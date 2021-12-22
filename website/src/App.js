@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
 import {
   BrowserRouter,
   Routes,
-  Route
+  Route,
+  Outlet
 } from "react-router-dom";
+import News from './pages/News'
+import Home from './pages/Home'
+import Edit from './pages/Edit'
+import Events from './pages/Events'
+import Contact from './pages/Contact'
+import Post from './pages/Post'
+import NotFound from './pages/NotFound'
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<App />}>
-        <Route index element={ /***** default ***/} />
-        <Route path="aktualnosci" element={ /***** ***/} >
-          <Route path=":postID" element={ /*****navigate(`/invoices/${newInvoice.id}`)***/} />
+    <div>
+      <Routes>
+        <Route path="/" element={<App />}>
+          {/* <Route index element={<Home />} /> */}
+          {/* <Route path="aktualnosci" element={<News />} >
+            <Route path=":postID" element={<Post />} />
+          </Route>
+          <Route path="wydarzenia" element={<Events />} />
+          <Route path="kontakt" element={<Contact />} />
+          <Route path="edycja" element={<Edit />} />
+          <Route path="*" element={<NotFound />} /> */}
         </Route>
-        <Route path="wydarzenia" element={ /***** ***/} />
-        <Route path="kontakt" element={ /***** ***/} />
-        <Route path="edycja" element={ /***** ***/} />
-        <Route path="*" element={ /***** ***/} />
-      </Route>
-    </Routes>
+      </Routes>
+      <p>dsf</p>
+      {/* <Outlet /> */}
+    </div>
+
   );
 }
 
