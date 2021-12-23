@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 
 const Edit = () => {
     return (
-        <main>
+        <div>
             <p>Edit</p>
-        </main>
+        </div>
     );
 }
 

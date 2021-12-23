@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react'
 const NotFound = () => {
 
     return (
-        <main>
+        <div>
             <p>NotFound</p>
-        </main>
+        </div>
     );
 }
 

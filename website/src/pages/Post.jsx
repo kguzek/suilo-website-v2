@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 const Post = () => {
     let params = useParams();
     return (
-        <main>
-            <p>Post {params.postID}</p>
-        </main>
+        <div>
+            <p>Post - {params.postID}</p>
+        </div>
     );
 }
 

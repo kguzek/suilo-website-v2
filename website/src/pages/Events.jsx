@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 
 const Events = () => {
     return (
-        <main>
+        <div>
             <p>Events</p>
-        </main>
+        </div>
     );
 }
 

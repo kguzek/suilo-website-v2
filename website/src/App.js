@@ -14,23 +14,26 @@ import NotFound from './pages/NotFound'
 
 function App() {
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<App />}>
-          {/* <Route index element={<Home />} /> */}
-          {/* <Route path="aktualnosci" element={<News />} >
-            <Route path=":postID" element={<Post />} />
-          </Route>
-          <Route path="wydarzenia" element={<Events />} />
-          <Route path="kontakt" element={<Contact />} />
-          <Route path="edycja" element={<Edit />} />
-          <Route path="*" element={<NotFound />} /> */}
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="aktualnosci" element={<News />} >
+          <Route path=":postID" element={<Post />} />
         </Route>
-      </Routes>
-      <p>dsf</p>
-      {/* <Outlet /> */}
-    </div>
+        <Route path="wydarzenia" element={<Events />} />
+        <Route path="kontakt" element={<Contact />} />
+        <Route path="edycja" element={<Edit />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
+  );
+}
 
+const Layout = () => {
+  return (
+    <main>
+      <Outlet />
+    </main>
   );
 }
 

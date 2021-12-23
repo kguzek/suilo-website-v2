@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react'
+import { Outlet, useParams } from 'react-router-dom'
 
 const News = () => {
-    return (
-        <main>
-            <p>News</p>
-        </main>
-    );
+    let params = useParams();
+    if (params.postID !== undefined) {
+        return <Outlet />
+    } else {
+        return (
+            <div>
+                <p>News</p>
+            </div>
+        );
+    }
 }
 
 

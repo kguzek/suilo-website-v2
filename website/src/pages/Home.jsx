@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 
 const Home = () => {
     return (
-        <main>
+        <div>
             <p>Home</p>
-        </main>
+        </div>
     );
 }
 
