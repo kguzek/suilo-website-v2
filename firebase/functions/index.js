@@ -91,7 +91,7 @@ app.get('/api/news', (req, res) => { // ?page=1&items=25
 });
 
 // add news
-app.get('/api/news/add', (req, res) => { // ?author=autortitle=tytuł&text=treść
+app.get('/api/news/add', (req, res) => { // ?author=autor&title=tytuł&text=treść
     // initialise parameters
     const author = req.query.author || "autor";
     const title = req.query.title || "tytuł";
