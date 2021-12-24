@@ -22,15 +22,15 @@ function sendSingleResponse(query, res) {
     query.get()
     .then((doc) => {    
         // check if the document was found
-        if (typeof doc.data() != "undefined") {
+        temp = doc.data();
+        if (temp) {
             // send document id with rest of the data
-            temp = doc.data();
             temp.id = doc.id; 
             return res.status(200).send(temp);
         }  
         else {
             // return an error if the document was not found
-            return res.status(500).send({errorDescription: "Nie znaleziono dokumentu"});
+            return res.status(404).send({ errorDescription: "The requested document was not found" });
         }
        
     })
@@ -66,14 +66,15 @@ function sendListResponse(query, res, { specialCase = "", startIndex = 0 }) {
                     } 
                     response.push(temp);
                 } else {
-                    // return an error if there were no documents found
-                    return res.status(500).send({errorDescription: "The requested documents were not found"});
+                    // return an error if any document was not found
+                    // index has already been incremented so it is 1-based
+                    return res.status(404).send({ errorDescription: `Document ${index} was not found` });
                 }
             }
         });
         return res.status(200).send(response);    
     }).catch((error) => {
-        console.log("Error getting documents: " + error);
+        return res.status(500).send({ errorDescription: "Error getting documents", error });
     });
 }
 
@@ -105,7 +106,7 @@ app.get('/api/news/add', (req, res) => { // ?author=autor&title=tytuÅ‚&text=treÅ
     db.collection("news").add(data).then((doc) => {
         res.status(200).send({id: doc.id, ...data});
     }).catch((error) => {
-        console.log("Error adding document: " + error);
+        return res.status(500).send({ errorDescription: "Error adding document", error });
     });
 });
 
