@@ -1,0 +1,67 @@
+$max-with: 1250px;
+
+//------------NAVBAR------------//
+
+.nav-bar{
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+    max-width: $max-with;
+    padding-top: 10px;
+}
+nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    margin-top: -14px;
+}
+
+.link-box{
+    margin: 0 1.75rem;
+    text-decoration: none;
+    transition: all 200ms ease-in-out;
+    padding: 0;
+    font-size: .85rem;
+    font-weight: 500;
+
+    &:hover{
+        text-decoration: underline;
+    }
+}
+
+.logo-box{
+    width: 20px;
+    height: 20px;
+}
+
+.login-btn{
+    margin-top: -13px;
+    cursor: pointer;
+    pointer-events: all;
+    p{
+        font-size: .825rem;
+        font-weight: 500;
+        color: #FF9C08;
+        padding: 0;
+        margin: 0;
+    }
+    padding: 8px 20px;
+    background-color:white;
+    border-radius: 7px;
+}
+
+
+//------------------------------//
+
+main{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}

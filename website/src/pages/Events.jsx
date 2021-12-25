@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 
-const Events = () => {
+const Events = ({ setPage }) => {
+
+    useEffect(() => {
+        setPage("events")
+    }, [])
+
     return (
         <div>
             <p>Events</p>

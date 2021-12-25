@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 
-const NotFound = () => {
+const NotFound = ({ setPage }) => {
+
+    useEffect(() => {
+        setPage("notFound")
+    }, [])
 
     return (
         <div>

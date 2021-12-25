@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from "react-router-dom";
 
-const Post = () => {
+const Post = ({ setPage }) => {
+
+    useEffect(() => {
+        setPage("news")
+    }, [])
+
     let params = useParams();
     return (
         <div>
