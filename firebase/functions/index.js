@@ -24,8 +24,9 @@ const db = admin.firestore();
 app.use( cors({ origin: true }) );
 
 // general function for performing action on single document
-function executeQuery(req, res, collectionName, onSuccessCallback) { // ?id=_
-    const id = req.query.id;
+function executeQuery(req, res, collectionName, onSuccessCallback) {
+    // get id from url parameters or arguments, e.g. /api/news/foo or /api/news/?id=foo
+    const id = req.params.id || req.query.id;
     // check if the id was provided in the query parameters
     if (id) {
         // initialise query
@@ -53,13 +54,25 @@ function createSingleDocument(data, collectionName, res) {
 }
 
 // general function for sending back a single document
-function sendSingleResponse(docQuery, res) {
+function sendSingleResponse(docQuery, res, dateFormat) {
     // send the query to db
     docQuery.get()
     .then((doc) => {    
         // check if the document was found
         temp = doc.data();
         if (temp) {
+            // formats all specified date fields as strings if they exist
+            for (fieldName of ["date", "modified"]) {
+                if (!temp[fieldName])
+                {
+                    // document does not contain the given field; skip it
+                    continue;
+                }
+                // cast field value as JS date object which has a built-in function to format it as a string
+                date = new Date(temp[fieldName]._seconds * 1000);  // Date object constructor takes milliseconds
+                // formatting using specified locale, default en-GB uses dd/mm/YYYY
+                temp[fieldName] = date.toLocaleString(dateFormat || "en-GB");
+            }
             // send document id with rest of the data
             return res.status(200).json({ id: doc.id, ...temp });
         }  else {
@@ -70,7 +83,7 @@ function sendSingleResponse(docQuery, res) {
 }
 
 // general function for sending back a list of documents
-function sendListResponse(docListQuery, res, { specialCase = "", startIndex = 0 }) {
+function sendListResponse(docListQuery, res, { specialCase = "", startIndex = 0, dateFormat = "en-GB" }) {
     // initialise response as an empty array
     const response = [];
     // send the query to db
@@ -79,18 +92,24 @@ function sendListResponse(docListQuery, res, { specialCase = "", startIndex = 0 
         // loop through every document
         let index = 0;
         querySnapshot.forEach((doc) => {
+            // increments index after evaluating it to see if it should be included in the response
             if (index++ >= startIndex) {
+                // read the document
                 const temp = doc.data();
                 if (temp) {
-                    // read the document
-                    temp.id = doc.id;  
-                    // chceck if there is a field named date
-                    if(temp.date) {
-                        // change timestamp for a date string;
-                        date = new Date(temp.date._seconds * 1000);  
-                        temp.date = `${zeroPad(date.getDate())}/${zeroPad(date.getMonth() + 1)}/${date.getFullYear()}`;     
-                    } 
-                    response.push(temp);
+                    // formats all specified date fields as strings if they exist
+                    for (fieldName of ["date", "modified"]) {
+                        if (!temp[fieldName])
+                        {
+                            // document does not contain the given field; it
+                            continue;
+                        }
+                        // cast field value as JS date object which has a built-in function to format it as a string
+                        date = new Date(temp[fieldName]._seconds * 1000);  // Date object constructor takes milliseconds
+                        // formatting using specified locale, default en-GB uses dd/mm/YYYY
+                        temp[fieldName] = date.toLocaleString(dateFormat || "en-GB");
+                    }
+                    response.push({ id: doc.id, ...temp });
                 } else {
                     // return an error if any document was not found
                     // index has already been incremented so it is 1-based
@@ -115,7 +134,7 @@ function updateSingleDocument(docQuery, res, requestParams, attributesToUpdate =
     let dataUpdated = false;
     // loop through each attribute that should be set
     for (let attrib of attributesToUpdate) {
-        // check if object attribute is provided in query paramters 
+        // check if object attribute is provided in the request query
         if (requestParams[attrib]) {
             // it is; assign parameter to object attributes
             newData[attrib] = requestParams[attrib];
@@ -124,7 +143,8 @@ function updateSingleDocument(docQuery, res, requestParams, attributesToUpdate =
         }
     }
     if (!dataUpdated) {
-        return res.status(400).json({ errorDescription: "400 Bad Request: There were no fields to update provided." });
+        // return an error if the query does not contain any new assignments
+        return res.status(400).json({ errorDescription: "400 Bad Request: There were no updated fields provided." });
     } else {
         console.log(newData);
     }
@@ -132,7 +152,7 @@ function updateSingleDocument(docQuery, res, requestParams, attributesToUpdate =
     docQuery.update(newData)
     .then(() => {
         // return updated document on success
-        sendSingleResponse(docQuery, res);
+        sendSingleResponse(docQuery, res, requestParams.date_format);
     }).catch((error) => {
         // return an error when the document was not found/could not be updated
         return res.status(400).json({ errorDescription: "400 Bad Request: Could not update document. It most likely does not exist.", error });
@@ -144,7 +164,8 @@ function deleteSingleDocument(docQuery, res) {
     docQuery.delete()
     .then(() => {
         // success deleting document
-        return res.status(200).json({ msg: "Success! The document has been deleted." });
+        // this may occur even if the document didn't exist to begin with
+        return res.status(200).json({ msg: `Success! Document with ID '${docQuery.id}' has been deleted.` });
     }).catch((error) => {
         return res.status(500).json({ errorDescription: "500 Server Error: The specified document could not be deleted.", error });
     });
@@ -168,44 +189,45 @@ app.post('/api/news', (req, res) => { // ?author=autor&title=tytuł&text=treść
     createSingleDocument(data, "news", res);
 });
 
-// READ news
-app.get('/api/news', (req, res) => { // ?id=_ || ?page=1&items=25
-    // depending on whether or not theid is specified, returns the specific id or a news list
+// READ all news
+app.get('/api/news', (req, res) => { // ?page=1&items=25?date_format=en-GB
+    // return news list
 
-    if (req.query.id) {
-        // id is specified, return specific news
+    // initialise parameters
+    const page = Math.max(parseInt(req.query.page || 1), 1);
+    const items = Math.max(parseInt(req.query.items || 25), 1);
+    const dateFormat = req.query.date_format; // this value is checked later; it can be undefined
+    // sendListResponse will only get the documents after startIndex
+    const startIndex = items * (page - 1);
+    const endIndex = items * page;
+    // send query to db
+    const docListQuery = db.collection("news").orderBy("date", "desc").limit(endIndex);
+    sendListResponse(docListQuery, res, { startIndex, dateFormat });
+});
 
-        // initialise the callback to execute on success
-        const callback = (docRef) => sendSingleResponse(docRef, res);
-        // validate the request; if it is valid, execute the above callback
-        executeQuery(req, res, "news", callback);
-    } else {
-        // id not specified, return news list
-
-        // initialize parameters
-        const page = Math.max(parseInt(req.query.page || 1), 1);
-        const items = Math.max(parseInt(req.query.items || 25), 1);
-        // sendListResponse will only get the documents after startIndex
-        const startIndex = items * (page - 1);
-        const endIndex = items * page;
-        // send query to db
-        const docListQuery = db.collection("news").orderBy("date", "desc").limit(endIndex);
-        sendListResponse(docListQuery, res, { startIndex });
-    }
+// READ single news
+app.get('/api/news/:id', (req, res) => { // ?date_format=en-GB
+    // initialise parameters
+    const dateFormat = req.query.date_format  // this value is checked later; can be undefined
+    // initialise the callback to execute on success
+    const callback = (docRef) => sendSingleResponse(docRef, res, dateFormat);
+    // validate the request; if it is valid, execute the above callback
+    executeQuery(req, res, "news", callback);
 });
 
 // UPDATE news
-app.put('/api/news', (req, res) => { // ?id=_&author=_&title=_&text=_
+app.put('/api/news/:id', (req, res) => { // ?id=_&author=_&title=_&text=_
     // initialise attributes to be updated
     const attributesToUpdate = ["author", "title", "text"];
     // initialise the callback to execute on success
+    console.log(typeof req.query)
     const callback = (docRef) => updateSingleDocument(docRef, res, req.query, attributesToUpdate);
     // validate the request; if it is valid, execute the above callback
     executeQuery(req, res, "news", callback);
 });
 
 // DELETE news
-app.delete('/api/news', (req, res) => { // ?id=_
+app.delete('/api/news/:id', (req, res) => { // ?id=_
     // initialise the callback to be executed on success
     const callback = (docRef) => deleteSingleDocument(docRef, res);
     // validate the request; if it is valid, execute the above callback
