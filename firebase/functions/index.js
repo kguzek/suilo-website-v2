@@ -68,7 +68,6 @@ app.put("/api/news/:id", (req, res) => { // ?id=_&author=_&title=_&text=_
     // initialise attributes to be updated
     const attributesToUpdate = ["author", "title", "text"];
     // initialise the callback to execute on success
-    console.log(typeof req.query)
     const callback = (docRef) => updateSingleDocument(docRef, res, req.query, attributesToUpdate);
     // validate the request; if it is valid, execute the above callback
     executeQuery(req, res, "news", callback);
