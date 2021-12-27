@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-
+import {signInWithGoogle} from "../firebase";
 const LoginScreen = ({ setLogging, setLogged, startLogging }) => {
     const [errorMessage, setErrorMessage] = useState(null)
     const { height, width } = useWindowDimensions();
 
     const _handleLogin = () => {
+        signInWithGoogle();
+        setLogging(false)
+        //     setLogged(true)
         // if (LOGIN_SUCCES) {
         //     setLogging(false)
         //     setLogged(true)
