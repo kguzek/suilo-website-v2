@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+const randomstring = require("randomstring");
 
 // Private service account key
 const serviceAccount = require("./permissions.json"); 
@@ -47,12 +48,80 @@ function executeQuery(req, res, collectionName, onSuccessCallback) {
 }
 
 
+// general function for generating a shortened URL
+function sendGenerateURLResponse(res, destination) {
+    // initialise the links collection reference
+    const shortURLs = db.collection("links");
+
+    // actually generate the URL pair and place it in the database
+    function generate() {
+        // generate new URLs until it finds one that hasn't been used yet
+        while (true) {
+            // generate alphanumeric string with length of 5 characters
+            const randStr = randomstring.generate(7);
+            // regenerate if the link is taken
+            if (resolveShortURL(randStr).then((destination) => destination)) {
+                continue;
+            }
+            // add the data to the database
+            shortURLs.doc(randStr).set({
+                destination
+            });
+            // return the shortened URL; breaks the while loop
+            return randStr;
+        }
+    }
+    // initialise query to check if there is already a short url for the given destination
+    const checkIfAlreadyExistsQuery = shortURLs.where("destination" , "==", destination).limit(1);
+
+    // determine if the URL should be generated, and if so, generate it
+    checkIfAlreadyExistsQuery.get()
+    .then((querySnapshot) => {
+        // existing data found in the database
+        if (querySnapshot.empty) {
+            // existing data not found in the database; return newly-created shortened URL
+            return res.status(200).json({ url: '/' + generate() });
+        } else {
+            // return the id of the document (i.e. short URL)
+            return res.status(200).json({ url: '/' + querySnapshot.docs[0].id });
+        }
+    });
+}
+
+// general function for retrieving the destination URL of a shortened link
+function resolveShortURL(shortURL) {
+    // initialise link collection reference
+    const shortURLs = db.collection("links");
+
+    // define thenable function
+    function resolve(resolve, reject) {
+        // get the document with the specified ID
+        shortURLs.doc(shortURL).get()
+        .then((doc) => {
+            // get the document data
+            const data = doc.data();
+            // check if the data has been retrieved successfully
+            if (data) {
+                // return the destination url
+                resolve(data.destination);
+            } else {
+                // return false if the given short URL is not present in the database
+                resolve(false);
+            }
+        });
+    }
+    // return a thenable object; usage is resolveShortURL(shortURL).then((destination) => {...})
+    return { then: resolve }
+}
+
+
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 // general function for creating a single document
 function createSingleDocument(data, collectionName, res) {
     // attempts to add the data to the given collection
-    db.collection(collectionName).add(data).then((doc) => {
+    db.collection(collectionName).add(data)
+    .then((doc) => {
         // success; return the data along with the document id
         return res.status(200).json({ id: doc.id, ...data });
     }).catch((error) => {
@@ -63,7 +132,7 @@ function createSingleDocument(data, collectionName, res) {
 
 // general function for sending back a single document
 function sendSingleResponse(docQuery, res, dateFormat) {
-    // send the query to db
+    // send the query to database
     docQuery.get()
     .then((doc) => {    
         // check if the document was found
@@ -84,7 +153,7 @@ function sendSingleResponse(docQuery, res, dateFormat) {
 function sendListResponse(docListQuery, res, { specialCase = "", startIndex = 0, dateFormat }) {
     // initialise response as an empty array
     const response = [];
-    // send the query to db
+    // send the query to database
     docListQuery.get()
     .then((querySnapshot) => {
         // loop through every document
@@ -136,7 +205,7 @@ function updateSingleDocument(docQuery, res, requestParams, attributesToUpdate =
     } else {
         console.log(newData);
     }
-    // send the query to db
+    // send the query to database
     docQuery.update(newData)
     .then(() => {
         // return updated document on success
@@ -164,12 +233,14 @@ function deleteSingleDocument(docQuery, res) {
 }
 
 module.exports = { 
-    admin, 
-    db, 
-    executeQuery, 
-    createSingleDocument, 
-    sendSingleResponse, 
-    sendListResponse, 
-    updateSingleDocument, 
-    deleteSingleDocument 
+    admin,
+    db,
+    executeQuery,
+    sendGenerateURLResponse,
+    resolveShortURL,
+    createSingleDocument,
+    sendSingleResponse,
+    sendListResponse,
+    updateSingleDocument,
+    deleteSingleDocument
 };

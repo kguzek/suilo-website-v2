@@ -11,6 +11,8 @@ const {
     admin, 
     db, 
     executeQuery,
+    sendGenerateURLResponse,
+    resolveShortURL,
     createSingleDocument, 
     sendSingleResponse, 
     sendListResponse, 
@@ -87,8 +89,52 @@ app.delete("/api/news/:id", (req, res) => { // ?id=_
 });
 
 
-app.get("/api/link/:link", (req, res) => {
-    
+/*      ======== LINK SHORTENER-SPECIFIC CRUD FUNCTIONS ========      */
+
+// CREATE shortened URL
+app.post("/api/links/:link", (req, res) => {
+    // return saved link if it has already been generated,
+    // otherwise return newly-generated URL
+
+    // initialise parameters
+    const destination = req.params.link.replace('.', '/');
+    // sends the response
+    sendGenerateURLResponse(res, destination);
 });
+
+
+// READ all shortened URLs
+app.get("/api/links/", (req, res) => { // ?page=1&items=25
+    // return URL list
+
+    // initialise parameters
+    const page = Math.max(parseInt(req.query.page || 1), 1);
+    const items = Math.max(parseInt(req.query.items || 25), 1);
+    // sendListResponse will only get the documents after startIndex
+    const startIndex = items * (page - 1);
+    const endIndex = items * page;
+    // send query to db
+    const docListQuery = db.collection("links").orderBy("destination", "asc").limit(endIndex);
+    // send a response with the entire collection
+    sendListResponse(docListQuery, res, { startIndex });
+});
+
+
+// READ single shortened URL
+app.get("/api/links/:link", (req, res) => { // link is the dot-separated relative path from 'suilo.pl/'
+    // find the destination URL in the database
+    resolveShortURL(req.params.link.replace('.', '/'))
+    .then((destination) => {
+        // check if it was found successfully
+        if (destination) {
+            // return the destination URL prefixed with '/'
+            return res.status(200).json({ target: '/' + destination });
+        } else {
+            // return an error if there is no such short URL
+            return res.status(404).json({ errorDescription: "404 Not Found: The shortened link does not exist." });
+        }
+    });
+});
+
 
 exports.app = functions.region("europe-west1").https.onRequest(app);
