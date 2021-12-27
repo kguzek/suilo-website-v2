@@ -17,7 +17,8 @@ const {
     sendSingleResponse, 
     sendListResponse, 
     updateSingleDocument, 
-    deleteSingleDocument 
+    deleteSingleDocument,
+    randomIntFromInterval 
 } = require("./util"); 
 
 // initialise express
@@ -25,7 +26,83 @@ const app = express();
 
 app.use( cors({ origin: true }) );
 
-
+app.get('/api/luckyNumbers',(req,res) => {      
+    try{
+        db.collection("numbers").doc("1").get().then(doc=>{
+            data = doc.data();
+            today = new Date();
+            lnDate = new Date(data.date._seconds*1000);
+            dateString = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`
+            dateStringDoc = `${lnDate.getDate()}/${lnDate.getMonth()+1}/${lnDate.getFullYear()}`
+          
+            if((today.getFullYear() === lnDate.getFullYear() && today.getMonth() === lnDate.getMonth() && today.getDate() === lnDate.getDate())||today.getDate()===0||today.getDate()===6||data.freeDays.includes(dateString)){
+                //no new lucky number havge to be generated
+                return res.status(200).send({date:dateStringDoc,luckyNumbers:data.luckyNumbers,excludedClasses:data.excludedClasses});
+            }else{
+          
+                newNumbers = [];
+            
+                
+                  
+                for(i=0;i<(data.numberQuantity)/2;i++){
+                    //generate a random number beetewen 1 and quantity of possible left numbers
+                    let helperNumber = randomIntFromInterval(1,data.splitPoint - data.usedBeforeSplit.length);
+                    let randomNumber = 1;
+                    //loop throught the numbers as long as you ve passed enought numbers that weren't used (helper number)
+                    while(helperNumber > 0){
+                        if(!data.usedBeforeSplit.includes(randomNumber)){
+                            helperNumber--;
+                            
+                        }
+                        if(helperNumber !== 0){
+                            randomNumber++;
+                        }
+                        
+                    }
+                    //add save resoult
+                    newNumbers.push(randomNumber); 
+                    data.usedBeforeSplit.push(randomNumber);
+                    //if used all numbers reset the array
+                    if(data.usedBeforeSplit.length === data.splitPoint )
+                    {
+                        data.usedBeforeSplit = [];
+                    }
+                    //same for the other half
+                    helperNumber = randomIntFromInterval(1,data.maxNumber-data.splitPoint-data.usedAfterSplit.length);
+                    randomNumber = data.splitPoint+1;
+                    while(helperNumber > 0){
+                        if(!data.usedAfterSplit.includes(randomNumber)){
+                            helperNumber--;
+                        }
+                        if(helperNumber !== 0){
+                            randomNumber++;
+                        }
+                    }
+                    newNumbers.push(randomNumber); 
+                    data.usedAfterSplit.push(randomNumber);
+                    if(data.usedAfterSplit.length === data.maxNumber - data.splitPoint )
+                    {
+                        data.usedAfterSplit = [];
+                    }
+                }
+                
+              
+                db.collection("numbers").doc("1").set({
+                    luckyNumbers:newNumbers,
+                    date: today,
+                    usedBeforeSplit:data.usedBeforeSplit,
+                    usedAfterSplit:data.usedAfterSplit
+                },{merge:true})
+                return res.status(200).send({date:dateString,luckyNumbers:newNumbers,excludedClasses:data.excludedClasses});
+                
+            }
+            
+        })
+    }
+    catch(error){
+        return res.status(500).send({errorDescription: error});
+    }   
+});
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
 
 // CREATE news

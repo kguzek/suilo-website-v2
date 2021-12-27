@@ -249,7 +249,9 @@ function deleteSingleDocument(docQuery, res) {
         return res.status(500).json({ errorDescription: "500 Server Error: The specified document could not be deleted.", error });
     });
 }
-
+function randomIntFromInterval(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+} 
 module.exports = { 
     admin,
     db,
@@ -260,5 +262,6 @@ module.exports = {
     sendSingleResponse,
     sendListResponse,
     updateSingleDocument,
-    deleteSingleDocument
+    deleteSingleDocument,
+    randomIntFromInterval
 };
