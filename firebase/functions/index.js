@@ -47,16 +47,10 @@ app.post("/api/news", (req, res) => { // ?author=autor&title=tytuł&text=treść
 app.get("/api/news", (req, res) => { // ?page=1&items=25?date_format=en-GB
     // return news list
 
-    // initialise parameters
-    const page = Math.max(parseInt(req.query.page || 1), 1);
-    const items = Math.max(parseInt(req.query.items || 25), 1);
-    const dateFormat = req.query.date_format || "en-GB";
-    // sendListResponse will only get the documents after startIndex
-    const startIndex = items * (page - 1);
-    const endIndex = items * page;
-    // send query to db
-    const docListQuery = db.collection("news").orderBy("date", "desc").limit(endIndex);
-    sendListResponse(docListQuery, res, { startIndex, dateFormat });
+    // initialise base query
+    const docListQuery = db.collection("news").orderBy("date", "desc");
+    // process query
+    sendListResponse(docListQuery, req, res);
 });
 
 // READ single news
@@ -105,18 +99,10 @@ app.post("/api/links/:link", (req, res) => {
 
 // READ all shortened URLs
 app.get("/api/links/", (req, res) => { // ?page=1&items=25
+    // initialise base query
+    const docListQuery = db.collection("links").orderBy("destination", "asc");
     // return URL list
-
-    // initialise parameters
-    const page = Math.max(parseInt(req.query.page || 1), 1);
-    const items = Math.max(parseInt(req.query.items || 25), 1);
-    // sendListResponse will only get the documents after startIndex
-    const startIndex = items * (page - 1);
-    const endIndex = items * page;
-    // send query to db
-    const docListQuery = db.collection("links").orderBy("destination", "asc").limit(endIndex);
-    // send a response with the entire collection
-    sendListResponse(docListQuery, res, { startIndex });
+    sendListResponse(docListQuery, req, res);
 });
 
 

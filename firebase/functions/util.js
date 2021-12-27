@@ -150,17 +150,29 @@ function sendSingleResponse(docQuery, res, dateFormat) {
 }
 
 // general function for sending back a list of documents
-function sendListResponse(docListQuery, res, { specialCase = "", startIndex = 0, dateFormat }) {
+function sendListResponse(docListQuery, req, res) {
+    /* -- Pagination -- */
+    // initialise parameters
+    const page = Math.max(parseInt(req.query.page || 1), 1);
+    const items = Math.max(parseInt(req.query.items || 25), 1);
+    const dateFormat = req.query.date_format || "en-GB";
+    // will only get the documents after startIndex
+    const startIndex = items * (page - 1);
+    const endIndex = items * page;
+
     // initialise response as an empty array
     const response = [];
     // send the query to database
-    docListQuery.get()
+    docListQuery.limit(endIndex).get()
     .then((querySnapshot) => {
+        // initialise extra info variables
+        let last = 0;
         // loop through every document
         let index = 0;
         querySnapshot.forEach((doc) => {
             // increments index after evaluating it to see if it should be included in the response
             if (index++ >= startIndex) {
+                last++;
                 // read the document
                 const temp = doc.data();
                 if (temp) {
@@ -174,7 +186,13 @@ function sendListResponse(docListQuery, res, { specialCase = "", startIndex = 0,
                 }
             }
         });
-        return res.status(200).json(response);    
+        return res.status(200).json({ 
+            // add extra info for messages such as "showing items X-Y of Z"
+            firstOnPage: startIndex + 1, 
+            lastOnPage: startIndex + last,
+            total: querySnapshot.docs.length,
+            contents: response
+        });    
     }).catch((error) => {
         return res.status(500).json({ errorDescription: "500 Server Error: Could not retrieve documents.", error });
     });
