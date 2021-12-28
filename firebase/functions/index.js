@@ -37,7 +37,7 @@ app.get('/api/luckyNumbers', (req, res) => {
             const today = new Date();
             const currentDateString = today.toLocaleDateString("en-GB");
             if (!data) {
-                return res.status(500).json({ errorDescription: "500 Server Error: No lucky numbers data exists. The database document has not been created. "});
+                return res.status(500).json({ errorDescription: "500 Internal Server Error: No lucky numbers data exists. The database document has not been created. "});
             }
             // check if all the requirements for new lucky numbers are met
             const dataDate = new Date(data.date._seconds * 1000);
@@ -100,10 +100,9 @@ app.get('/api/luckyNumbers', (req, res) => {
             });  
         })
     } catch (error) {
-        return res.status(500).json({ errorDescription: "500 Server Error: Could not get the lucky numbers data.", error });
+        return res.status(500).json({ errorDescription: "500 Internal Server Error: Could not get the lucky numbers data.", error });
     }
 });
-
 
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
 
@@ -174,15 +173,13 @@ app.post("/api/links/:link", (req, res) => {
     sendGenerateURLResponse(res, destination);
 });
 
-
 // READ all shortened URLs
-app.get("/api/links/", (req, res) => { // ?page=1&items=25
+app.get("/api/links", (req, res) => { // ?page=1&items=25
     // initialise base query
     const docListQuery = db.collection("links").orderBy("destination", "asc");
     // return URL list
     sendListResponse(docListQuery, req, res);
 });
-
 
 // READ single shortened URL
 app.get("/api/links/:link", (req, res) => { // link is the dot-separated relative path from 'suilo.pl/'
@@ -200,5 +197,15 @@ app.get("/api/links/:link", (req, res) => { // link is the dot-separated relativ
     });
 });
 
+for (path of ["luckyNumbers", "news", "news/:x", "links", "links/:x"]) {
+    // catch all requests to paths that are listed above but use the incorrect HTTP method
+    app.all("/api/" + path, (req, res) => {
+        return res.status(405).json({ errorDescription: `405 Method Not Allowed: Cannot ${req.method} ${req.path}.` });
+    });
+}
+// catch all requests to paths that are not listed above
+app.all("*", (req, res) => {
+    return res.status(404).json({ errorDescription: `404 Not Found: The server could not locate the resource at ${req.path}.` });
+})
 
 exports.app = functions.region("europe-west1").https.onRequest(app);

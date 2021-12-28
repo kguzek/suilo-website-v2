@@ -126,7 +126,7 @@ function createSingleDocument(data, collectionName, res) {
         return res.status(200).json({ id: doc.id, ...data });
     }).catch((error) => {
         // return an error when the document could not be added, e.g. invalid collection name
-        return res.status(500).json({ errorDescription: "500 Server Error: Could not create document.", error });
+        return res.status(500).json({ errorDescription: "500 Internal Server Error: Could not create document.", error });
     });
 }
 
@@ -194,7 +194,7 @@ function sendListResponse(docListQuery, req, res) {
             contents: response
         });    
     }).catch((error) => {
-        return res.status(500).json({ errorDescription: "500 Server Error: Could not retrieve documents.", error });
+        return res.status(500).json({ errorDescription: "500 Internal Server Error: Could not retrieve documents.", error });
     });
 }
 
@@ -246,7 +246,7 @@ function deleteSingleDocument(docQuery, res) {
         // this may occur even if the document did not exist to begin with
         return res.status(200).json({ msg: `Success! Document with ID '${docQuery.id}' has been deleted.` });
     }).catch((error) => {
-        return res.status(500).json({ errorDescription: "500 Server Error: The specified document could not be deleted.", error });
+        return res.status(500).json({ errorDescription: "500 Internal Server Error: The specified document could not be deleted.", error });
     });
 }
 
