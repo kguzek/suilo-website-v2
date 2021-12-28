@@ -249,9 +249,13 @@ function deleteSingleDocument(docQuery, res) {
         return res.status(500).json({ errorDescription: "500 Server Error: The specified document could not be deleted.", error });
     });
 }
+
+// general function for generating a random integer between the given interval, inclusively
 function randomIntFromInterval(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min)
+    return Math.floor(Math.random() * (max - min + 1) + min);
 } 
+
+
 module.exports = { 
     admin,
     db,

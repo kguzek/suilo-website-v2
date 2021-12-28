@@ -4,7 +4,6 @@ const cors = require("cors");
 
 // Firebase imports
 const functions = require("firebase-functions");
-const { firebaseConfig } = require("firebase-functions");
 
 // General local utility functions
 const { 
@@ -26,83 +25,83 @@ const app = express();
 
 app.use( cors({ origin: true }) );
 
-app.get('/api/luckyNumbers',(req,res) => {      
-    try{
-        db.collection("numbers").doc("1").get().then(doc=>{
-            data = doc.data();
-            today = new Date();
-            lnDate = new Date(data.date._seconds*1000);
-            dateString = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`
-            dateStringDoc = `${lnDate.getDate()}/${lnDate.getMonth()+1}/${lnDate.getFullYear()}`
+
+/*      ======== LUCKY NUMBERS-SPECIFIC CRUD FUNCTIONS ========      */
+
+// GET lucky numbers
+app.get('/api/luckyNumbers', (req, res) => {
+    try {
+        db.collection("numbers").doc("1").get().then((doc) => {
+            const data = doc.data();
+            const today = new Date();
+            const dataDate = new Date(data.date._seconds * 1000);
+            // en-GB locale uses dd/mm/YYYY for short date notation
+            const currentDateString = today.toLocaleDateString("en-GB");
+            const dataDateString = dataDate.toLocaleDateString("en-GB");
           
-            if((today.getFullYear() === lnDate.getFullYear() && today.getMonth() === lnDate.getMonth() && today.getDate() === lnDate.getDate())||today.getDate()===0||today.getDate()===6||data.freeDays.includes(dateString)){
-                //no new lucky number havge to be generated
-                return res.status(200).send({date:dateStringDoc,luckyNumbers:data.luckyNumbers,excludedClasses:data.excludedClasses});
-            }else{
-          
-                newNumbers = [];
-            
-                
-                  
-                for(i=0;i<(data.numberQuantity)/2;i++){
-                    //generate a random number beetewen 1 and quantity of possible left numbers
-                    let helperNumber = randomIntFromInterval(1,data.splitPoint - data.usedBeforeSplit.length);
+            // check if all the requirements for new lucky numbers are met
+            if ( (currentDateString !== dataDateString) && ![0, 6].includes(today.getDay()) && !data.freeDays.includes(currentDateString) ) {
+                // new lucky numbers must be generated
+                const newNumbers = [];
+                for (let i = 0; i < data.numberQuantity / 2; i++) {
+                    // generate a random number between 1 and quantity of possible left numbers
+                    let helperNumber = randomIntFromInterval(1, data.splitPoint - data.usedBeforeSplit.length);
                     let randomNumber = 1;
-                    //loop throught the numbers as long as you ve passed enought numbers that weren't used (helper number)
-                    while(helperNumber > 0){
-                        if(!data.usedBeforeSplit.includes(randomNumber)){
+                    // loop through the numbers as long as you've passed enough numbers that weren't used (helper number)
+                    while (helperNumber > 0) {
+                        if (!data.usedBeforeSplit.includes(randomNumber)) {
                             helperNumber--;
-                            
                         }
-                        if(helperNumber !== 0){
+                        if (helperNumber !== 0) {
                             randomNumber++;
                         }
-                        
                     }
-                    //add save resoult
+                    // add result
                     newNumbers.push(randomNumber); 
                     data.usedBeforeSplit.push(randomNumber);
-                    //if used all numbers reset the array
-                    if(data.usedBeforeSplit.length === data.splitPoint )
+                    // reset the array if all numbers have been used
+                    if (data.usedBeforeSplit.length === data.splitPoint)
                     {
                         data.usedBeforeSplit = [];
                     }
-                    //same for the other half
-                    helperNumber = randomIntFromInterval(1,data.maxNumber-data.splitPoint-data.usedAfterSplit.length);
-                    randomNumber = data.splitPoint+1;
-                    while(helperNumber > 0){
-                        if(!data.usedAfterSplit.includes(randomNumber)){
+                    // same for the other half
+                    let helperNumber = randomIntFromInterval(1, data.maxNumber - data.splitPoint - data.usedAfterSplit.length);
+                    let randomNumber = data.splitPoint + 1;
+                    while (helperNumber > 0) {
+                        if (!data.usedAfterSplit.includes(randomNumber)) {
                             helperNumber--;
                         }
-                        if(helperNumber !== 0){
+                        if (helperNumber !== 0) {
                             randomNumber++;
                         }
                     }
                     newNumbers.push(randomNumber); 
                     data.usedAfterSplit.push(randomNumber);
-                    if(data.usedAfterSplit.length === data.maxNumber - data.splitPoint )
+                    if (data.usedAfterSplit.length === data.maxNumber - data.splitPoint)
                     {
                         data.usedAfterSplit = [];
                     }
                 }
-                
-              
                 db.collection("numbers").doc("1").set({
-                    luckyNumbers:newNumbers,
-                    date: today,
-                    usedBeforeSplit:data.usedBeforeSplit,
-                    usedAfterSplit:data.usedAfterSplit
-                },{merge:true})
-                return res.status(200).send({date:dateString,luckyNumbers:newNumbers,excludedClasses:data.excludedClasses});
-                
+                    luckyNumbers: newNumbers,
+                    date: admin.firestore.Timestamp.fromDate(today),
+                    usedBeforeSplit: data.usedBeforeSplit,
+                    usedAfterSplit: data.usedAfterSplit
+                }, { merge: true });
             }
-            
+            // return the new or old data
+            return res.status(200).json({
+                date: currentDateString,
+                luckyNumbers: newNumbers || data.luckyNumbers,
+                excludedClasses: data.excludedClasses
+            });  
         })
+    } catch (error) {
+        return res.status(500).json({ errorDescription: "500 Server Error: Could not get the lucky numbers data.", error });
     }
-    catch(error){
-        return res.status(500).send({errorDescription: error});
-    }   
 });
+
+
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
 
 // CREATE news
