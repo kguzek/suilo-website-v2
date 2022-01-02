@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import Hamburger from 'hamburger-react'
 import LogoSU from '../media/LogoSU'
+import Blob from '../media/blob'
+
 
 const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     const { height, width } = useWindowDimensions();
@@ -60,6 +62,12 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     if (width > 800) {
         return (
             <div className="nav-bar">
+                <div className="blob" style={{ top: "-580px", left: "-830px", transform: "rotate(97deg)" }}>
+                    <Blob width="1000px" height="900px" />
+                </div>
+                <div className="blob" style={{ top: "-300px", right: "-750px", transform: "rotate(12deg)" }}>
+                    <Blob width="1200px" height="1400px" />
+                </div>
                 <LogoSU width={50} height={50} />
                 <div className="nav-box">
                     <div id="indicator"

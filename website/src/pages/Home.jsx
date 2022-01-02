@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Blob from '../media/blob'
 
 const Home = ({ setPage }) => {
 
@@ -9,6 +10,7 @@ const Home = ({ setPage }) => {
     return (
         <div>
             <p>Home</p>
+
         </div>
     );
 }

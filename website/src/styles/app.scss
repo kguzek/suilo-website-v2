@@ -3,6 +3,12 @@ $color-primary: #FFA900;
 
 //------------NAVBAR------------//
 
+.blob{
+    position: absolute;
+    z-index: -999;
+    transition: all 250ms ease-in-out;
+}
+
 .nav-bar{
     width: 95%;
     display: flex;
@@ -56,6 +62,7 @@ $color-primary: #FFA900;
     padding: 8px 20px;
     background-color:white;
     border-radius: 7px;
+    box-shadow: 0 5px 22px rgba(60, 50, 0, .1)
 }
 
 #indicator{
