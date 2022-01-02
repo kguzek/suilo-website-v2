@@ -1,15 +1,54 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
-import { Menu, X } from 'react-feather'
 import Hamburger from 'hamburger-react'
 import LogoSU from '../media/LogoSU'
 
 const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     const { height, width } = useWindowDimensions();
     const [isOpen, setOpen] = useState(false)
+    const [display, setDisplay] = useState("none");
+    const [opacity, setOpacity] = useState(0);
+    const [bgColor, setBgColor] = useState("transparent");
+    const [yHeight, setYHeight] = useState("40px");
+
+    const [isSafeToChange, setSafety] = useState(true);
+
+    useEffect(() => {
+        setSafety(false)
+        if (isOpen) { // on navbar open
+            fadeInDom();
+        } else { // on navbar close
+            fadeOutDom();
+        }
+    }, [isOpen])
+
+    const fadeInDom = () => {
+        setDisplay("flex") // change display
+        setTimeout(() => {
+            setYHeight("245px") // change height
+            setTimeout(() => {
+                setOpacity(1) // change opacity
+                setBgColor("white") // change bg color
+                setSafety(true)
+            }, 110);
+        }, 10);
+    }
+
+    const fadeOutDom = () => {
+        setOpacity(0) // change opacity
+        setTimeout(() => {
+            setYHeight("40px") // change height
+            setTimeout(() => {
+                setBgColor("transparent") // change bg color
+                setTimeout(() => {
+                    setDisplay("none")
+                    setSafety(true)
+                }, 210);
+            }, 110);
+        }, 40);
+    }
 
     const _handleLogin = () => {
-        // console.log("sprawdzam logowanie")
         if (logged) {
             logoutAction();
         } else {
@@ -60,11 +99,19 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
             <div className="nav-bar" style={{ paddingLeft: "6px" }}>
                 <LogoSU width={38} height={38} />
                 <div style={{ position: "relative" }}>
-                    <div className="mobile-top" style={{ backgroundColor: isOpen ? '#fff' : "transparent", boxShadow: isOpen ? "0 5px 25px rgba(60, 50, 0, .1)" : "0 7px 40px rgba(60, 50, 0, 0)" }}>
+                    <div className="mobile-top"
+                        style={{
+                            backgroundColor: bgColor,
+                            boxShadow: isOpen ? "0 5px 25px rgba(60, 50, 0, .1)" : "0 7px 40px rgba(60, 50, 0, 0)",
+                            height: yHeight,
+                            maxHeight: yHeight,
+                            minHeight: yHeight
+                        }}
+                    >
                         <div style={{ marginLeft: "120px" }}>
-                            <Hamburger toggled={isOpen} toggle={setOpen} duration={0.3} distance="md" color={isOpen ? "#FFA900" : "#fff"} rounded size={26} />
+                            <Hamburger toggled={isOpen} toggle={isSafeToChange ? setOpen : null} duration={0.3} distance="md" color={isOpen ? "#FFA900" : "#fff"} rounded size={26} />
                         </div>
-                        <nav className="nav-mobile" style={{ display: isOpen ? "flex" : "none" }}>
+                        <nav className="nav-mobile" style={{ display: display, opacity: opacity }}>
                             <Link to="/" className="link-box-mobile" style={{ color: page === "home" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Główna</Link>
                             <Link to="aktualnosci" className="link-box-mobile" style={{ color: page === "news" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Aktualności</Link>
                             <Link to="wydarzenia" className="link-box-mobile" style={{ color: page === "events" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Wydarzenia</Link>
