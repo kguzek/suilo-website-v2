@@ -80,6 +80,7 @@ $color-primary: #FFA900;
     position: absolute;
     right: 0;
     top: -24px;
+    box-shadow: 0 5px 25px rgba(60, 50, 0, .1);
 }
 
 .nav-mobile{
@@ -87,6 +88,8 @@ $color-primary: #FFA900;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: all 200ms ease-in-out;
+
 }
 
 .link-box-mobile{
@@ -106,6 +109,9 @@ $color-primary: #FFA900;
 
 //---------LOGIN SCREEN---------//
 
+
+
+
 .login-container{
     width: 100vw;
     height: 100vh;
@@ -117,12 +123,17 @@ $color-primary: #FFA900;
     transition: opacity 300ms ease-in-out;
 }
 
+
+
+
+
 .login-bg{
     background-color: black;
     opacity: .3;
     width: 100%;
     height: 100%;
     position: fixed;
+    pointer-events: all;
 }
 
 .login-box{
@@ -136,6 +147,8 @@ $color-primary: #FFA900;
     position: fixed;
     box-shadow: 0 7px 40px rgba(60, 50, 0, .1);
     pointer-events: all;
+    transition: all 300ms ease-in-out;
+
 }
 
 

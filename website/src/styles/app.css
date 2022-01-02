@@ -106,6 +106,8 @@
   position: absolute;
   right: 0;
   top: -24px;
+  -webkit-box-shadow: 0 5px 25px rgba(60, 50, 0, 0.1);
+          box-shadow: 0 5px 25px rgba(60, 50, 0, 0.1);
 }
 
 .nav-mobile {
@@ -122,6 +124,8 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
 }
 
 .link-box-mobile {
@@ -158,6 +162,7 @@
   width: 100%;
   height: 100%;
   position: fixed;
+  pointer-events: all;
 }
 
 .login-box {
@@ -179,6 +184,8 @@
   -webkit-box-shadow: 0 7px 40px rgba(60, 50, 0, 0.1);
           box-shadow: 0 7px 40px rgba(60, 50, 0, 0.1);
   pointer-events: all;
+  -webkit-transition: all 300ms ease-in-out;
+  transition: all 300ms ease-in-out;
 }
 
 .login-left {

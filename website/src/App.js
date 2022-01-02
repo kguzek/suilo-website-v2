@@ -16,16 +16,19 @@ import Post from './pages/Post'
 import NotFound from './pages/NotFound'
 import NavBar from './components/NavBar'
 import LoginScreen from './components/LoginScreen'
-import { getResults,logOut} from './firebase';
+import { getResults, logOut } from './firebase';
+
 function App() {
   const [page, setPage] = useState(null)
   const [logged, setLogged] = useState(false) // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [startLogging, setLogging] = useState(false)
-  useEffect(()=>{
+
+  useEffect(() => {
     getResults(callback)
 
 
-  },[])
+  }, [])
+
   //---debug code---//
   // useEffect(() => { 
   //   if (page !== null) {
@@ -33,26 +36,25 @@ function App() {
   //   }
   //   return;
   // }, [page])
-  const callback = (credentials,user) =>{
-    if(credentials !== undefined && user !== undefined){
-      if(user.email.endsWith("@lo1.gliwice.pl")){
+
+  const callback = (credentials, user) => {
+
+    if (credentials !== undefined && user !== undefined) {
+      if (user.email.endsWith("@lo1.gliwice.pl")) {
         //credentials.idTotken - token to acces api
         console.log("logged in");
 
       }
-      else{
+      else {
         console.log("invalid email");
         console.log("logging out");
-        logOut().then(succes=>{
-          console.log(succes?"succes":"failure");
+        logOut().then(succes => {
+          console.log(succes ? "succes" : "failure");
         })
-        
       }
-
-
     }
-
   }
+
   const loginAction = () => {
     // console.log("zalogowoano!")
     // setLogged(true)
