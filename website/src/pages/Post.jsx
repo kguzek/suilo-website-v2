@@ -9,7 +9,7 @@ const Post = ({ setPage }) => {
 
     let params = useParams();
     return (
-        <div>
+        <div style={{ minHeight: "89vh" }}>
             <p>Post - {params.postID}</p>
         </div>
     );

@@ -32,7 +32,7 @@ const Edit = ({ setPage, logged, loginAction }) => {
     }, [logged]) //CALL WHEN LOGGED HAVE CHANGED
 
     return (
-        <div>
+        <div style={{ minHeight: "89vh" }}>
             <p>Edit</p>
         </div>
     );

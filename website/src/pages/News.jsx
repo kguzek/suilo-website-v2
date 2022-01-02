@@ -12,7 +12,7 @@ const News = ({ setPage }) => {
         return <Outlet />
     } else {
         return (
-            <div>
+            <div style={{ minHeight: "89vh" }}>
                 <p>News</p>
             </div>
         );

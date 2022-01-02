@@ -7,7 +7,7 @@ const NotFound = ({ setPage }) => {
     }, [])
 
     return (
-        <div>
+        <div style={{ minHeight: "89vh" }}>
             <p>NotFound</p>
         </div>
     );

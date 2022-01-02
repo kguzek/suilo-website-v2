@@ -8,7 +8,7 @@ const Home = ({ setPage }) => {
     }, [])
 
     return (
-        <div>
+        <div style={{ minHeight: "89vh" }}>
             <p>Home</p>
 
         </div>

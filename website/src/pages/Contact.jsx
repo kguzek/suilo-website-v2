@@ -7,7 +7,7 @@ const Contact = ({ setPage }) => {
     }, [])
 
     return (
-        <div>
+        <div style={{ minHeight: "89vh" }}>
             <p>Contact</p>
         </div>
     );

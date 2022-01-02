@@ -7,7 +7,7 @@ const Events = ({ setPage }) => {
     }, [])
 
     return (
-        <div>
+        <div style={{ minHeight: "89vh" }}>
             <p>Events</p>
         </div>
     );

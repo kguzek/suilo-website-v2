@@ -16,6 +16,7 @@ import Post from './pages/Post'
 import NotFound from './pages/NotFound'
 import NavBar from './components/NavBar'
 import LoginScreen from './components/LoginScreen'
+import Footer from "./components/Footer";
 import { getResults, logOut } from './firebase';
 
 function App() {
@@ -90,6 +91,7 @@ const Layout = ({ page, logged, loginAction, logoutAction, startLogging, setLogg
       <NavBar page={page} logged={logged} loginAction={loginAction} logoutAction={logoutAction} />
       <Outlet />
       <LoginScreen setLogging={setLogging} setLogged={setLogged} startLogging={startLogging} />
+      <Footer />
     </main>
   );
 }
