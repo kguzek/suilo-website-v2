@@ -62,12 +62,12 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     if (width > 800) {
         return (
             <div className="nav-bar">
-                <div className="blob" style={{ top: "-580px", left: "-830px", transform: "rotate(97deg)" }}>
+                {/* <div className="blob" style={{ top: "-580px", left: "-830px", transform: "rotate(97deg)" }}>
                     <Blob width="1000px" height="900px" />
                 </div>
                 <div className="blob" style={{ top: "-300px", right: "-750px", transform: "rotate(12deg)" }}>
                     <Blob width="1200px" height="1400px" />
-                </div>
+                </div> */}
                 <LogoSU width={50} height={50} />
                 <div className="nav-box">
                     <div id="indicator"
@@ -79,12 +79,12 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
                                             page === "edit" && logged ? "32px" :
                                                 "35px",
                             transform:
-                                page === "home" ? "translateX(37px)" :
-                                    page === "news" ? "translateX(150px)" :
-                                        page === "events" ? "translateX(288px)" :
-                                            page === "contact" ? "translateX(418px)" :
-                                                page === "edit" && logged ? "translateX(525px)" :
-                                                    "translateX(37px)"
+                                page === "home" ? "translateX(2.1em)" :
+                                    page === "news" ? "translateX(8.55em)" :
+                                        page === "events" ? "translateX(16.65em)" :
+                                            page === "contact" ? "translateX(24.3em)" :
+                                                page === "edit" && logged ? "translateX(30.5em)" :
+                                                    "translateX(34px)"
                         }}
                     />
                     <nav className="nav-desktop">
