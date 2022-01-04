@@ -9,20 +9,25 @@ const LoginScreen = ({ setLogging, setLogged, startLogging }) => {//startLogging
     const [display, setDisplay] = useState("none");
     const [opacity, setOpacity] = useState(0);
     const [yPos, setYPos] = useState("10vh");
+    const [isSafeToChange, setSafety] = useState(true);
+
 
     useEffect(() => {
-        if (startLogging) {
+        if (startLogging && isSafeToChange) {
             fadeInDom();
-        } else {
+        } else if (isSafeToChange) {
             fadeOutDom();
         }
+        setSafety(false)
     }, [startLogging])
+
 
     const fadeInDom = () => {
         setDisplay("flex")
         setTimeout(() => {
             setOpacity(1)
             setYPos(0)
+            setSafety(true)
         }, 10);
     }
 
@@ -32,6 +37,7 @@ const LoginScreen = ({ setLogging, setLogged, startLogging }) => {//startLogging
         setTimeout(() => {
             setDisplay("none")
             setYPos("10vh")
+            setSafety(true)
         }, 310);
     }
 
