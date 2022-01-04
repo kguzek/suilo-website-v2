@@ -1,6 +1,126 @@
 $max-with: 1250px;
 $color-primary: #FFA900;
 
+//----------SCROLLTOP-----------//
+
+.scroll-top{
+    background-color: white;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    border: none;
+    justify-content: center;
+    position: fixed;
+    align-items: center;
+    bottom: 15px;
+    right: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    pointer-events: all;
+    box-shadow: 0 5px 22px rgba(60, 50, 0, .12);
+    transition: all 330ms ease-in-out;
+}
+
+//-----------COOKIES------------//
+
+.cookies-box{
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    bottom: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    background-color: white;
+    box-shadow: 0 -5px 64px rgba(60, 50, 0, .18);
+    transition: all 330ms ease-in-out;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.cookies-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 30px;
+    .cookies-header{
+        font-size: .9em;
+        font-weight: 500;
+        padding: 3px;
+        margin: 0;
+        color:#2E2E2E;
+        white-space: nowrap;
+    }
+    .cookies-description{
+        font-size: .775em;
+        font-weight: 400;
+        padding: 3px;
+        margin: 0;
+        color:#2E2E2E;
+        opacity: .5;
+    }
+}
+
+.cookies-buttons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.cookies-agree{
+    cursor: pointer;
+    pointer-events: all;
+    border: none;
+    p{
+        font-size: .825em;
+        font-weight: 500;
+        color: white;
+        padding: 0;
+        margin: 0;
+        white-space: nowrap;
+    }
+    padding: 8px 20px;
+    background: linear-gradient(170deg, #FFA000,#FFC300);
+    border-radius: 7px;
+    box-shadow: 0 5px 22px rgba(60, 50, 0, .0);
+    transition: all 200ms ease-in-out;
+    &:hover{
+        transform: scale(1.01);
+        box-shadow: 0 5px 22px rgba(60, 50, 0, .1);
+    }
+    &:active{
+        transform: scale(0.985);
+        box-shadow: 0 5px 22px rgba(60, 50, 0, .0);
+    }
+}
+
+.cookies-disagree{
+    cursor: pointer;
+    pointer-events: all;
+    border: none;
+    margin-top: 12px;
+    margin-bottom: -4px;
+    p{
+        font-size: .75em;
+        font-weight: 400;
+        color: $color-primary;
+        padding: 0;
+        margin: 0;
+        white-space: nowrap;
+    }
+    transition: all 200ms ease-in-out;
+    &:hover{
+        transform: scale(1.01);
+    }
+    &:active{
+        transform: scale(0.985);
+    }
+}
+
+
 //------------NAVBAR------------//
 
 .blob{
@@ -31,11 +151,11 @@ $color-primary: #FFA900;
 }
 
 .link-box{
-    margin: 0 1.75rem;
+    margin: 0 1.75em;
     text-decoration: none;
     transition: all 200ms ease-in-out;
     padding: 0;
-    font-size: .85rem;
+    font-size: .85em;
     font-weight: 500;
 
     &:hover{
@@ -52,8 +172,9 @@ $color-primary: #FFA900;
     margin-top: -13px;
     cursor: pointer;
     pointer-events: all;
+    border: none;
     p{
-        font-size: .825rem;
+        font-size: .825em;
         font-weight: 500;
         color: $color-primary;
         padding: 0;
@@ -62,7 +183,16 @@ $color-primary: #FFA900;
     padding: 8px 20px;
     background-color:white;
     border-radius: 7px;
-    box-shadow: 0 5px 22px rgba(60, 50, 0, .1)
+    box-shadow: 0 5px 22px rgba(60, 50, 0, .1);
+    transition: all 200ms ease-in-out;
+    &:hover{
+        transform: scale(1.01);
+        box-shadow: 0 5px 30px rgba(60, 50, 0, .15);
+    }
+    &:active{
+        transform: scale(0.985);
+        box-shadow: 0 5px 22px rgba(60, 50, 0, .05);
+    }
 }
 
 #indicator{
@@ -183,7 +313,7 @@ $color-primary: #FFA900;
 
 .login-header{
     font-weight: 800;
-    font-size: 2rem;
+    font-size: 2em;
     margin: 0;
     padding: 0;
 }
@@ -207,10 +337,10 @@ $color-primary: #FFA900;
 }
 
 .disabled-p{
-    font-size: .75rem;
+    font-size: .75em;
     padding: 0;
     margin: 0;
-    line-height: 1.1rem;
+    line-height: 1.1em;
     text-align: center;
     color: #5c5c5c;
     font-weight: 400;
@@ -237,7 +367,7 @@ $color-primary: #FFA900;
 
 .login-google-p{
     font-weight: 500;
-    font-size: .9rem;
+    font-size: .9em;
     color: white;
     padding: 0;
     margin: 0;
@@ -245,14 +375,14 @@ $color-primary: #FFA900;
 
 .login-info{
     font-weight: 300;
-    font-size: .6rem;
+    font-size: .6em;
     text-align: center;
     width: 79%;
 }
 
 .login-error{
     font-weight: 400;
-    font-size: .7rem;
+    font-size: .7em;
     text-align: right;
     width: 80%;
     color: rgb(252, 63, 30);
@@ -264,7 +394,7 @@ $color-primary: #FFA900;
 
 .register-p{
     font-weight: 400;
-    font-size: .7rem;
+    font-size: .7em;
     padding: 6px;
     margin: 0;
 }
@@ -290,4 +420,7 @@ main{
     display: flex;
     justify-content: center;
     flex-direction: column;
+    align-items: center;
+    max-width: 1920px;
+    position: relative;
 }

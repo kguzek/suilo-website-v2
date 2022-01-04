@@ -1,3 +1,171 @@
+.scroll-top {
+  background-color: white;
+  width: 50px;
+  height: 50px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border: none;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: fixed;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  bottom: 15px;
+  right: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  pointer-events: all;
+  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.12);
+          box-shadow: 0 5px 22px rgba(60, 50, 0, 0.12);
+  -webkit-transition: all 330ms ease-in-out;
+  transition: all 330ms ease-in-out;
+}
+
+.cookies-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  position: fixed;
+  bottom: 0;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 25px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  background-color: white;
+  -webkit-box-shadow: 0 -5px 64px rgba(60, 50, 0, 0.18);
+          box-shadow: 0 -5px 64px rgba(60, 50, 0, 0.18);
+  -webkit-transition: all 330ms ease-in-out;
+  transition: all 330ms ease-in-out;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+
+.cookies-info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-right: 30px;
+}
+
+.cookies-info .cookies-header {
+  font-size: .9em;
+  font-weight: 500;
+  padding: 3px;
+  margin: 0;
+  color: #2E2E2E;
+  white-space: nowrap;
+}
+
+.cookies-info .cookies-description {
+  font-size: .775em;
+  font-weight: 400;
+  padding: 3px;
+  margin: 0;
+  color: #2E2E2E;
+  opacity: .5;
+}
+
+.cookies-buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.cookies-agree {
+  cursor: pointer;
+  pointer-events: all;
+  border: none;
+  padding: 8px 20px;
+  background: linear-gradient(170deg, #FFA000, #FFC300);
+  border-radius: 7px;
+  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
+          box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+}
+
+.cookies-agree p {
+  font-size: .825em;
+  font-weight: 500;
+  color: white;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.cookies-agree:hover {
+  -webkit-transform: scale(1.01);
+          transform: scale(1.01);
+  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
+          box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
+}
+
+.cookies-agree:active {
+  -webkit-transform: scale(0.985);
+          transform: scale(0.985);
+  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
+          box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
+}
+
+.cookies-disagree {
+  cursor: pointer;
+  pointer-events: all;
+  border: none;
+  margin-top: 12px;
+  margin-bottom: -4px;
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+}
+
+.cookies-disagree p {
+  font-size: .75em;
+  font-weight: 400;
+  color: #FFA900;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.cookies-disagree:hover {
+  -webkit-transform: scale(1.01);
+          transform: scale(1.01);
+}
+
+.cookies-disagree:active {
+  -webkit-transform: scale(0.985);
+          transform: scale(0.985);
+}
+
 .blob {
   position: absolute;
   z-index: -999;
@@ -46,12 +214,12 @@
 }
 
 .link-box {
-  margin: 0 1.75rem;
+  margin: 0 1.75em;
   text-decoration: none;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
   padding: 0;
-  font-size: .85rem;
+  font-size: .85em;
   font-weight: 500;
 }
 
@@ -68,19 +236,36 @@
   margin-top: -13px;
   cursor: pointer;
   pointer-events: all;
+  border: none;
   padding: 8px 20px;
   background-color: white;
   border-radius: 7px;
   -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
           box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
 }
 
 .login-btn p {
-  font-size: .825rem;
+  font-size: .825em;
   font-weight: 500;
   color: #FFA900;
   padding: 0;
   margin: 0;
+}
+
+.login-btn:hover {
+  -webkit-transform: scale(1.01);
+          transform: scale(1.01);
+  -webkit-box-shadow: 0 5px 30px rgba(60, 50, 0, 0.15);
+          box-shadow: 0 5px 30px rgba(60, 50, 0, 0.15);
+}
+
+.login-btn:active {
+  -webkit-transform: scale(0.985);
+          transform: scale(0.985);
+  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.05);
+          box-shadow: 0 5px 22px rgba(60, 50, 0, 0.05);
 }
 
 #indicator {
@@ -231,7 +416,7 @@
 
 .login-header {
   font-weight: 800;
-  font-size: 2rem;
+  font-size: 2em;
   margin: 0;
   padding: 0;
 }
@@ -265,10 +450,10 @@
 }
 
 .disabled-p {
-  font-size: .75rem;
+  font-size: .75em;
   padding: 0;
   margin: 0;
-  line-height: 1.1rem;
+  line-height: 1.1em;
   text-align: center;
   color: #5c5c5c;
   font-weight: 400;
@@ -305,7 +490,7 @@
 
 .login-google-p {
   font-weight: 500;
-  font-size: .9rem;
+  font-size: .9em;
   color: white;
   padding: 0;
   margin: 0;
@@ -313,14 +498,14 @@
 
 .login-info {
   font-weight: 300;
-  font-size: .6rem;
+  font-size: .6em;
   text-align: center;
   width: 79%;
 }
 
 .login-error {
   font-weight: 400;
-  font-size: .7rem;
+  font-size: .7em;
   text-align: right;
   width: 80%;
   color: #fc3f1e;
@@ -332,7 +517,7 @@
 
 .register-p {
   font-weight: 400;
-  font-size: .7rem;
+  font-size: .7em;
   padding: 6px;
   margin: 0;
 }
@@ -356,5 +541,10 @@ main {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  max-width: 1920px;
+  position: relative;
 }
 /*# sourceMappingURL=app.css.map */
