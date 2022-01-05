@@ -17,16 +17,18 @@ import NotFound from './pages/NotFound'
 import NavBar from './components/NavBar'
 import LoginScreen from './components/LoginScreen'
 import Footer from "./components/Footer";
-import { getResults, logOut } from './firebase';
+import { getResults, logOut,AuthProvider } from './firebase';
 import ScrollToTop from "./components/ScrollToTop";
 import CookiesAlert from "./components/CookiesAlert";
 import { CookiesProvider } from "react-cookie";
 
 function App() {
   const [page, setPage] = useState(null)
-  const [logged, setLogged] = useState(true) // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
+  const [logged, setLogged] = useState(false) // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [startLogging, setLogging] = useState(false)
   const [showCookies, setShowCookies] = useState(true) // you can set cookies popup here
+  const [idToken,setIdToken] = useState() //this should be the working acces token for the api, not yet tested
+  const [UserEmail, setEmail] = useState() //user's  email
 
   useEffect(() => {
     getResults(callback)
@@ -42,22 +44,21 @@ function App() {
   //   return;
   // }, [page])
 
-  const callback = (credentials, user) => {
+  const callback = (idToken, email) => {
 
-    if (credentials !== undefined && user !== undefined) {
-      if (user.email.endsWith("@lo1.gliwice.pl")) {
-        //credentials.idTotken - token to acces api
-        console.log("logged in");
-
+    if (idToken !== null && email !== null) { 
+      setIdToken(idToken);
+      setEmail(email);
+      if (email.endsWith("@lo1.gliwice.pl")) {
+        setLogged(true);
       }
       else {
-        console.log("invalid email");
-        console.log("logging out");
-        logOut().then(succes => {
-          console.log(succes ? "succes" : "failure");
-        })
+        logOut();
       }
+    }else{
+      setLogged(false);
     }
+    
   }
 
   const loginAction = () => {
@@ -68,13 +69,16 @@ function App() {
   }
 
   const logoutAction = () => {
+   
+    logOut();
     // console.log("wylogowano!")
-    setLogged(false)
+    //setLogged(false)
     // LOGOUT (to integrate with backend) !!!!!! -------------------------- !!!!
   }
 
   return (
-    <Routes>
+  <AuthProvider callback={callback}>
+     <Routes>
       <Route path="/" element={<Layout page={page} logged={logged} loginAction={loginAction} logoutAction={logoutAction} setLogging={setLogging} startLogging={startLogging} setLogged={setLogged} showCookies={showCookies} />}>
         <Route index element={<Home setPage={setPage} />} />
         <Route path="aktualnosci" element={<News setPage={setPage} />} >
@@ -86,6 +90,8 @@ function App() {
         <Route path="*" element={<NotFound setPage={setPage} />} />
       </Route>
     </Routes>
+  </AuthProvider>
+   
   );
 }
 

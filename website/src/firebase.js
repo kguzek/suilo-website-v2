@@ -1,5 +1,30 @@
-import {getAuth,signInWithPopup, signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut} from "firebase/auth";
+import {getAuth,signInWithPopup, signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,onAuthStateChanged} from "firebase/auth";
 import { initializeApp } from 'firebase/app';
+import React, { useEffect, useState } from "react";
+
+
+
+export const AuthContext = React.createContext();
+
+export const AuthProvider = ({ children, callback }) => {
+    const [currentUser, setCurrentUser] = useState();
+    useEffect(() => { //this trigers every time the logging state triggers
+        onAuthStateChanged(auth, user => {
+            if(user !== null){ // user is set to null if no account was logged in
+                callback(user.accessToken,user.email); 
+            }
+            else {
+                callback(null,null);
+            }
+            setCurrentUser(user);
+        })
+    }, []);
+    return (
+        <AuthContext.Provider value={{ currentUser }}>
+            {children}
+        </AuthContext.Provider>
+    )
+}
 //this data is confidencial
 const firebaseConfig = {
     apiKey: "AIzaSyAhY-V5DxLWPmn0kaaAYvk4xrn5iWxbL74",
@@ -22,23 +47,19 @@ export const signInWithGoogle = (callback) => {
 export const getResults = (callback)=>{
     getRedirectResult(auth)
   .then((result) => {
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    //return user information and token
-    callback(credential, result.user);
+      //no need to check the results here since the onAuthStateChanged will get it 
     }).catch((error) => {
-    
-        callback(undefined,undefined);
+        console.log("an error acured Getting results:") // there is no error handeling since I dont yet know what erros can occur
         console.log(error);   
   });     
 };
-//I have totaly no idea why this returns an error but I don't think it matters atm
 export const logOut = async (succes)=>{
-    signOut(auth).then(()=>{
-        return true
-    }).catch((error)=>{
-        console.log(error);
-        return false;
-    })
+    signOut(auth).then(() => {
+      }).catch((error) => {
+        console.log("an error acured logging out:") // there is no error handeling since I dont yet know what erros can occur
+        console.log(error);  
+       
+      });
 
 
 }
