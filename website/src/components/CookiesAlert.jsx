@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
 
 const CookiesAlert = ({ showCookies }) => {
     const [yPos, setY] = useState("-140px")
     const [display, setDisplay] = useState("none")
     const { height, width } = useWindowDimensions();
-
+    const [cookies, setCookies, removeCookies] = useCookies();
     // user agreed to cookies policy
     const _cookieAgree = () => {
         //action
+        setCookies('cookie',true);
         _fadeOut();
     }
 
@@ -25,7 +27,7 @@ const CookiesAlert = ({ showCookies }) => {
                 setY("0")
             }, 100);
         }
-    }, [])
+    }, [showCookies])
 
     // animation on exit
     const _fadeOut = () => {

@@ -20,20 +20,28 @@ import Footer from "./components/Footer";
 import { getResults, logOut,AuthProvider } from './firebase';
 import ScrollToTop from "./components/ScrollToTop";
 import CookiesAlert from "./components/CookiesAlert";
-import { CookiesProvider } from "react-cookie";
+import { useCookies } from "react-cookie";
 
 function App() {
   const [page, setPage] = useState(null)
   const [logged, setLogged] = useState(false) // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [startLogging, setLogging] = useState(false)
-  const [showCookies, setShowCookies] = useState(true) // you can set cookies popup here
+  const [showCookies, setShowCookies] = useState(null) // you can set cookies popup here
   const [idToken,setIdToken] = useState() //this should be the working acces token for the api, not yet tested
   const [UserEmail, setEmail] = useState() //user's  email
-
+  const [cookies, setCookies, removeCookies] = useCookies();
   useEffect(() => {
     getResults(callback)
-
-    setShowCookies(false)
+    console.log(cookies);
+    console.log(cookies.cookie);
+    if(cookies.cookie)
+    {
+      setShowCookies(false);
+    }
+    else{
+      setShowCookies(true);
+    }
+    
   }, [])
 
   //---debug code---//
