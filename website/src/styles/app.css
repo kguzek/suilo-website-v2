@@ -529,6 +529,195 @@
   pointer-events: all;
 }
 
+.home-1 {
+  width: 95%;
+  max-width: 1250px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: auto;
+  height: 46em;
+  position: relative;
+}
+
+.more {
+  position: absolute;
+  bottom: -1em;
+  left: 2em;
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+  -webkit-transform: rotate(-90deg);
+          transform: rotate(-90deg);
+}
+
+.more1 {
+  height: 1em;
+  border-left: 0.1em solid #FFA900;
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+.more2 {
+  font-size: 1.25em;
+  font-weight: 300;
+  width: 6.5em;
+  padding: 0;
+  margin: 0;
+  color: #FFA900;
+  border-top: 0.1em solid #FFA900;
+}
+
+.CTA {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+h1 {
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: .008em;
+  font-size: 3.2em;
+  padding: 0;
+  margin: 0;
+}
+
+h4 {
+  font-weight: 400;
+  color: #4B4B4B;
+  letter-spacing: .008em;
+  font-size: 1.5em;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 1em;
+}
+
+.CTA-primary {
+  color: white;
+  border: none;
+  font-size: 1.1em;
+  font-weight: 500;
+  font-family: 'Poppins';
+  background: linear-gradient(165deg, #FF9900, #FFC300);
+  padding: .65em 2em;
+  border-radius: .75em;
+  cursor: pointer;
+  pointer-events: all;
+  text-decoration: none;
+  -webkit-box-shadow: 0 7px 25px rgba(141, 113, 0, 0.12);
+          box-shadow: 0 7px 25px rgba(141, 113, 0, 0.12);
+  -webkit-transition: all 125ms ease-in-out;
+  transition: all 125ms ease-in-out;
+}
+
+.CTA-primary:hover {
+  -webkit-box-shadow: 0 7px 30px rgba(141, 113, 0, 0.18);
+          box-shadow: 0 7px 30px rgba(141, 113, 0, 0.18);
+  -webkit-transform: scale(1.015);
+          transform: scale(1.015);
+}
+
+.CTA-primary:active {
+  -webkit-box-shadow: 0 5px 10px rgba(141, 113, 0, 0.05);
+          box-shadow: 0 5px 10px rgba(141, 113, 0, 0.05);
+  -webkit-transform: scale(0.985);
+          transform: scale(0.985);
+}
+
+.CTA-secondary {
+  color: #FFA900;
+  border: none;
+  font-size: 1.1em;
+  font-weight: 500;
+  font-family: 'Poppins';
+  background: transparent;
+  padding: .65em 2em;
+  border-radius: .75em;
+  cursor: pointer;
+  pointer-events: all;
+  text-decoration: none;
+}
+
+.reset {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  border: none;
+}
+
+.LN {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding-top: 2em;
+}
+
+h5 {
+  font-weight: 300;
+  font-size: 1.75em;
+  color: white;
+  text-align: right;
+  padding: 0;
+  margin: 0;
+  padding-bottom: .3em;
+  padding-top: 1em;
+}
+
+.LN-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.LN-container {
+  background-color: white;
+  border-radius: 1.5em;
+  width: 9.25em;
+  height: 10.25em;
+  margin-left: 1.3em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-shadow: 0 5px 30px rgba(141, 113, 0, 0.1);
+          box-shadow: 0 5px 30px rgba(141, 113, 0, 0.1);
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.LN-txt {
+  color: #FFA900;
+  font-weight: 800;
+  font-size: 4.25em;
+}
+
 main {
   width: 100%;
   display: -webkit-box;
@@ -544,7 +733,8 @@ main {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  max-width: 1920px;
+  max-width: 1600px;
   position: relative;
+  margin: auto;
 }
 /*# sourceMappingURL=app.css.map */

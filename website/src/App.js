@@ -17,7 +17,7 @@ import NotFound from './pages/NotFound'
 import NavBar from './components/NavBar'
 import LoginScreen from './components/LoginScreen'
 import Footer from "./components/Footer";
-import { getResults, logOut,AuthProvider } from './firebase';
+import { getResults, logOut, AuthProvider } from './firebase';
 import ScrollToTop from "./components/ScrollToTop";
 import CookiesAlert from "./components/CookiesAlert";
 import { useCookies } from "react-cookie";
@@ -27,21 +27,20 @@ function App() {
   const [logged, setLogged] = useState(false) // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [startLogging, setLogging] = useState(false)
   const [showCookies, setShowCookies] = useState(null) // you can set cookies popup here
-  const [idToken,setIdToken] = useState() //this should be the working acces token for the api, not yet tested
+  const [idToken, setIdToken] = useState() //this should be the working acces token for the api, not yet tested
   const [UserEmail, setEmail] = useState() //user's  email
   const [cookies, setCookies, removeCookies] = useCookies();
   useEffect(() => {
     getResults(callback)
     console.log(cookies);
     console.log(cookies.cookie);
-    if(cookies.cookie)
-    {
+    if (cookies.cookie) {
       setShowCookies(false);
     }
-    else{
+    else {
       setShowCookies(true);
     }
-    
+
   }, [])
 
   //---debug code---//
@@ -54,7 +53,7 @@ function App() {
 
   const callback = (idToken, email) => {
 
-    if (idToken !== null && email !== null) { 
+    if (idToken !== null && email !== null) {
       setIdToken(idToken);
       setEmail(email);
       if (email.endsWith("@lo1.gliwice.pl")) {
@@ -63,10 +62,10 @@ function App() {
       else {
         logOut();
       }
-    }else{
+    } else {
       setLogged(false);
     }
-    
+
   }
 
   const loginAction = () => {
@@ -77,7 +76,7 @@ function App() {
   }
 
   const logoutAction = () => {
-   
+
     logOut();
     // console.log("wylogowano!")
     //setLogged(false)
@@ -85,21 +84,21 @@ function App() {
   }
 
   return (
-  <AuthProvider callback={callback}>
-     <Routes>
-      <Route path="/" element={<Layout page={page} logged={logged} loginAction={loginAction} logoutAction={logoutAction} setLogging={setLogging} startLogging={startLogging} setLogged={setLogged} showCookies={showCookies} />}>
-        <Route index element={<Home setPage={setPage} />} />
-        <Route path="aktualnosci" element={<News setPage={setPage} />} >
-          <Route path=":postID" element={<Post setPage={setPage} />} />
+    <AuthProvider callback={callback}>
+      <Routes>
+        <Route path="/" element={<Layout page={page} logged={logged} loginAction={loginAction} logoutAction={logoutAction} setLogging={setLogging} startLogging={startLogging} setLogged={setLogged} showCookies={showCookies} />}>
+          <Route index element={<Home setPage={setPage} />} />
+          <Route path="aktualnosci" element={<News setPage={setPage} />} >
+            <Route path=":postID" element={<Post setPage={setPage} />} />
+          </Route>
+          <Route path="wydarzenia" element={<Events setPage={setPage} />} />
+          <Route path="kontakt" element={<Contact setPage={setPage} />} />
+          <Route path="edycja" element={<Edit setPage={setPage} logged={logged} loginAction={loginAction} />} />
+          <Route path="*" element={<NotFound setPage={setPage} />} />
         </Route>
-        <Route path="wydarzenia" element={<Events setPage={setPage} />} />
-        <Route path="kontakt" element={<Contact setPage={setPage} />} />
-        <Route path="edycja" element={<Edit setPage={setPage} logged={logged} loginAction={loginAction} />} />
-        <Route path="*" element={<NotFound setPage={setPage} />} />
-      </Route>
-    </Routes>
-  </AuthProvider>
-   
+      </Routes>
+    </AuthProvider>
+
   );
 }
 
@@ -116,7 +115,7 @@ const Layout = ({ page, logged, loginAction, logoutAction, startLogging, setLogg
           position: "absolute",
           zIndex: -99999,
           transformOrigin: "top left",
-          transform: "scale(.67)",
+          transform: "scale(.65)",
           clipPath: "path('M-254.73708-719.90154c101.2235-39.31238,245.38935,6.30359,353.14951,93.87061,108.439,88.27,181.105,217.8829,239.28706,362.83841,57.55027,145.56758,99.30695,306.38681,30.68232,379.45324C299.0773,188.62426,118.75881,173.843-27.84143,242.02288c-227.45885,105.78438-227.49889,198.49679-388.40643,233.736-207.39228,45.42249-521.8526-67.31778-592.75068-312.25552-57.279-197.88783,63.84638-414.93994,203.92341-509.51865,108.751-73.42822,164.462-29.50921,294.71133-120.23791,154.41672-107.5614,139.04581-208.376,255.62672-253.64832')"
         }}
       />
