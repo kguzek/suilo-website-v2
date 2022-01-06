@@ -652,6 +652,16 @@ h4 {
   cursor: pointer;
   pointer-events: all;
   text-decoration: none;
+  -webkit-transition: all 125ms ease-in-out;
+  transition: all 125ms ease-in-out;
+}
+
+.CTA-secondary:hover {
+  color: #eb9c00;
+}
+
+.CTA-secondary:active {
+  color: #ffb41d;
 }
 
 .reset {
@@ -718,6 +728,178 @@ h5 {
   font-size: 4.25em;
 }
 
+.home-2 {
+  width: 95%;
+  max-width: 1250px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: auto;
+  height: 28em;
+  position: relative;
+  margin-top: 10em;
+}
+
+.top-description {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  margin: auto;
+}
+
+.description-image {
+  width: 55%;
+  max-width: 45%;
+  position: relative;
+}
+
+.description-image img {
+  width: 95%;
+  border-radius: 2em;
+  -webkit-box-shadow: 0 7px 25px rgba(141, 113, 0, 0.18);
+          box-shadow: 0 7px 25px rgba(141, 113, 0, 0.18);
+}
+
+.info-part {
+  width: 50%;
+  padding-left: 2em;
+}
+
+.description-header {
+  color: #111111;
+  font-size: 2em;
+  font-weight: 700;
+  padding: 0;
+  margin: 0;
+  padding-bottom: .75em;
+}
+
+.description-p {
+  color: #222222;
+  font-size: 1.2em;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+  line-height: 2em;
+}
+
+.person-container {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 0 2em;
+}
+
+.person-avatar {
+  background-color: tomato;
+  height: 5.5em;
+  width: 5.5em;
+  border-radius: 50%;
+  -webkit-transform: translateY(40%);
+          transform: translateY(40%);
+  margin-top: -2.5em;
+}
+
+.person-description {
+  background-color: white;
+  -webkit-box-shadow: 0 5px 20px rgba(141, 113, 0, 0.1);
+          box-shadow: 0 5px 20px rgba(141, 113, 0, 0.1);
+  border-radius: 1em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 1.7em 0;
+  padding-top: 3em;
+  width: 14.5em;
+}
+
+.person-name {
+  color: #111111;
+  font-weight: 600;
+  font-size: 1.3em;
+  padding: 0;
+  padding-bottom: .2em;
+  margin: 0;
+}
+
+.person-role {
+  color: #111111;
+  font-weight: 200;
+  font-size: .85em;
+  font-style: italic;
+  padding: 0;
+  margin: 0;
+}
+
+.main-roles {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 95%;
+  margin: auto;
+  max-width: 1250px;
+  padding: 1.5em 0;
+  margin-bottom: 4em;
+}
+
+.person-class {
+  position: absolute;
+  color: #f0f0f0;
+  font-weight: 800;
+  font-size: 5em;
+  bottom: -.9em;
+  right: 0em;
+  margin: 0;
+  padding: 0;
+  z-index: -9;
+}
+
 main {
   width: 100%;
   display: -webkit-box;
@@ -736,5 +918,7 @@ main {
   max-width: 1600px;
   position: relative;
   margin: auto;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 /*# sourceMappingURL=app.css.map */

@@ -138,7 +138,7 @@ const Layout = ({ page, logged, loginAction, logoutAction, startLogging, setLogg
       <Outlet />
       <CookiesAlert showCookies={showCookies} />
       <LoginScreen setLogging={setLogging} setLogged={setLogged} startLogging={startLogging} />
-      {/* <Footer /> */}
+      <Footer />
     </main>
   );
 }
