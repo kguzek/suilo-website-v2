@@ -27,7 +27,7 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     const fadeInDom = () => {
         setDisplay("flex") // change display
         setTimeout(() => {
-            setYHeight("245px") // change height
+            setYHeight("77em") // change height
             setTimeout(() => {
                 setOpacity(1) // change opacity
                 setBgColor("white") // change bg color
@@ -39,7 +39,7 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     const fadeOutDom = () => {
         setOpacity(0) // change opacity
         setTimeout(() => {
-            setYHeight("40px") // change height
+            setYHeight("10em") // change height
             setTimeout(() => {
                 setBgColor("transparent") // change bg color
                 setTimeout(() => {
@@ -104,7 +104,7 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
         );
     } else {
         return (
-            <div className="nav-bar" style={{ paddingLeft: "6px" }}>
+            <div className="nav-bar" style={{ paddingLeft: "3em" }}>
                 <LogoSU width={38} height={38} />
                 <div style={{ position: "relative" }}>
                     <div className="mobile-top"
@@ -116,16 +116,17 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
                             minHeight: yHeight
                         }}
                     >
-                        <div style={{ marginLeft: "120px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <div />
                             <Hamburger toggled={isOpen} toggle={isSafeToChange ? setOpen : null} duration={0.3} distance="md" color={isOpen ? "#FFA900" : "#fff"} rounded size={26} />
                         </div>
                         <nav className="nav-mobile" style={{ display: display, opacity: opacity }}>
-                            <Link to="/" className="link-box-mobile" style={{ color: page === "home" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Główna</Link>
-                            <Link to="aktualnosci" className="link-box-mobile" style={{ color: page === "news" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Aktualności</Link>
-                            <Link to="wydarzenia" className="link-box-mobile" style={{ color: page === "events" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Wydarzenia</Link>
-                            <Link to="kontakt" className="link-box-mobile" style={{ color: page === "contact" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Kontakt</Link>
-                            {logged ? <Link to="edycja" className="link-box-mobile" style={{ color: page === "edit" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }} > Edycja</Link> : null}
-                            <div className="login-btn" onClick={() => _handleLogin()} style={{ backgroundColor: "#FFA900", width: "77px", margin: "auto", display: "flex", justifyContent: "center", marginTop: "30px", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none", transition: "all 200ms ease-in-out" }} >
+                            <Link onClick={() => setOpen(false)} to="/" className="link-box-mobile" style={{ color: page === "home" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Główna</Link>
+                            <Link onClick={() => setOpen(false)} to="aktualnosci" className="link-box-mobile" style={{ color: page === "news" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Aktualności</Link>
+                            <Link onClick={() => setOpen(false)} to="wydarzenia" className="link-box-mobile" style={{ color: page === "events" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Wydarzenia</Link>
+                            <Link onClick={() => setOpen(false)} to="kontakt" className="link-box-mobile" style={{ color: page === "contact" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Kontakt</Link>
+                            {logged ? <Link onClick={() => setOpen(false)} to="edycja" className="link-box-mobile" style={{ color: page === "edit" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }} > Edycja</Link> : null}
+                            <div className="login-btn-mobile" onClick={() => { _handleLogin(); setOpen(false) }} style={{ backgroundColor: "#FFA900", width: "25em", margin: "auto", display: "flex", justifyContent: "center", marginTop: "7em", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none", transition: "all 200ms ease-in-out" }} >
                                 <p style={{ color: "#fff" }}>
                                     {!logged ? "Zaloguj się" : "Wyloguj się"}
                                 </p>
