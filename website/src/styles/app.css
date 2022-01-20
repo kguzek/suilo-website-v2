@@ -797,9 +797,9 @@ h5 {
       -ms-flex-align: center;
           align-items: center;
   margin: auto;
-  height: 28em;
+  height: 57.5vh;
   position: relative;
-  margin-top: 10em;
+  margin-top: 10vh;
 }
 
 .top-description {
@@ -840,11 +840,11 @@ h5 {
 
 .description-header {
   color: #111111;
-  font-size: 2em;
+  font-size: 2.2em;
   font-weight: 700;
   padding: 0;
   margin: 0;
-  padding-bottom: .75em;
+  padding-bottom: .5em;
 }
 
 .description-p {
