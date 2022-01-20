@@ -9,7 +9,7 @@ body {
   scroll-behavior: smooth;
   position: relative;
   max-width: 100vw;
-  font-size: 1em;
+  font-size: 1vw;
 }
 
 code {
