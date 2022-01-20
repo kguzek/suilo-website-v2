@@ -34,14 +34,14 @@
           flex-direction: row;
   position: fixed;
   bottom: 0;
-  font-size: .8rem;
+  font-size: 1em;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  padding: 2em;
+  padding: 1.75em;
   border-top-right-radius: 1.5em;
   border-top-left-radius: 1.5em;
   background-color: white;
