@@ -17,8 +17,12 @@ const Home = ({ setPage }) => {
         // TUTAJ WYŻEJ ZINTEGROWAĆ LUCKY NUMBERS API
     }, [])
 
+    const _scrollDown = () => {
+        window.scrollTo({ top: 900, behavior: 'smooth' });
+    }
+
     return (
-        <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+        <div className="home-main">
             <div className="home-1">
                 <div className="CTA">
                     <h1>Samorząd Uczniowski</h1>
@@ -46,9 +50,9 @@ const Home = ({ setPage }) => {
                             </p>
                         </div>
                     </div>
-                    <h5 style={{ paddingTop: ".4em", fontSize: "1.25em", opacity: ".9" }}>{forDate}</h5>
+                    <h5 style={{ paddingTop: ".45em", fontSize: "1.4em", opacity: ".9", paddingBottom: "2vh" }}>{forDate}</h5>
                 </div>
-                <div className="more">
+                <div className="more" onClick={() => _scrollDown()}>
                     <div className="more1" />
                     <div className="more2">
                         więcej

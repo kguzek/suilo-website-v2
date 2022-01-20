@@ -68,23 +68,25 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
                 <div className="blob" style={{ top: "-300px", right: "-750px", transform: "rotate(12deg)" }}>
                     <Blob width="1200px" height="1400px" />
                 </div> */}
-                <LogoSU width={50} height={50} />
+                <Link to="/" style={{ padding: 0, margin: 0, margionBottom: "-1vh" }}>
+                    <LogoSU width="3.5em" height="3.5em" />
+                </Link>
                 <div className="nav-box">
                     <div id="indicator"
                         style={{
-                            width: page === "home" ? "35px" :
-                                page === "news" ? "55px" :
-                                    page === "events" ? "52px" :
-                                        page === "contact" ? "37px" :
-                                            page === "edit" && logged ? "32px" :
-                                                "35px",
+                            width: page === "home" ? "2.5em" :
+                                page === "news" ? "4.2em" :
+                                    page === "events" ? "4em" :
+                                        page === "contact" ? "3.1em" :
+                                            page === "edit" && logged ? "2.65em" :
+                                                "2.5em",
                             transform:
-                                page === "home" ? "translateX(2.1em)" :
-                                    page === "news" ? "translateX(8.55em)" :
-                                        page === "events" ? "translateX(16.65em)" :
-                                            page === "contact" ? "translateX(24.3em)" :
-                                                page === "edit" && logged ? "translateX(30.5em)" :
-                                                    "translateX(34px)"
+                                page === "home" ? "translateX(2em)" :
+                                    page === "news" ? "translateX(8.65em)" :
+                                        page === "events" ? "translateX(17.15em)" :
+                                            page === "contact" ? "translateX(25.35em)" :
+                                                page === "edit" && logged ? "translateX(31.9em)" :
+                                                    "translateX(2em)"
                         }}
                     />
                     <nav className="nav-desktop">

@@ -107,10 +107,10 @@ const Layout = ({ page, logged, loginAction, logoutAction, startLogging, setLogg
     <main>
       <div
         style={{
-          top: "-20px",
+          top: "-3vh",
           left: "0",
-          width: "500px",
-          height: "250px",
+          width: "70vh",
+          height: "30vh",
           background: "linear-gradient(-150deg,#FF9900,#FFC300)",
           position: "absolute",
           zIndex: -99999,
@@ -121,10 +121,10 @@ const Layout = ({ page, logged, loginAction, logoutAction, startLogging, setLogg
       />
       <div
         style={{
-          top: "-280px",
+          top: "-35vh",
           right: "0",
-          width: "500px",
-          height: "1400px",
+          width: "55vh",
+          height: "170vh",
           background: "linear-gradient(-140deg,#FF9900,#FFC300)",
           position: "absolute",
           zIndex: -99999,

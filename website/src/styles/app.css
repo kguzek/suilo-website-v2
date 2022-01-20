@@ -167,15 +167,8 @@
           transform: scale(0.985);
 }
 
-.blob {
-  position: absolute;
-  z-index: -999;
-  -webkit-transition: all 250ms ease-in-out;
-  transition: all 250ms ease-in-out;
-}
-
 .nav-bar {
-  width: 95%;
+  width: 83%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -190,7 +183,7 @@
       -ms-flex-align: center;
           align-items: center;
   margin: auto;
-  padding-top: .65em;
+  padding-top: 1vh;
   position: relative;
 }
 
@@ -210,16 +203,16 @@
           align-items: center;
   padding: 0;
   margin: 0;
-  margin-top: -1.1em;
+  margin-top: -1.25vh;
 }
 
 .link-box {
   margin: 0 1.75em;
+  margin-top: -.5em;
   text-decoration: none;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
-  padding: 0;
-  font-size: .85em;
+  font-size: .9em;
   font-weight: 500;
 }
 
@@ -233,7 +226,7 @@
 }
 
 .login-btn {
-  margin-top: -1.1em;
+  margin-top: -.9vh;
   cursor: pointer;
   pointer-events: all;
   border: none;
@@ -247,7 +240,7 @@
 }
 
 .login-btn p {
-  font-size: .825em;
+  font-size: .85em;
   font-weight: 500;
   color: #FFA900;
   padding: 0;
@@ -307,9 +300,9 @@
 
 #indicator {
   position: absolute;
-  top: -.1em;
+  top: -.17vh;
   background-color: #FFA900;
-  height: .45em;
+  height: .475em;
   border-bottom-left-radius: .6em;
   border-bottom-right-radius: .6em;
   -webkit-transition: all 250ms ease-in-out;
@@ -403,7 +396,7 @@
 
 .login-box {
   background-color: white;
-  border-radius: 25px;
+  border-radius: 1.5em;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -414,8 +407,10 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  width: 777px;
-  height: 450px;
+  width: 53em;
+  height: 30em;
+  min-width: 777px;
+  min-height: 450px;
   position: fixed;
   -webkit-box-shadow: 0 7px 40px rgba(60, 50, 0, 0.1);
           box-shadow: 0 7px 40px rgba(60, 50, 0, 0.1);
@@ -434,8 +429,8 @@
   min-height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  border-top-left-radius: 25px;
-  border-bottom-left-radius: 25px;
+  border-top-left-radius: 1.5em;
+  border-bottom-left-radius: 1.5em;
 }
 
 .login-right {
@@ -458,7 +453,7 @@
 
 .login-header {
   font-weight: 800;
-  font-size: 2rem;
+  font-size: 2em;
   margin: 0;
   padding: 0;
 }
@@ -480,22 +475,22 @@
 }
 
 .login-disabled {
-  margin-top: 20px;
+  margin-top: 2em;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  padding: 10px 15px;
+  padding: .8em;
   background-color: #F6F6F6;
-  border: #979797 2px dashed;
-  border-radius: 8px;
+  border: #979797 .15em dashed;
+  border-radius: .6em;
   width: 70%;
 }
 
 .disabled-p {
-  font-size: .75rem;
+  font-size: .8em;
   padding: 0;
   margin: 0;
-  line-height: 1.1rem;
+  line-height: 1.45em;
   text-align: center;
   color: #5c5c5c;
   font-weight: 400;
@@ -507,8 +502,8 @@
   display: -ms-flexbox;
   display: flex;
   background-color: #FFA900;
-  border-radius: 8px;
-  padding: 12px 15px;
+  border-radius: .6em;
+  padding: .8em .95em;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
@@ -532,7 +527,7 @@
 
 .login-google-p {
   font-weight: 500;
-  font-size: .9rem;
+  font-size: .925em;
   color: white;
   padding: 0;
   margin: 0;
@@ -540,27 +535,27 @@
 
 .login-info {
   font-weight: 300;
-  font-size: .6rem;
+  font-size: .65em;
   text-align: center;
   width: 79%;
 }
 
 .login-error {
   font-weight: 400;
-  font-size: .7rem;
+  font-size: .7em;
   text-align: right;
   width: 80%;
   color: #fc3f1e;
   margin: 0;
-  margin-top: 4px;
-  margin-bottom: -4px;
+  margin-top: .3em;
+  margin-bottom: -.3em;
   padding: 0;
 }
 
 .register-p {
   font-weight: 400;
-  font-size: .7rem;
-  padding: 6px;
+  font-size: .75em;
+  padding: .65em;
   margin: 0;
 }
 
@@ -569,6 +564,20 @@
   text-decoration: none;
   cursor: pointer;
   pointer-events: all;
+}
+
+.home-main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 87.5%;
 }
 
 .home-1 {
@@ -587,7 +596,7 @@
       -ms-flex-align: center;
           align-items: center;
   margin: auto;
-  height: 46em;
+  height: 87vh;
   position: relative;
 }
 
@@ -599,11 +608,13 @@
           transform-origin: bottom left;
   -webkit-transform: rotate(-90deg);
           transform: rotate(-90deg);
+  pointer-events: all;
+  cursor: pointer;
 }
 
 .more1 {
   height: 1em;
-  border-left: 0.1em solid #FFA900;
+  border-left: 0.15em solid #FFA900;
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
   -webkit-transform: rotate(45deg);
@@ -628,13 +639,14 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  padding-bottom: 2vh;
 }
 
 h1 {
   font-weight: 700;
   color: #111111;
-  letter-spacing: .008em;
-  font-size: 3.2em;
+  letter-spacing: .009em;
+  font-size: 3.4em;
   padding: 0;
   margin: 0;
 }
@@ -642,17 +654,17 @@ h1 {
 h4 {
   font-weight: 400;
   color: #4B4B4B;
-  letter-spacing: .008em;
-  font-size: 1.5em;
+  letter-spacing: .009em;
+  font-size: 1.6em;
   padding: 0;
   margin: 0;
-  margin-bottom: 1em;
+  margin-bottom: .9em;
 }
 
 .CTA-primary {
   color: white;
   border: none;
-  font-size: 1.1em;
+  font-size: 1.2em;
   font-weight: 500;
   font-family: 'Poppins';
   background: linear-gradient(165deg, #FF9900, #FFC300);
@@ -663,8 +675,8 @@ h4 {
   text-decoration: none;
   -webkit-box-shadow: 0 7px 25px rgba(141, 113, 0, 0.12);
           box-shadow: 0 7px 25px rgba(141, 113, 0, 0.12);
-  -webkit-transition: all 125ms ease-in-out;
-  transition: all 125ms ease-in-out;
+  -webkit-transition: all 175ms ease-in-out;
+  transition: all 175ms ease-in-out;
 }
 
 .CTA-primary:hover {
@@ -684,7 +696,7 @@ h4 {
 .CTA-secondary {
   color: #FFA900;
   border: none;
-  font-size: 1.1em;
+  font-size: 1.2em;
   font-weight: 500;
   font-family: 'Poppins';
   background: transparent;
@@ -693,8 +705,8 @@ h4 {
   cursor: pointer;
   pointer-events: all;
   text-decoration: none;
-  -webkit-transition: all 125ms ease-in-out;
-  transition: all 125ms ease-in-out;
+  -webkit-transition: all 175ms ease-in-out;
+  transition: all 175ms ease-in-out;
 }
 
 .CTA-secondary:hover {
@@ -720,7 +732,7 @@ h4 {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  padding-top: 2em;
+  padding-top: 2.1em;
 }
 
 h5 {
@@ -747,8 +759,8 @@ h5 {
 .LN-container {
   background-color: white;
   border-radius: 1.5em;
-  width: 9.25em;
-  height: 10.25em;
+  width: 9.35em;
+  height: 10.5em;
   margin-left: 1.3em;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -766,7 +778,7 @@ h5 {
 .LN-txt {
   color: #FFA900;
   font-weight: 800;
-  font-size: 4.25em;
+  font-size: 4.5em;
 }
 
 .home-2 {
