@@ -797,9 +797,8 @@ h5 {
       -ms-flex-align: center;
           align-items: center;
   margin: auto;
-  height: 57.5vh;
   position: relative;
-  margin-top: 10vh;
+  margin-top: 10em;
 }
 
 .top-description {
@@ -936,6 +935,7 @@ h5 {
   width: 95%;
   margin: auto;
   padding: 1.5em 0;
+  margin-top: 3em;
   margin-bottom: 4em;
 }
 

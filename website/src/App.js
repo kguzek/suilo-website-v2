@@ -109,7 +109,7 @@ const Layout = ({ page, logged, loginAction, logoutAction, startLogging, setLogg
         style={{
           top: "-3vh",
           left: "0",
-          width: "70vh",
+          width: "30em",
           height: "100vh",
           background: "linear-gradient(-150deg,#FF9900,#FFC300)",
           position: "absolute",
@@ -123,7 +123,7 @@ const Layout = ({ page, logged, loginAction, logoutAction, startLogging, setLogg
         style={{
           top: "-35vh",
           right: "0",
-          width: "55vh",
+          width: "32.5em",
           height: "220vh",
           background: "linear-gradient(-140deg,#FF9900,#FFC300)",
           position: "absolute",
