@@ -27,7 +27,7 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     const fadeInDom = () => {
         setDisplay("flex") // change display
         setTimeout(() => {
-            setYHeight("77em") // change height
+            setYHeight("87em") // change height
             setTimeout(() => {
                 setOpacity(1) // change opacity
                 setBgColor("white") // change bg color
@@ -97,11 +97,11 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
                         {logged ? <Link to="edycja" className="link-box" style={{ color: page === "edit" ? "#111111" : "#5B5B5B" }}>Edycja</Link> : null}
                     </nav>
                 </div>
-                <div className="login-btn" onClick={() => _handleLogin()} >
-                    <p>
-                        {!logged ? "Zaloguj się" : "Wyloguj się"}
-                    </p>
-                </div>
+                <button className="login-btn" onClick={() => _handleLogin()} >
+
+                    {!logged ? "Zaloguj się" : "Wyloguj się"}
+
+                </button>
             </div>
         );
     } else {

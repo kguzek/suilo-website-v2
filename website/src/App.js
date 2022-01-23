@@ -127,7 +127,7 @@ const Layout = ({ page, logged, loginAction, logoutAction, startLogging, setLogg
           top: "-35vh",
           right: "0",
           width: "32.5em",
-          height: "220vh",
+          height: "170vh",
           background: "linear-gradient(-140deg,#FF9900,#FFC300)",
           position: "absolute",
           zIndex: -99999,
