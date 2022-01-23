@@ -125,15 +125,13 @@
 }
 
 .cookies-agree:hover {
-  -webkit-transform: scale(1.01);
-          transform: scale(1.01);
   -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
           box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
 }
 
 .cookies-agree:active {
-  -webkit-transform: scale(0.985);
-          transform: scale(0.985);
+  -webkit-transform: scale(0.98);
+          transform: scale(0.98);
   -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
           box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
 }
@@ -226,39 +224,33 @@
 }
 
 .login-btn {
-  margin-top: -.9vh;
+  margin-top: -1.6em;
   cursor: pointer;
   pointer-events: all;
   border: none;
-  padding: .55em 1.6em;
+  font-family: 'Poppins';
+  font-size: .87em;
+  font-weight: 500;
+  color: #FFA900;
+  padding: .68em 1.6em;
   background-color: white;
   border-radius: .55em;
-  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
-          box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
+  -webkit-box-shadow: 0 0px 0px rgba(60, 50, 0, 0);
+          box-shadow: 0 0px 0px rgba(60, 50, 0, 0);
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
 
-.login-btn p {
-  font-size: .85em;
-  font-weight: 500;
-  color: #FFA900;
-  padding: 0;
-  margin: 0;
-}
-
 .login-btn:hover {
-  -webkit-transform: scale(1.01);
-          transform: scale(1.01);
-  -webkit-box-shadow: 0 5px 30px rgba(60, 50, 0, 0.15);
-          box-shadow: 0 5px 30px rgba(60, 50, 0, 0.15);
+  -webkit-box-shadow: 0 5px 28px rgba(60, 50, 0, 0.125);
+          box-shadow: 0 5px 28px rgba(60, 50, 0, 0.125);
 }
 
 .login-btn:active {
-  -webkit-transform: scale(0.985);
-          transform: scale(0.985);
-  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.05);
-          box-shadow: 0 5px 22px rgba(60, 50, 0, 0.05);
+  -webkit-transform: scale(0.98);
+          transform: scale(0.98);
+  -webkit-box-shadow: 0 5px 5px rgba(60, 50, 0, 0.01);
+          box-shadow: 0 5px 5px rgba(60, 50, 0, 0.01);
 }
 
 .login-btn-mobile {
@@ -270,8 +262,8 @@
   background-color: white;
   margin-bottom: 1em;
   border-radius: 1.5em;
-  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
-          box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
+  -webkit-box-shadow: 0 0px 0px rgba(60, 50, 0, 0);
+          box-shadow: 0 0px 0px rgba(60, 50, 0, 0);
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
@@ -285,17 +277,15 @@
 }
 
 .login-btn-mobile:hover {
-  -webkit-transform: scale(1.01);
-          transform: scale(1.01);
-  -webkit-box-shadow: 0 5px 30px rgba(60, 50, 0, 0.15);
-          box-shadow: 0 5px 30px rgba(60, 50, 0, 0.15);
+  -webkit-box-shadow: 0 5px 28px rgba(60, 50, 0, 0.125);
+          box-shadow: 0 5px 28px rgba(60, 50, 0, 0.125);
 }
 
 .login-btn-mobile:active {
-  -webkit-transform: scale(0.985);
-          transform: scale(0.985);
-  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.05);
-          box-shadow: 0 5px 22px rgba(60, 50, 0, 0.05);
+  -webkit-transform: scale(0.98);
+          transform: scale(0.98);
+  -webkit-box-shadow: 0 5px 5px rgba(60, 50, 0, 0.01);
+          box-shadow: 0 5px 5px rgba(60, 50, 0, 0.01);
 }
 
 #indicator {
@@ -512,17 +502,22 @@
           align-items: center;
   pointer-events: all;
   cursor: pointer;
-  -webkit-box-shadow: 0 5px 15px rgba(71, 49, 0, 0.12);
-          box-shadow: 0 5px 15px rgba(71, 49, 0, 0.12);
+  -webkit-box-shadow: 0 5px 15px rgba(71, 49, 0, 0);
+          box-shadow: 0 5px 15px rgba(71, 49, 0, 0);
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
 
 .login-google-btn:hover {
-  -webkit-box-shadow: 0 5px 22px rgba(71, 49, 0, 0.18);
-          box-shadow: 0 5px 22px rgba(71, 49, 0, 0.18);
-  -webkit-transform: scale(1.01);
-          transform: scale(1.01);
+  -webkit-box-shadow: 0 5px 22px rgba(71, 49, 0, 0.13);
+          box-shadow: 0 5px 22px rgba(71, 49, 0, 0.13);
+}
+
+.login-google-btn:active {
+  -webkit-box-shadow: 0 5px 22px rgba(71, 49, 0, 0);
+          box-shadow: 0 5px 22px rgba(71, 49, 0, 0);
+  -webkit-transform: scale(0.98);
+          transform: scale(0.98);
 }
 
 .login-google-p {
@@ -673,15 +668,15 @@ h4 {
   cursor: pointer;
   pointer-events: all;
   text-decoration: none;
-  -webkit-box-shadow: 0 7px 25px rgba(141, 113, 0, 0.12);
-          box-shadow: 0 7px 25px rgba(141, 113, 0, 0.12);
-  -webkit-transition: all 175ms ease-in-out;
-  transition: all 175ms ease-in-out;
+  -webkit-box-shadow: 0 7px 15px rgba(141, 113, 0, 0.07);
+          box-shadow: 0 7px 15px rgba(141, 113, 0, 0.07);
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
 }
 
 .CTA-primary:hover {
-  -webkit-box-shadow: 0 7px 30px rgba(141, 113, 0, 0.18);
-          box-shadow: 0 7px 30px rgba(141, 113, 0, 0.18);
+  -webkit-box-shadow: 0 7px 30px rgba(141, 113, 0, 0.16);
+          box-shadow: 0 7px 30px rgba(141, 113, 0, 0.16);
   -webkit-transform: scale(1.015);
           transform: scale(1.015);
 }

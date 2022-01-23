@@ -89,11 +89,11 @@ $color-primary: #FFA900;
     box-shadow: 0 5px 22px rgba(60, 50, 0, .0);
     transition: all 200ms ease-in-out;
     &:hover{
-        transform: scale(1.01);
+        // transform: scale(1.025);
         box-shadow: 0 5px 22px rgba(60, 50, 0, .1);
     }
     &:active{
-        transform: scale(0.985);
+        transform: scale(0.98);
         box-shadow: 0 5px 22px rgba(60, 50, 0, .0);
     }
 }
@@ -166,29 +166,27 @@ $color-primary: #FFA900;
 }
 
 .login-btn{
-    margin-top: -.9vh;
+    margin-top: -1.6em;
+    
     cursor: pointer;
     pointer-events: all;
     border: none;
-    p{
-        font-size: .85em;
-        font-weight: 500;
-        color: $color-primary;
-        padding: 0;
-        margin: 0;
-    }
-    padding: .55em 1.6em;
+    font-family: 'Poppins';
+    font-size: .87em;
+    font-weight: 500;
+    color: $color-primary;
+    padding: .68em 1.6em;
     background-color:white;
     border-radius: .55em;
-    box-shadow: 0 5px 22px rgba(60, 50, 0, .1);
+    box-shadow: 0 0px 0px rgba(60, 50, 0, .0);
     transition: all 200ms ease-in-out;
     &:hover{
-        transform: scale(1.01);
-        box-shadow: 0 5px 30px rgba(60, 50, 0, .15);
+        // transform: scale(1.01);
+        box-shadow: 0 5px 28px rgba(60, 50, 0, .125);
     }
     &:active{
-        transform: scale(0.985);
-        box-shadow: 0 5px 22px rgba(60, 50, 0, .05);
+        transform: scale(0.98);
+        box-shadow: 0 5px 5px rgba(60, 50, 0, .01);
     }
 }
 .login-btn-mobile{
@@ -207,15 +205,15 @@ $color-primary: #FFA900;
     background-color:white;
     margin-bottom: 1em;
     border-radius: 1.5em;
-    box-shadow: 0 5px 22px rgba(60, 50, 0, .1);
+    box-shadow: 0 0px 0px rgba(60, 50, 0, .0);
     transition: all 200ms ease-in-out;
     &:hover{
-        transform: scale(1.01);
-        box-shadow: 0 5px 30px rgba(60, 50, 0, .15);
+        // transform: scale(1.01);
+        box-shadow: 0 5px 28px rgba(60, 50, 0, .125);
     }
     &:active{
-        transform: scale(0.985);
-        box-shadow: 0 5px 22px rgba(60, 50, 0, .05);
+        transform: scale(0.98);
+        box-shadow: 0 5px 5px rgba(60, 50, 0, .01);
     }
 }
 
@@ -386,12 +384,18 @@ $color-primary: #FFA900;
     align-items: center;
     pointer-events: all;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(71, 49, 0, .12);
+    box-shadow: 0 5px 15px rgba(71, 49, 0, .0);
     transition: all 200ms ease-in-out;
 
     &:hover{
-        box-shadow: 0 5px 22px rgba(71, 49, 0, .18);
-        transform: scale(1.01);
+        box-shadow: 0 5px 22px rgba(71, 49, 0, .13);
+        // transform: scale(1.01);
+    }
+
+    &:active{
+        box-shadow: 0 5px 22px rgba(71, 49, 0, .0);
+        transform: scale(0.98);
+
     }
 }
 
@@ -520,10 +524,10 @@ h4{
     cursor: pointer;
     pointer-events: all;
     text-decoration: none;
-    box-shadow: 0 7px 25px rgba(141, 113, 0, .12);
-    transition: all 175ms ease-in-out;
+    box-shadow: 0 7px 15px rgba(141, 113, 0, .07);
+    transition: all 200ms ease-in-out;
     &:hover{
-        box-shadow: 0 7px 30px rgba(141, 113, 0, .18);
+        box-shadow: 0 7px 30px rgba(141, 113, 0, .16);
         transform: scale(1.015);
     }
     &:active{
