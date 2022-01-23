@@ -17,6 +17,7 @@ import NotFound from './pages/NotFound'
 import NavBar from './components/NavBar'
 import LoginScreen from './components/LoginScreen'
 import Footer from "./components/Footer";
+import NewsPage from './pages/NewsPage'
 import { getResults, logOut, AuthProvider } from './firebase';
 import ScrollToTop from "./components/ScrollToTop";
 import CookiesAlert from "./components/CookiesAlert";
@@ -89,7 +90,9 @@ function App() {
         <Route path="/" element={<Layout page={page} logged={logged} loginAction={loginAction} logoutAction={logoutAction} setLogging={setLogging} startLogging={startLogging} setLogged={setLogged} showCookies={showCookies} />}>
           <Route index element={<Home setPage={setPage} />} />
           <Route path="aktualnosci" element={<News setPage={setPage} />} >
-            <Route path=":postID" element={<Post setPage={setPage} />} />
+            <Route path="post" element={<Post setPage={setPage} />}>
+              <Route path=":postID" element={<Post setPage={setPage} />} />
+            </Route>
           </Route>
           <Route path="wydarzenia" element={<Events setPage={setPage} />} />
           <Route path="kontakt" element={<Contact setPage={setPage} />} />

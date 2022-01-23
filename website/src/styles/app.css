@@ -566,7 +566,7 @@
   pointer-events: all;
 }
 
-.home-main {
+.page-main {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

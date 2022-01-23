@@ -22,7 +22,7 @@ const Home = ({ setPage }) => {
     }
 
     return (
-        <div className="home-main">
+        <div className="page-main">
             <div className="home-1">
                 <div className="CTA">
                     <h1>Samorząd Uczniowski</h1>

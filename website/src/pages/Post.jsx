@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from "react-router-dom";
+import { Outlet, useParams, useNavigate } from 'react-router-dom'
 
 const Post = ({ setPage }) => {
+
+    let params = useParams();
+    let navigate = useNavigate();
 
     useEffect(() => {
         setPage("news")
     }, [])
 
-    let params = useParams();
-    return (
-        <div style={{ minHeight: "89vh" }}>
-            <p>Post - {params.postID}</p>
-        </div>
-    );
+    if (params.postID === undefined) {
+        navigate("/aktualnosci");
+        return null;
+    } else {
+        return (
+            <div className="page-main">
+                <p>Post - {params.postID}</p>
+            </div>
+        );
+    }
+
 }
 
 
