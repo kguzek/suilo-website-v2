@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Outlet, useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
+import MetaTags from 'react-meta-tags';
 
 const Post = ({ setPage }) => {
     const [loaded, setLoaded] = useState(false)

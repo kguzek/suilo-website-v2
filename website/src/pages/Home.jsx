@@ -3,6 +3,7 @@ import Blob from '../media/blob'
 import { Link } from 'react-router-dom'
 import SuPhoto from '../media/su-photo.jpg'
 import SecondaryPostCard from '../components/SecondaryPostCard'
+import MetaTags from 'react-meta-tags';
 import { ArrowRight, Youtube, Instagram, Facebook } from 'react-feather'
 
 const dummyData = [
@@ -55,8 +56,6 @@ const Home = ({ setPage }) => {
 
     useEffect(() => {
         setPage("home")
-        document.title = "Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach";
-
         // fetch("URLSCZESLIWYCHNUMERKOW").then((res)=>{
         //     setLuckyNumbers([String(res.xxxxx), String(res.xxxxx)])
         //     setForDate(String(res.xxxxx))
@@ -82,6 +81,12 @@ const Home = ({ setPage }) => {
 
     return (
         <div className="page-main">
+            <MetaTags>
+                <title>Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
+                <meta name="description" content="Oficjalna strona internetowa SUILO Gliwice. Informacje z życia szkoły i o Samorządzie. Szczęśliwe numerki. Kontakt z Samorządem." />
+                <meta property="og:title" content="Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach" />
+                <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
+            </MetaTags>
             <div className="home-1">
                 <div className="CTA">
                     <h1>Samorząd Uczniowski</h1>

@@ -3,6 +3,7 @@ import { Outlet, useParams, useNavigate } from 'react-router-dom'
 import PrimaryPostCard from '../components/PrimaryPostCard'
 import SecondaryPostCard from '../components/SecondaryPostCard'
 import MainPostCard from '../components/MainPostCard'
+import MetaTags from 'react-meta-tags';
 
 ///////////////////////////
 const testDataPrimary = [
@@ -133,7 +134,6 @@ const News = ({ setPage }) => {
 
     useEffect(() => {
         setPage("news")
-        document.title = "Aktualności | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach";
         /* 
         ---FETCHING DATA FOR PREVIEWS---
 
@@ -188,6 +188,12 @@ const News = ({ setPage }) => {
     else {
         return (
             <div className="page-main" style={{ minHeight: "100vh" }}>
+                <MetaTags>
+                    <title>Aktualności | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
+                    <meta name="description" content="Aktualności z życia Samorządu Uczniowskiego, oraz 1 Liceum Ogólnokształącego w Gliwicach." />
+                    <meta property="og:title" content="Aktualności | SUILO Gliwice" />
+                    <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
+                </MetaTags>
                 <div className="primary-grid">
                     {_renderPrimaryPreview(/*JSON WITH FIRST 3 ITEMS FROM previewsData*/testDataPrimary)}
                 </div>
