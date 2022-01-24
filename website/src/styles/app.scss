@@ -447,11 +447,11 @@ $color-primary: #FFA900;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 87.5%;
+    max-width: 83%;
 }
 
 .home-1{
-    width: 95%;
+    width: 100%;
     // max-width: $max-with;
     display: flex;
     flex-direction: row;
@@ -736,7 +736,230 @@ h5{
 
 //---------------NEWS---------------//
 
+//PRIMARY POST CARD//
+.primary-grid{
+    display: grid;
+    grid-template-columns: repeat(3, calc(33% - 1em));
+    grid-gap: 2em;
+    margin-top: 4em;
+    width: 100%;
+}
 
+.primary-post-card{
+    width: 100%;
+    
+}
+
+.primary-post-image{
+    width: 100%;
+    object-fit: cover;
+    height: 16em;
+    border-radius: 1.4em;
+    aspect-ratio: 16/9;
+    box-shadow: 0 5px 10px rgba(80, 60, 0, .05);
+
+}
+
+.primary-post-header{
+    font-size: 1.4em;
+    font-weight: 600;
+    max-width: 100%;
+    letter-spacing: .0125em;
+    color: #111111;
+    margin: .25em 0;
+    line-height: 1.45em;
+    max-height: 3em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.primary-description-box{
+    position: relative;
+}
+
+.primary-post-description{
+    font-size: .90em;
+    font-weight: 400;
+    max-width: 100%;
+    letter-spacing: .012em;
+    color: #444444;
+    margin:0;
+    margin-top: .6em;
+    line-height: 1.65em;
+    max-height: 4.95em;
+    // white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.primary-post-btn-box{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(90deg,transparent 0%,#F8F8F8 15%);
+    padding: .1em .3em;
+    padding-left: 3em;
+}
+
+.primary-post-btn{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    p{
+        margin: 0;
+        padding: 0;
+        font-weight: 500;
+        font-size: .95em;
+        color: $color-primary
+    }
+}
+/////////////////////////////
+
+//// SECONDARY POST CARD ////
+.secondary-grid{
+    display: grid;
+    grid-template-columns: repeat(4, calc(25% - 1em));
+    grid-gap: 2em;
+    margin-top: 3em;
+    max-width: 100%;
+}
+
+.secondary-post-card{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.secondary-post-image{
+    max-width: 100%;
+    width:100%;
+    object-fit: cover;
+    aspect-ratio: 16/9;
+    border-radius: 1.1em;
+    box-shadow: 0 5px 10px rgba(80, 60, 0, .05);
+}
+
+.secondary-post-header{
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: 600;
+    max-width: 100%;
+    letter-spacing: .0125em;
+    color: #111111;
+    margin: 0;
+    padding: 0;
+    padding-top: .55em;
+
+    line-height: 1.5em;
+    max-height: 3em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/////////////////////
+
+
+/// MAIN POST CARD ///
+.main-grid{
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-gap: 4em;
+    margin: 4em 0;
+    margin-top: 5em;
+    max-width: 100%;
+}
+
+.main-post-card{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    position: relative;
+    margin-top: -1em;
+    justify-content: space-between;
+}
+
+.main-post-date{
+    position: absolute;
+    top:-2.45em;
+    left:0;
+    font-weight: 400;
+    color: #6E6E6E;
+    font-size: .85em;
+}
+
+.main-post-right{
+    width: 75%;
+}
+
+.main-post-image{
+    width: 20%;
+    object-fit: cover;
+    aspect-ratio: 1;
+    border-radius: .7em;
+    box-shadow: 0 5px 10px rgba(80, 60, 0, .05);
+}
+
+.main-post-header{
+    font-size: 1.2em;
+    font-weight: 600;
+    max-width: 100%;
+    letter-spacing: .0125em;
+    color: #111111;
+    margin: 0;
+    padding: 0;
+    line-height: 1.3em;
+    max-height: 2.6em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.main-description-box{
+    position: relative;
+}
+
+.main-post-description{
+    font-size: .90em;
+    font-weight: 400;
+    max-width: 100%;
+    letter-spacing: .012em;
+    color: #444444;
+    margin:0;
+    margin-top: .5em;
+    line-height: 1.65em;
+    max-height: 4.95em;
+    // white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.main-post-btn-box{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(90deg,transparent 0%,#F8F8F8 15%);
+    padding: .1em .3em;
+    padding-left: 3em;
+}
+
+.main-post-btn{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    p{
+        margin: 0;
+        padding: 0;
+        font-weight: 500;
+        font-size: .95em;
+        color: $color-primary
+    }
+}
+
+//////////////////////
 
 
 main{
