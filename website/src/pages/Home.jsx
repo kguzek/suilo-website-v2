@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blob from '../media/blob'
 import { Link } from 'react-router-dom'
 import SuPhoto from '../media/su-photo.jpg'
-import SecondaryPostCard from '../components/SecondaryPostCard'
+import PostCardSecondary from '../components/PostCardSecondary'
 import MetaTags from 'react-meta-tags';
 import { ArrowRight, Youtube, Instagram, Facebook } from 'react-feather'
 
@@ -72,7 +72,7 @@ const Home = ({ setPage }) => {
     }, [])
 
     const _generateNewsPreview = (data) => {
-        return data.map((el, i) => <SecondaryPostCard key={`${el.id}${i}`} postData={el} />)
+        return data.map((el, i) => <PostCardSecondary key={`${el.id}${i}`} postData={el} />)
     }
 
     const _scrollDown = () => {

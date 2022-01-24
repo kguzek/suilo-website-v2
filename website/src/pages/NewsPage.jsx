@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
-import NewsCardComplex from '../components/PrimaryPostCard'
-import NewsCardSimple from '../components/SecondaryPostCard'
+import NewsCardComplex from '../components/PostCardPrimary'
+import NewsCardSimple from '../components/PostCardSecondary'
 import MetaTags from 'react-meta-tags';
 
 const NewsPage = () => {

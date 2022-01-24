@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import MetaTags from 'react-meta-tags';
-import MainPostCard from '../components/MainPostCard';
-import SecondaryPostCard from '../components/SecondaryPostCard';
+import PostCardMain from '../components/PostCardMain';
+import PostCardSecondary from '../components/PostCardSecondary';
 
 const testDataMain = [
     {
@@ -57,10 +57,10 @@ const Post = ({ setPage }) => {
     }, [])
 
     const _renderMainPreview = (data) => {
-        return data !== undefined ? data.map((el, idx) => <MainPostCard key={`${el.id}${idx}`} postData={el} />) : null;
+        return data !== undefined ? data.map((el, idx) => <PostCardMain key={`${el.id}${idx}`} postData={el} />) : null;
     }
     const _renderSecondaryPreview = (data) => {
-        return data !== undefined ? data.map((el, idx) => <div style={{ marginBottom: "1.5em" }}><SecondaryPostCard key={`${el.id}${idx}`} postData={el} /></div>) : null
+        return data !== undefined ? data.map((el, idx) => <div style={{ marginBottom: "1.5em" }}><PostCardSecondary key={`${el.id}${idx}`} postData={el} /></div>) : null
     }
 
     if (params.postID === undefined) {
