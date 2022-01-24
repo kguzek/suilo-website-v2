@@ -13,6 +13,7 @@ const Edit = ({ setPage, logged, loginAction }) => {
         } else {
             // console.log("edit zalogowoano")
             setPage("edit")
+            document.title = "Edycja kontentu | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach";
             return;
         }
     }, []) //INITIAL CALL

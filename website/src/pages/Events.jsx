@@ -4,6 +4,8 @@ const Events = ({ setPage }) => {
 
     useEffect(() => {
         setPage("events")
+        document.title = "Wydarzenia | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach";
+
     }, [])
 
     return (

@@ -9,6 +9,8 @@ const Home = ({ setPage }) => {
 
     useEffect(() => {
         setPage("home")
+        document.title = "Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach";
+
         // fetch("URLSCZESLIWYCHNUMERKOW").then((res)=>{
         //     setLuckyNumbers([String(res.xxxxx), String(res.xxxxx)])
         //     setForDate(String(res.xxxxx))
