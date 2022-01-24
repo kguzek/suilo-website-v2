@@ -27,7 +27,7 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     const fadeInDom = () => {
         setDisplay("flex") // change display
         setTimeout(() => {
-            setYHeight("245px") // change height
+            setYHeight("87em") // change height
             setTimeout(() => {
                 setOpacity(1) // change opacity
                 setBgColor("white") // change bg color
@@ -39,7 +39,7 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
     const fadeOutDom = () => {
         setOpacity(0) // change opacity
         setTimeout(() => {
-            setYHeight("40px") // change height
+            setYHeight("10em") // change height
             setTimeout(() => {
                 setBgColor("transparent") // change bg color
                 setTimeout(() => {
@@ -68,23 +68,25 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
                 <div className="blob" style={{ top: "-300px", right: "-750px", transform: "rotate(12deg)" }}>
                     <Blob width="1200px" height="1400px" />
                 </div> */}
-                <LogoSU width={50} height={50} />
+                <Link to="/" style={{ padding: 0, margin: 0, margionBottom: "-1vh" }}>
+                    <LogoSU width="3.5em" height="3.5em" />
+                </Link>
                 <div className="nav-box">
                     <div id="indicator"
                         style={{
-                            width: page === "home" ? "35px" :
-                                page === "news" ? "55px" :
-                                    page === "events" ? "52px" :
-                                        page === "contact" ? "37px" :
-                                            page === "edit" && logged ? "32px" :
-                                                "35px",
+                            width: page === "home" ? "2.5em" :
+                                page === "news" ? "4.2em" :
+                                    page === "events" ? "4em" :
+                                        page === "contact" ? "3.1em" :
+                                            page === "edit" && logged ? "2.65em" :
+                                                "2.5em",
                             transform:
-                                page === "home" ? "translateX(2.1em)" :
-                                    page === "news" ? "translateX(8.55em)" :
-                                        page === "events" ? "translateX(16.65em)" :
-                                            page === "contact" ? "translateX(24.3em)" :
-                                                page === "edit" && logged ? "translateX(30.5em)" :
-                                                    "translateX(34px)"
+                                page === "home" ? "translateX(2em)" :
+                                    page === "news" ? "translateX(8.65em)" :
+                                        page === "events" ? "translateX(17.15em)" :
+                                            page === "contact" ? "translateX(25.35em)" :
+                                                page === "edit" && logged ? "translateX(31.9em)" :
+                                                    "translateX(2em)"
                         }}
                     />
                     <nav className="nav-desktop">
@@ -95,16 +97,16 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
                         {logged ? <Link to="edycja" className="link-box" style={{ color: page === "edit" ? "#111111" : "#5B5B5B" }}>Edycja</Link> : null}
                     </nav>
                 </div>
-                <div className="login-btn" onClick={() => _handleLogin()} >
-                    <p>
-                        {!logged ? "Zaloguj się" : "Wyloguj się"}
-                    </p>
-                </div>
+                <button className="login-btn" onClick={() => _handleLogin()} >
+
+                    {!logged ? "Zaloguj się" : "Wyloguj się"}
+
+                </button>
             </div>
         );
     } else {
         return (
-            <div className="nav-bar" style={{ paddingLeft: "6px" }}>
+            <div className="nav-bar" style={{ paddingLeft: "3em" }}>
                 <LogoSU width={38} height={38} />
                 <div style={{ position: "relative" }}>
                     <div className="mobile-top"
@@ -116,16 +118,17 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
                             minHeight: yHeight
                         }}
                     >
-                        <div style={{ marginLeft: "120px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <div />
                             <Hamburger toggled={isOpen} toggle={isSafeToChange ? setOpen : null} duration={0.3} distance="md" color={isOpen ? "#FFA900" : "#fff"} rounded size={26} />
                         </div>
                         <nav className="nav-mobile" style={{ display: display, opacity: opacity }}>
-                            <Link to="/" className="link-box-mobile" style={{ color: page === "home" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Główna</Link>
-                            <Link to="aktualnosci" className="link-box-mobile" style={{ color: page === "news" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Aktualności</Link>
-                            <Link to="wydarzenia" className="link-box-mobile" style={{ color: page === "events" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Wydarzenia</Link>
-                            <Link to="kontakt" className="link-box-mobile" style={{ color: page === "contact" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Kontakt</Link>
-                            {logged ? <Link to="edycja" className="link-box-mobile" style={{ color: page === "edit" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }} > Edycja</Link> : null}
-                            <div className="login-btn" onClick={() => _handleLogin()} style={{ backgroundColor: "#FFA900", width: "77px", margin: "auto", display: "flex", justifyContent: "center", marginTop: "30px", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none", transition: "all 200ms ease-in-out" }} >
+                            <Link onClick={() => setOpen(false)} to="/" className="link-box-mobile" style={{ color: page === "home" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Główna</Link>
+                            <Link onClick={() => setOpen(false)} to="aktualnosci" className="link-box-mobile" style={{ color: page === "news" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Aktualności</Link>
+                            <Link onClick={() => setOpen(false)} to="wydarzenia" className="link-box-mobile" style={{ color: page === "events" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Wydarzenia</Link>
+                            <Link onClick={() => setOpen(false)} to="kontakt" className="link-box-mobile" style={{ color: page === "contact" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }}>Kontakt</Link>
+                            {logged ? <Link onClick={() => setOpen(false)} to="edycja" className="link-box-mobile" style={{ color: page === "edit" ? "#111111" : "#5B5B5B", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none" }} > Edycja</Link> : null}
+                            <div className="login-btn-mobile" onClick={() => { _handleLogin(); setOpen(false) }} style={{ backgroundColor: "#FFA900", width: "25em", margin: "auto", display: "flex", justifyContent: "center", marginTop: "7em", opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "all" : "none", transition: "all 200ms ease-in-out" }} >
                                 <p style={{ color: "#fff" }}>
                                     {!logged ? "Zaloguj się" : "Wyloguj się"}
                                 </p>

@@ -4,6 +4,8 @@ const Contact = ({ setPage }) => {
 
     useEffect(() => {
         setPage("contact")
+        document.title = "Kontakt | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach";
+
     }, [])
 
     return (

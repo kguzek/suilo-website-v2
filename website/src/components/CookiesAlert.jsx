@@ -9,7 +9,7 @@ const CookiesAlert = ({ showCookies }) => {
     // user agreed to cookies policy
     const _cookieAgree = () => {
         //action
-        setCookies('cookie',true);
+        setCookies('cookie', true);
         _fadeOut();
     }
 
