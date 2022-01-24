@@ -14,7 +14,7 @@ const SecondaryPostCard = ({ postData }) => {
     return (
         <div className="secondary-post-card">
             <img src={photo} className="secondary-post-image" />
-            <Link to={`post/${id}`} className="secondary-post-header">
+            <Link to={`post/${id}`} className="secondary-post-header" title={title}>
                 {title}
             </Link>
         </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'react-feather';
 
 const MainPostCard = ({ postData }) => {
     const {
@@ -11,22 +12,30 @@ const MainPostCard = ({ postData }) => {
         views //NEW
     } = postData;
 
+    let newDate = date.toLocaleDateString("pl-PL", { year: 'numeric', month: 'short', day: 'numeric' })
+
 
     return (
         <div className="main-post-card">
-            <p className="main-post-date">{date}</p>
+            <p className="main-post-date">{newDate}</p>
             <img src={photo} className="main-post-image" />
-            <h2 className="main-post-header">
-                {title}
-            </h2>
-            <div className="main-description-box">
-                <h3 className="main-post-description-p">
-                    {text}
-                </h3>
-                <Link to={`post/${id}`} className="main-post-btn">
-                    czytaj dalej
-                </Link>
+            <div className="main-post-right">
+                <h2 className="main-post-header">
+                    {title}
+                </h2>
+                <div className="main-description-box">
+                    <h3 className="main-post-description">
+                        {text}
+                    </h3>
+                    <div className="main-post-btn-box">
+                        <Link to={`post/${id}`} className="main-post-btn">
+                            <p>czytaj dalej</p>
+                            <ArrowRight size={16} strokeWidth={"2.5px"} style={{ marginBottom: "-.1em", paddingLeft: ".5em" }} color="#FFA900" />
+                        </Link>
+                    </div>
+                </div>
             </div>
+
         </div>
     );
 }
