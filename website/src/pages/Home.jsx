@@ -83,7 +83,7 @@ const Home = ({ setPage }) => {
         <div className="page-main">
             <MetaTags>
                 <title>Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
-                <meta name="description" content="Oficjalna strona internetowa SUILO Gliwice. Informacje z życia szkoły i o Samorządzie. Szczęśliwe numerki. Kontakt z Samorządem." />
+                <meta name="description" content={`Oficjalna strona internetowa Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach Gliwice. Informacje z życia szkoły, o Samorządzie i  kontakt. Szczęśliwe numerki na dzień ${forDate} to: ${luckyNumbers[0]} i ${luckyNumbers[1]}`} />
                 <meta property="og:title" content="Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach" />
                 <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
             </MetaTags>

@@ -5,7 +5,7 @@ const SecondaryPostCard = ({ postData }) => {
     const {
         id,
         title,
-        text, //NEED TO BE SHORTENED JUST FOR PREVIEW TO NOT DOWNLOADING WHOLE ARTICLE
+        textShort, //NEED TO BE SHORTENED JUST FOR PREVIEW TO NOT DOWNLOADING WHOLE ARTICLE
         date,
         photo,
         views //NEW

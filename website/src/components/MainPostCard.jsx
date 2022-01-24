@@ -6,7 +6,7 @@ const MainPostCard = ({ postData }) => {
     const {
         id,
         title,
-        text,//NEED TO BE SHORTENED JUST FOR PREVIEW TO NOT DOWNLOADING WHOLE ARTICLE
+        textShort,//NEED TO BE SHORTENED JUST FOR PREVIEW TO NOT DOWNLOADING WHOLE ARTICLE
         date,
         photo,
         views //NEW
@@ -25,7 +25,7 @@ const MainPostCard = ({ postData }) => {
                 </h2>
                 <div className="main-description-box">
                     <h3 className="main-post-description">
-                        {text}
+                        {textShort}
                     </h3>
                     <div className="main-post-btn-box">
                         <Link to={`post/${id}`} className="main-post-btn" onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
