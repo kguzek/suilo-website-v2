@@ -28,7 +28,7 @@ const MainPostCard = ({ postData }) => {
                         {text}
                     </h3>
                     <div className="main-post-btn-box">
-                        <Link to={`post/${id}`} className="main-post-btn">
+                        <Link to={`post/${id}`} className="main-post-btn" onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
                             <p>czytaj dalej</p>
                             <ArrowRight size={16} strokeWidth={"2.5px"} style={{ marginBottom: "-.1em", paddingLeft: ".5em" }} color="#FFA900" />
                         </Link>

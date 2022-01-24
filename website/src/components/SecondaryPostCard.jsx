@@ -12,12 +12,10 @@ const SecondaryPostCard = ({ postData }) => {
     } = postData;
 
     return (
-        <div className="secondary-post-card">
+        <Link to={`post/${id}`} className="secondary-post-card" onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
             <img src={photo} className="secondary-post-image" />
-            <Link to={`post/${id}`} className="secondary-post-header" title={title}>
-                {title}
-            </Link>
-        </div>
+            <p className="secondary-post-header" title={title}> {title}</p>
+        </Link>
     );
 }
 
