@@ -733,6 +733,76 @@ h5{
     z-index: -9;
 }
 
+.home-section-header{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    h2{
+        color: #111111;
+        font-weight: 600;
+        font-size: 1.7em;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.link-more{
+    display: flex;
+    flex-direction: row;
+    text-decoration: none;
+    align-items: center;
+    margin-top: 6em;
+    p{
+        color: $color-primary;
+        margin: 0;
+        padding: 0;
+        padding-right:.5em;
+        font-weight: 500;
+    }
+}
+
+.home-3{
+    display: grid;
+    grid-template-columns: repeat(5, calc(20% - 1.2em));
+    grid-gap: 1.5em;
+    margin-top: 1em;
+    margin-bottom: 3.5em;
+    max-width: 100%;
+}
+
+.home-4{
+    display: grid;
+    grid-template-columns: repeat(5, calc(20% - 5em));
+    grid-gap: 6em;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+    max-width: 100%;
+    width: 100%;
+    align-items: center;
+}
+
+.social-media-btn{
+    cursor: poiner;
+    pointer-events: all;
+    color:#858585;
+    font-weight: 600;
+    font-size: 1.1em;
+    padding: 0;
+    margin: 0;
+    letter-spacing: .0125em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    opacity: .75;   
+    transition: all 200ms ease-in-out;
+
+    &:hover{
+        opacity:1 
+    }
+}
 
 //---------------NEWS---------------//
 
@@ -830,6 +900,7 @@ h5{
     display: flex;
     flex-direction: column;
     position: relative;
+    text-decoration: none;
 }
 
 .secondary-post-image{
@@ -973,3 +1044,7 @@ main{
     flex-wrap: wrap;
 }
 
+a{
+    color: $color-primary;
+    text-decoration: none;
+}
