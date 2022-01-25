@@ -20,9 +20,14 @@ const PostCardMain = ({ data }) => {
     dateFormatOptions
   );
   const textShort = data.text;
+  const link = window.location.pathname.startsWith("/aktualnosci/post/")
+    ? data.id
+    : `post/${data.id}`;
   return (
     <div className="main-post-card">
-      {data.modified && <i className="main-post-date">Ostatnia edycja — {modified}</i>}
+      {data.modified && (
+        <i className="main-post-date">Ostatnia edycja — {modified}</i>
+      )}
       <p className="main-post-date">{date}</p>
       <img src={data.photo} className="main-post-image" />
       <div className="main-post-right">
@@ -31,7 +36,7 @@ const PostCardMain = ({ data }) => {
           <h3 className="main-post-description">{textShort}</h3>
           <div className="main-post-btn-box">
             <Link
-              to={`post/${data.id}`}
+              to={link}
               className="main-post-btn"
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });

@@ -72,7 +72,7 @@ const Home = ({ setPage }) => {
     }, [])
 
     const _generateNewsPreview = (data) => {
-        return data.map((el, i) => <PostCardSecondary key={`${el.id}${i}`} postData={el} />)
+        return data.map((el, i) => <PostCardSecondary key={`${el.id}${i}`} data={el} />)
     }
 
     const _scrollDown = () => {

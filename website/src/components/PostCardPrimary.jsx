@@ -4,6 +4,9 @@ import { ArrowRight } from "react-feather";
 
 const PostCardPrimary = ({ data }) => {
   const textShort = data.text;
+  const link = window.location.pathname.startsWith("/aktualnosci/post/")
+    ? data.id
+    : `post/${data.id}`;
   return (
     <div className="primary-post-card">
       <img src={data.photo} className="primary-post-image" />
@@ -16,7 +19,7 @@ const PostCardPrimary = ({ data }) => {
         </h3>
         <div className="primary-post-btn-box">
           <Link
-            to={`post/${data.id}`}
+            to={link}
             className="primary-post-btn"
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
