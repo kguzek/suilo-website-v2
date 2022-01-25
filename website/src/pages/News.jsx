@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
+import MetaTags from "react-meta-tags";
+import { useCookies } from "react-cookie";
 import PostCardPrimary from "../components/PostCardPrimary";
 import PostCardSecondary from "../components/PostCardSecondary";
 import PostCardMain from "../components/PostCardMain";
-import MetaTags from "react-meta-tags";
 
 // Change API URL in production
 const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api/news/";
 // Temporary image URL if an article has none specified
-const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png"
+const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
+
+// Set number of items on page to 3 primary, 4 secondary and 8 main.
+// Can introduce useState variable for user customisability or leave it hard-coded.
+const ITEMS_PER_PAGE = 3 + 4 + 8;
+const MAX_CACHE_AGE = 2; // hours
 
 ///////////////////////////
 const testDataPrimary = [
@@ -136,7 +142,6 @@ function sortArticles(article1, article2) {
   return new Date(article2.date) - new Date(article1.date);
 }
 
-
 const News = ({ setPage }) => {
   const [pageIdx, setPageIdx] = useState(1);
   const [loaded, setLoaded] = useState(false);
@@ -145,56 +150,77 @@ const News = ({ setPage }) => {
   const [dataSecondary, setDataSecondary] = useState([]);
   let params = useParams();
 
-  /** Populate the data containers with the API request response's JSON data. */
-  function processJsonData(data) {
-    if (!data) {
-      console.log("Could not retrieve data");
-      return setLoaded(true);
-    }
-    const _data = {
-      main: [],
-      primary: [],
-      secondary: [],
-    }
-    for (let article of data.contents.sort(sortArticles)) {
-      if (!article.photo) {
-        article.photo = DEFAULT_IMAGE;
-      }
-      if (_data.primary.length < 3) {
-        _data.primary.push(article);
-        continue;
-      }
-      if (_data.secondary.length < 4) {
-        _data.secondary.push(article);
-        continue;
-      }
-      _data.main.push(article);
-    }
-    setDataMain(_data.main);
-    setDataPrimary(_data.primary);
-    setDataSecondary(_data.secondary);
-    console.log("Loaded news!", _data);
-    setLoaded(true);
-  }
-
   /** Fetch the data for the news article previews. */
-  function fetchData() {
-    // Set URL parameters -- 3 main articles, 4 secondary and 8 primary per page.
-    // Can introduce useState variable for user customisability or leave it hard-coded.
-    const url = `${API_URL}?page=${pageIdx}&items=${3 + 4 + 8}`;
+  function fetchData(pageNumber, itemsOnPage) {
+    /** Populate the data containers with the API request response's JSON data. */
+    function processJsonData(data) {
+      if (!data) {
+        console.log("Could not retrieve data");
+        return setLoaded(true);
+      }
+      const _data = {
+        main: [],
+        primary: [],
+        secondary: [],
+      };
+      for (let article of data.contents.sort(sortArticles)) {
+        if (!article.photo) {
+          article.photo = DEFAULT_IMAGE;
+        }
+        if (_data.primary.length < 3) {
+          _data.primary.push(article);
+          continue;
+        }
+        if (_data.secondary.length < 4) {
+          _data.secondary.push(article);
+          continue;
+        }
+        _data.main.push(article);
+      }
+      const newCache = {
+        date: new Date(),
+        dataMain: _data.main,
+        dataPrimary: _data.primary,
+        dataSecondary: _data.secondary,
+      }
+      localStorage.setItem(
+        `page_${pageNumber}`,
+        JSON.stringify(newCache)
+      );
+      console.log("Created cache for news data.", newCache);
+      setDataMain(_data.main);
+      setDataPrimary(_data.primary);
+      setDataSecondary(_data.secondary);
+      setLoaded(true);
+    }
+
+    // check if there is a valid news data cache
+    const cache = JSON.parse(localStorage.getItem(`page_${pageNumber}`));
+    if (cache) {
+      // check if the cache is younger than 24 hours old
+      const cacheDate = Date.parse(cache.date);
+      const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
+      if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
+        console.log("Found existing cache for news data.", cache);
+        setDataMain(cache.dataMain);
+        setDataPrimary(cache.dataPrimary);
+        setDataSecondary(cache.dataSecondary);
+        return setLoaded(true);
+      }
+      // the cache is too old
+      localStorage.removeItem(`page_${pageNumber}`);
+    }
+
+    // Set URL parameters
+    const url = `${API_URL}?page=${pageNumber}&items=${itemsOnPage}`;
     fetch(url).then((res) => {
       res.json().then(processJsonData);
     });
   }
-  
-  
-  useEffect(() => {
-    setPage("news");
-    fetchData();
-  }, []);
 
   useEffect(() => {
-    fetchData();
+    setPage("news");
+    fetchData(pageIdx, ITEMS_PER_PAGE);
   }, [pageIdx]);
 
   const _renderPreview = (data, type) => {
