@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import { PostCardPreview, fetchData } from "../components/PostCardPreview";
+import { conjugatePolish } from "../misc";
 
 // Change API URL in production
 const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api/news/";
@@ -117,6 +118,7 @@ const Post = ({ setPage }) => {
       month: "short",
       day: "numeric",
     });
+    const views = conjugatePolish(currentPostData.views || 0, "wyświetle", "ni", "ń")
     return (
       <div className="page-main">
         <MetaTags>
@@ -137,7 +139,7 @@ const Post = ({ setPage }) => {
             </p>
             <p className="post-info">
               <span style={{ fontWeight: "500" }}>{newDate}</span>
-              &nbsp;&nbsp;·&nbsp;&nbsp;{currentPostData.views} wyświetleń
+              &nbsp;&nbsp;·&nbsp;&nbsp;{views}
             </p>
             <h1 className="article-title">{currentPostData.title}</h1>
             <p className="article-content">{currentPostData.content}</p>
