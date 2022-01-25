@@ -3,14 +3,26 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "react-feather";
 
 const PostCardMain = ({ data }) => {
-  const date = new Date(data.date).toLocaleDateString("pl-PL", {
+  const dateFormatOptions = {
     year: "numeric",
     month: "short",
     day: "numeric",
-  });
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  const date = new Date(data.date).toLocaleDateString(
+    "pl-PL",
+    dateFormatOptions
+  );
+  const modified = new Date(data.modified).toLocaleDateString(
+    "pl-PL",
+    dateFormatOptions
+  );
   const textShort = data.text;
   return (
     <div className="main-post-card">
+      {data.modified && <i className="main-post-date">Ostatnia edycja — {modified}</i>}
       <p className="main-post-date">{date}</p>
       <img src={data.photo} className="main-post-image" />
       <div className="main-post-right">
