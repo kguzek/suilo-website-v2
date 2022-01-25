@@ -25,6 +25,15 @@ const app = express();
 
 app.use(cors({ origin: true }));
 
+const UPDATABLE_POST_ATTRIBUTES = [
+  "author",
+  "title",
+  "text",
+  "content",
+  "photo",
+  "imageAuthor",
+];
+
 /*      ======== LUCKY NUMBERS-SPECIFIC CRUD FUNCTIONS ========      */
 
 // GET lucky numbers
@@ -138,7 +147,7 @@ app.post("/api/news", (req, res) => {
   const author = req.query.author || "autor";
   const title = req.query.title || "tytuł";
   const text = req.query.text || "treść";
-  const photo = req.query.text || "https://i.stack.imgur.com/6M513.png"
+  const photo = req.query.text || "https://i.stack.imgur.com/6M513.png";
   const data = {
     date: admin.firestore.Timestamp.fromDate(new Date()),
     author,
@@ -171,11 +180,9 @@ app.get("/api/news/:id", (req, res) => {
 // UPDATE news
 app.put("/api/news/:id", (req, res) => {
   // ?id=null&author=null&title=null&text=null&photo=null
-  // initialise attributes to be updated
-  const attributesToUpdate = ["author", "title", "text", "photo"];
   // initialise the callback to execute on success
   const callback = (docRef) =>
-    updateSingleDocument(docRef, res, req.query, attributesToUpdate);
+    updateSingleDocument(docRef, res, req.query, UPDATABLE_POST_ATTRIBUTES);
   // validate the request; if it is valid, execute the above callback
   executeQuery(req, res, "news", callback);
 });
@@ -202,7 +209,7 @@ app.post("/api/links/:link", (req, res) => {
   // initialise parameters
   const customURL = req.query.custom_url;
   let destination = req.params.link;
-  destination.startsWith("/") || (destination = "/" + destination)
+  destination.startsWith("/") || (destination = "/" + destination);
 
   // sends the response
   createShortenedURL(res, destination, customURL);
@@ -231,7 +238,9 @@ app.get("/api/links/:link", (req, res) => {
     // check if it was found successfully
     const data = doc.data();
     if (data) {
-      docRef.update({ reads: data.reads + 1 }).then(() => {
+      const views = (data.views || 0) + 1
+      docRef.update({ views }).then(() => {
+        data.views = views;
         return res.status(200).json(data);
       });
     } else {
@@ -244,13 +253,14 @@ app.get("/api/links/:link", (req, res) => {
 });
 
 // UPDATE shortened URL
-app.put("/api/links/:url", (req, res) => { // ?new_destination=null
+app.put("/api/links/:url", (req, res) => {
+  // ?new_destination=null
   // initialise parameters
   let destination = req.query.new_destination;
   if (!destination) {
-      return res.status(400).json({
-          errorDescription: HTTP400 + "No new destination provided.",
-      });
+    return res.status(400).json({
+      errorDescription: HTTP400 + "No new destination provided.",
+    });
   }
   const url = req.params.url;
   destination.startsWith("/") || (destination = "/" + destination);

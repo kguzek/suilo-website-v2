@@ -88,7 +88,7 @@ function createShortenedURL(res, destination, customURL) {
   function createDocument(id) {
     shortURLs.doc(id).set({
       destination,
-      reads: 0,
+      views: 0,
     });
     return res.status(200).json({
       msg: `Success! Created shortened URl with destination '${destination}'.`,
@@ -155,12 +155,16 @@ function sendSingleResponse(docQuery, res) {
   // send the query to database
   docQuery.get().then((doc) => {
     // check if the document was found
-    const temp = doc.data();
-    if (temp) {
+    const data = doc.data();
+    if (data) {
       // formats all specified date fields as strings if they exist
-      formatFirebaseTimestamps(temp);
-      // send document id with rest of the data
-      return res.status(200).json({ id: doc.id, ...temp });
+      formatFirebaseTimestamps(data);
+      const views = (data.views || 0) + 1;
+      docQuery.update({ views }).then(() => {
+        // send document id with rest of the data
+        data.views = views;
+        return res.status(200).json({ id: doc.id, ...data });
+      });
     } else {
       // return an error if the document was not found
       return res.status(404).json({
