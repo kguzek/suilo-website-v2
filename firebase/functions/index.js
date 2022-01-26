@@ -9,9 +9,9 @@ const functions = require("firebase-functions");
 const {
   admin,
   db,
+  HTTP,
   executeQuery,
   createShortenedURL,
-  updateShortenedURL,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,
@@ -225,47 +225,36 @@ app.get("/api/links", (req, res) => {
 });
 
 // READ single shortened URL
-app.get("/api/links/:link", (req, res) => {
+app.get("/api/links/:id", (req, res) => {
   // find the destination URL in the database
-
-  // initialise parameters
-  const url = req.params.link;
-
-  const docRef = db.collection("links").doc(url);
-  2;
-
-  docRef.get().then((doc) => {
-    // check if it was found successfully
-    const data = doc.data();
-    if (data) {
-      const views = (data.views || 0) + 1
-      docRef.update({ views }).then(() => {
-        data.views = views;
-        return res.status(200).json(data);
-      });
-    } else {
-      // return an error if there is no such short URL
-      return res.status(404).json({
-        errorDescription: "404 Not Found: The shortened link does not exist.",
-      });
-    }
-  });
+  const callback = (docRef) => sendSingleResponse(docRef, res);
+  // validate the request; if it is valid, execute the above callback
+  executeQuery(req, res, "links", callback);
 });
 
 // UPDATE shortened URL
 app.put("/api/links/:url", (req, res) => {
-  // ?new_destination=null
+  // ?destination=null
   // initialise parameters
-  let destination = req.query.new_destination;
+  let destination = req.query.destination;
   if (!destination) {
     return res.status(400).json({
-      errorDescription: HTTP400 + "No new destination provided.",
+      errorDescription: HTTP.Err400 + "No new destination provided.",
     });
   }
   const url = req.params.url;
   destination.startsWith("/") || (destination = "/" + destination);
 
-  updateShortenedURL(res, url, destination);
+  const docRef = db.collection("links").doc(url);
+  updateSingleDocument(docRef, res, { destination }, ["destination"]);
+});
+
+// DELETE single shortened URL
+app.delete("/api/links/:id", (req, res) => {
+  // find the destination URL in the database
+  const callback = (docRef) => deleteSingleDocument(docRef, res);
+  // validate the request; if it is valid, execute the above callback
+  executeQuery(req, res, "links", callback);
 });
 
 for (path of ["luckyNumbers", "news", "news/:x", "links", "links/:x"]) {

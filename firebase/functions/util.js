@@ -128,8 +128,6 @@ function createShortenedURL(res, destination, customURL) {
   });
 }
 
-function updateShortenedURL(res, shortURL, newDestination) {}
-
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 // general function for creating a single document
@@ -157,13 +155,14 @@ function sendSingleResponse(docQuery, res) {
     // check if the document was found
     const data = doc.data();
     if (data) {
-      // formats all specified date fields as strings if they exist
+      // formats all existing date fields as timestamp strings
       formatFirebaseTimestamps(data);
+      // increment the views count or start at 1 if it doesn't exist
       const views = (data.views || 0) + 1;
+      // update views count in database
       docQuery.update({ views }).then(() => {
         // send document id with rest of the data
-        data.views = views;
-        return res.status(200).json({ id: doc.id, ...data });
+        return res.status(200).json({ id: doc.id, ...data, views });
       });
     } else {
       // return an error if the document was not found
@@ -216,7 +215,7 @@ function sendListResponse(docListQuery, req, res) {
       });
       return res.status(200).json({
         // add extra info for messages such as "showing items X-Y of Z"
-        firstOnPage: startIndex + !!querySnapshot.docs, // increment by 1 if there is at least 1 document in the list
+        firstOnPage: startIndex + !!querySnapshot.docs.length, // increment by 1 if there is at least 1 document in the list
         totalOnPage: querySnapshot.docs.length,
         contents: response,
       });
@@ -306,9 +305,13 @@ function randomIntFromInterval(min, max) {
 module.exports = {
   admin,
   db,
+  HTTP: {
+    Err400: HTTP400,
+    Err404: HTTP404,
+    Err500: HTTP500,
+  },
   executeQuery,
   createShortenedURL,
-  updateShortenedURL,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,

@@ -1,18 +1,15 @@
-import React, { useState, useEffect } from 'react'
-import MetaTags from 'react-meta-tags';
+import React, { useEffect } from "react";
 
-const NotFound = ({ setPage }) => {
+const NotFound = ({ setPage, msg }) => {
+  useEffect(() => {
+    setPage("notFound");
+  }, []);
+  return (
+    <div style={{ minHeight: "89vh" }}>
+      <p>Nie znaleziono zasobu, którego szukasz.</p>
+      {msg && <small>{msg}</small>}
+    </div>
+  );
+};
 
-    useEffect(() => {
-        setPage("notFound")
-    }, [])
-
-    return (
-        <div style={{ minHeight: "89vh" }}>
-            <p>NotFound</p>
-        </div>
-    );
-}
-
-
-export default NotFound
+export default NotFound;
