@@ -77,13 +77,15 @@ const testDataMain = [
   },
 ];
 
-function createTestData(response) {
+function createTestData(res) {
+  let counter = 0;
   for (let testDataCollection of [
     testDataPrimary,
     testDataSecondary,
     testDataMain,
   ]) {
     for (testData of testDataCollection) {
+      counter++;
       const data = {
         date: dateToTimestamp(new Date()),
         author: "Konrad Guzek",
@@ -92,9 +94,17 @@ function createTestData(response) {
         content: "Wydłużona treść postu.",
         photo: testData.photo,
       };
-      createSingleDocument(data, "news", response);
+      const dummyRes = {
+        status: (code) => {
+          (json) => {
+            json.code = code;
+          };
+        },
+      };
+      createSingleDocument(data, "news", dummyRes);
     }
   }
+  res.status(200).json({ msg: `Success! Created ${counter} documents.` });
 }
 
 module.exports = {
