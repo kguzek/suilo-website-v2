@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import NotFound from "./NotFound";
 import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
-import { conjugatePolish, API_URL } from "../misc";
+import { conjugatePolish, API_URL, DEFAULT_IMAGE } from "../misc";
 
 const MAX_CACHE_AGE = 2; // hours
 
@@ -12,11 +12,14 @@ const Post = ({ setPage }) => {
   const [loadedNews, setLoadedNews] = useState(false);
   const [currentPostData, setCurrentPostData] = useState({});
   const [dataMain, setDataMain] = useState([]);
-  const [_dataPrimary, setDataPrimary] = useState([]);
+  // Primary data is unused. No need to create state.
+  // const [_dataPrimary, setDataPrimary] = useState([]);
+  const setDataPrimary = () => {};
   const [dataSecondary, setDataSecondary] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
 
+  /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
     /**Updates the post data with the data from the API JSON response and sets the 'loaded' status. */
     function processData(data) {
@@ -25,6 +28,7 @@ const Post = ({ setPage }) => {
         setCurrentPostData({ errorDescription: "Data doesn't exist." });
         return setLoaded(true);
       }
+      data.photo = data.photo || DEFAULT_IMAGE;
       const newCache = {
         date: new Date(),
         data,
@@ -111,7 +115,11 @@ const Post = ({ setPage }) => {
             src={currentPostData.photo}
             alt={currentPostData.alt}
           />
-          <p className="image-author">Zdjęcie: {currentPostData.imageAuthor}</p>
+          {currentPostData.imageAuthor && (
+            <p className="image-author">
+              Zdjęcie: {currentPostData.imageAuthor}
+            </p>
+          )}
           <p className="post-info">
             <span style={{ fontWeight: "500" }}>{newDate}</span>
             &nbsp;&nbsp;·&nbsp;&nbsp;{views}
@@ -119,17 +127,14 @@ const Post = ({ setPage }) => {
           <h1 className="article-title">{currentPostData.title}</h1>
           <p className="article-content">{currentPostData.content}</p>
         </article>
-        <div className="post-sidebar">
-          <PostCardPreview
-            type="secondary"
-            data={dataSecondary}
-            fromPost={true}
-          />
-        </div>
+        <PostCardPreview
+          type="secondary"
+          data={dataSecondary}
+          fromPost={true}
+          classOverride="post-sidebar"
+        />
       </div>
-      <div className="main-grid">
-        <PostCardPreview type="main" data={dataMain} fromPost={true} />
-      </div>
+      <PostCardPreview type="main" data={dataMain} fromPost={true} />
     </div>
   );
 };
