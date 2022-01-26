@@ -20,9 +20,6 @@ const PostCardMain = ({ data }) => {
     dateFormatOptions
   );
   const textShort = data.text;
-  const link = window.location.pathname.startsWith("/aktualnosci/post/")
-    ? data.id
-    : `post/${data.id}`;
   return (
     <div className="main-post-card">
       {data.modified && (
@@ -36,7 +33,7 @@ const PostCardMain = ({ data }) => {
           <h3 className="main-post-description">{textShort}</h3>
           <div className="main-post-btn-box">
             <Link
-              to={link}
+              to={data.link}
               className="main-post-btn"
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });

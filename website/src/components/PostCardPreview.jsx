@@ -2,9 +2,8 @@ import React from "react";
 import PostCardPrimary from "../components/PostCardPrimary";
 import PostCardSecondary from "../components/PostCardSecondary";
 import PostCardMain from "../components/PostCardMain";
+import { API_URL } from "../misc";
 
-// Change API URL in production
-const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api/news/";
 // Temporary image URL if an article has none specified
 const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
 
@@ -20,12 +19,13 @@ function sortArticles(article1, article2) {
 }
 
 /** Fetch the data for the news article previews. */
-export function fetchData(
-  pageNumber,
+export function fetchNewsData(
   setMain,
   setPrimary,
   setSecondary,
-  setLoaded
+  setLoaded = () => {},
+  pageNumber = 1,
+  updateCache = false
 ) {
   /** Populate the data containers with the API request response's JSON data. */
   function processJsonData(data) {
@@ -69,28 +69,30 @@ export function fetchData(
   // check if there is a valid news data cache
   const cache = JSON.parse(localStorage.getItem(`page_${pageNumber}`));
   if (cache) {
-    // check if the cache is younger than 24 hours old
-    const cacheDate = Date.parse(cache.date);
-    const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
-    if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
-      console.log("Found existing cache for news data.", cache);
-      setMain(cache.dataMain);
-      setPrimary(cache.dataPrimary);
-      setSecondary(cache.dataSecondary);
-      return setLoaded(true);
+    if (!updateCache) {
+      // check if the cache is younger than 24 hours old
+      const cacheDate = Date.parse(cache.date);
+      const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
+      if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
+        console.log("Found existing cache for news data.", cache);
+        setMain(cache.dataMain);
+        setPrimary(cache.dataPrimary);
+        setSecondary(cache.dataSecondary);
+        return setLoaded(true);
+      }
     }
-    // the cache is too old
+    // remove the existing cache
     localStorage.removeItem(`page_${pageNumber}`);
   }
 
   // Set URL parameters
-  const url = `${API_URL}?page=${pageNumber}&items=${ITEMS_PER_PAGE}`;
+  const url = `${API_URL}/news/?page=${pageNumber}&items=${ITEMS_PER_PAGE}`;
   fetch(url).then((res) => {
     res.json().then(processJsonData);
   });
 }
 
-export function PostCardPreview({ type, data }) {
+export function PostCardPreview({ type, data, linkPrefix = "" }) {
   if (data === undefined) {
     return null;
   }
@@ -100,9 +102,10 @@ export function PostCardPreview({ type, data }) {
       : type === "secondary"
       ? PostCardSecondary
       : PostCardMain;
-  return data.map((el, idx) =>
-    React.createElement(elem, { key: el.id + idx, data: el })
-  );
+  return data.map((el, idx) => {
+    el.link = linkPrefix + el.id;
+    return React.createElement(elem, { key: el.id + idx, data: el });
+  });
 }
 
 export default PostCardPreview;
