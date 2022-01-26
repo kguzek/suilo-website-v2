@@ -102,7 +102,7 @@ const Post = ({ setPage }) => {
 
   useEffect(() => {
     setPage("news");
-    fetchData(1, setDataMain, setDataPrimary, setDataSecondary, () => {});
+    fetchData(1, setDataMain, setDataPrimary, setDataSecondary, () => { });
     updatePostData();
   }, [params]);
 

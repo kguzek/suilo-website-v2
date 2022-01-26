@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import MetaTags from 'react-meta-tags';
+import MailBox from '../media/mail.svg'
 
 const Contact = ({ setPage }) => {
 

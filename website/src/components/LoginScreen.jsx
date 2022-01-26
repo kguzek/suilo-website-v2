@@ -65,7 +65,7 @@ const LoginScreen = ({ setLogging, setLogged, startLogging }) => {//startLogging
                 <div className="login-bg" onClick={() => setLogging(false)} />
                 <div className="login-box" style={{ transform: `translateY(${yPos})` }}>
 
-                    <img className="login-left" src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" />
+                    <img className="login-left" src={`https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80`} />
 
                     <div className="login-right">
                         <div />
