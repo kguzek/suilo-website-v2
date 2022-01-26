@@ -19,7 +19,7 @@ const HTTP500 = "500 Internal Server Error: ";
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
 
 // general function for modifying the date-containing parameters of temp objects into formatted strings
-function formatFirebaseTimestamps(dataObject) {
+function formatTimestamps(dataObject) {
   for (fieldName of ["date", "modified"]) {
     if (!dataObject[fieldName]) {
       // document does not contain the given field; skip it
@@ -156,7 +156,7 @@ function sendSingleResponse(docQuery, res) {
     const data = doc.data();
     if (data) {
       // formats all existing date fields as timestamp strings
-      formatFirebaseTimestamps(data);
+      formatTimestamps(data);
       // increment the views count or start at 1 if it doesn't exist
       const views = (data.views || 0) + 1;
       // update views count in database
@@ -202,7 +202,7 @@ function sendListResponse(docListQuery, req, res) {
           const temp = doc.data();
           if (temp) {
             // formats all specified date fields as strings if they exist
-            formatFirebaseTimestamps(temp);
+            formatTimestamps(temp);
             response.push({ id: doc.id, ...temp });
           } else {
             // return an error if any document was not found
@@ -238,7 +238,7 @@ function updateSingleDocument(
   // initialise new data
   const newData = {
     // add parameter indicating when the news was last edited
-    modified: admin.firestore.Timestamp.fromDate(new Date()),
+    modified: dateToTimestamp(new Date()),
   };
   // initialise boolean to indicate if any parameters were updated
   let dataUpdated = false;
@@ -257,8 +257,6 @@ function updateSingleDocument(
     return res.status(400).json({
       errorDescription: HTTP400 + "There were no updated fields provided.",
     });
-  } else {
-    console.log(newData);
   }
   // send the query to database
   docQuery
@@ -302,6 +300,15 @@ function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+function randomDateFromInterval(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+/** Convert a JavaScript Date object into a Firestore timestamp. */
+function dateToTimestamp(date) {
+  return admin.firestore.Timestamp.fromDate(date);
+}
+
 module.exports = {
   admin,
   db,
@@ -318,4 +325,6 @@ module.exports = {
   updateSingleDocument,
   deleteSingleDocument,
   randomIntFromInterval,
+  randomDateFromInterval,
+  dateToTimestamp,
 };

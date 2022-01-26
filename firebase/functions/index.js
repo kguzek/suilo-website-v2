@@ -18,7 +18,9 @@ const {
   updateSingleDocument,
   deleteSingleDocument,
   randomIntFromInterval,
+  dateToTimestamp,
 } = require("./util");
+const { createTestData } = require("./testData");
 
 // initialise express
 const app = express();
@@ -115,7 +117,7 @@ app.get("/api/luckyNumbers", (req, res) => {
             .set(
               {
                 luckyNumbers: luckyNumbers,
-                date: admin.firestore.Timestamp.fromDate(today),
+                date: dateToTimestamp(today),
                 usedBeforeSplit: data.usedBeforeSplit,
                 usedAfterSplit: data.usedAfterSplit,
               },
@@ -142,20 +144,21 @@ app.get("/api/luckyNumbers", (req, res) => {
 
 // CREATE news
 app.post("/api/news", (req, res) => {
-  // ?author=autor&title=tytuł&text=treść&photo=null
+  // ?author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null
   // initialise parameters
-  const author = req.query.author || "autor";
-  const title = req.query.title || "tytuł";
-  const text = req.query.text || "treść";
-  const photo = req.query.text || "https://i.stack.imgur.com/6M513.png";
   const data = {
-    date: admin.firestore.Timestamp.fromDate(new Date()),
-    author,
-    title,
-    text,
-    photo,
+    date: dateToTimestamp(new Date()),
+    author: req.query.author || "autor",
+    title: req.query.title || "Tytuł Postu",
+    text: req.query.text || "Krótka treść postu...",
+    content: req.query.content || "Wydłużona treść postu.",
+    photo: req.query.text || null,
   };
-  createSingleDocument(data, "news", res);
+  if (req.query.create_test_data) {
+    createTestData(res);
+  } else {
+    createSingleDocument(data, "news", res);
+  }
 });
 
 // READ all news
