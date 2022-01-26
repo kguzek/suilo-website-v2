@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 const NotFound = ({ setPage, msg }) => {
   useEffect(() => {
-    setPage("notFound");
+    setPage("not_found");
   }, []);
   return (
     <div style={{ minHeight: "89vh" }}>
