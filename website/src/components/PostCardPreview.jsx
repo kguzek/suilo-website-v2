@@ -2,16 +2,14 @@ import React from "react";
 import PostCardPrimary from "../components/PostCardPrimary";
 import PostCardSecondary from "../components/PostCardSecondary";
 import PostCardMain from "../components/PostCardMain";
-import { API_URL } from "../misc";
-
-// Temporary image URL if an article has none specified
-const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
+import { API_URL, DEFAULT_IMAGE } from "../misc";
 
 // Set number of items on page to 3 primary, 4 secondary and 8 main.
 // Can introduce useState variable for user customisability or leave it hard-coded.
 const ITEMS_PER_PAGE = 3 + 4 + 8;
 
 const MAX_CACHE_AGE = 2; // hours
+const NO_NEWS_MESSAGE = "Brak aktualności.";
 
 /** Compare two objects that contain a 'date' attribute. */
 function sortArticles(article1, article2) {
@@ -29,7 +27,7 @@ export function fetchNewsData(
 ) {
   /** Populate the data containers with the API request response's JSON data. */
   function processJsonData(data) {
-    if (!data) {
+    if (!data || !data.contents) {
       console.log("Could not retrieve data");
       return setLoaded(true);
     }
@@ -39,9 +37,7 @@ export function fetchNewsData(
       secondary: [],
     };
     for (let article of data.contents.sort(sortArticles)) {
-      if (!article.photo) {
-        article.photo = DEFAULT_IMAGE;
-      }
+      article.photo = article.photo || DEFAULT_IMAGE;
       if (_data.primary.length < 3) {
         _data.primary.push(article);
         continue;
@@ -62,10 +58,9 @@ export function fetchNewsData(
     console.log("Created cache for news data.", newCache);
     setMain(_data.main);
     setPrimary(_data.primary);
-    setPrimary(_data.secondary);
+    setSecondary(_data.secondary);
     setLoaded(true);
   }
-
   // check if there is a valid news data cache
   const cache = JSON.parse(localStorage.getItem(`page_${pageNumber}`));
   if (cache) {
@@ -92,7 +87,12 @@ export function fetchNewsData(
   });
 }
 
-export function PostCardPreview({ type, data, linkPrefix = "" }) {
+export function PostCardPreview({
+  type,
+  data = [],
+  linkPrefix = "",
+  classOverride,
+}) {
   if (data === undefined) {
     return null;
   }
@@ -102,10 +102,28 @@ export function PostCardPreview({ type, data, linkPrefix = "" }) {
       : type === "secondary"
       ? PostCardSecondary
       : PostCardMain;
-  return data.map((el, idx) => {
-    el.link = linkPrefix + el.id;
-    return React.createElement(elem, { key: el.id + idx, data: el });
-  });
+  if (data.length === 0) {
+    if (classOverride && classOverride.startsWith("home")) {
+      return (
+        <div style={{ width: "100%" }}>
+          <p>{NO_NEWS_MESSAGE}</p>
+        </div>
+      );
+    }
+    if (type === "primary") {
+      return NO_NEWS_MESSAGE;
+    }
+    return null;
+  }
+  const className = classOverride || `grid-${type}`;
+  return (
+    <div className={className}>
+      {data.map((el, idx) => {
+        el.link = linkPrefix + el.id;
+        return React.createElement(elem, { key: el.id + idx, data: el });
+      })}
+    </div>
+  );
 }
 
 export default PostCardPreview;
