@@ -66,7 +66,12 @@ const Post = ({ setPage }) => {
   useEffect(() => {
     setPage("news");
     if (!loadedNews) {
-      fetchNewsData(setDataMain, setDataPrimary, setDataSecondary, setLoadedNews);
+      fetchNewsData(
+        setDataMain,
+        setDataPrimary,
+        setDataSecondary,
+        setLoadedNews
+      );
     }
     const forceRefresh = searchParams.get("refresh");
     forceRefresh && setSearchParams({});
@@ -77,7 +82,7 @@ const Post = ({ setPage }) => {
     return null; // LOADING SCREEN //
   }
   if (currentPostData.errorDescription) {
-    setPage("not_found")
+    setPage("not_found");
     return <NotFound setPage={setPage} msg="Post nie istnieje." />;
   }
   const newDate = new Date(currentPostData.date).toLocaleDateString("pl-PL", {
@@ -115,7 +120,11 @@ const Post = ({ setPage }) => {
           <p className="article-content">{currentPostData.content}</p>
         </article>
         <div className="post-sidebar">
-          <PostCardPreview type="secondary" data={dataSecondary} fromPost={true} />
+          <PostCardPreview
+            type="secondary"
+            data={dataSecondary}
+            fromPost={true}
+          />
         </div>
       </div>
       <div className="main-grid">
