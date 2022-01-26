@@ -6,29 +6,19 @@ import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
 const News = ({ setPage }) => {
   const [pageIdx, setPageIdx] = useState(1);
   const [loaded, setLoaded] = useState(false);
-  const [dataMain, setDataMain] = useState([]);
-  const [dataPrimary, setDataPrimary] = useState([]);
-  const [dataScndary, setDataSecondary] = useState([]);
+  const [newsData, setNewsData] = useState([]);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams({});
 
   useEffect(() => {
     setPage("news");
     if (params.postID !== undefined) {
-      console.log("not updating news: post ID is", params.postID);
       return;
     }
     const forceRefresh = searchParams.get("refresh");
     forceRefresh && setSearchParams({});
-    fetchNewsData(
-      setDataMain,
-      setDataPrimary,
-      setDataSecondary,
-      setLoaded,
-      pageIdx,
-      forceRefresh
-    );
-  }, [pageIdx]);
+    fetchNewsData(setNewsData, setLoaded, forceRefresh, pageIdx);
+  }, [params]);
 
   if (params.postID !== undefined) {
     return <Outlet />;
@@ -55,9 +45,9 @@ const News = ({ setPage }) => {
         <meta property="og:title" content="Aktualności | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
       </MetaTags>
-      <PostCardPreview type="primary" data={dataPrimary} linkPrefix="post/" />
-      <PostCardPreview type="secondary" data={dataScndary} linkPrefix="post/" />
-      <PostCardPreview type="main" data={dataMain} linkPrefix="post/" />
+      <PostCardPreview type="primary" data={newsData} linkPrefix="post/" />
+      <PostCardPreview type="secondary" data={newsData} linkPrefix="post/" />
+      <PostCardPreview type="main" data={newsData} linkPrefix="post/" />
     </div>
   );
 };

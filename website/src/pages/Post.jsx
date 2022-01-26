@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import NotFound from "./NotFound";
-import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
+import {
+  PostCardPreview,
+  fetchNewsData,
+  MAIN_ITEMS_DEFAULT,
+} from "../components/PostCardPreview";
 import { conjugatePolish, API_URL, DEFAULT_IMAGE } from "../misc";
 
 const MAX_CACHE_AGE = 2; // hours
@@ -11,11 +15,7 @@ const Post = ({ setPage }) => {
   const [loaded, setLoaded] = useState(false);
   const [loadedNews, setLoadedNews] = useState(false);
   const [currentPostData, setCurrentPostData] = useState({});
-  const [dataMain, setDataMain] = useState([]);
-  // Primary data is unused. No need to create state.
-  // const [_dataPrimary, setDataPrimary] = useState([]);
-  const setDataPrimary = () => {};
-  const [dataSecondary, setDataSecondary] = useState([]);
+  const [newsData, setNewsData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
 
@@ -69,15 +69,10 @@ const Post = ({ setPage }) => {
 
   useEffect(() => {
     setPage("news");
-    if (!loadedNews) {
-      fetchNewsData(
-        setDataMain,
-        setDataPrimary,
-        setDataSecondary,
-        setLoadedNews
-      );
-    }
     const forceRefresh = searchParams.get("refresh");
+    if (!loadedNews) {
+      fetchNewsData(setNewsData, setLoadedNews, forceRefresh);
+    }
     forceRefresh && setSearchParams({});
     updatePostData(forceRefresh);
   }, [params]);
@@ -129,12 +124,16 @@ const Post = ({ setPage }) => {
         </article>
         <PostCardPreview
           type="secondary"
-          data={dataSecondary}
-          fromPost={true}
+          data={newsData}
           classOverride="post-sidebar"
+          startIndex={MAIN_ITEMS_DEFAULT}
         />
       </div>
-      <PostCardPreview type="main" data={dataMain} fromPost={true} />
+      <PostCardPreview
+        type="main"
+        data={newsData}
+        startIndex={0}
+      />
     </div>
   );
 };

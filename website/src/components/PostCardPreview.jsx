@@ -6,7 +6,11 @@ import { API_URL, DEFAULT_IMAGE } from "../misc";
 
 // Set number of items on page to 3 primary, 4 secondary and 8 main.
 // Can introduce useState variable for user customisability or leave it hard-coded.
-const ITEMS_PER_PAGE = 3 + 4 + 8;
+export const PRIMARY_ITEMS_DEFAULT = 3;
+export const SECONDARY_ITEMS_DEFAULT = 4;
+export const MAIN_ITEMS_DEFAULT = 8;
+const ITEMS_PER_PAGE =
+  PRIMARY_ITEMS_DEFAULT + SECONDARY_ITEMS_DEFAULT + MAIN_ITEMS_DEFAULT;
 
 const MAX_CACHE_AGE = 2; // hours
 const NO_NEWS_MESSAGE = "Brak aktualności.";
@@ -18,61 +22,41 @@ function sortArticles(article1, article2) {
 
 /** Fetch the data for the news article previews. */
 export function fetchNewsData(
-  setMain,
-  setPrimary,
-  setSecondary,
+  setData,
   setLoaded = () => {},
+  updateCache = false,
   pageNumber = 1,
-  updateCache = false
+  maxItems = ITEMS_PER_PAGE
 ) {
   /** Populate the data containers with the API request response's JSON data. */
-  function processJsonData(data) {
-    if (!data || !data.contents) {
+  function processJsonData(jsonData) {
+    if (!jsonData || !jsonData.contents) {
       console.log("Could not retrieve data");
       return setLoaded(true);
     }
-    const _data = {
-      main: [],
-      primary: [],
-      secondary: [],
-    };
-    for (let article of data.contents.sort(sortArticles)) {
-      article.photo = article.photo || DEFAULT_IMAGE;
-      if (_data.primary.length < 3) {
-        _data.primary.push(article);
-        continue;
-      }
-      if (_data.secondary.length < 4) {
-        _data.secondary.push(article);
-        continue;
-      }
-      _data.main.push(article);
-    }
+    // map each article so that if it doesn't contain a 'photo' attribute it uses the default image
+    const data = jsonData.contents.sort(sortArticles).map((article) => {
+      return { ...article, photo: article.photo || DEFAULT_IMAGE };
+    });
     const newCache = {
       date: new Date(),
-      dataMain: _data.main,
-      dataPrimary: _data.primary,
-      dataSecondary: _data.secondary,
+      data,
     };
     localStorage.setItem(`page_${pageNumber}`, JSON.stringify(newCache));
     console.log("Created cache for news data.", newCache);
-    setMain(_data.main);
-    setPrimary(_data.primary);
-    setSecondary(_data.secondary);
+    setData(data);
     setLoaded(true);
   }
   // check if there is a valid news data cache
   const cache = JSON.parse(localStorage.getItem(`page_${pageNumber}`));
-  if (cache) {
+  if (cache && cache.data && cache.data.length >= maxItems) {
     if (!updateCache) {
       // check if the cache is younger than 24 hours old
       const cacheDate = Date.parse(cache.date);
       const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
       if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
         console.log("Found existing cache for news data.", cache);
-        setMain(cache.dataMain);
-        setPrimary(cache.dataPrimary);
-        setSecondary(cache.dataSecondary);
+        setData(cache.data);
         return setLoaded(true);
       }
     }
@@ -81,7 +65,7 @@ export function fetchNewsData(
   }
 
   // Set URL parameters
-  const url = `${API_URL}/news/?page=${pageNumber}&items=${ITEMS_PER_PAGE}`;
+  const url = `${API_URL}/news/?page=${pageNumber}&items=${maxItems}`;
   fetch(url).then((res) => {
     res.json().then(processJsonData);
   });
@@ -92,16 +76,35 @@ export function PostCardPreview({
   data = [],
   linkPrefix = "",
   classOverride,
+  startIndex,
+  numItems,
 }) {
   if (data === undefined) {
     return null;
   }
-  const elem =
-    type === "primary"
-      ? PostCardPrimary
-      : type === "secondary"
-      ? PostCardSecondary
-      : PostCardMain;
+  const defaultItems = {
+    primary: {
+      element: PostCardPrimary,
+      startIndex: 0,
+      numItems: PRIMARY_ITEMS_DEFAULT,
+    },
+    secondary: {
+      element: PostCardSecondary,
+      startIndex: PRIMARY_ITEMS_DEFAULT,
+      numItems: SECONDARY_ITEMS_DEFAULT,
+    },
+    main: {
+      element: PostCardMain,
+      startIndex: PRIMARY_ITEMS_DEFAULT + SECONDARY_ITEMS_DEFAULT,
+      numItems: MAIN_ITEMS_DEFAULT,
+    },
+  };
+  const elem = defaultItems[type].element;
+  startIndex === undefined && (startIndex = defaultItems[type].startIndex);
+  numItems === undefined && (numItems = defaultItems[type].numItems);
+
+  const className = classOverride || `${type}-grid`;
+  data = [...data].splice(startIndex, numItems);
   if (data.length === 0) {
     if (classOverride && classOverride.startsWith("home")) {
       return (
@@ -115,7 +118,6 @@ export function PostCardPreview({
     }
     return null;
   }
-  const className = classOverride || `${type}-grid`;
   return (
     <div className={className}>
       {data.map((el, idx) => {
