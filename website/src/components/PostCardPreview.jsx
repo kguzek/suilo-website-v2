@@ -115,7 +115,7 @@ export function PostCardPreview({
     }
     return null;
   }
-  const className = classOverride || `grid-${type}`;
+  const className = classOverride || `${type}-grid`;
   return (
     <div className={className}>
       {data.map((el, idx) => {
