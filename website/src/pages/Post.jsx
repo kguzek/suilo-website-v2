@@ -80,7 +80,7 @@ const Post = ({ setPage }) => {
     const forceRefresh = searchParams.get("refresh");
     forceRefresh && setSearchParams({});
     updatePostData(forceRefresh);
-  }, []);
+  }, [params]);
 
   if (!loaded) {
     return null; // LOADING SCREEN //
