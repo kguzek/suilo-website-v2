@@ -1,6 +1,6 @@
-/** 
+/**
  * (1, 'wyświetle', 'ni', 'ń') -> '1 wyświetlenie'
- * 
+ *
  * (21, 'wyświetle', 'ni', 'ń') -> '21 wyświetleń'
  */
 export function conjugatePolish(value, base, suffix1, suffix2) {
@@ -9,8 +9,10 @@ export function conjugatePolish(value, base, suffix1, suffix2) {
   }
   const lastLetter = value.toString()[value.toString().length - 1];
   const lastDigit = parseInt(lastLetter);
-  if (lastDigit in [2, 3, 4] && !(Math.abs(value) in [12, 13, 14])) {
+  if ([2, 3, 4].includes(lastDigit) && ![12, 13, 14].includes(Math.abs(value))) {
     return `${value} ${base}${suffix1}a`;
   }
   return `${value} ${base}${suffix2}`;
 }
+
+export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api";
