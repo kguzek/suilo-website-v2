@@ -10,15 +10,16 @@ const News = ({ setPage }) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams({});
 
+
   useEffect(() => {
-    setPage("news");
     if (params.postID !== undefined) {
       return;
     }
-    const forceRefresh = searchParams.get("refresh");
-    forceRefresh && setSearchParams({});
-    fetchNewsData(setNewsData, setLoaded, forceRefresh, pageIdx);
-  }, [params]);
+    setPage("news");
+    const updateCache = searchParams.get("refresh");
+    updateCache && setSearchParams({});
+    fetchNewsData({ setNewsData, setLoaded, updateCache, pageNumber: pageIdx });
+  }, [params.postID]);
 
   if (params.postID !== undefined) {
     return <Outlet />;

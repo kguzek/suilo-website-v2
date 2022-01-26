@@ -21,13 +21,13 @@ function sortArticles(article1, article2) {
 }
 
 /** Fetch the data for the news article previews. */
-export function fetchNewsData(
-  setData,
+export function fetchNewsData({
+  setNewsData,
   setLoaded = () => {},
   updateCache = false,
   pageNumber = 1,
-  maxItems = ITEMS_PER_PAGE
-) {
+  maxItems = ITEMS_PER_PAGE,
+}) {
   /** Populate the data containers with the API request response's JSON data. */
   function processJsonData(jsonData) {
     if (!jsonData || !jsonData.contents) {
@@ -44,7 +44,7 @@ export function fetchNewsData(
     };
     localStorage.setItem(`page_${pageNumber}`, JSON.stringify(newCache));
     console.log("Created cache for news data.", newCache);
-    setData(data);
+    setNewsData(data);
     setLoaded(true);
   }
   // check if there is a valid news data cache
@@ -56,7 +56,7 @@ export function fetchNewsData(
       const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
       if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
         console.log("Found existing cache for news data.", cache);
-        setData(cache.data);
+        setNewsData(cache.data);
         return setLoaded(true);
       }
     }
@@ -73,13 +73,14 @@ export function fetchNewsData(
 
 export function PostCardPreview({
   type,
-  data = [],
+  data,
   linkPrefix = "",
   classOverride,
   startIndex,
   numItems,
 }) {
   if (data === undefined) {
+    console.log("News data is undefined. Not rendering preview.");
     return null;
   }
   const defaultItems = {
@@ -104,8 +105,8 @@ export function PostCardPreview({
   numItems === undefined && (numItems = defaultItems[type].numItems);
 
   const className = classOverride || `${type}-grid`;
-  data = [...data].splice(startIndex, numItems);
-  if (data.length === 0) {
+  const _data = [...data].splice(startIndex, numItems);
+  if (_data.length === 0) {
     if (classOverride && classOverride.startsWith("home")) {
       return (
         <div style={{ width: "100%" }}>
@@ -120,7 +121,7 @@ export function PostCardPreview({
   }
   return (
     <div className={className}>
-      {data.map((el, idx) => {
+      {_data.map((el, idx) => {
         el.link = linkPrefix + el.id;
         return React.createElement(elem, { key: el.id + idx, data: el });
       })}

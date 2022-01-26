@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import Blob from "../media/blob";
 import { Link } from "react-router-dom";
 import SuPhoto from "../media/su-photo.jpg";
-import PostCardPreview from "../components/PostCardPreview";
 import MetaTags from "react-meta-tags";
 import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
+import PostCardPreview, { fetchNewsData } from "../components/PostCardPreview";
+import { SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
 
 const dummyData = [
   {
@@ -62,19 +63,13 @@ const Home = ({ setPage }) => {
     // });
     //
     // INTEGRATE LUCKY NUMBERS API
-    //
-    //
-    // fetch("URL").then((res)=>{
-    //      setNewsData(res)
-    // })
-    //
-    //  INTEGRATE DOWNLOADING FIRST 5 NEWS PREVIEW DATA FROM API
+
+    fetchNewsData({ setNewsData, maxItems: SECONDARY_ITEMS_DEFAULT });
   }, []);
 
   const _scrollDown = () => {
     window.scrollTo({ top: 900, behavior: "smooth" });
   };
-
   return (
     <div className="page-main">
       <MetaTags>
@@ -173,10 +168,7 @@ const Home = ({ setPage }) => {
       <div className="main-roles">
         <div className="person-container">
           <p className="person-class">2C</p>
-          <src
-            className="person-avatar"
-            alt="Zdjęcie Szymona Wróbla - marszałka Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
-          />
+          <img className="person-avatar" alt="Szymon Wróbel" />
           <div
             className="person-description"
             title="Marszałek Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
@@ -187,10 +179,7 @@ const Home = ({ setPage }) => {
         </div>
         <div className="person-container">
           <p className="person-class">3Ap</p>
-          <src
-            className="person-avatar"
-            alt="Zdjęcie Adama Kurzaka - sekretarza Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
-          />
+          <img className="person-avatar" alt="Adam Kurzak" />
           <div
             className="person-description"
             title="Sekretarz Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
@@ -201,10 +190,7 @@ const Home = ({ setPage }) => {
         </div>
         <div className="person-container">
           <p className="person-class">3Bg</p>
-          <src
-            className="person-avatar"
-            alt="Zdjęcie Mikołaja Mrózka - skarbnika i konsultanta Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
-          />
+          <img className="person-avatar" alt="Mikołaj Mrózek" />
           <div
             className="person-description"
             title="Skarbnik i Konsultant Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
@@ -214,10 +200,7 @@ const Home = ({ setPage }) => {
           </div>
         </div>
         <div className="person-container">
-          <src
-            className="person-avatar"
-            alt="Zdjęcie Barbary Białowąs - opiekunki Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
-          />
+          <img className="person-avatar" alt="Barbara Białowąs" />
           <div
             className="person-description"
             title="Opiekun Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
@@ -247,9 +230,10 @@ const Home = ({ setPage }) => {
       </div>
       <PostCardPreview
         type="secondary"
-        // data={dummyData}
+        data={newsData}
         linkPrefix="aktualnosci/post/"
         classOverride="home-3"
+        startIndex={0}
       />
       <div className="home-4">
         <a

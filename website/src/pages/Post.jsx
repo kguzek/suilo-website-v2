@@ -69,19 +69,20 @@ const Post = ({ setPage }) => {
 
   useEffect(() => {
     setPage("news");
-    const forceRefresh = searchParams.get("refresh");
-    if (!loadedNews) {
-      fetchNewsData(setNewsData, setLoadedNews, forceRefresh);
-    }
-    forceRefresh && setSearchParams({});
-    updatePostData(forceRefresh);
-  }, [params]);
+    const updateCache = searchParams.get("refresh");
+    fetchNewsData({ setNewsData, setLoaded: setLoadedNews, updateCache });
+  }, []);
+
+  useEffect(() => {
+    const updateCache = searchParams.get("refresh");
+    updateCache && setSearchParams({});
+    updatePostData(updateCache);
+  }, [params.postID]);
 
   if (!loaded) {
     return null; // LOADING SCREEN //
   }
   if (currentPostData.errorDescription) {
-    setPage("not_found");
     return <NotFound setPage={setPage} msg="Post nie istnieje." />;
   }
   const newDate = new Date(currentPostData.date).toLocaleDateString("pl-PL", {
@@ -129,11 +130,7 @@ const Post = ({ setPage }) => {
           startIndex={MAIN_ITEMS_DEFAULT}
         />
       </div>
-      <PostCardPreview
-        type="main"
-        data={newsData}
-        startIndex={0}
-      />
+      <PostCardPreview type="main" data={newsData} startIndex={0} />
     </div>
   );
 };
