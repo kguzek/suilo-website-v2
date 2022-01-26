@@ -245,13 +245,12 @@ const Home = ({ setPage }) => {
           />
         </Link>
       </div>
-      <div className="home-3">
-        <PostCardPreview
-          type="secondary"
-          data={dummyData}
-          linkPrefix="aktualnosci/post/"
-        />
-      </div>
+      <PostCardPreview
+        type="secondary"
+        // data={dummyData}
+        linkPrefix="aktualnosci/post/"
+        classOverride="home-3"
+      />
       <div className="home-4">
         <a
           className="social-media-btn"

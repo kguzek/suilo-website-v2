@@ -8,7 +8,7 @@ const News = ({ setPage }) => {
   const [loaded, setLoaded] = useState(false);
   const [dataMain, setDataMain] = useState([]);
   const [dataPrimary, setDataPrimary] = useState([]);
-  const [dataSecondary, setDataSecondary] = useState([]);
+  const [dataScndary, setDataSecondary] = useState([]);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams({});
 
@@ -41,7 +41,6 @@ const News = ({ setPage }) => {
       </div>
     );
   }
-
   return (
     <div className="page-main" style={{ minHeight: "100vh" }}>
       <MetaTags>
@@ -56,15 +55,9 @@ const News = ({ setPage }) => {
         <meta property="og:title" content="Aktualności | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
       </MetaTags>
-      <div className="primary-grid">
-        <PostCardPreview type="primary" data={dataPrimary} linkPrefix="post/" />
-      </div>
-      <div className="secondary-grid">
-        <PostCardPreview type="secondary" data={dataSecondary} linkPrefix="post/" />
-      </div>
-      <div className="main-grid">
-        <PostCardPreview type="main" data={dataMain} linkPrefix="post/" />
-      </div>
+      <PostCardPreview type="primary" data={dataPrimary} linkPrefix="post/" />
+      <PostCardPreview type="secondary" data={dataScndary} linkPrefix="post/" />
+      <PostCardPreview type="main" data={dataMain} linkPrefix="post/" />
     </div>
   );
 };
