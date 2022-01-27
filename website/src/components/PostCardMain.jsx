@@ -22,9 +22,6 @@ const PostCardMain = ({ data }) => {
             <Link
               to={data.link}
               className="main-post-btn"
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
             >
               <p>czytaj dalej</p>
               <ArrowRight
