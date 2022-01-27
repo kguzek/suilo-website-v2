@@ -31,7 +31,7 @@ export default function ShortLinkRedirect({ setPage }) {
     fetchData();
   }, []);
   if (redirected === null) {
-    return null; // Loading...
+    return "Trwa przekierowywanie..."; // Loading...
   }
 	const msg = redirected ? "Przekierowanie linku działa, natomiast adres docelowy nie istnieje." : undefined;
 	return <NotFound setPage={setPage} msg={msg} />;
