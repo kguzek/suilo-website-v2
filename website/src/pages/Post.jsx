@@ -7,14 +7,14 @@ import {
   fetchNewsData,
   MAIN_ITEMS_DEFAULT,
 } from "../components/PostCardPreview";
-import { conjugatePolish, API_URL, DEFAULT_IMAGE } from "../misc";
+import { conjugatePolish, API_URL, DEFAULT_IMAGE, formatDate } from "../misc";
 
 const MAX_CACHE_AGE = 2; // hours
 
 const Post = ({ setPage }) => {
   const [loaded, setLoaded] = useState(false);
   const [loadedNews, setLoadedNews] = useState(false);
-  const [currentPostData, setCurrentPostData] = useState({});
+  const [postData, setPostData] = useState({});
   const [newsData, setNewsData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
@@ -25,7 +25,7 @@ const Post = ({ setPage }) => {
     function processData(data) {
       if (!data) {
         console.log("ERROR: Could not retrieve post data.");
-        setCurrentPostData({ errorDescription: "Data doesn't exist." });
+        setPostData({ errorDescription: "Data doesn't exist." });
         return setLoaded(true);
       }
       data.photo = data.photo || DEFAULT_IMAGE;
@@ -39,7 +39,7 @@ const Post = ({ setPage }) => {
         localStorage.setItem(params.postID, JSON.stringify(newCache));
         console.log("Created cache for post data.", newCache);
       }
-      setCurrentPostData(data);
+      setPostData(data);
       setLoaded(true);
     }
     // check if there is a valid post data cache
@@ -53,7 +53,7 @@ const Post = ({ setPage }) => {
           const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
           if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
             console.log("Found existing cache for post data.", cache);
-            setCurrentPostData(cache.data);
+            setPostData(cache.data);
             return setLoaded(true);
           }
         }
@@ -82,46 +82,34 @@ const Post = ({ setPage }) => {
   if (!loaded) {
     return null; // LOADING SCREEN //
   }
-  if (currentPostData.errorDescription) {
+  if (postData.errorDescription) {
     return <NotFound setPage={setPage} msg="Post nie istnieje." />;
   }
-  const newDate = new Date(currentPostData.date).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-  const views = conjugatePolish(
-    currentPostData.views || 0,
-    "wyświetle",
-    "ni",
-    "ń"
-  );
+  const newDate = formatDate(postData.date, true);
+  const modifiedDate = formatDate(postData.modified, true);
+  const views = conjugatePolish(postData.views || 0, "wyświetle", "ni", "ń");
   return (
     <div className="page-main">
       <MetaTags>
-        <title>{currentPostData.title}</title>
-        <meta name="description" content={currentPostData.text} />
-        <meta property="og:title" content={currentPostData.title} />
+        <title>{postData.title}</title>
+        <meta name="description" content={postData.text} />
+        <meta property="og:title" content={postData.title} />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
       <div className="post-division">
         <article>
-          <img
-            className="post-image"
-            src={currentPostData.photo}
-            alt={currentPostData.alt}
-          />
-          {currentPostData.imageAuthor && (
-            <p className="image-author">
-              Zdjęcie: {currentPostData.imageAuthor}
-            </p>
+          <img className="post-image" src={postData.photo} alt={postData.alt} />
+          {postData.imageAuthor && (
+            <p className="image-author">Zdjęcie: {postData.imageAuthor}</p>
           )}
-          <p className="post-info">
+          <div className="post-info">
             <span style={{ fontWeight: "500" }}>{newDate}</span>
-            &nbsp;&nbsp;·&nbsp;&nbsp;{views}
-          </p>
-          <h1 className="article-title">{currentPostData.title}</h1>
-          <p className="article-content">{currentPostData.content}</p>
+            {postData.modified && <i>{`Ostatnia modyfikacja: ${modifiedDate}`}</i>}
+            <span>·</span>
+            <span>{views}</span>
+          </div>
+          <h1 className="article-title">{postData.title}</h1>
+          <p className="article-content">{postData.content}</p>
         </article>
         <PostCardPreview
           type="secondary"
