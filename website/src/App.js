@@ -26,28 +26,22 @@ function App() {
   const [page, setPage] = useState(null);
   const [logged, setLogged] = useState(false); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [startLogging, setLogging] = useState(false);
-  const [showCookies, setShowCookies] = useState(null); // you can set cookies popup here
   const [tokenAPI, setTokenAPI] = useState(); // this should be the working access token for the api, not yet tested
   const [UserEmail, setEmail] = useState(); // user's email
   const [cookies, setCookies, removeCookies] = useCookies();
   useEffect(() => {
     getResults(callback);
-    console.log("Cookies:", cookies);
-    console.log("Cookie:", cookies.cookie);
-    if (cookies.cookie) {
-      setShowCookies(false);
-    } else {
-      setShowCookies(true);
-    }
+    // console.log("Cookies:", cookies);
   }, []);
 
   //---debug code---//
-  // useEffect(() => {
-  //   if (page !== null) {
-  //     console.log(page)
-  //   }
-  //   return;
-  // }, [page])
+  useEffect(() => {
+    if (page !== null) {
+      console.log(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    return;
+  }, [page]);
 
   const callback = (apiToken, email) => {
     if (apiToken !== null && email !== null) {
@@ -91,7 +85,7 @@ function App() {
               setLogging={setLogging}
               startLogging={startLogging}
               setLogged={setLogged}
-              showCookies={showCookies}
+              showCookies={!cookies.cookie}
             />
           }
         >
