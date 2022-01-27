@@ -36,7 +36,7 @@ const UPDATABLE_POST_ATTRIBUTES = [
   "photo",
   "imageAuthor",
 ];
-const MAX_LUCKY_NUMBER = 39;
+const MAX_LUCKY_NUMBER = 35;
 
 String.prototype.replaceAll = function replaceAll(search, replacement) {
   var target = this;
@@ -182,9 +182,10 @@ app.get("/api/luckyNumbers/v2", (req, res) => {
   function generateNumbersData(data = {}) {
     const luckyNumbers = [];
     // one number pool for each lucky number: 1:15 and 16:MAX
+    const splitPoints = data.splitPoints || [15, 16];
     const numberLimits = [
-      [1, 15],
-      [16, data.maxNumber || MAX_LUCKY_NUMBER],
+      [1, splitPoints[0]],
+      [splitPoints[1], data.maxNumber || MAX_LUCKY_NUMBER],
     ];
     const numberPools = [data.numberPoolA, data.numberPoolB];
     for (let i = 0; i < 2; i++) {
@@ -208,6 +209,7 @@ app.get("/api/luckyNumbers/v2", (req, res) => {
       excludedClasses: data.excludedClasses || [],
       freeDays: data.freeDays || [],
       maxNumber: numberLimits[1][1],
+      splitPoints,
       numberPoolA: numberPools[0],
       numberPoolB: numberPools[1],
     };
