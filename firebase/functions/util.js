@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const randomstring = require("randomstring");
 
 // Private service account key
 const serviceAccount = require("./permissions.json");
@@ -11,9 +10,10 @@ admin.initializeApp({
 // Assign database reference
 const db = admin.firestore();
 
-// Initialise constants
+// Initialise HTTP error constants
 const HTTP400 = "400 Bad Request: ";
 const HTTP404 = "404 Not Found: ";
+const HTTP405 = "405 Method Not Allowed: ";
 const HTTP500 = "500 Internal Server Error: ";
 
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
@@ -24,24 +24,28 @@ String.prototype.replaceAll = function replaceAll(search, replacement) {
   return target.split(search).join(replacement);
 };
 
-// general function for modifying the date-containing parameters of temp objects into formatted strings
+/** If the object contains fields 'date' or 'modified', converts the
+ * values from Firebase timestamps to JavaScript Date objects. */
 function formatTimestamps(dataObject) {
   if (!dataObject) {
     return;
   }
   for (fieldName of ["date", "modified"]) {
-    if (!dataObject[fieldName]) {
-      // document does not contain the given field; skip it
+    const fieldValue = dataObject[fieldName];
+    if (!fieldValue || !fieldValue._seconds) {
+      // the field does not exist or it is not a Firebase timestamp; skip it
       continue;
     }
     // cast field value as JS date object which has a built-in function to format it as a string
-    date = new Date(dataObject[fieldName]._seconds * 1000); // Date object constructor takes milliseconds
+    date = new Date(fieldValue._seconds * 1000); // Date object constructor takes milliseconds
     // formatting using specified locale, default en-GB uses dd/mm/YYYY
     dataObject[fieldName] = date.toJSON();
   }
 }
 
-// general function for performing action on single document
+/** Checks if the request params or query contains a document ID.
+ * If so, calls the callback with a reference to the document with the specified ID.
+ * Otherwise sends a HTTP 400 response.  */
 function executeQuery(req, res, collectionName) {
   // get id from url parameters or arguments, e.g. /api/news/foo or /api/news/?id=foo
   const id = req.params.id || req.query.id;
@@ -60,136 +64,14 @@ function executeQuery(req, res, collectionName) {
   }
 }
 
-/*      ======== SHORT URL FUNCTIONS ========      */
-
-// thenable function for generating a random shortened URL
-function generateRandomURL(length = 7) {
-  // generate new URLs until it finds one that hasn't been used yet
-  const shortURLs = db.collection("links");
-
-  /** Recursive function for generating the random URL. */
-  function generate(resolve, reject) {
-    // generate alphanumeric string with given length
-    const randStr = randomstring.generate(length);
-    console.log(`Generated URL '${randStr}'`);
-    // regenerate if the link is taken
-    shortURLs
-      .doc(randStr)
-      .get()
-      .then((doc) => {
-        // check if the document exists in the database
-        if (doc.data()) {
-          // recursive call to regenerate URL
-          generate(resolve, reject);
-        }
-        resolve(randStr);
-      });
-  }
-  return { then: generate };
-}
-
-function createShortenedURL(res, destination, customURL) {
-  // initialise the links collection reference
-  const shortURLs = db.collection("links");
-
-  // ensure destination starts with '/'
-  destination.startsWith("/") || (destination = "/" + destination);
-
-  // initialise query to check if there is already a short url for the given destination
-  const existingDestinationQuery = shortURLs
-    .where("destination", "==", destination)
-    .limit(1);
-
-  function createDocument(id) {
-    shortURLs.doc(id).set({
-      destination,
-      views: 0,
-    });
-    return res.status(200).json({
-      msg: `Success! Created shortened URL with destination '${destination}'.`,
-      url: id,
-    });
-  }
-
-  // determine if the URL should be generated, and if so, generate it
-  existingDestinationQuery.get().then((querySnapshot) => {
-    // if the destination already has a link, return it. If not, generate a new one.
-
-    if (!querySnapshot.empty) {
-      // already exists; return the existing short URL
-      return res.status(400).json({
-        errorDescription:
-          HTTP400 + `There is already a URL for destination '${destination}'.`,
-        url: "/" + querySnapshot.docs[0].id,
-      });
-    }
-
-    if (!customURL) {
-      // generate random URL if there is none provided
-      return generateRandomURL().then(createDocument, (err) => {
-        return res.status(500).json({ errorDescription: HTTP500 + err });
-      });
-    }
-
-    shortURLs
-      .doc(customURL)
-      .get()
-      .then((doc) => {
-        if (doc.data()) {
-          return res.status(400).json({
-            errorDescription: HTTP400 + "That custom URL is taken.",
-          });
-        }
-        return createDocument(customURL);
-      });
-  });
-}
-
-/** Returns the Polish name for the month with the given zero-based index. */
-function getMonthName(monthID) {
-  const date = new Date(new Date().setMonth(monthID));
-  return date.toLocaleString("pl-PL", { month: "long" });
-}
-
-/*      ======== CALENDAR FUNCTIONS ========      */
-function createCalendar(res, monthID, events = []) {
-  if (!monthID) {
-    return res.status(400).json({
-      errorMessage: `${HTTP400}Invalid month ID '${monthID}'.`,
-    });
-  }
-  const docRef = db.collection("calendar").doc(monthID.toString());
-  const eventCollection = docRef.collection("events");
-
-  const monthName = getMonthName(monthID - 1);
-
-  const data = {
-    monthID,
-    monthName,
-    numEvents: events.length,
-    events,
-  };
-
-  function populateEvents(_createdDocRef) {
-    // loop through each event in the array and create a document in the "events" collection
-    for (const event of events) {
-      eventCollection.doc().set(event);
-    }
-    res.status(200).json(data);
-  }
-  docRef.get().then((doc) => {
-    if (doc.data()) {
-      return res.status(400).json({
-        errorDescription: HTTP400 + "A calendar for that month already exists.",
-      });
-    }
-    docRef.set({ monthName }).then(populateEvents);
-  });
+/** Converts a JavaScript Date object into a Firestore timestamp. */
+function dateToTimestamp(date) {
+  return admin.firestore.Timestamp.fromDate(date);
 }
 
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
-// general function for creating a single document
+/** Creates a single document with the specified data in the specified collection. */
 function createSingleDocument(data, collectionName, res) {
   // attempts to add the data to the given collection
   db.collection(collectionName)
@@ -207,7 +89,7 @@ function createSingleDocument(data, collectionName, res) {
     });
 }
 
-// general function for sending back a single document
+/** Sends a response containing the data of the specified document query. */
 function sendSingleResponse(docQuery, res) {
   // send the query to database
   docQuery.get().then((doc) => {
@@ -231,9 +113,14 @@ function sendSingleResponse(docQuery, res) {
   });
 }
 
-// general function for sending back a list of documents
-function sendListResponse(docListQuery, queryOptions, res, callback) {
-  /* -- Pagination -- */
+/** Sends a response containing an array with the contents of the collection query.
+ *
+ * @param {FirebaseFirestore.Query<FirebaseFirestore.DocumentData>} docListQuery the query to execute
+ * @param {object} queryOptions an object with defaults: { page = 1, items = 25, all = false }
+ * @param {response} res the HTTP response
+ * @param {function} callback (responseArray, querySnapshotDocuments)
+ */
+function sendListResponse(docListQuery, queryOptions, res, callback = null) {
   // initialise parameters
   const page = Math.max(parseInt(queryOptions.page || 1), 1);
   const items = Math.max(parseInt(queryOptions.items || 25), 1);
@@ -241,7 +128,7 @@ function sendListResponse(docListQuery, queryOptions, res, callback) {
   const startIndex = items * (page - 1);
   const endIndex = items * page;
 
-  // don't limit the response if the 'items' parameter is set to -1
+  // don't limit the response length if the 'all' parameter is set to "true"
   if (queryOptions.all !== "true") {
     docListQuery = docListQuery.limit(endIndex);
   }
@@ -293,7 +180,13 @@ function sendListResponse(docListQuery, queryOptions, res, callback) {
     });
 }
 
-// general function for updating a single document
+/** Updates the document fields and sends a response containing the new data.
+ *
+ * @param {FirebaseFirestore.DocumentReference} docQuery
+ * @param {reponse} res the HTTP response
+ * @param {object} requestParams an object containing key-value pairs of the fields to update
+ * @param {Array} attributesToUpdate an array containing the field names that should be updated
+ */
 function updateSingleDocument(
   docQuery,
   res,
@@ -340,7 +233,13 @@ function updateSingleDocument(
     });
 }
 
-// general function for deleting a single document
+/** Deletes a document from the database and sends the appropriate response.
+ * Note: the action will be treated as success even if the document didn't exist before.
+ * This is due to how the Firebase Firestore API works.
+ * 
+ * @param {FirebaseFirestore.DocumentReference} docQuery a reference to the document to delete
+ * @param {response} res the HTTP response
+ */
 function deleteSingleDocument(docQuery, res) {
   docQuery
     .delete()
@@ -360,56 +259,21 @@ function deleteSingleDocument(docQuery, res) {
     });
 }
 
-/**Generate a random integer between the given interval, inclusively. */
-function randomIntFromInterval(min, max) {
-  return Math.floor(min + Math.random() * (max - min + 1));
-}
-
-function randomDateFromInterval(start, end) {
-  return new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime())
-  );
-}
-
-/** Convert a JavaScript Date object into a Firestore timestamp. */
-function dateToTimestamp(date) {
-  return admin.firestore.Timestamp.fromDate(date);
-}
-
-/** Returns an array made from the given range. E.g. (2, 5) => [2, 3, 4, 5]. */
-function arrayFromRange(start, end) {
-  return Array.from({ length: end - start + 1 }, (_, i) => i + start);
-}
-
-/**Returns the index of a random item in the given array. */
-function randomArraySelection(array) {
-  if (!array || !array.length) {
-    return null;
-  }
-  const randomIndex = randomIntFromInterval(0, array.length - 1);
-  return randomIndex;
-}
-
 module.exports = {
   admin,
   db,
   HTTP: {
-    Err400: HTTP400,
-    Err404: HTTP404,
-    Err500: HTTP500,
+    err400: HTTP400,
+    err404: HTTP404,
+    err405: HTTP405,
+    err500: HTTP500,
   },
   executeQuery,
-  createShortenedURL,
-  createCalendar,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,
   updateSingleDocument,
   deleteSingleDocument,
-  randomIntFromInterval,
-  randomDateFromInterval,
   dateToTimestamp,
   formatTimestamps,
-  arrayFromRange,
-  randomArraySelection,
 };

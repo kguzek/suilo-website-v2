@@ -1,5 +1,12 @@
 const { createSingleDocument, dateToTimestamp } = require("./util");
 
+/** Generate a random date from between the start and end dates. */
+function randomDateFromInterval(start, end) {
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
+}
+
 const testDataPrimary = [
   {
     title: `Adam Sarkowicz: "uczymy do ostatniego żywego ucznia" `,
