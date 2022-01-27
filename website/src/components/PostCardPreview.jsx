@@ -68,6 +68,9 @@ export function fetchNewsData({
   const url = `${API_URL}/news/?page=${pageNumber}&items=${maxItems}`;
   fetch(url).then((res) => {
     res.json().then(processJsonData);
+  }).catch((error) => {
+    console.log("Error retrieving news data!", error);
+    setLoaded(true);
   });
 }
 

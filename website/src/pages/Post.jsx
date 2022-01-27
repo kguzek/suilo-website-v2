@@ -29,9 +29,9 @@ const Post = ({ setPage }) => {
   function updatePostData(updateCache = false) {
     /**Updates the post data with the data from the API JSON response and sets the 'loaded' status. */
     function processData(data) {
-      if (!data) {
-        console.log("ERROR: Could not retrieve post data.");
-        setPostData({ errorDescription: "Data doesn't exist." });
+      if (!data || data.errorDescription) {
+        console.log("ERROR: Could not retrieve news post data.", data);
+        setPostData({ errorMessage: "Post nie istnieje." });
         return setLoaded(true);
       }
       data.photo = data.photo || DEFAULT_IMAGE;
@@ -39,12 +39,8 @@ const Post = ({ setPage }) => {
         date: new Date(),
         data,
       };
-      if (data.errorDescription) {
-        console.log("Post data contains error. Not saving cache.");
-      } else {
-        localStorage.setItem(params.postID, JSON.stringify(newCache));
-        console.log("Created cache for post data.", newCache);
-      }
+      localStorage.setItem(params.postID, JSON.stringify(newCache));
+      console.log("Created cache for news post data.", newCache);
       setPostData(data);
       setLoaded(true);
     }
@@ -68,9 +64,17 @@ const Post = ({ setPage }) => {
       localStorage.removeItem(params.postID);
     }
 
-    fetch(`${API_URL}/news/${params.postID}`).then((res) => {
-      res.json().then(processData);
-    });
+    fetch(`${API_URL}/news/${params.postID}`)
+      .then((res) => {
+        res.json().then(processData);
+      })
+      .catch((error) => {
+        console.log("Error retrieving news post data!", error);
+        setPostData({
+          errorMessage: "Nastąpił błąd sieciowy. Spróbuj ponownie w krótce.",
+        });
+        setLoaded(true);
+      });
   }
 
   useEffect(() => {
@@ -98,8 +102,8 @@ const Post = ({ setPage }) => {
       </div>
     );
   }
-  if (postData.errorDescription) {
-    return <NotFound setPage={setPage} msg="Post nie istnieje." />;
+  if (postData.errorMessage) {
+    return <NotFound setPage={setPage} msg={postData.errorMessage} />;
   }
   const newDate = formatDate(postData.date, true);
   const modifiedDate = formatDate(postData.modified, true);

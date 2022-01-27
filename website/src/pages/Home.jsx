@@ -43,6 +43,8 @@ const Home = ({ setPage }) => {
         setForDate(newCache.date);
         setCookies("lucky_numbers_cache", newCache, { sameSite: "lax" });
       });
+    }).catch((error) => {
+      console.log("Error retrieving lucky numbers data!", error);
     });
   }
 
