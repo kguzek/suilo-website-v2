@@ -8,6 +8,7 @@ import {
   MAIN_ITEMS_DEFAULT,
 } from "../components/PostCardPreview";
 import { conjugatePolish, API_URL, DEFAULT_IMAGE, formatDate } from "../misc";
+import { Bars } from 'react-loader-spinner'
 
 const MAX_CACHE_AGE = 2; // hours
 
@@ -80,7 +81,11 @@ const Post = ({ setPage }) => {
   }, [params.postID]);
 
   if (!loaded) {
-    return "Trwa ładowanie postu..."; // LOADING SCREEN //
+    return (
+      <div className="loading-whole-screen" style={{ backgroundColor: "transparent" }}>
+        <Bars color="#FFA900" height={50} width={50} />
+      </div>
+    );
   }
   if (postData.errorDescription) {
     return <NotFound setPage={setPage} msg="Post nie istnieje." />;
