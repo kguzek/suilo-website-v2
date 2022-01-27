@@ -100,7 +100,7 @@ const Home = ({ setPage }) => {
         </div>
         <div
           className="LN"
-          title={`szczęśliwe numerki na dziś to: ${luckyNumbers[0]} i ${luckyNumbers[1]} `}
+          title={`szczęśliwe numerki na dziś (${forDate}) to: ${luckyNumbers[0]} i ${luckyNumbers[1]} `}
         >
           <h5>Szczęśliwe numerki:</h5>
           <div className="LN-box">
