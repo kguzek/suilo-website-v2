@@ -193,6 +193,7 @@ app.get("/api/luckyNumbers/v2", (req, res) => {
       const selection = numberPool.splice(randomIndex, 1)[0];
       luckyNumbers.push(selection);
     }
+    console.log("Generated new lucky numbers data:", luckyNumbers);
     const newData = {
       date: todayString,
       luckyNumbers,
