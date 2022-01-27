@@ -353,7 +353,7 @@ for (path of ["luckyNumbers", "news", "news/:x", "links", "links/:x"]) {
 // catch all requests to paths that are not listed above
 app.all("*", (req, res) => {
   return res.status(404).json({
-    errorDescription: `404 Not Found: The server could not locate the resource at ${req.path}.`,
+    errorDescription: `404 Not Found: The server could not locate the resource at '${req.path}'.`,
   });
 });
 

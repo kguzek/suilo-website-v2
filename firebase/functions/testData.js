@@ -95,9 +95,9 @@ function createTestData(res) {
         photo: testData.photo,
       };
       const dummyRes = {
-        status: (code) => {
-          (json) => {
-            json.code = code;
+        status: () => {
+          return {
+            json: (data) => data,
           };
         },
       };
