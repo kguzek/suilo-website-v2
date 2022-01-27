@@ -83,7 +83,7 @@ const Home = ({ setPage }) => {
               flexDirection: "row",
               justifyContent: "flex-start",
               alignItems: "center",
-              marginTop: ".2em",
+              marginTop: "0em",
             }}
           >
             <Link to="/aktualnosci" className="CTA-primary">

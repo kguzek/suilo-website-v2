@@ -143,10 +143,10 @@ const Layout = ({
       />
       <div
         style={{
-          top: "-35vh",
+          top: "-32vh",
           right: "0",
-          width: "32.5em",
-          height: "170vh",
+          width: "33em",
+          height: "175vh",
           background: "linear-gradient(-140deg,#FF9900,#FFC300)",
           position: "absolute",
           zIndex: -99999,
