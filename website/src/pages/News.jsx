@@ -29,7 +29,6 @@ const News = ({ setPage }) => {
     return <Outlet />;
   }
   if (!loaded) {
-    // TODO: Loading animation
     return (
       <div className="page-main" style={{ minHeight: "100vh" }}>
         <div
