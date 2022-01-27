@@ -49,13 +49,13 @@ export function fetchNewsData({
   }
   // check if there is a valid news data cache
   const cache = JSON.parse(localStorage.getItem(`page_${pageNumber}`));
-  if (cache && cache.data && cache.data.length >= maxItems) {
+  if (cache) {
     if (!updateCache) {
       // check if the cache is younger than 24 hours old
       const cacheDate = Date.parse(cache.date);
       const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
       if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
-        console.log("Found existing cache for news data.", cache);
+        // console.log("Found existing cache for news data.", cache);
         setNewsData(cache.data);
         return setLoaded(true);
       }
