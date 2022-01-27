@@ -80,7 +80,7 @@ const Post = ({ setPage }) => {
   }, [params.postID]);
 
   if (!loaded) {
-    return null; // LOADING SCREEN //
+    return "Trwa ładowanie postu..."; // LOADING SCREEN //
   }
   if (postData.errorDescription) {
     return <NotFound setPage={setPage} msg="Post nie istnieje." />;
@@ -104,9 +104,8 @@ const Post = ({ setPage }) => {
           )}
           <div className="post-info">
             <span style={{ fontWeight: "500" }}>{newDate}</span>
-            {postData.modified && <i>{`Ostatnia modyfikacja: ${modifiedDate}`}</i>}
-            <span>·</span>
-            <span>{views}</span>
+            {postData.modified && <i>&nbsp;&nbsp;{`Ostatnia modyfikacja: ${modifiedDate}`}</i>}
+            &nbsp;&nbsp;·&nbsp;&nbsp;{views}
           </div>
           <h1 className="article-title">{postData.title}</h1>
           <p className="article-content">{postData.content}</p>
