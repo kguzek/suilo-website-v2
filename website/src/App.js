@@ -18,7 +18,7 @@ import LoginScreen from "./components/LoginScreen";
 import Footer from "./components/Footer";
 import ShortLinkRedirect from "./pages/ShortLinkRedirect";
 import { getResults, logOut, AuthProvider } from "./firebase";
-import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTop, { scrollToTop } from "./components/ScrollToTop";
 import CookiesAlert from "./components/CookiesAlert";
 import { useCookies } from "react-cookie";
 
@@ -37,8 +37,8 @@ function App() {
   //---debug code---//
   useEffect(() => {
     if (page !== null) {
-      console.log(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // console.log(page);
+      scrollToTop();
     }
     return;
   }, [page]);
