@@ -19,6 +19,9 @@ const {
   deleteSingleDocument,
   randomIntFromInterval,
   dateToTimestamp,
+  formatTimestamps,
+  arrayFromRange,
+  randomArraySelection,
 } = require("./util");
 const { createTestData } = require("./testData");
 
@@ -36,9 +39,14 @@ const UPDATABLE_POST_ATTRIBUTES = [
   "imageAuthor",
 ];
 
+String.prototype.replaceAll = function replaceAll(search, replacement) {
+  var target = this;
+  return target.split(search).join(replacement);
+};
+
 /*      ======== LUCKY NUMBERS-SPECIFIC CRUD FUNCTIONS ========      */
 
-// GET lucky numbers
+// GET lucky numbers (v1)
 app.get("/api/luckyNumbers", (req, res) => {
   try {
     db.collection("numbers")
@@ -130,6 +138,79 @@ app.get("/api/luckyNumbers", (req, res) => {
           luckyNumbers,
           excludedClasses: data.excludedClasses,
         });
+      });
+  } catch (error) {
+    return res.status(500).json({
+      errorDescription:
+        "500 Internal Server Error: Could not get the lucky numbers data.",
+      error,
+    });
+  }
+});
+
+// GET lucky numbers (v2)
+app.get("/api/luckyNumbers/v2", (req, res) => {
+  // ?force_update=false
+  const today = [
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    new Date().getDate(),
+  ];
+  const todayString = today.toString().replaceAll(",", "-");
+
+  const forceUpdate = req.query.force_update;
+
+  function dataIsCurrent(data) {
+    // return false if the update is forced or if there is no lucky numbers data
+    if (forceUpdate || !data) {
+      return false;
+    }
+    // return true if the lucky numbers data is for today
+    if (data.date === todayString) {
+      return true;
+    }
+    const freeDays = data.freeDays || [];
+    // return true if it's weekend or a free day
+    return [0, 6].includes(today[2]) || freeDays.includes(todayString);
+  }
+  function sendNumbersData(data) {
+    res.status(200).json({
+      date: data.date,
+      luckyNumbers: data.luckyNumbers,
+      excludedClasses: data.excludedClasses,
+    });
+  }
+  function generateNumbersData(data = {}) {
+    const luckyNumbers = [];
+    const maxNumber = data.maxNumber || 35;
+    let numberPool = data.numberPool;
+    for (let i = 0; i < 2; i++) {
+      if (!numberPool || numberPool.length === 0) {
+        numberPool = arrayFromRange(1, maxNumber);
+      }
+      const randomIndex = randomArraySelection(numberPool);
+      // remove selection from number pool
+      const selection = numberPool.splice(randomIndex, 1)[0];
+      luckyNumbers.push(selection);
+    }
+    const newData = {
+      date: todayString,
+      luckyNumbers,
+      excludedClasses: data.excludedClasses || [],
+      freeDays: data.freeDays || [],
+      maxNumber,
+      numberPool,
+    };
+    db.collection("numbers").doc("data").set(newData);
+    sendNumbersData(newData);
+  }
+  try {
+    db.collection("numbers")
+      .doc("data")
+      .get()
+      .then((doc) => {
+        const data = doc.data();
+        dataIsCurrent(data) ? sendNumbersData(data) : generateNumbersData(data);
       });
   } catch (error) {
     return res.status(500).json({

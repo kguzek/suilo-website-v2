@@ -20,6 +20,9 @@ const HTTP500 = "500 Internal Server Error: ";
 
 // general function for modifying the date-containing parameters of temp objects into formatted strings
 function formatTimestamps(dataObject) {
+  if (!dataObject) {
+    return;
+  }
   for (fieldName of ["date", "modified"]) {
     if (!dataObject[fieldName]) {
       // document does not contain the given field; skip it
@@ -295,18 +298,34 @@ function deleteSingleDocument(docQuery, res) {
     });
 }
 
-// general function for generating a random integer between the given interval, inclusively
+/**Generate a random integer between the given interval, inclusively. */
 function randomIntFromInterval(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+  return Math.floor(min + Math.random() * (max - min + 1));
 }
 
 function randomDateFromInterval(start, end) {
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
 }
 
 /** Convert a JavaScript Date object into a Firestore timestamp. */
 function dateToTimestamp(date) {
   return admin.firestore.Timestamp.fromDate(date);
+}
+
+/** Returns an array made from the given range. E.g. (2, 5) => [2, 3, 4, 5]. */
+function arrayFromRange(start, end) {
+  return Array.from({ length: end - start + 1 }, (_, i) => i + start);
+}
+
+/**Returns the index of a random item in the given array. */
+function randomArraySelection(array) {
+  if (!array || !array.length) {
+    return null;
+  }
+  const randomIndex = randomIntFromInterval(0, array.length - 1);
+  return randomIndex;
 }
 
 module.exports = {
@@ -327,4 +346,7 @@ module.exports = {
   randomIntFromInterval,
   randomDateFromInterval,
   dateToTimestamp,
+  formatTimestamps,
+  arrayFromRange,
+  randomArraySelection,
 };
