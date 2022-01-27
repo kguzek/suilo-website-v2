@@ -6,7 +6,6 @@ import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
 import { removeSearchParam } from "../misc";
 
 const News = ({ setPage }) => {
-  const [pageIdx, setPageIdx] = useState(1);
   const [loaded, setLoaded] = useState(false);
   const [newsData, setNewsData] = useState([]);
   const params = useParams();
@@ -22,7 +21,8 @@ const News = ({ setPage }) => {
       setSearchParams,
       "refresh"
     );
-    fetchNewsData({ setNewsData, setLoaded, updateCache, pageNumber: pageIdx });
+    const pageNumber = searchParams.get("page") || 1;
+    fetchNewsData({ setNewsData, setLoaded, updateCache, pageNumber });
   }, [params.postID]);
 
   if (params.postID !== undefined) {
