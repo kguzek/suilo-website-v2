@@ -209,6 +209,12 @@ const Home = ({ setPage }) => {
           />
         </Link>
       </div>
+      {/* Here must be 5 latest post */}
+      {/* use loading when not loaded 
+      <div className="loading-whole-screen" style={{ backgroundColor: "transparent" }}>
+          <Bars color="#FFA900" height={50} width={50} />
+        </div>
+      */}
       <PostCardPreview
         type="secondary"
         data={newsData}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet, useParams, useSearchParams } from "react-router-dom";
 import { MetaTags } from "react-meta-tags";
 import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
+import { Bars } from 'react-loader-spinner'
 
 const News = ({ setPage }) => {
   const [pageIdx, setPageIdx] = useState(1);
@@ -28,7 +29,9 @@ const News = ({ setPage }) => {
     // TODO: Loading animation
     return (
       <div className="page-main" style={{ minHeight: "100vh" }}>
-        Trwa ładowanie aktualności...
+        <div className="loading-whole-screen" style={{ backgroundColor: "transparent" }}>
+          <Bars color="#FFA900" height={50} width={50} />
+        </div>
       </div>
     );
   }
