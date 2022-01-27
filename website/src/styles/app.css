@@ -69,21 +69,21 @@
 }
 
 .cookies-info .cookies-header {
-  font-size: .9em;
+  font-size: 0.9em;
   font-weight: 500;
-  padding: .25em;
+  padding: 0.25em;
   margin: 0;
-  color: #2E2E2E;
+  color: #2e2e2e;
   white-space: nowrap;
 }
 
 .cookies-info .cookies-description {
-  font-size: .775em;
+  font-size: 0.775em;
   font-weight: 400;
-  padding: .25em;
+  padding: 0.25em;
   margin: 0;
-  color: #2E2E2E;
-  opacity: .5;
+  color: #2e2e2e;
+  opacity: 0.5;
 }
 
 .cookies-buttons {
@@ -106,9 +106,9 @@
   cursor: pointer;
   pointer-events: all;
   border: none;
-  padding: .6em 1.5em;
-  background: linear-gradient(170deg, #FFA000, #FFC300);
-  border-radius: .65em;
+  padding: 0.6em 1.5em;
+  background: linear-gradient(170deg, #ffa000, #ffc300);
+  border-radius: 0.65em;
   -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
           box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
   -webkit-transition: all 200ms ease-in-out;
@@ -116,7 +116,7 @@
 }
 
 .cookies-agree p {
-  font-size: .825em;
+  font-size: 0.825em;
   font-weight: 500;
   color: white;
   padding: 0;
@@ -141,15 +141,15 @@
   pointer-events: all;
   border: none;
   margin-top: 1em;
-  margin-bottom: -.5em;
+  margin-bottom: -0.5em;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
 
 .cookies-disagree p {
-  font-size: .75em;
+  font-size: 0.75em;
   font-weight: 400;
-  color: #FFA900;
+  color: #ffa900;
   padding: 0;
   margin: 0;
   white-space: nowrap;
@@ -206,11 +206,11 @@
 
 .link-box {
   margin: 0 1.75em;
-  margin-top: -.5em;
+  margin-top: -0.5em;
   text-decoration: none;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
-  font-size: .9em;
+  font-size: 0.9em;
   font-weight: 500;
 }
 
@@ -228,13 +228,13 @@
   cursor: pointer;
   pointer-events: all;
   border: none;
-  font-family: 'Poppins';
-  font-size: .87em;
+  font-family: "Poppins";
+  font-size: 0.87em;
   font-weight: 500;
-  color: #FFA900;
-  padding: .68em 1.6em;
+  color: #ffa900;
+  padding: 0.68em 1.6em;
   background-color: white;
-  border-radius: .55em;
+  border-radius: 0.55em;
   -webkit-box-shadow: 0 0px 0px rgba(60, 50, 0, 0);
           box-shadow: 0 0px 0px rgba(60, 50, 0, 0);
   -webkit-transition: all 200ms ease-in-out;
@@ -271,7 +271,7 @@
 .login-btn-mobile p {
   font-size: 4em;
   font-weight: 500;
-  color: #FFA900;
+  color: #ffa900;
   padding: 0;
   margin: 0;
 }
@@ -290,11 +290,11 @@
 
 #indicator {
   position: absolute;
-  top: -.17vh;
-  background-color: #FFA900;
-  height: .475em;
-  border-bottom-left-radius: .6em;
-  border-bottom-right-radius: .6em;
+  top: -0.17vh;
+  background-color: #ffa900;
+  height: 0.475em;
+  border-bottom-left-radius: 0.6em;
+  border-bottom-right-radius: 0.6em;
   -webkit-transition: all 250ms ease-in-out;
   transition: all 250ms ease-in-out;
 }
@@ -349,8 +349,8 @@
   z-index: 99999;
   text-decoration: none;
   font-size: 5em;
-  padding: .15em 1.8em;
-  margin: .15em .9em;
+  padding: 0.15em 1.8em;
+  margin: 0.15em 0.9em;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
   outline: default;
@@ -377,7 +377,7 @@
 
 .login-bg {
   background-color: black;
-  opacity: .3;
+  opacity: 0.3;
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -469,15 +469,15 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  padding: .8em;
-  background-color: #F6F6F6;
-  border: #979797 .15em dashed;
-  border-radius: .6em;
+  padding: 0.8em;
+  background-color: #f6f6f6;
+  border: #979797 0.15em dashed;
+  border-radius: 0.6em;
   width: 70%;
 }
 
 .disabled-p {
-  font-size: .8em;
+  font-size: 0.8em;
   padding: 0;
   margin: 0;
   line-height: 1.45em;
@@ -491,9 +491,9 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  background-color: #FFA900;
-  border-radius: .6em;
-  padding: .8em .95em;
+  background-color: #ffa900;
+  border-radius: 0.6em;
+  padding: 0.8em 0.95em;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
@@ -522,7 +522,7 @@
 
 .login-google-p {
   font-weight: 500;
-  font-size: .925em;
+  font-size: 0.925em;
   color: white;
   padding: 0;
   margin: 0;
@@ -530,32 +530,32 @@
 
 .login-info {
   font-weight: 300;
-  font-size: .65em;
+  font-size: 0.65em;
   text-align: center;
   width: 79%;
 }
 
 .login-error {
   font-weight: 400;
-  font-size: .7em;
+  font-size: 0.7em;
   text-align: right;
   width: 80%;
   color: #fc3f1e;
   margin: 0;
-  margin-top: .3em;
-  margin-bottom: -.3em;
+  margin-top: 0.3em;
+  margin-bottom: -0.3em;
   padding: 0;
 }
 
 .register-p {
   font-weight: 400;
-  font-size: .75em;
-  padding: .65em;
+  font-size: 0.75em;
+  padding: 0.65em;
   margin: 0;
 }
 
 .register-a {
-  color: #FFA900;
+  color: #ffa900;
   text-decoration: none;
   cursor: pointer;
   pointer-events: all;
@@ -609,7 +609,7 @@
 
 .more1 {
   height: 1em;
-  border-left: 0.15em solid #FFA900;
+  border-left: 0.15em solid #ffa900;
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
   -webkit-transform: rotate(45deg);
@@ -622,8 +622,8 @@
   width: 6.5em;
   padding: 0;
   margin: 0;
-  color: #FFA900;
-  border-top: 0.1em solid #FFA900;
+  color: #ffa900;
+  border-top: 0.1em solid #ffa900;
 }
 
 .CTA {
@@ -640,7 +640,7 @@
 h1 {
   font-weight: 700;
   color: #111111;
-  letter-spacing: .009em;
+  letter-spacing: 0.009em;
   font-size: 3.4em;
   padding: 0;
   margin: 0;
@@ -648,12 +648,12 @@ h1 {
 
 h4 {
   font-weight: 400;
-  color: #4B4B4B;
-  letter-spacing: .009em;
+  color: #4b4b4b;
+  letter-spacing: 0.009em;
   font-size: 1.6em;
   padding: 0;
   margin: 0;
-  margin-bottom: .9em;
+  margin-bottom: 0.9em;
 }
 
 .CTA-primary {
@@ -661,10 +661,10 @@ h4 {
   border: none;
   font-size: 1.2em;
   font-weight: 500;
-  font-family: 'Poppins';
-  background: linear-gradient(165deg, #FF9900, #FFC300);
-  padding: .65em 2em;
-  border-radius: .75em;
+  font-family: "Poppins";
+  background: linear-gradient(165deg, #ff9900, #ffc300);
+  padding: 0.65em 2em;
+  border-radius: 0.75em;
   cursor: pointer;
   pointer-events: all;
   text-decoration: none;
@@ -689,14 +689,14 @@ h4 {
 }
 
 .CTA-secondary {
-  color: #FFA900;
+  color: #ffa900;
   border: none;
   font-size: 1.2em;
   font-weight: 500;
-  font-family: 'Poppins';
+  font-family: "Poppins";
   background: transparent;
-  padding: .65em 2em;
-  border-radius: .75em;
+  padding: 0.65em 2em;
+  border-radius: 0.75em;
   cursor: pointer;
   pointer-events: all;
   text-decoration: none;
@@ -737,7 +737,7 @@ h5 {
   text-align: right;
   padding: 0;
   margin: 0;
-  padding-bottom: .3em;
+  padding-bottom: 0.3em;
   padding-top: 1em;
 }
 
@@ -771,7 +771,7 @@ h5 {
 }
 
 .LN-txt {
-  color: #FFA900;
+  color: #ffa900;
   font-weight: 800;
   font-size: 4.5em;
 }
@@ -838,7 +838,7 @@ h5 {
   font-weight: 700;
   padding: 0;
   margin: 0;
-  padding-bottom: .5em;
+  padding-bottom: 0.5em;
 }
 
 .description-p {
@@ -900,14 +900,14 @@ h5 {
   font-weight: 600;
   font-size: 1.3em;
   padding: 0;
-  padding-bottom: .2em;
+  padding-bottom: 0.2em;
   margin: 0;
 }
 
 .person-role {
   color: #111111;
   font-weight: 200;
-  font-size: .85em;
+  font-size: 0.85em;
   font-style: italic;
   padding: 0;
   margin: 0;
@@ -939,7 +939,7 @@ h5 {
   color: #f0f0f0;
   font-weight: 800;
   font-size: 5em;
-  bottom: -.9em;
+  bottom: -0.9em;
   right: 0em;
   margin: 0;
   padding: 0;
@@ -987,10 +987,10 @@ h5 {
 }
 
 .link-more p {
-  color: #FFA900;
+  color: #ffa900;
   margin: 0;
   padding: 0;
-  padding-right: .5em;
+  padding-right: 0.5em;
   font-weight: 500;
 }
 
@@ -1028,7 +1028,7 @@ h5 {
   font-size: 1.1em;
   padding: 0;
   margin: 0;
-  letter-spacing: .0125em;
+  letter-spacing: 0.0125em;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1039,7 +1039,7 @@ h5 {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  opacity: .75;
+  opacity: 0.75;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
@@ -1077,9 +1077,9 @@ h5 {
   font-size: 1.4em;
   font-weight: 600;
   max-width: 100%;
-  letter-spacing: .0125em;
+  letter-spacing: 0.0125em;
   color: #111111;
-  margin: .25em 0;
+  margin: 0.25em 0;
   line-height: 1.45em;
   max-height: 3em;
   text-overflow: ellipsis;
@@ -1091,13 +1091,13 @@ h5 {
 }
 
 .primary-post-description {
-  font-size: .90em;
+  font-size: 0.9em;
   font-weight: 400;
   max-width: 100%;
-  letter-spacing: .012em;
+  letter-spacing: 0.012em;
   color: #444444;
   margin: 0;
-  margin-top: .6em;
+  margin-top: 0.6em;
   line-height: 1.65em;
   max-height: 4.95em;
   overflow: hidden;
@@ -1108,9 +1108,9 @@ h5 {
   position: absolute;
   bottom: 0;
   right: 0;
-  background: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(15%, #F8F8F8));
-  background: linear-gradient(90deg, transparent 0%, #F8F8F8 15%);
-  padding: .1em .3em;
+  background: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(15%, #f8f8f8));
+  background: linear-gradient(90deg, transparent 0%, #f8f8f8 15%);
+  padding: 0.1em 0.3em;
   padding-left: 3em;
 }
 
@@ -1135,8 +1135,8 @@ h5 {
   margin: 0;
   padding: 0;
   font-weight: 500;
-  font-size: .95em;
-  color: #FFA900;
+  font-size: 0.95em;
+  color: #ffa900;
 }
 
 .secondary-grid {
@@ -1178,11 +1178,11 @@ h5 {
   font-size: 1.2em;
   font-weight: 600;
   max-width: 100%;
-  letter-spacing: .0125em;
+  letter-spacing: 0.0125em;
   color: #111111;
   margin: 0;
   padding: 0;
-  padding-top: .55em;
+  padding-top: 0.55em;
   line-height: 1.5em;
   max-height: 3em;
   text-overflow: ellipsis;
@@ -1224,8 +1224,8 @@ h5 {
   top: -2.45em;
   left: 0;
   font-weight: 400;
-  color: #6E6E6E;
-  font-size: .85em;
+  color: #6e6e6e;
+  font-size: 0.85em;
 }
 
 .main-post-right {
@@ -1237,7 +1237,7 @@ h5 {
   -o-object-fit: cover;
      object-fit: cover;
   aspect-ratio: 1;
-  border-radius: .7em;
+  border-radius: 0.7em;
   -webkit-box-shadow: 0 5px 10px rgba(80, 60, 0, 0.05);
           box-shadow: 0 5px 10px rgba(80, 60, 0, 0.05);
 }
@@ -1246,7 +1246,7 @@ h5 {
   font-size: 1.2em;
   font-weight: 600;
   max-width: 100%;
-  letter-spacing: .0125em;
+  letter-spacing: 0.0125em;
   color: #111111;
   margin: 0;
   padding: 0;
@@ -1261,13 +1261,13 @@ h5 {
 }
 
 .main-post-description {
-  font-size: .90em;
+  font-size: 0.9em;
   font-weight: 400;
   max-width: 100%;
-  letter-spacing: .012em;
+  letter-spacing: 0.012em;
   color: #444444;
   margin: 0;
-  margin-top: .5em;
+  margin-top: 0.5em;
   line-height: 1.65em;
   max-height: 4.95em;
   overflow: hidden;
@@ -1278,9 +1278,9 @@ h5 {
   position: absolute;
   bottom: 0;
   right: 0;
-  background: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(15%, #F8F8F8));
-  background: linear-gradient(90deg, transparent 0%, #F8F8F8 15%);
-  padding: .1em .3em;
+  background: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(15%, #f8f8f8));
+  background: linear-gradient(90deg, transparent 0%, #f8f8f8 15%);
+  padding: 0.1em 0.3em;
   padding-left: 3em;
 }
 
@@ -1305,8 +1305,8 @@ h5 {
   margin: 0;
   padding: 0;
   font-weight: 500;
-  font-size: .95em;
-  color: #FFA900;
+  font-size: 0.95em;
+  color: #ffa900;
 }
 
 .post-division {
@@ -1348,13 +1348,13 @@ article {
   margin: 0;
   padding: 0;
   font-weight: 400;
-  margin-top: -.2em;
-  margin-bottom: .1em;
+  margin-top: -0.2em;
+  margin-bottom: 0.1em;
 }
 
 .image-author {
   color: #444444;
-  font-size: .9em;
+  font-size: 0.9em;
   padding: 0;
   margin: 0;
   width: 100%;
@@ -1404,7 +1404,7 @@ main {
 }
 
 a {
-  color: #FFA900;
+  color: #ffa900;
   text-decoration: none;
 }
 /*# sourceMappingURL=app.css.map */
