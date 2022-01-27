@@ -7,7 +7,6 @@ const functions = require("firebase-functions");
 
 // General local utility functions
 const {
-  admin,
   db,
   HTTP,
   executeQuery,
@@ -19,7 +18,6 @@ const {
   deleteSingleDocument,
   randomIntFromInterval,
   dateToTimestamp,
-  formatTimestamps,
   arrayFromRange,
   randomArraySelection,
 } = require("./util");
@@ -38,6 +36,7 @@ const UPDATABLE_POST_ATTRIBUTES = [
   "photo",
   "imageAuthor",
 ];
+const MAX_LUCKY_NUMBER = 39;
 
 String.prototype.replaceAll = function replaceAll(search, replacement) {
   var target = this;
@@ -158,7 +157,7 @@ app.get("/api/luckyNumbers/v2", (req, res) => {
   ];
   const todayString = today.toString().replaceAll(",", "-");
 
-  const forceUpdate = req.query.force_update;
+  const forceUpdate = req.query.force_update === "true";
 
   function dataIsCurrent(data) {
     // return false if the update is forced or if there is no lucky numbers data
@@ -182,15 +181,24 @@ app.get("/api/luckyNumbers/v2", (req, res) => {
   }
   function generateNumbersData(data = {}) {
     const luckyNumbers = [];
-    const maxNumber = data.maxNumber || 35;
-    let numberPool = data.numberPool;
+    // one number pool for each lucky number: 1:15 and 16:MAX
+    const numberLimits = [
+      [1, 15],
+      [16, data.maxNumber || MAX_LUCKY_NUMBER],
+    ];
+    const numberPools = [data.numberPoolA, data.numberPoolB];
     for (let i = 0; i < 2; i++) {
+      let numberPool = numberPools[i];
+      // reset the number pool if it's empty
       if (!numberPool || numberPool.length === 0) {
-        numberPool = arrayFromRange(1, maxNumber);
+        numberPool = arrayFromRange(...numberLimits[i]);
       }
       const randomIndex = randomArraySelection(numberPool);
       // remove selection from number pool
       const selection = numberPool.splice(randomIndex, 1)[0];
+      // upate the number pool
+      numberPools[i] = numberPool;
+
       luckyNumbers.push(selection);
     }
     console.log("Generated new lucky numbers data:", luckyNumbers);
@@ -199,8 +207,9 @@ app.get("/api/luckyNumbers/v2", (req, res) => {
       luckyNumbers,
       excludedClasses: data.excludedClasses || [],
       freeDays: data.freeDays || [],
-      maxNumber,
-      numberPool,
+      maxNumber: numberLimits[1][1],
+      numberPoolA: numberPools[0],
+      numberPoolB: numberPools[1],
     };
     db.collection("numbers").doc("data").set(newData);
     sendNumbersData(newData);
