@@ -1,74 +1,61 @@
 import React, { useState, useEffect } from "react";
-import Blob from "../media/blob";
 import { Link } from "react-router-dom";
-import SuPhoto from "../media/su-photo.jpg";
 import MetaTags from "react-meta-tags";
 import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
+import { useCookies } from "react-cookie";
+import Blob from "../media/blob";
+import SuPhoto from "../media/su-photo.jpg";
 import PostCardPreview, { fetchNewsData } from "../components/PostCardPreview";
 import { SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
-
-const dummyData = [
-  {
-    id: `ijsdfb32tew`,
-    title: `Adam Sarkowicz: "uczymy do ostatniego żywego ucznia" `,
-    text: `W dobie pandemi Koronaświrusa, Adam Sarkowicz wypowiada mocne słowa: "Będziemy prowadzili zajęcia szkolne do ostatniego żywego ucznia." Udanych Igrzysk i niech los zawsze wam sprzyja!`,
-    date: new Date(),
-    photo: `https://www.sportslaski.pl/static/thumbnail/article/med/13452.jpg`,
-    views: `2137`,
-  },
-  {
-    id: `sdf89ub8743`,
-    title: `SpeedDating edycja 2022 - informacje`,
-    text: `Nowa edycja SpeedDating'u już przednami, w tym poście znajdziecie wszystkie przydatne informacje dotyczące tegorocznej edycji wydarzenia.`,
-    date: new Date(),
-    photo: `https://images.unsplash.com/photo-1544911845-1f34a3eb46b1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80`,
-    views: `4326`,
-  },
-  {
-    id: `534879bjifsd`,
-    title: `PiS znowu atakuje polską edukację `,
-    text: `Co tu dużo mówić, w końcu żyjemy w Polsce.. Niemniej tutaj mamy dla was krótkie podsumownie aktualnych informacji dotyczących LexCzarnek i idiotyzmów polskiego obozu rządzącego. `,
-    date: new Date(),
-    photo: `https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80`,
-    views: `42069`,
-  },
-  {
-    id: `432fsdsdffd`,
-    title: `Fotorelacja z wycieczki do babiogórskiego parku narodowego`,
-    text: `W dobie pandemi Koronaświrusa, Adam Sarkowicz wypowiada mocne słowa: "Będziemy prowadzili zajęcia szkolne do ostatniego żywego ucznia." Udanych Igrzysk i niech los zawsze wam sprzyja!`,
-    date: new Date(),
-    photo: `https://images.unsplash.com/photo-1494500764479-0c8f2919a3d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80`,
-    views: `2137`,
-  },
-  {
-    id: `5349769fgdgfd`,
-    title: `Teorie spiskowe odnośnie p. Dziedzica [ZOBACZ ZDJĘCIA]`,
-    text: `W dobie pandemi Koronaświrusa, Adam Sarkowicz wypowiada mocne słowa: "Będziemy prowadzili zajęcia szkolne do ostatniego żywego ucznia." Udanych Igrzysk i niech los zawsze wam sprzyja!`,
-    date: new Date(),
-    photo: `https://images.unsplash.com/photo-1470145318698-cb03732f5ddf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80`,
-    views: `2137`,
-  },
-];
+import { API_URL, formatDate } from "../misc";
 
 const Home = ({ setPage }) => {
-  const [luckyNumbers, setLuckyNumbers] = useState([13, 14]);
-  const [forDate, setForDate] = useState("10 sty 2022");
+  const [luckyNumbers, setLuckyNumbers] = useState([3, 14]);
+  const [forDate, setForDate] = useState(formatDate());
   const [newsData, setNewsData] = useState([{}]);
+  const [cookies, setCookies, removeCookies] = useCookies();
+
+  function fetchLuckyNumbers() {
+    const cache = cookies.lucky_numbers_cache;
+    if (cache && cache.date === formatDate()) {
+      // console.log("Found existing cache for lucky numbers data.");
+      setLuckyNumbers(cache.luckyNumbers);
+      setForDate(cache.date);
+      return;
+    }
+    fetch(`${API_URL}/luckyNumbers/v2`).then((res) => {
+      if (res.status !== 200) {
+        setLuckyNumbers(["?", "?"]);
+        return;
+      }
+      res.json().then((data) => {
+        if (!data) {
+          setLuckyNumbers(["?", "?"]);
+          return;
+        }
+        const newCache = {
+          date: formatDate(data.date),
+          luckyNumbers: data.luckyNumbers,
+          excludedClasses: data.excludedClasses,
+        };
+        console.log("Created new cache for lucky numbers data.");
+        setLuckyNumbers(data.luckyNumbers);
+        setForDate(newCache.date);
+        setCookies("lucky_numbers_cache", newCache, { sameSite: "lax" });
+      });
+    });
+  }
 
   useEffect(() => {
     setPage("home");
-    // fetch("URLSCZESLIWYCHNUMERKOW").then((res)=>{
-    //     setLuckyNumbers([String(res.xxxxx), String(res.xxxxx)])
-    //     setForDate(String(res.xxxxx))
-    // });
-    //
-    // INTEGRATE LUCKY NUMBERS API
-
+    fetchLuckyNumbers();
     fetchNewsData({ setNewsData, maxItems: SECONDARY_ITEMS_DEFAULT });
   }, []);
 
   const _scrollDown = () => {
-    window.scrollTo({ top: 900, behavior: "smooth" });
+    document
+      .getElementsByClassName("home-2")[0]
+      .scrollIntoView({ behavior: "smooth", block: "start" });
   };
   return (
     <div className="page-main">
@@ -115,7 +102,7 @@ const Home = ({ setPage }) => {
           className="LN"
           title={`szczęśliwe numerki na dziś to: ${luckyNumbers[0]} i ${luckyNumbers[1]} `}
         >
-          <h5>lucky numbers:</h5>
+          <h5>Szczęśliwe numerki:</h5>
           <div className="LN-box">
             <div className="LN-container">
               <p className="LN-txt">{luckyNumbers[0]}</p>
@@ -212,13 +199,7 @@ const Home = ({ setPage }) => {
       </div>
       <div className="home-section-header">
         <h2>Aktualności</h2>
-        <Link
-          to="/aktualnosci"
-          className="link-more"
-          onClick={() => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-        >
+        <Link to="/aktualnosci" className="link-more">
           <p>zobacz wszystko</p>
           <ArrowRight
             size={22}
