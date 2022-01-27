@@ -11,6 +11,7 @@ const luckyNumbersRoute = require("./routes/luckyNumbers");
 const newsRoute = require("./routes/news");
 const linksRoute = require("./routes/links");
 const calendarRoute = require("./routes/calendar");
+const eventsRoute = require("./routes/events");
 
 // initialise express
 const app = express();
@@ -20,16 +21,17 @@ app.use("/api/luckyNumbers/", luckyNumbersRoute);
 app.use("/api/news/", newsRoute);
 app.use("/api/links/", linksRoute);
 app.use("/api/calendar/", calendarRoute);
+app.use("/api/events/", eventsRoute);
 
 // define the routes that the API is able to serve
-const definedRoutes = ["luckyNumbers", "news", "links", "calendar"];
+const definedRoutes = ["luckyNumbers", "news", "links", "calendar", "events"];
 
 for (path of definedRoutes) {
   // catch all requests to paths that are listed above but use the incorrect HTTP method
   for (pathSuffix of ["/", "/*"]) {
     app.all("/api/" + path + pathSuffix, (req, res) => {
       return res.status(405).json({
-        errorDescription: `${HTTP.err405}Cannot ${req.method} ${req.path}.`,
+        errorDescription: `${HTTP.err405}Cannot ${req.method} '${req.path}'.`,
       });
     });
   }
