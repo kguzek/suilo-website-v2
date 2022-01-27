@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { ChevronsUp } from "react-feather";
 
-const ScrollToTop = () => {
+/**Scrolls the window to the top. */
+export function scrollToTop() {
+  document
+    .getElementById("root")
+    .scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+export function ScrollToTop() {
   const [isActive, setActive] = useState(false);
   const [isSafe, setSafety] = useState(true);
   const [yPos, setY] = useState("-70px");
@@ -57,21 +64,16 @@ const ScrollToTop = () => {
     setSafety(false);
   }, [isActive]);
 
-  // Smooth scroll to top //
-  const _scrollAction = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <button
       title="scroll to top"
       className="scroll-top"
-      onClick={() => _scrollAction()}
+      onClick={() => scrollToTop()}
       style={{ display: display, bottom: yPos }}
     >
       <ChevronsUp size="38" strokeWidth="1.5px" color="#FFA900" />
     </button>
   );
-};
+}
 
 export default ScrollToTop;

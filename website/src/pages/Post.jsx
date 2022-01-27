@@ -68,12 +68,12 @@ const Post = ({ setPage }) => {
   }
 
   useEffect(() => {
-    setPage("news");
     const updateCache = searchParams.get("refresh");
     fetchNewsData({ setNewsData, setLoaded: setLoadedNews, updateCache });
   }, []);
 
   useEffect(() => {
+    setPage(`news_post_${params.postID}`);
     const updateCache = searchParams.get("refresh");
     updateCache && setSearchParams({});
     updatePostData(updateCache);
