@@ -18,6 +18,12 @@ const HTTP500 = "500 Internal Server Error: ";
 
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
 
+/**Custom method definition for replacing all instances of a substring within a string instance. */
+String.prototype.replaceAll = function replaceAll(search, replacement) {
+  var target = this;
+  return target.split(search).join(replacement);
+};
+
 // general function for modifying the date-containing parameters of temp objects into formatted strings
 function formatTimestamps(dataObject) {
   if (!dataObject) {
@@ -36,7 +42,7 @@ function formatTimestamps(dataObject) {
 }
 
 // general function for performing action on single document
-function executeQuery(req, res, collectionName, onSuccessCallback) {
+function executeQuery(req, res, collectionName) {
   // get id from url parameters or arguments, e.g. /api/news/foo or /api/news/?id=foo
   const id = req.params.id || req.query.id;
   // check if the id was provided in the query parameters
@@ -44,14 +50,17 @@ function executeQuery(req, res, collectionName, onSuccessCallback) {
     // initialise query
     const docRef = db.collection(collectionName).doc(id);
     // validation success; execute the given callback function
-    onSuccessCallback(docRef);
+    return { then: (callback) => callback(docRef) };
   } else {
     // return an error if the query parameters do not contain the id of the document to be updated
-    return res
+    res
       .status(400)
       .json({ errorDescription: HTTP400 + "No document ID specified." });
+    return { then: () => {} };
   }
 }
+
+/*      ======== SHORT URL FUNCTIONS ========      */
 
 // .thennable function for generating a random shortened URL
 function generateRandomURL(length = 7) {
@@ -94,7 +103,7 @@ function createShortenedURL(res, destination, customURL) {
       views: 0,
     });
     return res.status(200).json({
-      msg: `Success! Created shortened URl with destination '${destination}'.`,
+      msg: `Success! Created shortened URL with destination '${destination}'.`,
       url: id,
     });
   }
@@ -131,6 +140,48 @@ function createShortenedURL(res, destination, customURL) {
   });
 }
 
+/** Returns the Polish name for the month with the given zero-based index. */
+function getMonthName(monthID) {
+  const date = new Date(new Date().setMonth(monthID));
+  return date.toLocaleString("pl-PL", { month: "long" });
+}
+
+/*      ======== CALENDAR FUNCTIONS ========      */
+function createCalendar(res, monthID, events = []) {
+  if (!monthID) {
+    return res.status(400).json({
+      errorMessage: `${HTTP400}Invalid month ID '${monthID}'.`,
+    });
+  }
+  const docRef = db.collection("calendar").doc(monthID.toString());
+  const eventCollection = docRef.collection("events");
+
+  const monthName = getMonthName(monthID - 1);
+
+  const data = {
+    monthID,
+    monthName,
+    numEvents: events.length,
+    events,
+  };
+
+  function populateEvents(_createdDocRef) {
+    // loop through each event in the array and create a document in the "events" collection
+    for (const event of events) {
+      eventCollection.doc().set(event);
+    }
+    res.status(200).json(data);
+  }
+  docRef.get().then((doc) => {
+    if (doc.data()) {
+      return res.status(400).json({
+        errorDescription: HTTP400 + "A calendar for that month already exists.",
+      });
+    }
+    docRef.set({ monthName }).then(populateEvents);
+  });
+}
+
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 // general function for creating a single document
@@ -157,50 +208,61 @@ function sendSingleResponse(docQuery, res) {
   docQuery.get().then((doc) => {
     // check if the document was found
     const data = doc.data();
-    if (data) {
-      // formats all existing date fields as timestamp strings
-      formatTimestamps(data);
-      // increment the views count or start at 1 if it doesn't exist
-      const views = (data.views || 0) + 1;
-      // update views count in database
-      docQuery.update({ views }).then(() => {
-        // send document id with rest of the data
-        return res.status(200).json({ id: doc.id, ...data, views });
-      });
-    } else {
+    if (!data) {
       // return an error if the document was not found
       return res.status(404).json({
         errorDescription: HTTP404 + "The requested document was not located.",
       });
     }
+    // formats all existing date fields as timestamp strings
+    formatTimestamps(data);
+    // increment the views count or start at 1 if it doesn't exist
+    const views = (data.views || 0) + 1;
+    // update views count in database
+    docQuery.update({ views }).then(() => {
+      // send document id with rest of the data
+      return res.status(200).json({ id: doc.id, ...data, views });
+    });
   });
 }
 
 // general function for sending back a list of documents
-function sendListResponse(docListQuery, req, res) {
+function sendListResponse(docListQuery, queryOptions, res, callback) {
   /* -- Pagination -- */
   // initialise parameters
-  const page = Math.max(parseInt(req.query.page || 1), 1);
-  const items = Math.max(parseInt(req.query.items || 25), 1);
+  const page = Math.max(parseInt(queryOptions.page || 1), 1);
+  const items = Math.max(parseInt(queryOptions.items || 25), 1);
   // will only get the documents after startIndex
   const startIndex = items * (page - 1);
   const endIndex = items * page;
+  
+  // don't limit the response if the 'items' parameter is set to -1
+  if (queryOptions.all !== "true") {
+    docListQuery = docListQuery.limit(endIndex);
+  }
+
+  function defaultCallback(responseArray, collectionDocs) {
+    return res.status(200).json({
+      // add extra info for messages such as "showing items X-Y of Z"
+      firstOnPage: startIndex + !!collectionDocs.length, // increment by 1 if there is at least 1 document in the list
+      lastOnPage: collectionDocs.length,
+      contents: responseArray,
+    });
+  }
 
   // initialise response as an empty array
   const response = [];
+
   // send the query to database
   docListQuery
-    .limit(endIndex)
     .get()
     .then((querySnapshot) => {
       // initialise extra info variables
-      let last = 0;
       // loop through every document
       let index = 0;
       querySnapshot.forEach((doc) => {
         // increments index after evaluating it to see if it should be included in the response
         if (index++ >= startIndex) {
-          last++;
           // read the document
           const temp = doc.data();
           if (temp) {
@@ -216,12 +278,7 @@ function sendListResponse(docListQuery, req, res) {
           }
         }
       });
-      return res.status(200).json({
-        // add extra info for messages such as "showing items X-Y of Z"
-        firstOnPage: startIndex + !!querySnapshot.docs.length, // increment by 1 if there is at least 1 document in the list
-        totalOnPage: querySnapshot.docs.length,
-        contents: response,
-      });
+      return (callback || defaultCallback)(response, querySnapshot.docs);
     })
     .catch((error) => {
       return res.status(500).json({
@@ -338,6 +395,7 @@ module.exports = {
   },
   executeQuery,
   createShortenedURL,
+  createCalendar,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,
