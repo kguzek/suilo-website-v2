@@ -11,6 +11,7 @@ const {
   HTTP,
   executeQuery,
   createShortenedURL,
+  createCalendar,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,
@@ -38,10 +39,16 @@ const UPDATABLE_POST_ATTRIBUTES = [
 ];
 const MAX_LUCKY_NUMBER = 35;
 
-String.prototype.replaceAll = function replaceAll(search, replacement) {
-  var target = this;
-  return target.split(search).join(replacement);
-};
+const definedRoutes = [
+  "luckyNumbers",
+  "luckyNumbers/v2",
+  "news",
+  "news/*",
+  "links",
+  "links/*",
+  "calendar",
+  "calendar/*",
+];
 
 /*      ======== LUCKY NUMBERS-SPECIFIC CRUD FUNCTIONS ========      */
 
@@ -262,34 +269,30 @@ app.get("/api/news", (req, res) => {
   // initialise base query
   const docListQuery = db.collection("news").orderBy("date", "desc");
   // process query
-  sendListResponse(docListQuery, req, res);
+  sendListResponse(docListQuery, req.query, res);
 });
 
 // READ single news
 app.get("/api/news/:id", (req, res) => {
-  // initialise the callback to execute on success
-  const callback = (docRef) => sendSingleResponse(docRef, res);
-  // validate the request; if it is valid, execute the above callback
-  executeQuery(req, res, "news", callback);
+  executeQuery(req, res, "news").then((docRef) =>
+    sendSingleResponse(docRef, res)
+  );
 });
 
 // UPDATE news
 app.put("/api/news/:id", (req, res) => {
   // ?id=null&author=null&title=null&text=null&photo=null
-  // initialise the callback to execute on success
-  const callback = (docRef) =>
-    updateSingleDocument(docRef, res, req.query, UPDATABLE_POST_ATTRIBUTES);
-  // validate the request; if it is valid, execute the above callback
-  executeQuery(req, res, "news", callback);
+  executeQuery(req, res, "news").then((docRef) =>
+    updateSingleDocument(docRef, res, req.query, UPDATABLE_POST_ATTRIBUTES)
+  );
 });
 
 // DELETE news
 app.delete("/api/news/:id", (req, res) => {
   // ?id=null
-  // initialise the callback to be executed on success
-  const callback = (docRef) => deleteSingleDocument(docRef, res);
-  // validate the request; if it is valid, execute the above callback
-  executeQuery(req, res, "news", callback);
+  executeQuery(req, res, "news").then((docRef) =>
+    deleteSingleDocument(docRef, res)
+  );
 });
 
 /*      ======== LINK SHORTENER-SPECIFIC CRUD FUNCTIONS ========      */
@@ -314,18 +317,16 @@ app.post("/api/links/:link", (req, res) => {
 // READ all shortened URLs
 app.get("/api/links", (req, res) => {
   // ?page=1&items=25
-  // initialise base query
   const docListQuery = db.collection("links").orderBy("destination", "asc");
   // return URL list
-  sendListResponse(docListQuery, req, res);
+  sendListResponse(docListQuery, req.query, res);
 });
 
 // READ single shortened URL
 app.get("/api/links/:id", (req, res) => {
-  // find the destination URL in the database
-  const callback = (docRef) => sendSingleResponse(docRef, res);
-  // validate the request; if it is valid, execute the above callback
-  executeQuery(req, res, "links", callback);
+  executeQuery(req, res, "links").then((docRef) =>
+    sendSingleResponse(docRef, res)
+  );
 });
 
 // UPDATE shortened URL
@@ -347,13 +348,72 @@ app.put("/api/links/:url", (req, res) => {
 
 // DELETE single shortened URL
 app.delete("/api/links/:id", (req, res) => {
-  // find the destination URL in the database
-  const callback = (docRef) => deleteSingleDocument(docRef, res);
-  // validate the request; if it is valid, execute the above callback
-  executeQuery(req, res, "links", callback);
+  executeQuery(req, res, "links").then((docRef) =>
+    deleteSingleDocument(docRef, res)
+  );
 });
 
-for (path of ["luckyNumbers", "news", "news/:x", "links", "links/:x"]) {
+/*      ======== CALENDAR EVENT-SPECIFIC CRUD FUNCTIONS ========      */
+
+// CREATE specific calendar
+app.post("/api/calendar/:monthID", (req, res) => {
+  createCalendar(res, req.params.monthID);
+});
+
+// READ specific calendar
+app.get("/api/calendar/:id", (req, res) => {
+  const inputID = req.params.id;
+  const monthID = parseInt(inputID);
+
+  // check if the user-inputted month ID is valid
+  if (
+    isNaN(monthID) ||
+    monthID.toString() !== inputID ||
+    monthID < 1 ||
+    monthID > 12
+  ) {
+    return res.status(400).json({
+      errorDescription: `${HTTP.Err400}Invalid month ID '${inputID}'. Must be an integer value from 1 to 12.`,
+    });
+  }
+
+  // handle the document reference and send the response
+  function processData(docRef) {
+    docRef.get().then((doc) => {
+      /** Send the JSON response containing the events from the 'events' collection. */
+      function sendResponse(responseArr, snapshotDocuments) {
+        return res.status(200).json({
+          monthID,
+          ...data,
+          numEvents: snapshotDocuments.length,
+          events: responseArr,
+        });
+      }
+
+      const data = doc.data();
+      // create the calendar if it does not exist
+      if (!data) {
+        return createCalendar(res, monthID);
+      }
+      const docListQuery = docRef.collection("events");
+
+      // 'all' query parameter ensures the list response contains every document in the collection
+      // by default it's limited to 25 items
+      // could also manually set the number of items with { items: xxx }
+      const queryOptions = { all: "true" };
+      sendListResponse(docListQuery, queryOptions, res, sendResponse);
+    });
+  }
+  executeQuery(req, res, "calendar").then(processData);
+});
+
+// READ current calendar
+app.get("/api/calendar", (_req, res) => {
+  const monthID = new Date().getMonth() + 1;
+  res.redirect(monthID.toString());
+});
+
+for (path of definedRoutes) {
   // catch all requests to paths that are listed above but use the incorrect HTTP method
   app.all("/api/" + path, (req, res) => {
     return res.status(405).json({
