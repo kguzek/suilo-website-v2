@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useParams, useSearchParams } from "react-router-dom";
-import MetaTags from "react-meta-tags";
+import { MetaTags } from "react-meta-tags";
 import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
 
 const News = ({ setPage }) => {
