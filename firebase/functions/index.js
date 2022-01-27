@@ -297,19 +297,19 @@ app.delete("/api/news/:id", (req, res) => {
 
 /*      ======== LINK SHORTENER-SPECIFIC CRUD FUNCTIONS ========      */
 
-// CREATE shortened URL
-app.post("/api/links/:link", (req, res) => {
-  //?custom_url=null
-  // return saved link if it has already been generated,
-  // otherwise return newly-generated URL
-
-  // link is the relative path from 'suilo.pl/'; '/' -> '%2F' in HTTP request
+// CREATE random shortened URL
+app.post("/api/links/*", (req, res) => {
+  // /api/links/?destination=null -> random short URL with given destination
+  // /api/links/[custom_url]/?destination=null -> custom short URL with given destination
 
   // initialise parameters
-  const customURL = req.query.custom_url;
-  let destination = req.params.link;
-  destination.startsWith("/") || (destination = "/" + destination);
-
+  const customURL = req.params[0]; // can be an empty string; this means there was none specified
+  const destination = req.query.destination;
+  if (!destination) {
+    return res.status(400).json({
+      errorDescription: HTTP.Err400 + "No destination URL specified.",
+    });
+  }
   // sends the response
   createShortenedURL(res, destination, customURL);
 });

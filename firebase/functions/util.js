@@ -62,35 +62,38 @@ function executeQuery(req, res, collectionName) {
 
 /*      ======== SHORT URL FUNCTIONS ========      */
 
-// .thennable function for generating a random shortened URL
+// thenable function for generating a random shortened URL
 function generateRandomURL(length = 7) {
   // generate new URLs until it finds one that hasn't been used yet
   const shortURLs = db.collection("links");
-  let continueLooping = true;
 
-  function resolve(_resolve, _reject) {
-    while (continueLooping) {
-      // generate alphanumeric string with given length
-      const randStr = randomstring.generate(length);
-      // regenerate if the link is taken
-      shortURLs
-        .doc(randStr)
-        .get()
-        .then((doc) => {
-          if (!doc.data()) {
-            continueLooping = false;
-            _resolve(randStr);
-          }
-        });
-    }
+  /** Recursive function for generating the random URL. */
+  function generate(resolve, reject) {
+    // generate alphanumeric string with given length
+    const randStr = randomstring.generate(length);
+    console.log(`Generated URL '${randStr}'`);
+    // regenerate if the link is taken
+    shortURLs
+      .doc(randStr)
+      .get()
+      .then((doc) => {
+        // check if the document exists in the database
+        if (doc.data()) {
+          // recursive call to regenerate URL
+          generate(resolve, reject);
+        }
+        resolve(randStr);
+      });
   }
-
-  return { then: resolve };
+  return { then: generate };
 }
 
 function createShortenedURL(res, destination, customURL) {
   // initialise the links collection reference
   const shortURLs = db.collection("links");
+
+  // ensure destination starts with '/'
+  destination.startsWith("/") || (destination = "/" + destination);
 
   // initialise query to check if there is already a short url for the given destination
   const existingDestinationQuery = shortURLs
@@ -123,7 +126,9 @@ function createShortenedURL(res, destination, customURL) {
 
     if (!customURL) {
       // generate random URL if there is none provided
-      return generateRandomURL().then(createDocument);
+      return generateRandomURL().then(createDocument, (err) => {
+        return res.status(500).json({ errorDescription: HTTP500 + err });
+      });
     }
 
     shortURLs
@@ -235,7 +240,7 @@ function sendListResponse(docListQuery, queryOptions, res, callback) {
   // will only get the documents after startIndex
   const startIndex = items * (page - 1);
   const endIndex = items * page;
-  
+
   // don't limit the response if the 'items' parameter is set to -1
   if (queryOptions.all !== "true") {
     docListQuery = docListQuery.limit(endIndex);
