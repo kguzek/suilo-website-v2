@@ -52,7 +52,7 @@ const Post = ({ setPage }) => {
           const cacheDate = Date.parse(cache.date);
           const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
           if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
-            console.log("Found existing cache for post data.", cache);
+            // console.log("Found existing cache for post data.", cache);
             setPostData(cache.data);
             return setLoaded(true);
           }
