@@ -7,17 +7,22 @@ import {
   fetchNewsData,
   MAIN_ITEMS_DEFAULT,
 } from "../components/PostCardPreview";
-import { conjugatePolish, API_URL, DEFAULT_IMAGE, formatDate } from "../misc";
-import { Bars } from 'react-loader-spinner'
+import {
+  conjugatePolish,
+  API_URL,
+  DEFAULT_IMAGE,
+  formatDate,
+  removeSearchParam,
+} from "../misc";
+import { Bars } from "react-loader-spinner";
 
 const MAX_CACHE_AGE = 2; // hours
 
 const Post = ({ setPage }) => {
   const [loaded, setLoaded] = useState(false);
-  const [loadedNews, setLoadedNews] = useState(false);
   const [postData, setPostData] = useState({});
   const [newsData, setNewsData] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({});
   const params = useParams();
 
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
@@ -70,19 +75,25 @@ const Post = ({ setPage }) => {
 
   useEffect(() => {
     const updateCache = searchParams.get("refresh");
-    fetchNewsData({ setNewsData, setLoaded: setLoadedNews, updateCache });
+    fetchNewsData({ setNewsData, updateCache });
   }, []);
 
   useEffect(() => {
     setPage(`news_post_${params.postID}`);
-    const updateCache = searchParams.get("refresh");
-    updateCache && setSearchParams({});
+    const updateCache = removeSearchParam(
+      searchParams,
+      setSearchParams,
+      "refresh"
+    );
     updatePostData(updateCache);
   }, [params.postID]);
 
   if (!loaded) {
     return (
-      <div className="loading-whole-screen" style={{ backgroundColor: "transparent" }}>
+      <div
+        className="loading-whole-screen"
+        style={{ backgroundColor: "transparent" }}
+      >
         <Bars color="#FFA900" height={50} width={50} />
       </div>
     );
@@ -109,7 +120,9 @@ const Post = ({ setPage }) => {
           )}
           <div className="post-info">
             <span style={{ fontWeight: "500" }}>{newDate}</span>
-            {postData.modified && <i>&nbsp;&nbsp;{`Ostatnia modyfikacja: ${modifiedDate}`}</i>}
+            {postData.modified && (
+              <i>&nbsp;&nbsp;{`Ostatnia modyfikacja: ${modifiedDate}`}</i>
+            )}
             &nbsp;&nbsp;·&nbsp;&nbsp;{views}
           </div>
           <h1 className="article-title">{postData.title}</h1>

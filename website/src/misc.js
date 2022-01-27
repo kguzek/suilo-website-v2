@@ -40,6 +40,19 @@ export function formatDate(
   return dateObj.toLocaleDateString("pl-PL", options);
 }
 
+/** Removes the given parameter from the search params object. Returns the key's value prior to deletion. */
+export function removeSearchParam(
+  searchParams,
+  setSearchParamsFunc,
+  paramToRemove
+) {
+  const value = searchParams.get(paramToRemove);
+  const newSearchParams = new URLSearchParams(searchParams);
+  newSearchParams.delete(paramToRemove);
+  setSearchParamsFunc(newSearchParams);
+  return value;
+}
+
 // Temporary API URL assignment
 export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api";
 
