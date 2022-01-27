@@ -1,24 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "react-feather";
+import { formatDate } from "../misc";
 
 const PostCardMain = ({ data }) => {
-  const dateFormatOptions = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  };
-  const date = new Date(data.date).toLocaleDateString(
-    "pl-PL",
-    dateFormatOptions
-  );
-  const modified = new Date(data.modified).toLocaleDateString(
-    "pl-PL",
-    dateFormatOptions
-  );
+  const date = formatDate(data.date, true);
+  const modified = formatDate(data.modified, true);
   const textShort = data.text;
   return (
     <div className="main-post-card">
