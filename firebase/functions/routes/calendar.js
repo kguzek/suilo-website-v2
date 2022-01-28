@@ -67,7 +67,7 @@ router
     if (!collectionInfo) {
       return;
     }
-    const [collectionRef, yearInt, monthInt] = collectionInfo;
+    const [collectionRef, _yearInt, monthInt] = collectionInfo;
 
     // determine the number of days in the month
     const maxDate = new Date(new Date().getFullYear(), monthInt, 0).getDate();
@@ -88,8 +88,6 @@ router
       type: parseInt(req.query.type) || 0,
       startDate,
       endDate,
-      yearInt,
-      monthInt,
     };
 
     createSingleDocument(event, res, { collectionRef });
