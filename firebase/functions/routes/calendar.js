@@ -51,11 +51,7 @@ function getCollectionReference(req, res) {
     return;
   }
   return [
-    db
-      .collection("calendar")
-      .doc(yearStr)
-      .collection(monthStr)
-      .orderBy("startDate", "asc"),
+    db.collection("calendar").doc(yearStr).collection(monthStr),
     yearInt,
     monthInt,
   ];
@@ -129,7 +125,12 @@ router
     // 'all' query parameter ensures the list response contains every document in the collection
     // by default it's limited to 25 items
     // could also manually set the number of items with { items: xxx }
-    sendListResponse(collectionRef, { all: "true" }, res, sendResponse);
+    sendListResponse(
+      collectionRef.orderBy("startDate", "asc"),
+      { all: "true" },
+      res,
+      sendResponse
+    );
   })
 
   // READ specific calendar event

@@ -83,10 +83,13 @@ function dateToTimestamp(date) {
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
 function createSingleDocument(data, res, { collectionName, collectionRef }) {
   // attempts to add the data to the given collection
-  (collectionRef || db.collection(collectionName))
+  console.log({ collectionRef, collectionName });
+  collectionRef = collectionRef || db.collection(collectionName);
+  collectionRef
     .add(data)
     .then((doc) => {
       // success; return the data along with the document id
+      formatTimestamps(data);
       return res.status(200).json({ id: doc.id, ...data });
     })
     .catch((error) => {
@@ -165,11 +168,11 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
         // increments index after evaluating it to see if it should be included in the response
         if (index++ >= startIndex) {
           // read the document
-          const temp = doc.data();
-          if (temp) {
+          const data = doc.data();
+          if (data) {
             // formats all specified date fields as strings if they exist
-            formatTimestamps(temp);
-            response.push({ id: doc.id, ...temp });
+            formatTimestamps(data);
+            response.push({ id: doc.id, ...data });
           } else {
             // return an error if any document was not found
             // index has already been incremented so it is 1-based

@@ -23,7 +23,7 @@ function getIntArray(string, separator, defaultInput = "0") {
   function parseNum(num) {
     const int = parseInt(num);
     // set anyNaN to true if 'int' is not a number
-    anyNaN ||= isNaN(int);
+    anyNaN = anyNaN || isNaN(int);
     return int;
   }
 
