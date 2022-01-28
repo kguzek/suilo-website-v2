@@ -8,7 +8,7 @@ const {
   sendListResponse,
   updateSingleDocument,
   deleteSingleDocument,
-  executeQuery,
+  getDocRef,
 } = require("../util");
 
 const router = express.Router();
@@ -57,7 +57,7 @@ router
 
   // READ single news
   .get("/:id", (req, res) => {
-    executeQuery(req, res, "news").then((docRef) =>
+    getDocRef(req, res, "news").then((docRef) =>
       sendSingleResponse(docRef, res)
     );
   })
@@ -65,7 +65,7 @@ router
   // UPDATE news
   .put("/:id", (req, res) => {
     // ?id=null&author=null&title=null&text=null&photo=null
-    executeQuery(req, res, "news").then((docRef) =>
+    getDocRef(req, res, "news").then((docRef) =>
       updateSingleDocument(docRef, res, req.query, UPDATABLE_POST_ATTRIBUTES)
     );
   })
@@ -73,7 +73,7 @@ router
   // DELETE news
   .delete("/:id", (req, res) => {
     // ?id=null
-    executeQuery(req, res, "news").then((docRef) =>
+    getDocRef(req, res, "news").then((docRef) =>
       deleteSingleDocument(docRef, res)
     );
   });

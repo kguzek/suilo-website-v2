@@ -3,7 +3,7 @@ const randomstring = require("randomstring");
 const {
   db,
   HTTP,
-  executeQuery,
+  getDocRef,
   sendSingleResponse,
   sendListResponse,
   updateSingleDocument,
@@ -128,7 +128,7 @@ router
 
   // READ single shortened URL
   .get("/:id", (req, res) => {
-    executeQuery(req, res, "links").then((docRef) =>
+    getDocRef(req, res, "links").then((docRef) =>
       sendSingleResponse(docRef, res)
     );
   })
@@ -152,7 +152,7 @@ router
 
   // DELETE single shortened URL
   .delete("/:id", (req, res) => {
-    executeQuery(req, res, "links").then((docRef) =>
+    getDocRef(req, res, "links").then((docRef) =>
       deleteSingleDocument(docRef, res)
     );
   });

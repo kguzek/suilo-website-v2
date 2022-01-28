@@ -4,7 +4,7 @@ const {
   db,
   HTTP,
   SERVER_REGION,
-  executeQuery,
+  getDocRef,
   sendListResponse,
   sendSingleResponse,
   createSingleDocument,
@@ -137,7 +137,7 @@ router
     const collectionRef = collectionInfo[0];
     const id = req.params.id;
 
-    executeQuery(req, res, "calendar").then(() => {
+    getDocRef(req, res, "calendar").then((_docRef) => {
       sendSingleResponse(collectionRef.doc(id), res);
     });
   })
@@ -151,7 +151,7 @@ router
 
     const docRef = collectionInfo[0].doc(req.params.id);
 
-    executeQuery(req, res, "calendar").then(() => {
+    getDocRef(req, res, "calendar").then(() => {
       updateSingleDocument(docRef, res, req.query, UPDATABLE_EVENT_ATTRIBUTES);
     });
   })
@@ -165,7 +165,7 @@ router
     const id = req.params.id;
 
     const collectionRef = collectionInfo[0];
-    executeQuery(req, res, "calendar").then(() => {
+    getDocRef(req, res, "calendar").then(() => {
       deleteSingleDocument(collectionRef.doc(id), res);
     });
   });

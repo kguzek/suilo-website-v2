@@ -48,7 +48,7 @@ function formatTimestamps(dataObject) {
 /** Checks if the request params or query contains a document ID.
  * If so, calls the success callback with a reference to the document with the specified ID.
  * Otherwise calls the failure callback if specified, or sends a HTTP 400 response.  */
-function executeQuery(req, res, collectionName) {
+function getDocRef(req, res, collectionName) {
   // get id from url parameters or arguments, e.g. /api/news/foo or /api/news/?id=foo
   const id = req.params.id || req.query.id;
 
@@ -81,7 +81,7 @@ function dateToTimestamp(date) {
 
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
-/** Creates a single document with the specified data in the specified collection. */
+/** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
 function createSingleDocument(data, res, { collectionName, collectionRef }) {
   // attempts to add the data to the given collection
   (collectionRef || db.collection(collectionName))
@@ -284,7 +284,7 @@ module.exports = {
     err500: HTTP500,
   },
   SERVER_REGION,
-  executeQuery,
+  getDocRef,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,
