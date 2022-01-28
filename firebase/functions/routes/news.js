@@ -46,12 +46,8 @@ router
 
   // READ all news
   .get("/", (req, res) => {
-    // ?page=1&items=25
-    // return news list
-
-    // initialise base query
+    // ?page=1&items=25&all=false
     const docListQuery = db.collection("news").orderBy("date", "desc");
-    // process query
     sendListResponse(docListQuery, req.query, res);
   })
 
@@ -64,7 +60,6 @@ router
 
   // UPDATE news
   .put("/:id", (req, res) => {
-    // ?id=null&author=null&title=null&text=null&photo=null
     getDocRef(req, res, "news").then((docRef) =>
       updateSingleDocument(docRef, res, req.query, UPDATABLE_POST_ATTRIBUTES)
     );
@@ -72,7 +67,6 @@ router
 
   // DELETE news
   .delete("/:id", (req, res) => {
-    // ?id=null
     getDocRef(req, res, "news").then((docRef) =>
       deleteSingleDocument(docRef, res)
     );

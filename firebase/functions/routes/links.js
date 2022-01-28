@@ -105,8 +105,6 @@ router
   .post("/*", (req, res) => {
     // /api/links/?destination=null -> random short URL with given destination
     // /api/links/[custom_url]/?destination=null -> custom short URL with given destination
-
-    // initialise parameters
     const customURL = req.params[0]; // can be an empty string; this means there was none specified
     const destination = req.query.destination;
     if (!destination) {
@@ -122,7 +120,6 @@ router
   .get("/", (req, res) => {
     // ?page=1&items=25
     const docListQuery = db.collection("links").orderBy("destination", "asc");
-    // return URL list
     sendListResponse(docListQuery, req.query, res);
   })
 
@@ -136,7 +133,6 @@ router
   // UPDATE shortened URL
   .put("/:url", (req, res) => {
     // ?destination=null
-    // initialise parameters
     let destination = req.query.destination;
     if (!destination) {
       return res.status(400).json({
