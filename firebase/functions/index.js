@@ -6,7 +6,7 @@ const cors = require("cors");
 const functions = require("firebase-functions");
 
 // Local imports
-const { HTTP } = require("./util");
+const { HTTP, SERVER_REGION } = require("./util");
 const luckyNumbersRoute = require("./routes/luckyNumbers");
 const newsRoute = require("./routes/news");
 const linksRoute = require("./routes/links");
@@ -44,4 +44,4 @@ app.all("*", (req, res) => {
   });
 });
 
-exports.app = functions.region("europe-west1").https.onRequest(app);
+exports.app = functions.region(SERVER_REGION).https.onRequest(app);

@@ -16,6 +16,8 @@ const HTTP404 = "404 Not Found: ";
 const HTTP405 = "405 Method Not Allowed: ";
 const HTTP500 = "500 Internal Server Error: ";
 
+const SERVER_REGION = "europe-west1";
+
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
 
 /**Custom method definition for replacing all instances of a substring within a string instance. */
@@ -276,6 +278,7 @@ module.exports = {
     err405: HTTP405,
     err500: HTTP500,
   },
+  SERVER_REGION,
   executeQuery,
   createSingleDocument,
   sendSingleResponse,

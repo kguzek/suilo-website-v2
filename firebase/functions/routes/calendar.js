@@ -1,7 +1,9 @@
 const express = require("express");
+const url = require("url");
 const {
   db,
   HTTP,
+  SERVER_REGION,
   executeQuery,
   sendListResponse,
   sendSingleResponse,
@@ -93,8 +95,10 @@ router
   })
 
   // READ all current calendar events
-  .get("/", (_req, res) => {
-    res.redirect(`${new Date().getFullYear()}/${new Date().getMonth() + 1}`);
+  .get("/", (req, res) => {
+    const redirect = `${new Date().getFullYear()}/${new Date().getMonth() + 1}`;
+    const fullURL = `/suilo-page/${SERVER_REGION}/app${req.baseUrl}/${redirect}`;
+    res.redirect(fullURL);
   })
 
   // READ all calendar events
@@ -144,7 +148,7 @@ router
     if (!collectionInfo) {
       return;
     }
-	
+
     const docRef = collectionInfo[0].doc(req.params.id);
 
     executeQuery(req, res, "calendar").then(() => {
