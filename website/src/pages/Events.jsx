@@ -25,18 +25,14 @@ const Events = ({ setPage }) => {
   }
 
   function fetchCalendarEventsData(updateCache = false) {
-    function processJsonData(jsonData) {
-      if (!jsonData) {
+    function processJsonData(data) {
+      if (!data) {
         console.log("Could not retrieve calendar events data.");
         return setLoaded(true);
       }
-      // sort the events by start date
-      const events = jsonData.events.sort(
-        (event1, event2) => event1.startDate - event2.startDate
-      );
       const newCache = {
         date: new Date(),
-        data: { ...jsonData, events },
+        data,
       };
       localStorage.setItem(cacheName, JSON.stringify(newCache));
       console.log("Created cache for calendar events data.", newCache);
@@ -89,24 +85,31 @@ const Events = ({ setPage }) => {
         />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
-      {/* TODO: improve temporary calendar events render */}
+      {/* TODO: replace temporary calendar events render */}
       {calendarData.events.length === 0
         ? "Brak wydarzeń kalendarzowych."
         : calendarData.events.map((event, key) => {
             return (
               <div key={key}>
-                {event.title}:{" "}
-                {formatDate([
-                  calendarData.yearInt,
-                  calendarData.monthInt,
-                  event.startDate,
-                ])}
-                {event.startDate !== event.endDate &&
-                  ` — ${formatDate([
-                    calendarData.yearInt,
-                    calendarData.monthInt,
-                    event.endDate,
-                  ])}`}
+                <p>
+                  <small>
+                    <i>
+                      {formatDate([
+                        calendarData.yearInt,
+                        calendarData.monthInt,
+                        event.startDate,
+                      ])}
+                      {event.startDate !== event.endDate &&
+                        ` — ${formatDate([
+                          calendarData.yearInt,
+                          calendarData.monthInt,
+                          event.endDate,
+                        ])}`}
+                    </i>
+                  </small>
+                  <br />
+                  {event.title}
+                </p>
               </div>
             );
           })}

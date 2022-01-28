@@ -14,11 +14,6 @@ const ITEMS_PER_PAGE =
 
 const NO_NEWS_MESSAGE = "Brak aktualności.";
 
-/** Compare two objects that contain a 'date' attribute. */
-function sortArticles(article1, article2) {
-  return new Date(article2.date) - new Date(article1.date);
-}
-
 /** Fetch the data for the news article previews. */
 export function fetchNewsData({
   setNewsData,
@@ -34,7 +29,7 @@ export function fetchNewsData({
       return setLoaded(true);
     }
     // map each article so that if it doesn't contain a 'photo' attribute it uses the default image
-    const data = jsonData.contents.sort(sortArticles).map((article) => {
+    const data = jsonData.contents.map((article) => {
       return { ...article, photo: article.photo || DEFAULT_IMAGE };
     });
     const newCache = {
