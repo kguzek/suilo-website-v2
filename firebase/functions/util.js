@@ -215,7 +215,12 @@ function updateSingleDocument(
     // check if object attribute is provided in the request query
     if (requestParams[attrib]) {
       // it is; assign parameter to object attributes
-      newData[attrib] = requestParams[attrib];
+      const val = requestParams[attrib];
+      if (parseInt(val).toString() === val) {
+        newData[attrib] = parseInt(val);
+      } else {
+        newData[attrib] = val;
+      }
       // mark data as updated
       dataUpdated = true;
     }
