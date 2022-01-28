@@ -51,7 +51,11 @@ function getCollectionReference(req, res) {
     return;
   }
   return [
-    db.collection("calendar").doc(yearStr).collection(monthStr),
+    db
+      .collection("calendar")
+      .doc(yearStr)
+      .collection(monthStr)
+      .orderBy("startDate", "asc"),
     yearInt,
     monthInt,
   ];
