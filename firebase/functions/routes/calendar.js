@@ -1,110 +1,169 @@
 const express = require("express");
-const { db, HTTP, executeQuery, sendListResponse } = require("../util");
+const {
+  db,
+  HTTP,
+  executeQuery,
+  sendListResponse,
+  sendSingleResponse,
+  createSingleDocument,
+  deleteSingleDocument,
+  updateSingleDocument,
+} = require("../util");
 
 const router = express.Router();
 
+const UPDATABLE_EVENT_ATTRIBUTES = ["title", "type", "startDate", "endDate"];
+
 /*      ======== CALENDAR FUNCTIONS ========      */
 
-/** Returns the Polish name for the month with the given zero-based index. */
+/** Returns the Polish name for the month of the year with the given zero-based index. */
 function getMonthName(monthID) {
   const date = new Date(new Date().setMonth(monthID));
   return date.toLocaleString("pl-PL", { month: "long" });
 }
 
-function createCalendar(res, monthID, events = []) {
-  if (!monthID) {
-    return res.status(400).json({
-      errorMessage: `${HTTP400}Invalid month ID '${monthID}'.`,
+/** Returns the collection reference from the request query. */
+function getCollectionReference(req, res) {
+  const yearStr = req.params.year;
+  const monthStr = req.params.month;
+  const yearInt = parseInt(yearStr);
+  const monthInt = parseInt(monthStr);
+
+  // check if the user-inputted year is valid
+  if (isNaN(yearInt) || yearInt.toString() !== yearStr || yearInt < 2022) {
+    res.status(400).json({
+      errorDescription: `${HTTP.err400}Invalid year '${yearStr}'. Must be an integer value representing a year.`,
     });
+    return;
   }
-  const docRef = db.collection("calendar").doc(monthID.toString());
-  const eventCollection = docRef.collection("events");
-
-  const monthName = getMonthName(monthID - 1);
-
-  const data = {
-    monthID,
-    monthName,
-    numEvents: events.length,
-    events,
-  };
-
-  function populateEvents(_createdDocRef) {
-    // loop through each event in the array and create a document in the "events" collection
-    for (const event of events) {
-      eventCollection.doc().set(event);
-    }
-    res.status(200).json(data);
+  // check if the user-inputted month ID is valid
+  if (
+    isNaN(monthInt) ||
+    monthInt.toString() !== monthStr ||
+    monthInt < 1 ||
+    monthInt > 12
+  ) {
+    res.status(400).json({
+      errorDescription: `${HTTP.err400}Invalid month index '${monthStr}'. Must be an integer value from 1 to 12.`,
+    });
+    return;
   }
-  docRef.get().then((doc) => {
-    if (doc.data()) {
-      return res.status(400).json({
-        errorDescription: HTTP400 + "A calendar for that month already exists.",
-      });
-    }
-    docRef.set({ monthName }).then(populateEvents);
-  });
+  return [
+    db.collection("calendar").doc(yearStr).collection(monthStr),
+    yearInt,
+    monthInt,
+  ];
 }
 
 /*      ======== CALENDAR EVENT-SPECIFIC CRUD FUNCTIONS ========      */
 
-// CREATE specific calendar
 router
-  .post("/:monthID", (req, res) => {
-    createCalendar(res, req.params.monthID);
+  // CREATE new calendar event
+  .post("/:year/:month", (req, res) => {
+    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1
+    const collectionInfo = getCollectionReference(req, res);
+    if (!collectionInfo) {
+      return;
+    }
+    const [collectionRef, yearInt, monthInt] = collectionInfo;
+
+    // determine the number of days in the month
+    const maxDate = new Date(new Date().getFullYear(), monthInt, 0).getDate();
+
+    // ensure that the start date is between the first and last day of the month
+    const startDate = Math.min(
+      Math.max(parseInt(req.query.startDate) || 1, 1),
+      maxDate
+    );
+    // ensure that the end date is between the start date and the last day of the month
+    const endDate = Math.min(
+      Math.max(parseInt(req.query.endDate) || 1, startDate),
+      maxDate
+    );
+
+    const event = {
+      title: req.query.title || "Nazwa wydarzenia kalendarzowego",
+      type: parseInt(req.query.type) || 0,
+      startDate,
+      endDate,
+      yearInt,
+    };
+
+    createSingleDocument(event, res, { collectionRef });
   })
 
-  // READ specific calendar
-  .get("/:id", (req, res) => {
-    const inputID = req.params.id;
-    const monthID = parseInt(inputID);
-
-    // check if the user-inputted month ID is valid
-    if (
-      isNaN(monthID) ||
-      monthID.toString() !== inputID ||
-      monthID < 1 ||
-      monthID > 12
-    ) {
-      return res.status(400).json({
-        errorDescription: `${HTTP.err400}Invalid month ID '${inputID}'. Must be an integer value from 1 to 12.`,
-      });
-    }
-
-    // handle the document reference and send the response
-    function processData(docRef) {
-      docRef.get().then((doc) => {
-        /** Send the JSON response containing the events from the 'events' collection. */
-        function sendResponse(responseArr, snapshotDocuments) {
-          return res.status(200).json({
-            monthID,
-            ...data,
-            numEvents: snapshotDocuments.length,
-            events: responseArr,
-          });
-        }
-
-        const data = doc.data();
-        // create the calendar if it does not exist
-        if (!data) {
-          return createCalendar(res, monthID);
-        }
-        const docListQuery = docRef.collection("events");
-
-        // 'all' query parameter ensures the list response contains every document in the collection
-        // by default it's limited to 25 items
-        // could also manually set the number of items with { items: xxx }
-        const queryOptions = { all: "true" };
-        sendListResponse(docListQuery, queryOptions, res, sendResponse);
-      });
-    }
-    executeQuery(req, res, "calendar").then(processData);
-  })
-
-  // READ current calendar
+  // READ all current calendar events
   .get("/", (_req, res) => {
-    const monthID = new Date().getMonth() + 1;
-    res.redirect(monthID.toString());
+    res.redirect(`${new Date().getFullYear()}/${new Date().getMonth() + 1}`);
+  })
+
+  // READ all calendar events
+  .get("/:year/:month", (req, res) => {
+    const collectionInfo = getCollectionReference(req, res);
+    if (!collectionInfo) {
+      return;
+    }
+    const [collectionRef, yearInt, monthInt] = collectionInfo;
+
+    /** Sends the JSON response containing the events from the 'events' collection. */
+    function sendResponse(events, snapshotDocuments) {
+      const monthName = getMonthName(monthInt - 1);
+      const data = {
+        yearInt,
+        monthInt,
+        monthName,
+        numEvents: snapshotDocuments.length,
+        events,
+      };
+      return res.status(200).json(data);
+    }
+
+    // 'all' query parameter ensures the list response contains every document in the collection
+    // by default it's limited to 25 items
+    // could also manually set the number of items with { items: xxx }
+    sendListResponse(collectionRef, { all: "true" }, res, sendResponse);
+  })
+
+  // READ specific calendar event
+  .get("/:year/:month/:id", (req, res) => {
+    const collectionInfo = getCollectionReference(req, res);
+    if (!collectionInfo) {
+      return;
+    }
+    const collectionRef = collectionInfo[0];
+    const id = req.params.id;
+
+    executeQuery(req, res, "calendar").then(() => {
+      sendSingleResponse(collectionRef.doc(id), res);
+    });
+  })
+
+  // UPDATE specific calendar event
+  .put("/:year/:month/:id", (req, res) => {
+    const collectionInfo = getCollectionReference(req, res);
+    if (!collectionInfo) {
+      return;
+    }
+	
+    const docRef = collectionInfo[0].doc(req.params.id);
+
+    executeQuery(req, res, "calendar").then(() => {
+      updateSingleDocument(docRef, res, req.query, UPDATABLE_EVENT_ATTRIBUTES);
+    });
+  })
+
+  // DELETE specific calendar event
+  .delete("/:year/:month/:id", (req, res) => {
+    const collectionInfo = getCollectionReference(req, res);
+    if (!collectionInfo) {
+      return;
+    }
+    const id = req.params.id;
+
+    const collectionRef = collectionInfo[0];
+    executeQuery(req, res, "calendar").then(() => {
+      deleteSingleDocument(collectionRef.doc(id), res);
+    });
   });
 
 module.exports = router;

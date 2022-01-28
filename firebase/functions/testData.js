@@ -108,7 +108,7 @@ function createTestData(res) {
           };
         },
       };
-      createSingleDocument(data, "news", dummyRes);
+      createSingleDocument(data, dummyRes, { collectionName: "news" });
     }
   }
   res.status(200).json({ msg: `Success! Created ${counter} documents.` });

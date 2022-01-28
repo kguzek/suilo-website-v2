@@ -26,10 +26,10 @@ app.use("/api/events/", eventsRoute);
 // define the routes that the API is able to serve
 const definedRoutes = ["luckyNumbers", "news", "links", "calendar", "events"];
 
-for (path of definedRoutes) {
+for (const route of definedRoutes) {
   // catch all requests to paths that are listed above but use the incorrect HTTP method
-  for (pathSuffix of ["/", "/*"]) {
-    app.all("/api/" + path + pathSuffix, (req, res) => {
+  for (const pathSuffix of ["/", "/:foo/"]) {
+    app.all("/api/" + route + pathSuffix, (req, res) => {
       return res.status(405).json({
         errorDescription: `${HTTP.err405}Cannot ${req.method} '${req.path}'.`,
       });

@@ -44,24 +44,32 @@ function formatTimestamps(dataObject) {
 }
 
 /** Checks if the request params or query contains a document ID.
- * If so, calls the callback with a reference to the document with the specified ID.
- * Otherwise sends a HTTP 400 response.  */
+ * If so, calls the success callback with a reference to the document with the specified ID.
+ * Otherwise calls the failure callback if specified, or sends a HTTP 400 response.  */
 function executeQuery(req, res, collectionName) {
   // get id from url parameters or arguments, e.g. /api/news/foo or /api/news/?id=foo
   const id = req.params.id || req.query.id;
-  // check if the id was provided in the query parameters
-  if (id) {
-    // initialise query
-    const docRef = db.collection(collectionName).doc(id);
-    // validation success; execute the given callback function
-    return { then: (callback) => callback(docRef) };
-  } else {
-    // return an error if the query parameters do not contain the id of the document to be updated
-    res
-      .status(400)
-      .json({ errorDescription: HTTP400 + "No document ID specified." });
-    return { then: () => {} };
+
+  function resolve(_resolve, _reject) {
+    // check if the id was provided in the query parameters
+    if (id) {
+      // initialise query
+      const docRef = db.collection(collectionName).doc(id);
+      // validation success; execute the given callback function
+      _resolve(docRef);
+    } else {
+      // id not provided, check if the failure callback is specified
+      if (_reject) {
+        // call the failure callback
+        return _reject();
+      }
+      // default to sending a HTTP 400 response
+      res
+        .status(400)
+        .json({ errorDescription: HTTP400 + "No document ID specified." });
+    }
   }
+  return { then: resolve };
 }
 
 /** Converts a JavaScript Date object into a Firestore timestamp. */
@@ -72,9 +80,9 @@ function dateToTimestamp(date) {
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 /** Creates a single document with the specified data in the specified collection. */
-function createSingleDocument(data, collectionName, res) {
+function createSingleDocument(data, res, { collectionName, collectionRef }) {
   // attempts to add the data to the given collection
-  db.collection(collectionName)
+  (collectionRef || db.collection(collectionName))
     .add(data)
     .then((doc) => {
       // success; return the data along with the document id
@@ -183,7 +191,7 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
 /** Updates the document fields and sends a response containing the new data.
  *
  * @param {FirebaseFirestore.DocumentReference} docQuery
- * @param {reponse} res the HTTP response
+ * @param {response} res the HTTP response
  * @param {object} requestParams an object containing key-value pairs of the fields to update
  * @param {Array} attributesToUpdate an array containing the field names that should be updated
  */
@@ -236,7 +244,7 @@ function updateSingleDocument(
 /** Deletes a document from the database and sends the appropriate response.
  * Note: the action will be treated as success even if the document didn't exist before.
  * This is due to how the Firebase Firestore API works.
- * 
+ *
  * @param {FirebaseFirestore.DocumentReference} docQuery a reference to the document to delete
  * @param {response} res the HTTP response
  */

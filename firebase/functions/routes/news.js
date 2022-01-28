@@ -40,7 +40,7 @@ router
     if (req.query.create_test_data) {
       createTestData(res);
     } else {
-      createSingleDocument(data, "news", res);
+      createSingleDocument(data, res, { collectionName: "news" });
     }
   })
 
