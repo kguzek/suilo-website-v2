@@ -9,14 +9,12 @@ import {
 } from "../components/PostCardPreview";
 import {
   conjugatePolish,
-  API_URL,
   DEFAULT_IMAGE,
   formatDate,
   removeSearchParam,
+  fetchData,
 } from "../misc";
 import { Bars } from "react-loader-spinner";
-
-const MAX_CACHE_AGE = 2; // hours
 
 const Post = ({ setPage }) => {
   const [loaded, setLoaded] = useState(false);
@@ -25,10 +23,12 @@ const Post = ({ setPage }) => {
   const [searchParams, setSearchParams] = useSearchParams({});
   const params = useParams();
 
+  const cacheName = `news_post_${params.postID}`;
+
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
     /**Updates the post data with the data from the API JSON response and sets the 'loaded' status. */
-    function processData(data) {
+    function processJsonData(data) {
       if (!data || data.errorDescription) {
         console.log("ERROR: Could not retrieve news post data.", data);
         setPostData({ errorMessage: "Post nie istnieje." });
@@ -44,37 +44,17 @@ const Post = ({ setPage }) => {
       setPostData(data);
       setLoaded(true);
     }
-    // check if there is a valid post data cache
-    const cache = JSON.parse(localStorage.getItem(params.postID));
-    if (cache) {
-      if (!updateCache) {
-        // check if the cache contains no error
-        if (cache.data && !cache.data.errorDescription) {
-          // check if the cache is younger than 24 hours old
-          const cacheDate = Date.parse(cache.date);
-          const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
-          if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
-            // console.log("Found existing cache for post data.", cache);
-            setPostData(cache.data);
-            return setLoaded(true);
-          }
-        }
-      }
-      // remove the existing cache
-      localStorage.removeItem(params.postID);
-    }
 
-    fetch(`${API_URL}/news/${params.postID}`)
-      .then((res) => {
-        res.json().then(processData);
-      })
-      .catch((error) => {
-        console.log("Error retrieving news post data!", error);
-        setPostData({
-          errorMessage: "Nastąpił błąd sieciowy. Spróbuj ponownie w krótce.",
-        });
-        setLoaded(true);
-      });
+    const args = {
+      setData: setPostData,
+      setLoaded,
+      updateCache,
+      onSuccessCallback: processJsonData,
+      onFailData: {
+        errorMessage: "Nastąpił błąd sieciowy. Spróbuj ponownie w krótce.",
+      },
+    };
+    fetchData(cacheName, `/news/${params.postID}`, args);
   }
 
   useEffect(() => {
@@ -83,7 +63,7 @@ const Post = ({ setPage }) => {
   }, []);
 
   useEffect(() => {
-    setPage(`news_post_${params.postID}`);
+    setPage(cacheName);
     const updateCache = removeSearchParam(
       searchParams,
       setSearchParams,

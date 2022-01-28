@@ -38,7 +38,7 @@ const Home = ({ setPage }) => {
           luckyNumbers: data.luckyNumbers,
           excludedClasses: data.excludedClasses,
         };
-        console.log("Created new cache for lucky numbers data.");
+        console.log("Created cache for lucky numbers data.", data.luckyNumbers);
         setLuckyNumbers(data.luckyNumbers);
         setForDate(newCache.date);
         setCookies("lucky_numbers_cache", newCache, { sameSite: "lax" });

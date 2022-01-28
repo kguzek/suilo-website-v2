@@ -2,7 +2,7 @@ import React from "react";
 import PostCardPrimary from "../components/PostCardPrimary";
 import PostCardSecondary from "../components/PostCardSecondary";
 import PostCardMain from "../components/PostCardMain";
-import { API_URL, DEFAULT_IMAGE } from "../misc";
+import { API_URL, DEFAULT_IMAGE, fetchData } from "../misc";
 
 // Set number of items on page to 3 primary, 4 secondary and 8 main.
 // Can introduce useState variable for user customisability or leave it hard-coded.
@@ -12,7 +12,6 @@ export const MAIN_ITEMS_DEFAULT = 8;
 const ITEMS_PER_PAGE =
   PRIMARY_ITEMS_DEFAULT + SECONDARY_ITEMS_DEFAULT + MAIN_ITEMS_DEFAULT;
 
-const MAX_CACHE_AGE = 2; // hours
 const NO_NEWS_MESSAGE = "Brak aktualności.";
 
 /** Compare two objects that contain a 'date' attribute. */
@@ -42,36 +41,20 @@ export function fetchNewsData({
       date: new Date(),
       data,
     };
-    localStorage.setItem(`page_${pageNumber}`, JSON.stringify(newCache));
+    localStorage.setItem(`news_page_${pageNumber}`, JSON.stringify(newCache));
     console.log("Created cache for news data.", newCache);
     setNewsData(data);
     setLoaded(true);
   }
-  // check if there is a valid news data cache
-  const cache = JSON.parse(localStorage.getItem(`page_${pageNumber}`));
-  if (cache) {
-    if (!updateCache) {
-      // check if the cache is younger than 24 hours old
-      const cacheDate = Date.parse(cache.date);
-      const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
-      if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
-        // console.log("Found existing cache for news data.", cache);
-        setNewsData(cache.data);
-        return setLoaded(true);
-      }
-    }
-    // remove the existing cache
-    localStorage.removeItem(`page_${pageNumber}`);
-  }
 
-  // Set URL parameters
-  const url = `${API_URL}/news/?page=${pageNumber}&items=${maxItems}`;
-  fetch(url).then((res) => {
-    res.json().then(processJsonData);
-  }).catch((error) => {
-    console.log("Error retrieving news data!", error);
-    setLoaded(true);
-  });
+  const url = `/news/?page=${pageNumber}&items=${maxItems}`;
+  const args = {
+    setData: setNewsData,
+    setLoaded,
+    updateCache,
+    onSuccessCallback: processJsonData,
+  };
+  fetchData(`news_page_${pageNumber}`, url, args);
 }
 
 export function PostCardPreview({

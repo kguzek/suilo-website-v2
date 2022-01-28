@@ -1,3 +1,11 @@
+export const MAX_CACHE_AGE = 2; // hours
+
+// Temporary API URL assignment
+export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api";
+
+// Temporary image URL if an article has none specified
+export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
+
 /**
  * (1, 'wyświetle', 'ni', 'ń') -> '1 wyświetlenie'
  *
@@ -53,8 +61,39 @@ export function removeSearchParam(
   return value;
 }
 
-// Temporary API URL assignment
-export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api";
+export function fetchData(
+  cacheName,
+  fetchURL,
+  { setData, setLoaded, updateCache, onSuccessCallback, onFailData }
+) {
+  // check if there is a valid data cache
+  const cache = JSON.parse(localStorage.getItem(cacheName));
+  if (cache) {
+    if (!updateCache) {
+      // check if the cache contains no error
+      if (cache.data && !cache.data.errorDescription) {
+        // check if the cache is younger than 2 hours old
+        const cacheDate = Date.parse(cache.date);
+        const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
+        if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
+          console.log(`Found existing cache for '${cacheName}'.`, cache);
+          setData(cache.data);
+          return setLoaded(true);
+        }
+      }
+    }
+    // remove the existing cache
+    localStorage.removeItem(cacheName);
+  }
 
-// Temporary image URL if an article has none specified
-export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
+  // fetch new data
+  fetch(API_URL + fetchURL)
+    .then((res) => {
+      res.json().then(onSuccessCallback);
+    })
+    .catch((error) => {
+      console.log("Error retrieving news data!", error);
+      onFailData && setData(onFailData);
+      setLoaded(true);
+    });
+}
