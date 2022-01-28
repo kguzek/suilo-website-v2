@@ -1,4 +1,5 @@
 const express = require("express");
+const { dateToArray, serialiseDateArray } = require("../../../website/src/common");
 const { db, HTTP, dateToTimestamp } = require("../util");
 
 const router = express.Router();
@@ -135,12 +136,7 @@ router
   // GET lucky numbers (v2)
   .get("/v2", (req, res) => {
     // ?force_update=false
-    const today = [
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      new Date().getDate(),
-    ];
-    const todayString = today.toString().replaceAll(",", "-");
+    const todayString = serialiseDateArray(dateToArray(new Date()));
 
     const forceUpdate = req.query.force_update === "true";
 

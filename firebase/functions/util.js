@@ -20,12 +20,6 @@ const SERVER_REGION = "europe-west1";
 
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
 
-/**Custom method definition for replacing all instances of a substring within a string instance. */
-String.prototype.replaceAll = function replaceAll(search, replacement) {
-  var target = this;
-  return target.split(search).join(replacement);
-};
-
 /** If the object contains fields 'date' or 'modified', converts the
  * values from Firebase timestamps to JavaScript Date objects. */
 function formatTimestamps(dataObject) {
@@ -42,6 +36,11 @@ function formatTimestamps(dataObject) {
     const date = new Date(seconds * 1000); // Date object constructor takes milliseconds
     dataObject[key] = date.toJSON();
   });
+}
+
+/** Converts a JavaScript Date object into a Firestore timestamp. */
+function dateToTimestamp(date) {
+  return admin.firestore.Timestamp.fromDate(date);
 }
 
 /** Checks if the request params or query contains a document ID.
@@ -71,11 +70,6 @@ function getDocRef(req, res, collectionName) {
     }
   }
   return { then: resolve };
-}
-
-/** Converts a JavaScript Date object into a Firestore timestamp. */
-function dateToTimestamp(date) {
-  return admin.firestore.Timestamp.fromDate(date);
 }
 
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
@@ -286,12 +280,12 @@ module.exports = {
     err500: HTTP500,
   },
   SERVER_REGION,
+  formatTimestamps,
+  dateToTimestamp,
   getDocRef,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,
   updateSingleDocument,
   deleteSingleDocument,
-  dateToTimestamp,
-  formatTimestamps,
 };
