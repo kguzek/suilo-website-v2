@@ -28,8 +28,8 @@ function randomArraySelection(array) {
 
 /*      ======== LUCKY NUMBERS-SPECIFIC CRUD FUNCTIONS ========      */
 
-// GET lucky numbers (v1)
 router
+  // GET lucky numbers (v1)
   .get("/", (req, res) => {
     try {
       db.collection("numbers")

@@ -24,8 +24,8 @@ const UPDATABLE_POST_ATTRIBUTES = [
 
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
 
-// CREATE news
 router
+  // CREATE news
   .post("/", (req, res) => {
     // ?author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null
     // initialise parameters

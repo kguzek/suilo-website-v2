@@ -100,8 +100,8 @@ function createShortenedURL(res, destination, customURL) {
 
 /*      ======== LINK SHORTENER-SPECIFIC CRUD FUNCTIONS ========      */
 
-// CREATE random shortened URL
 router
+  // CREATE random shortened URL
   .post("/*", (req, res) => {
     // /api/links/?destination=null -> random short URL with given destination
     // /api/links/[custom_url]/?destination=null -> custom short URL with given destination
