@@ -29,20 +29,19 @@ String.prototype.replaceAll = function replaceAll(search, replacement) {
 /** If the object contains fields 'date' or 'modified', converts the
  * values from Firebase timestamps to JavaScript Date objects. */
 function formatTimestamps(dataObject) {
-  if (!dataObject) {
-    return;
-  }
-  for (fieldName of ["date", "modified"]) {
-    const fieldValue = dataObject[fieldName];
-    if (!fieldValue || !fieldValue._seconds) {
-      // the field does not exist or it is not a Firebase timestamp; skip it
-      continue;
+  Object.keys(dataObject).forEach((key) => {
+    try {
+      dataObject[key]._seconds;
+    } catch {
+      return;
     }
-    // cast field value as JS date object which has a built-in function to format it as a string
-    date = new Date(fieldValue._seconds * 1000); // Date object constructor takes milliseconds
-    // formatting using specified locale, default en-GB uses dd/mm/YYYY
-    dataObject[fieldName] = date.toJSON();
-  }
+    const seconds = dataObject[key]._seconds;
+    if (seconds === undefined) {
+      return;
+    }
+    const date = new Date(seconds * 1000); // Date object constructor takes milliseconds
+    dataObject[key] = date.toJSON();
+  });
 }
 
 /** Checks if the request params or query contains a document ID.
