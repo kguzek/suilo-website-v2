@@ -89,6 +89,7 @@ router
       startDate,
       endDate,
       yearInt,
+      monthInt,
     };
 
     createSingleDocument(event, res, { collectionRef });
@@ -101,7 +102,7 @@ router
     res.redirect(fullURL);
   })
 
-  // READ all calendar events
+  // READ all current month calendar events
   .get("/:year/:month", (req, res) => {
     const collectionInfo = getCollectionReference(req, res);
     if (!collectionInfo) {
