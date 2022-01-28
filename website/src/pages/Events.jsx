@@ -73,9 +73,6 @@ const Events = ({ setPage }) => {
       </div>
     );
   }
-  if (calendarData.errorMessage) {
-    return <NotFound setPage={setPage} msg={calendarData.errorMessage} />;
-  }
 
   return (
     <div style={{ minHeight: "89vh" }}>
@@ -92,24 +89,27 @@ const Events = ({ setPage }) => {
         />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
-      {calendarData.events.map((event, key) => {
-        return (
-          <div key={key}>
-            {event.title}:{" "}
-            {formatDate([
-              calendarData.yearInt,
-              calendarData.monthInt,
-              event.startDate,
-            ])}
-            {event.startDate !== event.endDate &&
-              ` — ${formatDate([
-                calendarData.yearInt,
-                calendarData.monthInt,
-                event.endDate,
-              ])}`}
-          </div>
-        );
-      })}
+      {/* TODO: improve temporary calendar events render */}
+      {calendarData.events.length === 0
+        ? "Brak wydarzeń kalendarzowych."
+        : calendarData.events.map((event, key) => {
+            return (
+              <div key={key}>
+                {event.title}:{" "}
+                {formatDate([
+                  calendarData.yearInt,
+                  calendarData.monthInt,
+                  event.startDate,
+                ])}
+                {event.startDate !== event.endDate &&
+                  ` — ${formatDate([
+                    calendarData.yearInt,
+                    calendarData.monthInt,
+                    event.endDate,
+                  ])}`}
+              </div>
+            );
+          })}
     </div>
   );
 };
