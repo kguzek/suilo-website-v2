@@ -86,15 +86,19 @@ const testDataMain = [
 
 function createTestData(res) {
   let counter = 0;
-  for (let testDataCollection of [
+  const startDate = new Date("2022-01-01");
+  const now = new Date();
+
+  for (const testDataCollection of [
     testDataPrimary,
     testDataSecondary,
     testDataMain,
   ]) {
-    for (testData of testDataCollection) {
+    for (const testData of testDataCollection) {
       counter++;
+      const randomDate = randomDateFromInterval(startDate, now);
       const data = {
-        date: dateToTimestamp(new Date()),
+        date: dateToTimestamp(randomDate),
         author: "Konrad Guzek",
         title: testData.title,
         text: testData.textShort,
@@ -103,9 +107,7 @@ function createTestData(res) {
       };
       const dummyRes = {
         status: () => {
-          return {
-            json: (data) => data,
-          };
+          return { json: (data) => data };
         },
       };
       createSingleDocument(data, dummyRes, { collectionName: "news" });
