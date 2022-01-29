@@ -1,10 +1,8 @@
 const express = require("express");
 const { createTestData } = require("../testData");
 const {
-  db,
   dateToTimestamp,
   createSingleDocument,
-  sendListResponse,
   updateSingleDocument,
   getDocRef,
 } = require("../util");

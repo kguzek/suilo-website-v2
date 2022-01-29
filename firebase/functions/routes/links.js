@@ -3,7 +3,6 @@ const randomstring = require("randomstring");
 const {
   db,
   HTTP,
-  sendListResponse,
   updateSingleDocument,
 } = require("../util");
 

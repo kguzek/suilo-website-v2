@@ -1,10 +1,8 @@
 const express = require("express");
 const {
-  db,
   HTTP,
   getDocRef,
   createSingleDocument,
-  sendListResponse,
   updateSingleDocument,
 } = require("../util");
 

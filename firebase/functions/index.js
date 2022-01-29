@@ -7,6 +7,7 @@ const functions = require("firebase-functions");
 
 // Local imports
 const {
+  db,
   HTTP,
   SERVER_REGION,
   getDocRef,
