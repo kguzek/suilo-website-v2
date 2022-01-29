@@ -1,5 +1,8 @@
 const express = require("express");
-const { dateToArray, serialiseDateArray } = require("../../../website/src/common");
+const {
+  dateToArray,
+  serialiseDateArray,
+} = require("../../../website/src/common");
 const { db, HTTP, dateToTimestamp } = require("../util");
 
 const router = express.Router();
@@ -136,7 +139,9 @@ router
   // GET lucky numbers (v2)
   .get("/v2", (req, res) => {
     // ?force_update=false
-    const todayString = serialiseDateArray(dateToArray(new Date()));
+    const weekday = new Date().getDay();
+    const today = dateToArray();
+    const todayString = serialiseDateArray(today);
 
     const forceUpdate = req.query.force_update === "true";
 
@@ -151,7 +156,7 @@ router
       }
       const freeDays = data.freeDays || [];
       // return true if it's weekend or a free day
-      return [0, 6].includes(today[2]) || freeDays.includes(todayString);
+      return [0, 6].includes(weekday) || freeDays.includes(todayString);
     }
     function sendNumbersData(data) {
       res.status(200).json({
