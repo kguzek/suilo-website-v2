@@ -4,10 +4,8 @@ const {
   db,
   dateToTimestamp,
   createSingleDocument,
-  sendSingleResponse,
   sendListResponse,
   updateSingleDocument,
-  deleteSingleDocument,
   getDocRef,
 } = require("../util");
 
@@ -44,31 +42,10 @@ router
     }
   })
 
-  // READ all news
-  .get("/", (req, res) => {
-    // ?page=1&items=25&all=false
-    const docListQuery = db.collection("news").orderBy("date", "desc");
-    sendListResponse(docListQuery, req.query, res);
-  })
-
-  // READ single news
-  .get("/:id", (req, res) => {
-    getDocRef(req, res, "news").then((docRef) =>
-      sendSingleResponse(docRef, res)
-    );
-  })
-
   // UPDATE news
   .put("/:id", (req, res) => {
     getDocRef(req, res, "news").then((docRef) =>
       updateSingleDocument(docRef, res, req.query, UPDATABLE_POST_ATTRIBUTES)
-    );
-  })
-
-  // DELETE news
-  .delete("/:id", (req, res) => {
-    getDocRef(req, res, "news").then((docRef) =>
-      deleteSingleDocument(docRef, res)
     );
   });
 

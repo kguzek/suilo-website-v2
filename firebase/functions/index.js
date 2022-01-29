@@ -6,7 +6,12 @@ const cors = require("cors");
 const functions = require("firebase-functions");
 
 // Local imports
-const { HTTP, SERVER_REGION } = require("./util");
+const {
+  HTTP,
+  SERVER_REGION,
+  getDocRef,
+  deleteSingleDocument,
+} = require("./util");
 const luckyNumbersRoute = require("./routes/luckyNumbers");
 const newsRoute = require("./routes/news");
 const linksRoute = require("./routes/links");
@@ -17,6 +22,8 @@ const eventsRoute = require("./routes/events");
 const app = express();
 
 app.use(cors({ origin: true }));
+
+// set individual API routes
 app.use("/api/luckyNumbers/", luckyNumbersRoute);
 app.use("/api/news/", newsRoute);
 app.use("/api/links/", linksRoute);
@@ -25,6 +32,39 @@ app.use("/api/events/", eventsRoute);
 
 // define the routes that the API is able to serve
 const definedRoutes = ["luckyNumbers", "news", "links", "calendar", "events"];
+
+// define sort options for sending list responses
+const sortOptions = {
+  events: ["date", "asc"],
+  links: ["destination", "asc"],
+  news: ["date", "desc"],
+};
+// define routes that have similar structures
+for (const endpoint of ["events", "links", "news"]) {
+  app
+    // READ all events/links/news
+    .get(`/api/${endpoint}/`, (req, res) => {
+      // ?page=1&items=25&all=false
+      const docListQuery = db
+        .collection(endpoint)
+        .orderBy(...sortOptions[endpoint]);
+      sendListResponse(docListQuery, req.query, res);
+    })
+
+    // READ single event/link/news
+    .get(`/api/${endpoint}/:id`, (req, res) => {
+      getDocRef(req, res, endpoint).then((docRef) =>
+        sendSingleResponse(docRef, res)
+      );
+    })
+
+    // DELETE single event/link/news
+    .delete(`/api/${endpoint}/:id`, (req, res) => {
+      getDocRef(req, res, endpoint).then((docRef) =>
+        deleteSingleDocument(docRef, res)
+      );
+    });
+}
 
 for (const route of definedRoutes) {
   // catch all requests to paths that are listed above but use the incorrect HTTP method

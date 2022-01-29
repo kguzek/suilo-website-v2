@@ -3,11 +3,8 @@ const randomstring = require("randomstring");
 const {
   db,
   HTTP,
-  getDocRef,
-  sendSingleResponse,
   sendListResponse,
   updateSingleDocument,
-  deleteSingleDocument,
 } = require("../util");
 
 const router = express.Router();
@@ -116,20 +113,6 @@ router
     createShortenedURL(res, destination, customURL);
   })
 
-  // READ all shortened URLs
-  .get("/", (req, res) => {
-    // ?page=1&items=25
-    const docListQuery = db.collection("links").orderBy("destination", "asc");
-    sendListResponse(docListQuery, req.query, res);
-  })
-
-  // READ single shortened URL
-  .get("/:id", (req, res) => {
-    getDocRef(req, res, "links").then((docRef) =>
-      sendSingleResponse(docRef, res)
-    );
-  })
-
   // UPDATE shortened URL
   .put("/:url", (req, res) => {
     // ?destination=null
@@ -144,13 +127,6 @@ router
 
     const docRef = db.collection("links").doc(url);
     updateSingleDocument(docRef, res, { destination }, ["destination"]);
-  })
-
-  // DELETE single shortened URL
-  .delete("/:id", (req, res) => {
-    getDocRef(req, res, "links").then((docRef) =>
-      deleteSingleDocument(docRef, res)
-    );
   });
 
 module.exports = router;

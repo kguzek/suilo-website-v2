@@ -1,13 +1,11 @@
 const express = require("express");
 const {
-  createSingleDocument,
-  sendSingleResponse,
-  sendListResponse,
   db,
-  getDocRef,
-  updateSingleDocument,
-  deleteSingleDocument,
   HTTP,
+  getDocRef,
+  createSingleDocument,
+  sendListResponse,
+  updateSingleDocument,
 } = require("../util");
 
 const router = express.Router();
@@ -79,7 +77,7 @@ router
         }
         let participants = data.participants || [];
         let msg;
-				const participating = participants.includes(userID);
+        const participating = participants.includes(userID);
         if (participating) {
           participants = participants.filter((id) => id !== userID);
           msg = `Success! User with ID ${userID} is no longer participating in the event.`;
@@ -95,31 +93,10 @@ router
     });
   })
 
-  // READ all events
-  .get("/", (req, res) => {
-    // ?page=1&items=25&all=false
-    const docListQuery = db.collection("events").orderBy("date", "asc");
-    sendListResponse(docListQuery, req.query, res);
-  })
-
-  // READ single event
-  .get("/:id", (req, res) => {
-    getDocRef(req, res, "events").then((docRef) =>
-      sendSingleResponse(docRef, res)
-    );
-  })
-
   // UPDATE single event
   .put("/:id", (req, res) => {
     getDocRef(req, res, "events").then((docRef) =>
       updateSingleDocument(docRef, res, req.query, UPDATABLE_EVENT_ATTRIBUTES)
-    );
-  })
-
-  // DELETE single event
-  .delete("/:id", (req, res) => {
-    getDocRef(req, res, "events").then((docRef) =>
-      deleteSingleDocument(docRef, res)
     );
   });
 
