@@ -17,20 +17,28 @@ const Home = ({ setPage }) => {
 
   function fetchLuckyNumbers() {
     const cache = cookies.lucky_numbers_cache;
-    // check if there is a cache from today
-    if (cache && cache.date === formatDate()) {
-      // console.log("Found existing cache for lucky numbers data.");
+    // check if there is a cache
+    if (cache) {
+      console.log("Found existing cache for lucky numbers data.");
+
+      // set the lucky numbers to the cached data, even if it's not from today
       setLuckyNumbers(cache.luckyNumbers);
       setForDate(cache.date);
-      return;
+      if (cache.date === formatDate()) {
+        // don't fetch new data if the cache is from today
+        return;
+      }
     }
-    // lucky numbers data needs to be retrieved from API
+    console.log("Checking if there are updated lucky numbers...");
     fetch(`${API_URL}/luckyNumbers/v2/`)
       .then((res) => {
         res.json().then((data) => {
           if (res.status !== 200 || !data) {
             console.log("Error retrieving lucky numbers data.", data);
-            setLuckyNumbers(["?", "?"]);
+            if (luckyNumbers === ["...", "..."]) {
+              // set lucky numbers data to "?" if there is no previous cache
+              setLuckyNumbers(["?", "?"]);
+            }
             return;
           }
           const newCache = {
@@ -38,6 +46,12 @@ const Home = ({ setPage }) => {
             luckyNumbers: data.luckyNumbers,
             excludedClasses: data.excludedClasses,
           };
+          if (JSON.stringify(cache) === JSON.stringify(newCache)) {
+            console.log(
+              "There are no new lucky numbers for today. Using cached values."
+            );
+            return;
+          }
           console.log(
             "Created cache for lucky numbers data.",
             data.luckyNumbers
