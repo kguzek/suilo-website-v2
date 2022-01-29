@@ -8,11 +8,13 @@ import SuPhoto from "../media/su-photo.jpg";
 import PostCardPreview, { fetchNewsData } from "../components/PostCardPreview";
 import { SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
 import { API_URL, formatDate } from "../misc";
+import { Bars } from "react-loader-spinner";
 
 const Home = ({ setPage }) => {
   const [luckyNumbers, setLuckyNumbers] = useState(["...", "..."]);
+  const [loadedNews, setLoadedNews] = useState(false);
   const [forDate, setForDate] = useState(formatDate());
-  const [newsData, setNewsData] = useState([{}]);
+  const [newsData, setNewsData] = useState([]);
   const [cookies, setCookies, removeCookies] = useCookies();
 
   function fetchLuckyNumbers() {
@@ -69,7 +71,11 @@ const Home = ({ setPage }) => {
   useEffect(() => {
     setPage("home");
     fetchLuckyNumbers();
-    fetchNewsData({ setNewsData, maxItems: SECONDARY_ITEMS_DEFAULT });
+    fetchNewsData({
+      setNewsData,
+      setLoaded: setLoadedNews,
+      maxItems: SECONDARY_ITEMS_DEFAULT,
+    });
   }, []);
 
   const _scrollDown = () => {
@@ -229,19 +235,24 @@ const Home = ({ setPage }) => {
           />
         </Link>
       </div>
-      {/* Here must be 5 latest post */}
-      {/* use loading when not loaded 
-      <div className="loading-whole-screen" style={{ backgroundColor: "transparent" }}>
+      {loadedNews ? (
+        <PostCardPreview
+          type="secondary"
+          data={newsData}
+          linkPrefix="aktualnosci/post/"
+          classOverride="home-3"
+          startIndex={0}
+        />
+      ) : (
+        <div
+          // Leave loading bars only in 'aktualności' section
+          // className="loading-whole-screen"
+          style={{ backgroundColor: "transparent" }}
+        >
           <Bars color="#FFA900" height={50} width={50} />
         </div>
-      */}
-      <PostCardPreview
-        type="secondary"
-        data={newsData}
-        linkPrefix="aktualnosci/post/"
-        classOverride="home-3"
-        startIndex={0}
-      />
+      )}
+
       <div className="home-4">
         <a
           className="social-media-btn"

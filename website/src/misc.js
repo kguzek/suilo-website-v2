@@ -57,7 +57,7 @@ export function formatTime([hour, minute]) {
   const formattedDate = formatDate(date, false, {
     hour: "2-digit",
     minute: "2-digit",
-  })
+  });
   return formattedDate.split(", ")[1];
 }
 

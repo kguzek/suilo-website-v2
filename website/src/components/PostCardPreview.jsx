@@ -2,7 +2,7 @@ import React from "react";
 import PostCardPrimary from "../components/PostCardPrimary";
 import PostCardSecondary from "../components/PostCardSecondary";
 import PostCardMain from "../components/PostCardMain";
-import { API_URL, DEFAULT_IMAGE, fetchData } from "../misc";
+import { DEFAULT_IMAGE, fetchData } from "../misc";
 
 // Set number of items on page to 3 primary, 4 secondary and 8 main.
 // Can introduce useState variable for user customisability or leave it hard-coded.

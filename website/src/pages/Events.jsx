@@ -3,7 +3,6 @@ import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { fetchData, formatDate, formatTime, removeSearchParam } from "../misc";
-import NotFound from "./NotFound";
 const { dateToArray, serialiseDateArray } = require("../common");
 
 const calendarEventTypes = [
@@ -33,9 +32,8 @@ function fetchEventsData(cacheName, updateCache = false, setData, setLoaded) {
   fetchData(cacheName, `/${cacheName}`, args);
 }
 
-function getNextEvent(eventContainer = {}) {
+function getNextEvent(eventContainer) {
   const now = new Date();
-
   const container = eventContainer.events || eventContainer.contents;
 
   for (let i = 0; i < container.length; i++) {
@@ -64,8 +62,8 @@ function getNextEvent(eventContainer = {}) {
 const Events = ({ setPage }) => {
   const [loadedA, setLoadedA] = useState(false);
   const [loadedB, setLoadedB] = useState(false);
-  const [eventsData, setEventsData] = useState({});
-  const [calendarData, setCalendarData] = useState({});
+  const [eventsData, setEventsData] = useState({ contents: [] });
+  const [calendarData, setCalendarData] = useState({ events: [] });
   const [searchParams, setSearchParams] = useSearchParams({});
   const params = useParams();
 
@@ -134,9 +132,6 @@ const Events = ({ setPage }) => {
 };
 
 function EventPreview({ event }) {
-  if (event == {}) {
-    return null;
-  }
   const numParticipants = event.participants.length;
   const suffix = numParticipants == 1 ? "" : "ów";
   return (
