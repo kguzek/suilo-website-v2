@@ -27,22 +27,15 @@ const Post = ({ setPage }) => {
 
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
-    /**Updates the post data with the data from the API JSON response and sets the 'loaded' status. */
+    /** Verifies that the API response is valid and returns the processed data. */
     function processJsonData(data) {
       if (!data || data.errorDescription) {
         console.log("ERROR: Could not retrieve news post data.", data);
         setPostData({ errorMessage: "Post nie istnieje." });
-        return setLoaded(true);
+        return;
       }
       data.photo = data.photo || DEFAULT_IMAGE;
-      const newCache = {
-        date: new Date(),
-        data,
-      };
-      localStorage.setItem(params.postID, JSON.stringify(newCache));
-      console.log("Created cache for news post data.", newCache);
-      setPostData(data);
-      setLoaded(true);
+      return data;
     }
 
     const args = {
@@ -54,7 +47,7 @@ const Post = ({ setPage }) => {
         errorMessage: "Nastąpił błąd sieciowy. Spróbuj ponownie w krótce.",
       },
     };
-    fetchData(cacheName, `/news/${params.postID}`, args);
+    fetchData(cacheName, `/news/${encodeURIComponent(params.postID)}`, args);
   }
 
   useEffect(() => {
@@ -85,7 +78,7 @@ const Post = ({ setPage }) => {
   if (postData.errorMessage) {
     return <NotFound setPage={setPage} msg={postData.errorMessage} />;
   }
-  const newDate = formatDate(postData.date, true);
+  const createdDate = formatDate(postData.date, true);
   const modifiedDate = formatDate(postData.modified, true);
   const views = conjugatePolish(postData.views || 0, "wyświetle", "ni", "ń");
   return (
@@ -103,11 +96,14 @@ const Post = ({ setPage }) => {
             <p className="image-author">Zdjęcie: {postData.imageAuthor}</p>
           )}
           <div className="post-info">
-            <span style={{ fontWeight: "500" }}>{newDate}</span>
-            {postData.modified && (
-              <i>&nbsp;&nbsp;{`Ostatnia modyfikacja: ${modifiedDate}`}</i>
-            )}
+            <span style={{ fontWeight: "500" }}>{createdDate}</span>
             &nbsp;&nbsp;·&nbsp;&nbsp;{views}
+            {postData.modified && (
+              <span>
+                &nbsp;&nbsp;·&nbsp;&nbsp;
+                <i>Ostatnia modyfikacja: {modifiedDate}</i>
+              </span>
+            )}
           </div>
           <h1 className="article-title">{postData.title}</h1>
           <p className="article-content">{postData.content}</p>

@@ -10,8 +10,7 @@ export default function ShortLinkRedirect({ setPage }) {
   const navigate = useNavigate();
 
   function fetchData() {
-    const url = `${API_URL}/links${window.location.pathname}`;
-    fetch(url)
+    fetch(`${API_URL}/links${window.location.pathname}`)
       .then((res) => {
         res.json().then((data) => {
           if (res.status !== 200) {
@@ -51,8 +50,8 @@ export default function ShortLinkRedirect({ setPage }) {
       </div>
     );
   }
-  const msg = redirected
-    ? "Przekierowanie linku działa, natomiast adres docelowy nie istnieje."
-    : undefined;
+  const msg =
+    redirected &&
+    "Przekierowanie linku działa, natomiast adres docelowy nie istnieje.";
   return <NotFound setPage={setPage} msg={msg} />;
 }

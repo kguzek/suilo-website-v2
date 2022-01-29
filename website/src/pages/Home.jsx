@@ -10,42 +10,46 @@ import { SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
 import { API_URL, formatDate } from "../misc";
 
 const Home = ({ setPage }) => {
-  const [luckyNumbers, setLuckyNumbers] = useState([3, 14]);
+  const [luckyNumbers, setLuckyNumbers] = useState(["...", "..."]);
   const [forDate, setForDate] = useState(formatDate());
   const [newsData, setNewsData] = useState([{}]);
   const [cookies, setCookies, removeCookies] = useCookies();
 
   function fetchLuckyNumbers() {
     const cache = cookies.lucky_numbers_cache;
+    // check if there is a cache from today
     if (cache && cache.date === formatDate()) {
       // console.log("Found existing cache for lucky numbers data.");
       setLuckyNumbers(cache.luckyNumbers);
       setForDate(cache.date);
       return;
     }
-    fetch(`${API_URL}/luckyNumbers/v2`).then((res) => {
-      if (res.status !== 200) {
-        setLuckyNumbers(["?", "?"]);
-        return;
-      }
-      res.json().then((data) => {
-        if (!data) {
-          setLuckyNumbers(["?", "?"]);
-          return;
-        }
-        const newCache = {
-          date: formatDate(data.date),
-          luckyNumbers: data.luckyNumbers,
-          excludedClasses: data.excludedClasses,
-        };
-        console.log("Created cache for lucky numbers data.", data.luckyNumbers);
-        setLuckyNumbers(data.luckyNumbers);
-        setForDate(newCache.date);
-        setCookies("lucky_numbers_cache", newCache, { sameSite: "lax" });
+    // lucky numbers data needs to be retrieved from API
+    fetch(`${API_URL}/luckyNumbers/v2/`)
+      .then((res) => {
+        res.json().then((data) => {
+          if (res.status !== 200 || !data) {
+            console.log("Error retrieving lucky numbers data.", data);
+            setLuckyNumbers(["?", "?"]);
+            return;
+          }
+          const newCache = {
+            date: formatDate(data.date),
+            luckyNumbers: data.luckyNumbers,
+            excludedClasses: data.excludedClasses,
+          };
+          console.log(
+            "Created cache for lucky numbers data.",
+            data.luckyNumbers
+          );
+          setLuckyNumbers(data.luckyNumbers);
+          setForDate(newCache.date);
+          setCookies("lucky_numbers_cache", newCache, { sameSite: "lax" });
+        });
+      })
+      .catch((error) => {
+        console.log("Error retrieving lucky numbers data!", error);
       });
-    }).catch((error) => {
-      console.log("Error retrieving lucky numbers data!", error);
-    });
   }
 
   useEffect(() => {
@@ -102,7 +106,7 @@ const Home = ({ setPage }) => {
         </div>
         <div
           className="LN"
-          title={`szczęśliwe numerki na dziś (${forDate}) to: ${luckyNumbers[0]} i ${luckyNumbers[1]} `}
+          title={`Szczęśliwe numerki na ${forDate} to ${luckyNumbers[0]} i ${luckyNumbers[1]}.`}
         >
           <h5>Szczęśliwe numerki:</h5>
           <div className="LN-box">

@@ -22,24 +22,16 @@ export function fetchNewsData({
   pageNumber = 1,
   maxItems = ITEMS_PER_PAGE,
 }) {
-  /** Populate the data containers with the API request response's JSON data. */
-  function processJsonData(jsonData) {
-    if (!jsonData || !jsonData.contents) {
+  /** Verifies that the API response is valid and returns the processed data. */
+  function processJsonData(data) {
+    if (!data || !data.contents) {
       console.log("Could not retrieve data");
-      return setLoaded(true);
+      return;
     }
     // map each article so that if it doesn't contain a 'photo' attribute it uses the default image
-    const data = jsonData.contents.map((article) => {
+    return data.contents.map((article) => {
       return { ...article, photo: article.photo || DEFAULT_IMAGE };
     });
-    const newCache = {
-      date: new Date(),
-      data,
-    };
-    localStorage.setItem(`news_page_${pageNumber}`, JSON.stringify(newCache));
-    console.log("Created cache for news data.", newCache);
-    setNewsData(data);
-    setLoaded(true);
   }
 
   const url = `/news/?page=${pageNumber}&items=${maxItems}`;

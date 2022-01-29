@@ -9,6 +9,8 @@ export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
 /**
  * (1, 'wyświetle', 'ni', 'ń') -> '1 wyświetlenie'
  *
+ * (2, 'wyświetle', 'ni', 'ń') -> '2 wyświetlenia'
+ *
  * (21, 'wyświetle', 'ni', 'ń') -> '21 wyświetleń'
  */
 export function conjugatePolish(value, base, suffix1, suffix2) {
@@ -26,7 +28,7 @@ export function conjugatePolish(value, base, suffix1, suffix2) {
   return `${value} ${base}${suffix2}`;
 }
 
-/**Format a timestamp string with format: `01 sty 2022`. */
+/** Format a timestamp string with format: `01 sty 2022`. */
 export function formatDate(
   date,
   includeTime = false,
@@ -46,6 +48,17 @@ export function formatDate(
   }
   const dateObj = date ? new Date(date) : new Date();
   return dateObj.toLocaleDateString("pl-PL", options);
+}
+
+/** Format a time array as a human-readable string. */
+export function formatTime([hour, minute]) {
+  let date = new Date().setHours(hour);
+  date = new Date(date).setMinutes(minute);
+  const formattedDate = formatDate(date, false, {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+  return formattedDate.split(", ")[1];
 }
 
 /** Removes the given parameter from the search params object. Returns the key's value prior to deletion. */
@@ -89,7 +102,15 @@ export function fetchData(
   // fetch new data
   fetch(API_URL + fetchURL)
     .then((res) => {
-      res.json().then(onSuccessCallback);
+      res.json().then((data) => {
+        const newCache = { date: new Date(), data: onSuccessCallback(data) };
+        if (newCache.data) {
+          localStorage.setItem(cacheName, JSON.stringify(newCache));
+          console.log(`Created cache '${cacheName}'.`, newCache);
+          setData(newCache.data);
+        }
+        setLoaded(true);
+      });
     })
     .catch((error) => {
       console.log("Error retrieving news data!", error);
