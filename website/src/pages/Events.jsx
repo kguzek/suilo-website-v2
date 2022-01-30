@@ -3,7 +3,7 @@ import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { fetchData, formatDate, formatTime, removeSearchParam } from "../misc";
-const { serialiseDateArray } = require("../common");
+const { serialiseDateArray, dateToArray } = require("../common");
 
 const calendarEventTypes = [
   "święta/wydarzenia szkolne",
@@ -178,12 +178,23 @@ function CalendarEventPreview({ event, data }) {
       </p>
     </div>
   );
-  // temporary render style: cross out events that are in the past
+  // temporary render style
   const eventEndDate = new Date(
     serialiseDateArray([data.yearInt, data.monthInt, event.endDate])
   );
-  const isCompleted = eventEndDate < new Date();
-  return isCompleted ? <s>{elem}</s> : elem;
+  const todayMidnight = new Date(serialiseDateArray(dateToArray()));
+  const tomorrowMidnight = new Date();
+  tomorrowMidnight.setHours(24, 0, 0, 0);
+  if (eventEndDate < todayMidnight) {
+    // cross out past events
+    return <s>{elem}</s>;
+  }
+  if (eventEndDate <= tomorrowMidnight) {
+    // bolden events that are today
+    return <b>{elem}</b>;
+  }
+  // no style effect for future events
+  return elem;
 }
 
 export default Events;

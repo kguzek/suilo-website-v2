@@ -8,7 +8,14 @@ const {
 
 const router = express.Router();
 
-const UPDATABLE_EVENT_ATTRIBUTES = ["title", "date", "location"];
+const UPDATABLE_EVENT_ATTRIBUTES = [
+  "title",
+  "date",
+  "startTime",
+  "endTime",
+  "location",
+  "content",
+];
 
 /** Splits the string with the given separator and casts each resulting array element into an integer.
  * If any array element is NaN, the appropriate array for the default input argument.
@@ -35,13 +42,12 @@ function getIntArray(string, separator, defaultInput = "0") {
 router
   // CREATE new event
   .post("/", (req, res) => {
-    // ?title=Tytuł wydarzenia&date=1970-01-01&start_time=00:00&end_time=23:59location=null&content=Treść wydarzenia...
+    // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&content=Treść wydarzenia...
 
-    //initialise parameters
     const title = req.query.title || "Tytuł wydarzenia";
     const date = getIntArray(req.query.date, "-", "1970-01-01");
-    const startTime = getIntArray(req.query.start_time, ":", "00:00");
-    const endTime = getIntArray(req.query.end_time, ":", "23:59");
+    const startTime = getIntArray(req.query.startTime, ":", "00:00");
+    const endTime = getIntArray(req.query.endTime, ":", "23:59");
     const location = req.query.location || null;
     const content = req.query.content || "Treść wydarzenia...";
 
@@ -60,6 +66,8 @@ router
   // CREATE (toggle) event participation status
   .post("/:id", (req, res) => {
     // ?user_id=null
+
+    // TODO: add proper user ID verification -- now it just checks if it's an integer
     const userID = parseInt(req.query.user_id);
     if (isNaN(userID)) {
       return res.status(400).json({ errorDescription: "Invalid user ID." });
