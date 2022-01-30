@@ -3,7 +3,7 @@ import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { fetchData, formatDate, formatTime, removeSearchParam } from "../misc";
-const { dateToArray, serialiseDateArray } = require("../common");
+const { serialiseDateArray } = require("../common");
 
 const calendarEventTypes = [
   "święta/wydarzenia szkolne",
@@ -18,10 +18,9 @@ const calendarEventTypes = [
 function fetchEventsData(cacheName, updateCache = false, setData, setLoaded) {
   /** Verifies that the API response is valid and returns the processed data. */
   function processJsonData(data) {
-    if (data) {
+    if (data && !data.errorDescription) {
       return data;
     }
-    console.log(`Could not retrieve ${cacheName} data.`);
   }
   const args = {
     setData,

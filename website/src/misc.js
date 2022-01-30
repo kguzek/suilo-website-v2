@@ -1,8 +1,7 @@
 export const MAX_CACHE_AGE = 2; // hours
 
-// Temporary API URL assignment
-// export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api";
-export const API_URL = "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
+export const API_URL = // "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
+  "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
 
 // Temporary image URL if an article has none specified
 export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
@@ -95,7 +94,9 @@ export function fetchData(
           setData(cache.data);
           return setLoaded(true);
         }
-        console.log(`The found cache is too old (${dateDifferenceHours} hours).`);
+        console.log(
+          `The found cache is too old (${dateDifferenceHours} hours).`
+        );
       }
     }
     // remove the existing cache
@@ -111,6 +112,15 @@ export function fetchData(
           localStorage.setItem(cacheName, JSON.stringify(newCache));
           console.log(`Created cache '${cacheName}'.`, newCache);
           setData(newCache.data);
+        } else {
+          // onSuccessCallback didn't return data; this usually means the data could not be processed
+          // (API returned a non-200 response code or the data was otherwise malformed)
+          console.log(
+            `Request to '${fetchURL}' returned an invalid response:`,
+            res.status,
+            res.statusText,
+            data
+          );
         }
         setLoaded(true);
       });

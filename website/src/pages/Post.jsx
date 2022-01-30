@@ -29,13 +29,11 @@ const Post = ({ setPage }) => {
   function updatePostData(updateCache = false) {
     /** Verifies that the API response is valid and returns the processed data. */
     function processJsonData(data) {
-      if (!data || data.errorDescription) {
-        console.log("ERROR: Could not retrieve news post data.", data);
-        setPostData({ errorMessage: "Post nie istnieje." });
-        return;
+      if (data && !data.errorDescription) {
+        data.photo = data.photo || DEFAULT_IMAGE;
+        return data;
       }
-      data.photo = data.photo || DEFAULT_IMAGE;
-      return data;
+      setPostData({ errorMessage: "Post nie istnieje." });
     }
 
     const args = {
