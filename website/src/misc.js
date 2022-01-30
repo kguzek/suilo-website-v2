@@ -14,7 +14,7 @@ export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
  * (21, 'wyświetle', 'ni', 'ń') -> '21 wyświetleń'
  */
 export function conjugatePolish(value, base, suffix1, suffix2) {
-  if (value == 1) {
+  if (value === 1) {
     return `1 ${base}${suffix1}e`;
   }
   const lastLetter = value.toString()[value.toString().length - 1];
@@ -85,14 +85,16 @@ export function fetchData(
     if (!updateCache) {
       // check if the cache contains no error
       if (cache.data && !cache.data.errorDescription) {
+        console.log(`Found existing cache for '${cacheName}'.`, cache);
         // check if the cache is younger than 2 hours old
         const cacheDate = Date.parse(cache.date);
         const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
-        if (dateDifferenceSeconds / 3600 < MAX_CACHE_AGE) {
-          console.log(`Found existing cache for '${cacheName}'.`, cache);
+        const dateDifferenceHours = dateDifferenceSeconds / 3600;
+        if (dateDifferenceHours < MAX_CACHE_AGE) {
           setData(cache.data);
           return setLoaded(true);
         }
+        console.log(`The found cache is too old (${dateDifferenceHours} hours).`);
       }
     }
     // remove the existing cache
