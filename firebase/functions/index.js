@@ -24,7 +24,14 @@ const eventsRoute = require("./routes/events");
 // initialise express
 const app = express();
 
-app.use(cors({ origin: true }));
+// default CORS options:
+/* {
+  "origin": "*",
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204
+} */
+app.use(cors());
 
 // set individual API routes
 app.use("/api/luckyNumbers/", luckyNumbersRoute);
