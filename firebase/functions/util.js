@@ -16,8 +16,6 @@ const HTTP404 = "404 Not Found: ";
 const HTTP405 = "405 Method Not Allowed: ";
 const HTTP500 = "500 Internal Server Error: ";
 
-const SERVER_REGION = "europe-west1";
-
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
 
 /** If the object contains fields 'date' or 'modified', converts the
@@ -278,7 +276,6 @@ module.exports = {
     err405: HTTP405,
     err500: HTTP500,
   },
-  SERVER_REGION,
   formatTimestamps,
   dateToTimestamp,
   getDocRef,

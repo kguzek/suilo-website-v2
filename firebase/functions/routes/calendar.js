@@ -2,7 +2,6 @@ const express = require("express");
 const {
   db,
   HTTP,
-  SERVER_REGION,
   getDocRef,
   sendListResponse,
   sendSingleResponse,
@@ -33,7 +32,7 @@ function getCollectionReference(req, res) {
   // check if the user-inputted year is valid
   if (isNaN(yearInt) || yearInt.toString() !== yearStr || yearInt < 2022) {
     res.status(400).json({
-      errorDescription: `${HTTP.err400}Invalid year '${yearStr}'. Must be an integer value representing a year.`,
+      errorDescription: `${HTTP.err400}Invalid year '${yearStr}'. Must be an integer value representing a year from 2022 onwards.`,
     });
     return;
   }
@@ -93,9 +92,14 @@ router
   })
 
   // READ all current calendar events
-  .get("/", (_req, res) => {
+  .get("/", (req, res) => {
     const now = new Date();
-    res.redirect(`${now.getFullYear()}/${now.getMonth() + 1}`);
+    const calendarURL = `${now.getFullYear()}/${now.getMonth() + 1}`;
+    if (req.originalUrl.endsWith("/")) {
+      res.redirect(calendarURL);
+    } else {
+      res.redirect(`calendar/${calendarURL}`);
+    }
   })
 
   // READ all current month calendar events

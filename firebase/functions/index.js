@@ -9,7 +9,6 @@ const functions = require("firebase-functions");
 const {
   db,
   HTTP,
-  SERVER_REGION,
   getDocRef,
   sendSingleResponse,
   sendListResponse,
@@ -39,6 +38,9 @@ app.use("/api/news/", newsRoute);
 app.use("/api/links/", linksRoute);
 app.use("/api/calendar/", calendarRoute);
 app.use("/api/events/", eventsRoute);
+
+// define server region name for Firebase app
+const SERVER_REGION = "europe-west1";
 
 // define the routes that the API is able to serve
 const definedRoutes = ["luckyNumbers", "news", "links", "calendar", "events"];
