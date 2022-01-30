@@ -35,7 +35,7 @@ const Home = ({ setPage }) => {
     fetch(`${API_URL}/luckyNumbers/v2/`)
       .then((res) => {
         res.json().then((data) => {
-          if (res.status !== 200 || !data) {
+          if (!res.ok|| !data) {
             console.log("Error retrieving lucky numbers data.", data);
             if (luckyNumbers === ["...", "..."]) {
               // set lucky numbers data to "?" if there is no previous cache

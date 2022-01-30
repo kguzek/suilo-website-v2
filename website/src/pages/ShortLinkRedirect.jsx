@@ -13,7 +13,7 @@ export default function ShortLinkRedirect({ setPage }) {
     fetch(`${API_URL}/links${window.location.pathname}`)
       .then((res) => {
         res.json().then((data) => {
-          if (res.status !== 200) {
+          if (!res.ok) {
             console.log("No such short URL (no entry in database).", data);
             return setRedirected(false);
           }
