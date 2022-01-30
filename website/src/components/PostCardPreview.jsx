@@ -34,6 +34,9 @@ export function fetchNewsData({
     });
   }
 
+  // ensure the pageNumber argument is a valid integer; prevent parameter injection
+  pageNumber = encodeURIComponent(parseInt(pageNumber));
+
   const url = `/news/?page=${pageNumber}&items=${maxItems}`;
   const args = {
     setData: setNewsData,
