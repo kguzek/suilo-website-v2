@@ -93,10 +93,9 @@ router
   })
 
   // READ all current calendar events
-  .get("/", (req, res) => {
-    const redirect = `${new Date().getFullYear()}/${new Date().getMonth() + 1}`;
-    const fullURL = `/suilo-page/${SERVER_REGION}/app${req.baseUrl}/${redirect}`;
-    res.redirect(fullURL);
+  .get("/", (_req, res) => {
+    const now = new Date();
+    res.redirect(`${now.getFullYear()}/${now.getMonth() + 1}`);
   })
 
   // READ all current month calendar events
