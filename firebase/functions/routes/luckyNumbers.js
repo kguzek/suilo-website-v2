@@ -2,7 +2,7 @@ const express = require("express");
 const {
   dateToArray,
   serialiseDateArray,
-} = require("../../../website/src/common");
+} = require("../common");
 const { db, HTTP, dateToTimestamp } = require("../util");
 
 const router = express.Router();
