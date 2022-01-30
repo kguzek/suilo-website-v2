@@ -94,7 +94,7 @@ router
   // READ all current calendar events
   .get("/", (req, res) => {
     const now = new Date();
-    const calendarURL = `${now.getFullYear()}/${now.getMonth() + 1}`;
+    const calendarURL = `${now.getFullYear()}/${now.getMonth() + 1}/`;
     if (req.originalUrl.endsWith("/")) {
       res.redirect(calendarURL);
     } else {
