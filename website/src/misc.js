@@ -116,7 +116,7 @@ export function fetchData(
       });
     })
     .catch((error) => {
-      console.log("Error retrieving news data!", error);
+      console.log(`Error retrieving: '${fetchURL}'`, error);
       onFailData && setData(onFailData);
       setLoaded(true);
     });
