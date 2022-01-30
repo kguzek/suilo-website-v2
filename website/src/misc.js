@@ -14,7 +14,7 @@ export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
  * (21, 'wyświetle', 'ni', 'ń') -> '21 wyświetleń'
  */
 export function conjugatePolish(value, base, suffix1, suffix2) {
-  if (value == 1) {
+  if (value === 1) {
     return `1 ${base}${suffix1}e`;
   }
   const lastLetter = value.toString()[value.toString().length - 1];
