@@ -1,7 +1,8 @@
 export const MAX_CACHE_AGE = 2; // hours
 
 // Temporary API URL assignment
-export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api";
+// export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api";
+export const API_URL = "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
 
 // Temporary image URL if an article has none specified
 export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
