@@ -1,10 +1,6 @@
 const express = require("express");
 const randomstring = require("randomstring");
-const {
-  db,
-  HTTP,
-  updateSingleDocument,
-} = require("../util");
+const { db, HTTP, updateSingleDocument } = require("../util");
 
 const router = express.Router();
 

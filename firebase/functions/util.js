@@ -77,7 +77,6 @@ function getDocRef(req, res, collectionName) {
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
 function createSingleDocument(data, res, { collectionName, collectionRef }) {
   // attempts to add the data to the given collection
-  console.log({ collectionRef, collectionName });
   collectionRef = collectionRef || db.collection(collectionName);
   collectionRef
     .add(data)
