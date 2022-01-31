@@ -1,40 +1,35 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Outlet,
-  useLocation,
-} from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { Routes, Route, Outlet } from "react-router-dom";
+import { useCookies } from "react-cookie";
+
 import "./styles/app.css";
-import News from "./pages/News";
 import Home from "./pages/Home";
+import News from "./pages/News";
+import Post from "./pages/Post";
 import Edit from "./pages/Edit";
 import Events from "./pages/Events";
 import Contact from "./pages/Contact";
-import Post from "./pages/Post";
-import NavBar from "./components/NavBar";
-import LoginScreen from "./components/LoginScreen";
-import Footer from "./components/Footer";
 import ShortLinkRedirect from "./pages/ShortLinkRedirect";
-import { getResults, logOut, AuthProvider } from "./firebase";
-import ScrollToTop, { scrollToTop } from "./components/ScrollToTop";
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
+import LoginScreen from "./components/LoginScreen";
 import CookiesAlert from "./components/CookiesAlert";
-import { useCookies } from "react-cookie";
+import ScrollToTop, { scrollToTop } from "./components/ScrollToTop";
+import { getResults, logOut, AuthProvider } from "./firebase";
+import { API_URL } from "./misc";
 
 function App() {
   const [page, setPage] = useState(null);
   const [logged, setLogged] = useState(false); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [startLogging, setLogging] = useState(false);
-  const [tokenAPI, setTokenAPI] = useState(); // this should be the working access token for the api, not yet tested
-  const [UserEmail, setEmail] = useState(); // user's email
+  const [apiToken, setApiToken] = useState(); // this should be the working access token for the api, not yet tested
+  const [userEmail, setUserEmail] = useState(); // user's email
   const [cookies, setCookies, removeCookies] = useCookies();
   useEffect(() => {
     getResults(callback);
     // console.log("Cookies:", cookies);
   }, []);
 
-  //---debug code---//
   useEffect(() => {
     if (page !== null) {
       // console.log(page);
@@ -43,10 +38,10 @@ function App() {
     return;
   }, [page]);
 
-  const callback = (apiToken, email) => {
+  function callback(apiToken, email) {
     if (apiToken !== null && email !== null) {
-      setTokenAPI(apiToken);
-      setEmail(email);
+      setApiToken(apiToken);
+      setUserEmail(email);
       if (email.endsWith("@lo1.gliwice.pl")) {
         setLogged(true);
       } else {
@@ -55,21 +50,26 @@ function App() {
     } else {
       setLogged(false);
     }
-  };
+  }
 
-  const loginAction = () => {
-    // console.log("zalogowoano!")
-    // setLogged(true)
+  function loginAction() {
     // CALL LOG SCREEN
     setLogging(true);
-  };
+  }
 
-  const logoutAction = () => {
+  function logoutAction() {
     logOut();
-    // console.log("wylogowano!")
-    //setLogged(false)
     // LOGOUT (to integrate with backend) !!!!!! -------------------------- !!!!
-  };
+  }
+
+  /** Performs a 'fetch' with the auth header set to the user's API token. */
+  function fetchFromAPI(relativeURL) {
+    return fetch(API_URL + relativeURL, {
+      headers: {
+        authorization: `Bearer ${apiToken}`,
+      },
+    });
+  }
 
   return (
     <AuthProvider callback={callback}>
@@ -89,13 +89,16 @@ function App() {
             />
           }
         >
-          <Route index element={<Home setPage={setPage} />} />
-          <Route path="aktualnosci" element={<News setPage={setPage} />}>
-            <Route path="post" element={<Post setPage={setPage} />}>
-              <Route path=":postID" element={<Post setPage={setPage} />} />
+          <Route
+            index
+            element={<Home setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+          />
+          <Route path="aktualnosci" element={<News setPage={setPage} fetchFromAPI={fetchFromAPI} />}>
+            <Route path="post" element={<Post setPage={setPage} fetchFromAPI={fetchFromAPI} />}>
+              <Route path=":postID" element={<Post setPage={setPage} fetchFromAPI={fetchFromAPI} />} />
             </Route>
           </Route>
-          <Route path="wydarzenia" element={<Events setPage={setPage} />} />
+          <Route path="wydarzenia" element={<Events setPage={setPage} fetchFromAPI={fetchFromAPI} />} />
           <Route path="kontakt" element={<Contact setPage={setPage} />} />
           <Route
             path="edycja"
@@ -107,7 +110,15 @@ function App() {
               />
             }
           />
-          <Route path="*" element={<ShortLinkRedirect setPage={setPage} />} />
+          <Route
+            path="*"
+            element={
+              <ShortLinkRedirect
+                setPage={setPage}
+                fetchFromAPI={fetchFromAPI}
+              />
+            }
+          />
         </Route>
       </Routes>
     </AuthProvider>

@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import MetaTags from "react-meta-tags";
-import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
 import { useCookies } from "react-cookie";
-import Blob from "../media/blob";
-import SuPhoto from "../media/su-photo.jpg";
+import { Bars } from "react-loader-spinner";
+import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
 import PostCardPreview, { fetchNewsData } from "../components/PostCardPreview";
 import { SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
-import { API_URL, formatDate } from "../misc";
-import { Bars } from "react-loader-spinner";
+import SuPhoto from "../media/su-photo.jpg";
+import { formatDate } from "../misc";
 
-const Home = ({ setPage }) => {
+const Home = ({ setPage, fetchFromAPI }) => {
   const [luckyNumbers, setLuckyNumbers] = useState(["...", "..."]);
   const [loadedNews, setLoadedNews] = useState(false);
   const [forDate, setForDate] = useState(formatDate());
@@ -32,10 +31,10 @@ const Home = ({ setPage }) => {
       }
     }
     console.log("Checking if there are updated lucky numbers...");
-    fetch(`${API_URL}/luckyNumbers/v2/`)
+    fetchFromAPI("/luckyNumbers/v2/")
       .then((res) => {
         res.json().then((data) => {
-          if (!res.ok|| !data) {
+          if (!res.ok || !data) {
             console.log("Error retrieving lucky numbers data.", data);
             if (luckyNumbers === ["...", "..."]) {
               // set lucky numbers data to "?" if there is no previous cache
@@ -75,6 +74,7 @@ const Home = ({ setPage }) => {
       setNewsData,
       setLoaded: setLoadedNews,
       maxItems: SECONDARY_ITEMS_DEFAULT,
+      fetchFromAPI,
     });
   }, []);
 

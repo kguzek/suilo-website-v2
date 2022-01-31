@@ -4,9 +4,8 @@ const admin = require("firebase-admin");
 const serviceAccount = require("./permissions.json");
 
 // Authorise Firebase
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+
 // Assign database reference
 const db = admin.firestore();
 

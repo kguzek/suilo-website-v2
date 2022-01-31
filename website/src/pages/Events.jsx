@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { fetchData, formatDate, formatTime, removeSearchParam } from "../misc";
+import {
+  fetchCachedData,
+  formatDate,
+  formatTime,
+  removeSearchParam,
+} from "../misc";
 const { serialiseDateArray, dateToArray } = require("../common");
 
 const calendarEventTypes = [
@@ -15,7 +20,13 @@ const calendarEventTypes = [
   "matury i inne egzaminy",
 ];
 
-function fetchEventsData(cacheName, updateCache = false, setData, setLoaded) {
+function fetchEventsData(
+  cacheName,
+  updateCache = false,
+  setData,
+  setLoaded,
+  fetchFromAPI
+) {
   /** Verifies that the API response is valid and returns the processed data. */
   function processJsonData(data) {
     if (data && !data.errorDescription) {
@@ -28,7 +39,7 @@ function fetchEventsData(cacheName, updateCache = false, setData, setLoaded) {
     updateCache,
     onSuccessCallback: processJsonData,
   };
-  fetchData(cacheName, `/${cacheName}`, args);
+  fetchCachedData(cacheName, `/${cacheName}`, args, fetchFromAPI);
 }
 
 function getNextEvent(eventContainer) {
@@ -58,7 +69,7 @@ function getNextEvent(eventContainer) {
   }
 }
 
-const Events = ({ setPage }) => {
+function Events({ setPage, fetchFromAPI }) {
   const [loadedA, setLoadedA] = useState(false);
   const [loadedB, setLoadedB] = useState(false);
   const [eventsData, setEventsData] = useState({ contents: [] });
@@ -73,8 +84,20 @@ const Events = ({ setPage }) => {
       setSearchParams,
       "refresh"
     );
-    fetchEventsData("events", updateCache, setEventsData, setLoadedA);
-    fetchEventsData("calendar", updateCache, setCalendarData, setLoadedB);
+    fetchEventsData(
+      "events",
+      updateCache,
+      setEventsData,
+      setLoadedA,
+      fetchFromAPI
+    );
+    fetchEventsData(
+      "calendar",
+      updateCache,
+      setCalendarData,
+      setLoadedB,
+      fetchFromAPI
+    );
   }, [params.postID]);
 
   if (!(loadedA && loadedB)) {
@@ -128,7 +151,7 @@ const Events = ({ setPage }) => {
       )}
     </div>
   );
-};
+}
 
 function EventPreview({ event }) {
   const numParticipants = event.participants.length;

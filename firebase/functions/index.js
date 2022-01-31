@@ -19,6 +19,7 @@ const newsRoute = require("./routes/news");
 const linksRoute = require("./routes/links");
 const calendarRoute = require("./routes/calendar");
 const eventsRoute = require("./routes/events");
+const authMiddleware = require("./authMiddleware");
 
 // initialise express
 const app = express();
@@ -31,6 +32,15 @@ const app = express();
   "optionsSuccessStatus": 204
 } */
 app.use(cors());
+
+// uncomment to enable token verification (doesn't work when tested?)
+// use authentication middleware for individual HTTP methods
+/*
+app.get("*", authMiddleware("any"));
+app.put("*", authMiddleware("edit"));
+app.post("*", authMiddleware("admin"));
+app.delete("*", authMiddleware("admin"));
+//*/
 
 // set individual API routes
 app.use("/api/luckyNumbers/", luckyNumbersRoute);

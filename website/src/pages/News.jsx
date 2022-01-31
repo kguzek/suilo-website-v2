@@ -5,7 +5,7 @@ import { Bars } from "react-loader-spinner";
 import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
 import { removeSearchParam } from "../misc";
 
-const News = ({ setPage }) => {
+const News = ({ setPage, fetchFromAPI }) => {
   const [loaded, setLoaded] = useState(false);
   const [newsData, setNewsData] = useState([]);
   const params = useParams();
@@ -23,7 +23,13 @@ const News = ({ setPage }) => {
     );
     // this raw value is later encoded in the fetchNewsData() function
     const pageNumber = searchParams.get("page") || 1;
-    fetchNewsData({ setNewsData, setLoaded, updateCache, pageNumber });
+    fetchNewsData({
+      setNewsData,
+      setLoaded,
+      updateCache,
+      pageNumber,
+      fetchFromAPI,
+    });
   }, [params.postID]);
 
   if (params.postID !== undefined) {

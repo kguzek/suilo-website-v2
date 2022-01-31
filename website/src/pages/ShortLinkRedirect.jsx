@@ -3,14 +3,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bars } from "react-loader-spinner";
 import NotFound from "./NotFound";
-import { API_URL } from "../misc";
 
-export default function ShortLinkRedirect({ setPage }) {
+export default function ShortLinkRedirect({ setPage, fetchFromAPI }) {
   const [redirected, setRedirected] = useState(null);
   const navigate = useNavigate();
 
-  function fetchData() {
-    fetch(`${API_URL}/links${window.location.pathname}`)
+  function fetchShortLinkData() {
+    fetchFromAPI("/links" + window.location.pathname)
       .then((res) => {
         res.json().then((data) => {
           if (!res.ok) {
@@ -36,7 +35,7 @@ export default function ShortLinkRedirect({ setPage }) {
   }
   useEffect(() => {
     setPage("redirect");
-    fetchData();
+    fetchShortLinkData();
   }, []);
   if (redirected === null) {
     return (

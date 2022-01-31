@@ -2,7 +2,7 @@ import React from "react";
 import PostCardPrimary from "../components/PostCardPrimary";
 import PostCardSecondary from "../components/PostCardSecondary";
 import PostCardMain from "../components/PostCardMain";
-import { DEFAULT_IMAGE, fetchData } from "../misc";
+import { fetchCachedData, DEFAULT_IMAGE } from "../misc";
 
 // Set number of items on page to 3 primary, 4 secondary and 8 main.
 // Can introduce useState variable for user customisability or leave it hard-coded.
@@ -21,6 +21,7 @@ export function fetchNewsData({
   updateCache = false,
   pageNumber = 1,
   maxItems = ITEMS_PER_PAGE,
+  fetchFromAPI,
 }) {
   /** Verifies that the API response is valid and returns the processed data. */
   function processJsonData(data) {
@@ -42,7 +43,7 @@ export function fetchNewsData({
     updateCache,
     onSuccessCallback: processJsonData,
   };
-  fetchData(`news_page_${pageNumber}`, url, args);
+  fetchCachedData(`news_page_${pageNumber}`, url, args, fetchFromAPI);
 }
 
 export function PostCardPreview({

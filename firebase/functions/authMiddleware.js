@@ -1,121 +1,102 @@
-//This code will execue before the server gets the request
-//----- NOT YET TESTED SINCE IN ORDER TO FULLY TEST IT WEBSITE MUST BE RUNNING-------
-//firebase imports
+// This code will execute before the server receives the request
+
+// general imports
 const admin = require("firebase-admin");
+const { OAuth2Client } = require("google-auth-library");
+
 const db = admin.firestore();
-const {OAuth2Client} = require('google-auth-library');
+
 const client = new OAuth2Client();
 
-module.exports = validateToken = function(authType){
-    //authType shoud be 
-    //any         anyone with an account can enter
-    //edit        only editors and admins
-    //admin       only admins 
-    return (async(req,res,next) => {
-        //check if authorization token was provided
-    if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
-    !(req.cookies && req.cookies.__session)) {
-        res.status(403).send('No authorization token provided');
-        return;
+function validateToken(authType) {
+  // authType shoud be one of:
+  // * any -- anyone with an account can access
+  // * edit -- only editors and admins
+  // * admin -- only admins
+
+  function validatePerms(data, next) {
+    if (!data) {
+      // user is not yet in the database; add default entry
+      db.collection.doc(userid).set({
+        name: payload.email,
+        editor: false,
+        admin: false,
+        event_ids: [],
+      });
+      if (authType !== "any") {
+        return send403();
+      }
+    } else if (authType === "edit" && !(data.admin || data.editor)) {
+      return send403();
+    } else if (authType === "admin" && !data.admin) {
+      return send403();
+    }
+    // user is authorised to perform the action; send back user info
+    req.email = payload.email;
+    req.id = userid;
+    // accept the request
+    next();
+  }
+
+  async function authorise(req, res, next) {
+    console.log(`Validating the request for permission level '${authType}'...`);
+
+    function send403(msg = "You are not authorised to do that.", err) {
+      const jsonResponse = { errorDescription: "403 Forbidden: " + msg };
+      res.status(403);
+      if (err) {
+        res.json({ ...jsonResponse, error: err.toString() });
+      } else {
+        res.json(jsonResponse);
+      }
+    }
+
+    // check if an authorisation token was provided
+    const authHeader = req.headers.authorization;
+    if (
+      (!authHeader || !authHeader.startsWith("Bearer ")) &&
+      !(req.cookies && req.cookies.__session)
+    ) {
+      return send403("No authorisation token provided.");
     }
     let idToken;
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-        // Read the token from the Authorization header.
-        idToken = req.headers.authorization.split('Bearer ')[1];
-      } else if(req.cookies) {
-        // Read the token from cookie.
-        idToken = req.cookies.__session;
-      } else {
-        // No cookie
-        res.status(403).send('Unable to read the authorization token');
-        return;
-      }
-      try {
-        //verify the provided token
-        const ticket = await client.verifyIdToken({
-            idToken: idToken,
-        });
-        //get user data
-        const payload = ticket.getPayload();
-        //get user id
-        const userid = payload['sub'];
-        //allow only school emails
-        if(payload.hd === "lo1.gliwice.pl"){
-            db.collection(user).doc(userid).get().then(doc=>{
-                if(doc.data() === "undefined"){
-                    //user is not yet in the database
-                    let data = {
-                        name: payload.email,
-                        editor: false,
-                        admin: false,
-                        event_ids: [],
-                    }
-                    db.collection.doc(userid).set(data);
-                    if(authType === 'any'){
-                        //send back user info
-                        req.email = payload.email;
-                        req.id = userid;
-                        //accept the request
-                        next();
-                        return;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      // Read the token from the auth header
+      idToken = authHeader.split(" ")[1];
+    } else if (req.cookies) {
+      // Read the token from cookie.
+      idToken = req.cookies.__session;
+    } else {
+      // No cookie or authorisation token
+      return send403("Unable to read the authorisation token.");
+    }
+    // verify the provided token
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({ idToken });
+    } catch (error) {
+      return send403(
+        "Encountered an error while validating the API token.",
+        error
+      );
+    }
+    // get user data
+    const payload = ticket.getPayload();
+    // get user id
+    const userid = payload["sub"];
+    // allow only school emails
+    if (payload.hd !== "lo1.gliwice.pl") {
+      return send403(
+        "This email address is from outside the LO1 organisation."
+      );
+    }
+    db.collection(user)
+      .doc(userid)
+      .get()
+      .then((doc) => validatePerms(doc.data(), next));
+  }
 
-                    }else{
-                        res.status(403).send("You are not authorized to do that");
+  return authorise;
+}
 
-                    }
-                }
-                else{
-                    if(authType ==="edit"){
-                        if(doc.data().admin||doc.data().editor){
-                            //send back user info
-                            req.email = payload.email;
-                            req.id = userid;
-                            //accept the request
-                            next();
-                            return;
-
-                        }
-                        else{
-                            res.status(403).send("You are not authorized to do that");
-
-                        }
-                    }
-                    else if(authType === 'admin'){
-                        if(doc.data().admin){
-                            //send back user info
-                            req.email = payload.email;
-                            req.id = userid;
-                            //accept the request
-                            next();
-                            return;
-
-                        }
-                        else{
-                            res.status(403).send("You are not authorized to do that");
-
-                        }
-                        }
-
-                    }
-
-                }
-            )
-            
-            
-        }else{
-            res.status(403).send('Only school account are allowed');
-            return;
-        }
-        
-        
-      } catch (error) {
-        res.status(403).send('Some unknow error occured');
-        return;
-      }
-
-    })
-
-
-
-
-};
+module.exports = validateToken;

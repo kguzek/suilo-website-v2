@@ -8,15 +8,15 @@ import {
   MAIN_ITEMS_DEFAULT,
 } from "../components/PostCardPreview";
 import {
+  fetchCachedData,
   conjugatePolish,
   DEFAULT_IMAGE,
   formatDate,
   removeSearchParam,
-  fetchData,
 } from "../misc";
 import { Bars } from "react-loader-spinner";
 
-const Post = ({ setPage }) => {
+const Post = ({ setPage, fetchFromAPI }) => {
   const [loaded, setLoaded] = useState(false);
   const [postData, setPostData] = useState({});
   const [newsData, setNewsData] = useState([]);
@@ -45,12 +45,17 @@ const Post = ({ setPage }) => {
         errorMessage: "Nastąpił błąd sieciowy. Spróbuj ponownie w krótce.",
       },
     };
-    fetchData(cacheName, `/news/${encodeURIComponent(params.postID)}`, args);
+    fetchCachedData(
+      cacheName,
+      `/news/${encodeURIComponent(params.postID)}`,
+      args,
+      fetchFromAPI
+    );
   }
 
   useEffect(() => {
     const updateCache = searchParams.get("refresh");
-    fetchNewsData({ setNewsData, updateCache });
+    fetchNewsData({ setNewsData, updateCache, fetchFromAPI });
   }, []);
 
   useEffect(() => {
