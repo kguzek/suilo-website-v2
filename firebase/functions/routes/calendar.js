@@ -31,7 +31,6 @@ function sanitiseDate(dateString, maxDate = 31) {
 function getMonthName(monthInt, yearInt) {
   yearInt === undefined && (yearInt = new Date().getFullYear());
   const date = new Date(yearInt, monthInt, 0);
-  console.log(date);
   return date.toLocaleString("pl-PL", { month: "long" });
 }
 

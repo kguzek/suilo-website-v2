@@ -14,30 +14,6 @@ function validateToken(authType) {
   // * edit -- only editors and admins
   // * admin -- only admins
 
-  function validatePerms(data, next) {
-    if (!data) {
-      // user is not yet in the database; add default entry
-      db.collection.doc(userid).set({
-        name: payload.email,
-        editor: false,
-        admin: false,
-        event_ids: [],
-      });
-      if (authType !== "any") {
-        return send403();
-      }
-    } else if (authType === "edit" && !(data.admin || data.editor)) {
-      return send403();
-    } else if (authType === "admin" && !data.admin) {
-      return send403();
-    }
-    // user is authorised to perform the action; send back user info
-    req.email = payload.email;
-    req.id = userid;
-    // accept the request
-    next();
-  }
-
   async function authorise(req, res, next) {
     console.log(`Validating the request for permission level '${authType}'...`);
 
@@ -49,26 +25,26 @@ function validateToken(authType) {
       } else {
         res.json(jsonResponse);
       }
+      console.log("Rejected the request.");
     }
 
     // check if an authorisation token was provided
     const authHeader = req.headers.authorization;
-    if (
-      (!authHeader || !authHeader.startsWith("Bearer ")) &&
-      !(req.cookies && req.cookies.__session)
-    ) {
-      return send403("No authorisation token provided.");
-    }
     let idToken;
     if (authHeader && authHeader.startsWith("Bearer ")) {
       // Read the token from the auth header
-      idToken = authHeader.split(" ")[1];
+      const headerInfo = authHeader.split(" ");
+      if (headerInfo.length === 2) {
+        idToken = headerInfo[1];
+      }
     } else if (req.cookies) {
       // Read the token from cookie.
       idToken = req.cookies.__session;
-    } else {
-      // No cookie or authorisation token
-      return send403("Unable to read the authorisation token.");
+    }
+    // if the token is provided but the user is not logged in, the 
+    // fetch method interpolates the token as literal "undefined".
+    if (!idToken || idToken === "undefined") {
+      return send403("No authorisation token provided.");
     }
     // verify the provided token
     let ticket;
@@ -82,18 +58,42 @@ function validateToken(authType) {
     }
     // get user data
     const payload = ticket.getPayload();
-    // get user id
-    const userid = payload["sub"];
+    // get user ID
+    const userID = payload.sub;
     // allow only school emails
     if (payload.hd !== "lo1.gliwice.pl") {
       return send403(
         "This email address is from outside the LO1 organisation."
       );
     }
-    db.collection(user)
-      .doc(userid)
+    db.collection("users")
+      .doc(userID)
       .get()
-      .then((doc) => validatePerms(doc.data(), next));
+      .then((doc) => {
+        const data = doc.data();
+        if (!data) {
+          // user is not yet in the database; add default entry
+          db.collection("users").doc(userID).set({
+            name: payload.email,
+            editor: false,
+            admin: false,
+            event_ids: [],
+          });
+          if (authType !== "any") {
+            return send403();
+          }
+        } else if (authType === "edit" && !(data.admin || data.editor)) {
+          return send403();
+        } else if (authType === "admin" && !data.admin) {
+          return send403();
+        }
+        // user is authorised to perform the action; send back user info
+        req.email = payload.email;
+        req.id = userID;
+        // accept the request
+        console.log("Validated the request!");
+        next();
+      });
   }
 
   return authorise;
