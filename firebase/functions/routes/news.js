@@ -20,6 +20,7 @@ const postAttributeSanitisers = {
   content: (content) => content || "Wydłużona treść postu.",
   photo: (photo) => photo || null,
   photoAuthor: (photoAuthor) => photoAuthor || null,
+  alt: (altPhotoText) => altPhotoText || null,
 };
 
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
