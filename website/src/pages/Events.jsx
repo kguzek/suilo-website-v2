@@ -148,7 +148,7 @@ function EventPreview({ event }) {
       </b>
       <br />
       <i>
-        Godzina: {formatTime(event.startTime)} — {formatTime(event.endTime)}
+        Godz. {formatTime(event.startTime)}—{formatTime(event.endTime)}
         {event.location && (
           <span>&nbsp;&nbsp;·&nbsp;&nbsp;Miejsce: {event.location}</span>
         )}
