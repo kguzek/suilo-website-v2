@@ -8,17 +8,17 @@ const {
 
 const router = express.Router();
 
-const UPDATABLE_EVENT_ATTRIBUTES = [
-  "title",
-  "date",
-  "startTime",
-  "endTime",
-  "location",
-  "content",
-];
+const eventAttributeSanitisers = {
+  title: (title) => title || "Tytuł wydarzenia",
+  date: (date) => getIntArray(date, "-", "1970-01-01"),
+  startTime: (startTime) => getIntArray(startTime, ":", "00:00"),
+  endTime: (endTime) => getIntArray(endTime, ":", "23:59"),
+  location: (location) => location || null,
+  content: (content) => content || "Treść wydarzenia...",
+};
 
 /** Splits the string with the given separator and casts each resulting array element into an integer.
- * If any array element is NaN, the appropriate array for the default input argument.
+ * If any array element is NaN, the appropriate array for the default input argument is returned.
  */
 function getIntArray(string, separator, defaultInput = "0") {
   let anyNaN = false;
@@ -44,22 +44,12 @@ router
   .post("/", (req, res) => {
     // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&content=Treść wydarzenia...
 
-    const title = req.query.title || "Tytuł wydarzenia";
-    const date = getIntArray(req.query.date, "-", "1970-01-01");
-    const startTime = getIntArray(req.query.startTime, ":", "00:00");
-    const endTime = getIntArray(req.query.endTime, ":", "23:59");
-    const location = req.query.location || null;
-    const content = req.query.content || "Treść wydarzenia...";
-
-    const data = {
-      title,
-      date,
-      startTime,
-      endTime,
-      location,
-      content,
-      participants: [],
-    };
+    // initialise parameters
+    const data = { participants: [] };
+    for (const attrib in eventAttributeSanitisers) {
+      const sanitiser = eventAttributeSanitisers[attrib];
+      data[attrib] = sanitiser(req.query[attrib]);
+    }
     createSingleDocument(data, res, { collectionName: "events" });
   })
 
@@ -102,7 +92,7 @@ router
   // UPDATE single event
   .put("/:id", (req, res) => {
     getDocRef(req, res, "events").then((docRef) =>
-      updateSingleDocument(docRef, res, req.query, UPDATABLE_EVENT_ATTRIBUTES)
+      updateSingleDocument(docRef, res, req.query, eventAttributeSanitisers)
     );
   });
 

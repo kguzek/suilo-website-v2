@@ -9,41 +9,44 @@ const {
 
 const router = express.Router();
 
-const UPDATABLE_POST_ATTRIBUTES = [
-  "author",
-  "title",
-  "text",
-  "content",
-  "photo",
-  "imageAuthor",
-];
+const postAttributeSanitisers = {
+  date: (dateStr) => {
+    const date = new Date(dateStr);
+    return dateToTimestamp(date == "Invalid Date" ? new Date() : date);
+  },
+  author: (author) => author || "autor",
+  title: (title) => title || "Tytuł Postu",
+  text: (text) => text || "Krótka treść postu...",
+  content: (content) => content || "Wydłużona treść postu.",
+  photo: (photo) => photo || null,
+  photoAuthor: (photoAuthor) => photoAuthor || null,
+};
 
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
 
 router
   // CREATE news
   .post("/", (req, res) => {
-    // ?author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null
-    // initialise parameters
-    const data = {
-      date: dateToTimestamp(new Date()),
-      author: req.query.author || "autor",
-      title: req.query.title || "Tytuł Postu",
-      text: req.query.text || "Krótka treść postu...",
-      content: req.query.content || "Wydłużona treść postu.",
-      photo: req.query.text || null,
-    };
+    // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null
+
     if (req.query.create_test_data) {
-      createTestData(res);
-    } else {
-      createSingleDocument(data, res, { collectionName: "news" });
+      return createTestData(res);
     }
+
+    // initialise parameters
+    const data = {};
+    for (const attrib in postAttributeSanitisers) {
+      const sanitiser = postAttributeSanitisers[attrib];
+      data[attrib] = sanitiser(req.query[attrib]);
+    }
+
+    createSingleDocument(data, res, { collectionName: "news" });
   })
 
   // UPDATE news
   .put("/:id", (req, res) => {
     getDocRef(req, res, "news").then((docRef) =>
-      updateSingleDocument(docRef, res, req.query, UPDATABLE_POST_ATTRIBUTES)
+      updateSingleDocument(docRef, res, req.query, postAttributeSanitisers)
     );
   });
 

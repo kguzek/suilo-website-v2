@@ -132,7 +132,7 @@ const Events = ({ setPage }) => {
 
 function EventPreview({ event }) {
   const numParticipants = event.participants.length;
-  const suffix = numParticipants == 1 ? "" : "ów";
+  const suffix = numParticipants === 1 ? "" : "ów";
   return (
     <div>
       <small>

@@ -188,13 +188,13 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
  * @param {FirebaseFirestore.DocumentReference} docQuery
  * @param {response} res the HTTP response
  * @param {object} requestParams an object containing key-value pairs of the fields to update
- * @param {Array} attributesToUpdate an array containing the field names that should be updated
+ * @param {object} attributeSanitisers an object containing key-value pairs of attribute names and sanitation functions that validate the input
  */
 function updateSingleDocument(
   docQuery,
   res,
   requestParams,
-  attributesToUpdate = []
+  attributeSanitisers = {}
 ) {
   // initialise new data
   const newData = {
@@ -204,20 +204,21 @@ function updateSingleDocument(
   // initialise boolean to indicate if any parameters were updated
   let dataUpdated = false;
   // loop through each attribute that should be set
-  attributesToUpdate.forEach((attrib) => {
-    // check if object attribute is provided in the request query
-    if (requestParams[attrib]) {
-      // it is; assign parameter to object attributes
-      const val = requestParams[attrib];
-      if (parseInt(val).toString() === val) {
-        newData[attrib] = parseInt(val);
-      } else {
-        newData[attrib] = val;
-      }
-      // mark data as updated
-      dataUpdated = true;
+  for (const attrib in attributeSanitisers) {
+    if (!requestParams[attrib]) {
+      // the attribute is not present in the request query
+      continue;
     }
-  });
+    // sanitise the request query value
+    const sanitiser = attributeSanitisers[attrib];
+    const sanitisedValue = sanitiser(requestParams[attrib]);
+
+    // assign the sanitised value to the updated data object
+    newData[attrib] = sanitisedValue;
+
+    // mark the data as having been updated
+    dataUpdated = true;
+  }
   if (!dataUpdated) {
     // return an error if the query does not contain any new assignments
     return res.status(400).json({

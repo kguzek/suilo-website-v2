@@ -12,18 +12,32 @@ const {
 
 const router = express.Router();
 
-const UPDATABLE_EVENT_ATTRIBUTES = ["title", "type", "startDate", "endDate"];
+const eventAttributeSanitisers = {
+  title: (title) => title || "Nazwa wydarzenia kalendarzowego",
+  type: (type) => parseInt(type) || 0,
+  startDate: (startDate) => sanitiseDate(startDate),
+  endDate: (endDate) => sanitiseDate(endDate),
+};
 
 /*      ======== CALENDAR FUNCTIONS ========      */
 
-/** Returns the Polish name for the month of the year with the given zero-based index. */
-function getMonthName(monthID) {
-  const date = new Date(new Date().setMonth(monthID));
+/** Converts a day of the month string into an integer between 1 and the number of days in the month. */
+function sanitiseDate(dateString, maxDate = 31) {
+  // ensure that start date is between the first and last day of the month
+  return Math.min(Math.max(parseInt(dateString) || 1, 1), maxDate);
+}
+
+/** Returns the Polish name for the month of the year with the given one-based index. */
+function getMonthName(monthInt, yearInt) {
+  yearInt === undefined && (yearInt = new Date().getFullYear());
+  const date = new Date(yearInt, monthInt, 0);
+  console.log(date);
   return date.toLocaleString("pl-PL", { month: "long" });
 }
 
-/** Returns the collection reference from the request query. */
-function getCollectionReference(req, res) {
+/** Returns an array containing the appropriate collection reference, year, and month from the request query.
+ * If the query is invalid, sends a HTTP 400 response and returns void. */
+function getCollectionInfo(req, res) {
   const yearStr = req.params.year;
   const monthStr = req.params.month;
   const yearInt = parseInt(yearStr);
@@ -61,31 +75,24 @@ router
   // CREATE new calendar event
   .post("/:year/:month", (req, res) => {
     // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1
-    const collectionInfo = getCollectionReference(req, res);
+    const collectionInfo = getCollectionInfo(req, res);
     if (!collectionInfo) {
       return;
     }
-    const [collectionRef, _yearInt, monthInt] = collectionInfo;
+    const [collectionRef, yearInt, monthInt] = collectionInfo;
 
     // determine the number of days in the month
-    const maxDate = new Date(new Date().getFullYear(), monthInt, 0).getDate();
+    const maxDate = new Date(yearInt, monthInt, 0).getDate();
 
-    // ensure that the start date is between the first and last day of the month
-    const startDate = Math.min(
-      Math.max(parseInt(req.query.startDate) || 1, 1),
-      maxDate
-    );
-    // ensure that the end date is between the start date and the last day of the month
-    const endDate = Math.min(
-      Math.max(parseInt(req.query.endDate) || 1, startDate),
-      maxDate
-    );
+    // ensure that the dates are between the first and last day of the month
+    const startDate = sanitiseDate(req.query.startDate, maxDate);
+    const endDate = sanitiseDate(req.query.endDate, maxDate);
 
     const event = {
-      title: req.query.title || "Nazwa wydarzenia kalendarzowego",
-      type: parseInt(req.query.type) || 0,
+      title: eventAttributeSanitisers.title(req.query.title),
+      type: eventAttributeSanitisers.type(req.query.type),
       startDate,
-      endDate,
+      endDate: Math.max(endDate, startDate),
     };
 
     createSingleDocument(event, res, { collectionRef });
@@ -104,7 +111,7 @@ router
 
   // READ all current month calendar events
   .get("/:year/:month", (req, res) => {
-    const collectionInfo = getCollectionReference(req, res);
+    const collectionInfo = getCollectionInfo(req, res);
     if (!collectionInfo) {
       return;
     }
@@ -112,7 +119,7 @@ router
 
     /** Sends the JSON response containing the events from the 'events' collection. */
     function sendResponse(events, snapshotDocuments) {
-      const monthName = getMonthName(monthInt - 1);
+      const monthName = getMonthName(monthInt, yearInt);
       const data = {
         yearInt,
         monthInt,
@@ -136,7 +143,7 @@ router
 
   // READ specific calendar event
   .get("/:year/:month/:id", (req, res) => {
-    const collectionInfo = getCollectionReference(req, res);
+    const collectionInfo = getCollectionInfo(req, res);
     if (!collectionInfo) {
       return;
     }
@@ -150,7 +157,7 @@ router
 
   // UPDATE specific calendar event
   .put("/:year/:month/:id", (req, res) => {
-    const collectionInfo = getCollectionReference(req, res);
+    const collectionInfo = getCollectionInfo(req, res);
     if (!collectionInfo) {
       return;
     }
@@ -158,13 +165,13 @@ router
     const docRef = collectionInfo[0].doc(req.params.id);
 
     getDocRef(req, res, "calendar").then(() => {
-      updateSingleDocument(docRef, res, req.query, UPDATABLE_EVENT_ATTRIBUTES);
+      updateSingleDocument(docRef, res, req.query, eventAttributeSanitisers);
     });
   })
 
   // DELETE specific calendar event
   .delete("/:year/:month/:id", (req, res) => {
-    const collectionInfo = getCollectionReference(req, res);
+    const collectionInfo = getCollectionInfo(req, res);
     if (!collectionInfo) {
       return;
     }

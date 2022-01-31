@@ -4,6 +4,10 @@ const { db, HTTP, updateSingleDocument } = require("../util");
 
 const router = express.Router();
 
+const linkAttributeSanitisers = {
+  destination: (dest) => (dest.startsWith("/") ? dest : "/" + dest),
+};
+
 /*      ======== SHORT URL FUNCTIONS ========      */
 
 /** Thenable function for generating a random shortened URL. */
@@ -64,7 +68,7 @@ function createShortenedURL(res, destination, customURL) {
       // already exists; return the existing short URL
       return res.status(400).json({
         errorDescription:
-          HTTP400 + `There is already a URL for destination '${destination}'.`,
+          HTTP.err400 + `There is already a URL for destination '${destination}'.`,
         url: "/" + querySnapshot.docs[0].id,
       });
     }
@@ -72,7 +76,7 @@ function createShortenedURL(res, destination, customURL) {
     if (!customURL) {
       // generate random URL if there is none provided
       return generateRandomURL().then(createDocument, (err) => {
-        return res.status(500).json({ errorDescription: HTTP500 + err });
+        return res.status(500).json({ errorDescription: HTTP.err500 + err });
       });
     }
 
@@ -82,7 +86,7 @@ function createShortenedURL(res, destination, customURL) {
       .then((doc) => {
         if (doc.data()) {
           return res.status(400).json({
-            errorDescription: HTTP400 + "That custom URL is taken.",
+            errorDescription: HTTP.err400 + "That custom URL is taken.",
           });
         }
         return createDocument(customURL);
@@ -111,17 +115,18 @@ router
   // UPDATE shortened URL
   .put("/:url", (req, res) => {
     // ?destination=null
-    let destination = req.query.destination;
+    const destination = req.query.destination;
+
     if (!destination) {
       return res.status(400).json({
         errorDescription: HTTP.err400 + "No new destination provided.",
       });
     }
+
     const url = req.params.url;
-    destination.startsWith("/") || (destination = "/" + destination);
 
     const docRef = db.collection("links").doc(url);
-    updateSingleDocument(docRef, res, { destination }, ["destination"]);
+    updateSingleDocument(docRef, res, { destination }, linkAttributeSanitisers);
   });
 
 module.exports = router;
