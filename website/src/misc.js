@@ -77,7 +77,14 @@ export function removeSearchParam(
 export function fetchCachedData(
   cacheName,
   fetchURL,
-  { setData, setLoaded, updateCache, onSuccessCallback, onFailData },
+  {
+    setData,
+    setLoaded,
+    updateCache,
+    cacheArgument,
+    onSuccessCallback,
+    onFailData,
+  },
   fetchFromAPI
 ) {
   // check if there is a valid data cache
@@ -92,12 +99,21 @@ export function fetchCachedData(
         const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
         const dateDifferenceHours = dateDifferenceSeconds / 3600;
         if (dateDifferenceHours < MAX_CACHE_AGE) {
-          setData(cache.data);
-          return setLoaded(true);
+          // compare arguments for cache, such as maxItems for news fetches.
+          // this ensures that if the current request is for e.g. 8 news articles and we find
+          // a cache containing only 4, that we do not use the old cache and instead make a new request.
+          if (cache.arg >= cacheArgument) {
+            setData(cache.data);
+            return setLoaded(true);
+          }
+          console.log(
+            `The found cache had a different argument (${cache.arg} vs ${cacheArgument}).`
+          );
+        } else {
+          console.log(
+            `The found cache is too old (${dateDifferenceHours} hours).`
+          );
         }
-        console.log(
-          `The found cache is too old (${dateDifferenceHours} hours).`
-        );
       }
     }
     // remove the existing cache
@@ -108,7 +124,11 @@ export function fetchCachedData(
   fetchFromAPI(fetchURL)
     .then((res) => {
       res.json().then((data) => {
-        const newCache = { date: new Date(), data: onSuccessCallback(data) };
+        const newCache = {
+          date: new Date(),
+          arg: cacheArgument,
+          data: onSuccessCallback(data),
+        };
         if (newCache.data) {
           localStorage.setItem(cacheName, JSON.stringify(newCache));
           console.log(`Created cache '${cacheName}'.`, newCache);

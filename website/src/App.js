@@ -24,10 +24,6 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [userHasEditPerms, setUserEditPerms] = useState(false);
   const [cookies, setCookies, removeCookies] = useCookies();
-  useEffect(() => {
-    // check if the user has edit permissions by performing a dummy PUT request to the API
-    fetchFromAPI("/", "put").then((res) => setUserEditPerms(res.ok));
-  }, [cookies.apiToken]);
 
   useEffect(() => {
     if (page !== null) {
@@ -74,6 +70,8 @@ function App() {
     });
   }
 
+
+  
   return (
     <AuthProvider setUserCallback={setUserCallback} currentUser={currentUser}>
       <Routes>
@@ -83,13 +81,12 @@ function App() {
             <Layout
               page={page}
               logged={logged}
-              canEdit={logged && userHasEditPerms}
               loginAction={loginAction}
               logoutAction={logoutAction}
               setLogged={setLogged}
-              cookies={cookies}
-              setCookies={setCookies}
-              removeCookies={removeCookies}
+              canEdit={logged && userHasEditPerms}
+              setUserEditPerms={setUserEditPerms}
+              fetchFromAPI={fetchFromAPI}
             />
           }
         >
@@ -141,14 +138,16 @@ function App() {
   );
 }
 
-const Layout = ({
+function Layout({
   page,
   logged,
-  canEdit,
   loginAction,
   logoutAction,
   setLogged,
-}) => {
+  canEdit,
+  setUserEditPerms,
+  fetchFromAPI,
+}) {
   return (
     <main>
       <div
@@ -193,6 +192,8 @@ const Layout = ({
       <CookiesAlert />
       <LoginScreen
         setLogged={setLogged}
+        fetchFromAPI={fetchFromAPI}
+        setUserEditPerms={setUserEditPerms}
       />
       <Footer />
     </main>

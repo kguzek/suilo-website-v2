@@ -4,7 +4,7 @@ import { useCookies } from "react-cookie";
 import { Bars } from "react-loader-spinner";
 import { signInWithGoogle, getResults } from "../firebase";
 
-const LoginScreen = ({ setLogged }) => {
+const LoginScreen = ({ setLogged, fetchFromAPI, setUserEditPerms }) => {
   // startLogging opens login window :boolean
   const [errorMessage, setErrorMessage] = useState(null);
   const { height, width } = useWindowDimensions();
@@ -23,7 +23,7 @@ const LoginScreen = ({ setLogged }) => {
       }
     }
     setSafety(false);
-  }, [cookies.processingLogin, isSafeToChange]);
+  }, [isSafeToChange]);
 
   useEffect(() => {
     if (!cookies.processingLogin) {
@@ -39,7 +39,13 @@ const LoginScreen = ({ setLogged }) => {
 
         // create Date object for the time when the API token expires
         const expires = new Date(new Date().getTime() + expiresIn);
-        setCookies("apiToken", token, { sameSite: "lax" /*, expires*/ });
+
+        // check if the user has edit permissions by performing a dummy PUT request to the API
+        console.log("Checking user permissions...");
+        fetchFromAPI("/", "put").then((res) => {
+          setUserEditPerms(res.ok);
+          res.json().then(console.log);
+        });
       } else {
         setErrorMessage(errMsg);
         setCookies("processingLogin", "postRedirect", { sameSite: "lax" });

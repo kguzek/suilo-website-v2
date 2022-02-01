@@ -41,6 +41,7 @@ export function fetchNewsData({
     setData: setNewsData,
     setLoaded,
     updateCache,
+    cacheArgument: maxItems,
     onSuccessCallback: processJsonData,
   };
   fetchCachedData(`news_page_${pageNumber}`, url, args, fetchFromAPI);
