@@ -4,7 +4,7 @@ import Hamburger from "hamburger-react";
 import LogoSU from "../media/LogoSU";
 import Blob from "../media/blob";
 
-const NavBar = ({ page, logged, loginAction, logoutAction }) => {
+const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
   const { height, width } = useWindowDimensions();
   const [isOpen, setOpen] = useState(false);
   const [display, setDisplay] = useState("none");
@@ -154,7 +154,7 @@ const NavBar = ({ page, logged, loginAction, logoutAction }) => {
             >
               Kontakt
             </Link>
-            {logged ? (
+            {canEdit ? (
               <Link
                 to="edycja"
                 className="link-box"

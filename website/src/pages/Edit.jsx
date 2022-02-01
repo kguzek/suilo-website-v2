@@ -2,18 +2,18 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 
-const Edit = ({ setPage, logged, loginAction }) => {
+const Edit = ({ setPage, canEdit, loginAction }) => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    if (logged) {
+    if (canEdit) {
       setPage("edit");
     } else {
       navigate("/");
       setPage("home");
       loginAction();
     }
-  }, [logged]);
+  }, [canEdit]);
 
   return (
     <div style={{ minHeight: "89vh" }}>

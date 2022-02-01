@@ -17,14 +17,10 @@ function validateToken(authType) {
   async function authorise(req, res, next) {
     console.log(`Validating the request for permission level '${authType}'...`);
 
-    function send403(msg = "You are not authorised to do that.", err) {
-      const jsonResponse = { errorDescription: "403 Forbidden: " + msg };
-      res.status(403);
-      if (err) {
-        res.json({ ...jsonResponse, error: err.toString() });
-      } else {
-        res.json(jsonResponse);
-      }
+    function send403(msg = "You are not authorised to do that.", info = {}) {
+      res
+        .status(403)
+        .json({ errorDescription: "403 Forbidden: " + msg, ...info });
       console.log("Rejected the request.");
     }
 
@@ -41,7 +37,7 @@ function validateToken(authType) {
       // Read the token from cookie.
       idToken = req.cookies.__session;
     }
-    // if the token is provided but the user is not logged in, the 
+    // if the token is provided but the user is not logged in, the
     // fetch method interpolates the token as literal "undefined".
     if (!idToken || idToken === "undefined") {
       return send403("No authorisation token provided.");
@@ -51,10 +47,9 @@ function validateToken(authType) {
     try {
       ticket = await client.verifyIdToken({ idToken });
     } catch (error) {
-      return send403(
-        "Encountered an error while validating the API token.",
-        error
-      );
+      return send403("Encountered an error while validating the API token.", {
+        errorDetails: error.toString(),
+      });
     }
     // get user data
     const payload = ticket.getPayload();
@@ -91,7 +86,17 @@ function validateToken(authType) {
         req.email = payload.email;
         req.id = userID;
         // accept the request
-        console.log("Validated the request!");
+        if (req.originalUrl === "/api/") {
+          console.log("Validated dummy request.");
+          return res.status(200).json({
+            msg: "User verification passed! Assuming this is a test request.",
+            userID,
+            userEmail: payload.email,
+            userIsAdmin: data.admin,
+            userIsEditor: data.editor,
+          });
+        }
+        console.log(`Validated ${req.method} request to '${req.originalUrl}'.`);
         next();
       });
   }

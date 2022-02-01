@@ -15,64 +15,67 @@ import Footer from "./components/Footer";
 import LoginScreen from "./components/LoginScreen";
 import CookiesAlert from "./components/CookiesAlert";
 import ScrollToTop, { scrollToTop } from "./components/ScrollToTop";
-import { getResults, logOut, AuthProvider } from "./firebase";
+import { logOut, AuthProvider } from "./firebase";
 import { API_URL } from "./misc";
 
 function App() {
   const [page, setPage] = useState(null);
   const [logged, setLogged] = useState(false); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
-  const [startLogging, setLogging] = useState(false);
-  const [apiToken, setApiToken] = useState(); // this should be the working access token for the api, not yet tested
-  const [userEmail, setUserEmail] = useState(); // user's email
+  const [currentUser, setCurrentUser] = useState({});
+  const [userHasEditPerms, setUserEditPerms] = useState(false);
   const [cookies, setCookies, removeCookies] = useCookies();
   useEffect(() => {
-    getResults(callback);
-    // console.log("Cookies:", cookies);
-  }, []);
+    // check if the user has edit permissions by performing a dummy PUT request to the API
+    fetchFromAPI("/", "put").then((res) => setUserEditPerms(res.ok));
+  }, [cookies.apiToken]);
 
   useEffect(() => {
     if (page !== null) {
-      // console.log(page);
       scrollToTop();
     }
     return;
   }, [page]);
 
-  function callback(apiToken, email) {
-    if (apiToken !== null && email !== null) {
-      setApiToken(apiToken);
-      setUserEmail(email);
-      if (email.endsWith("@lo1.gliwice.pl")) {
-        setLogged(true);
+  function setUserCallback(user) {
+    if (user) {
+      if (user.email.endsWith("@lo1.gliwice.pl")) {
+        setCurrentUser(user);
+        if (!cookies.processingLogin) {
+          setLogged(true);
+        }
       } else {
+        console.log("Invalid email. Logging out.");
         logOut();
       }
     } else {
+      console.log("No user. Logging out.");
       setLogged(false);
+      setUserEditPerms(false);
     }
   }
 
   function loginAction() {
     // CALL LOG SCREEN
-    setLogging(true);
+    setCookies("processingLogin", "waitForRedirect", { sameSite: "lax" });
   }
-
   function logoutAction() {
     logOut();
     // LOGOUT (to integrate with backend) !!!!!! -------------------------- !!!!
   }
 
   /** Performs a 'fetch' with the auth header set to the user's API token. */
-  function fetchFromAPI(relativeURL) {
+  function fetchFromAPI(relativeURL, method = "get") {
     return fetch(API_URL + relativeURL, {
-      headers: {
-        authorization: `Bearer ${apiToken}`,
-      },
+      method,
+      headers: new Headers({
+        "Content-Type": "application/json",
+        authorization: `Bearer ${cookies.apiToken}`,
+      }),
     });
   }
 
   return (
-    <AuthProvider callback={callback}>
+    <AuthProvider setUserCallback={setUserCallback} currentUser={currentUser}>
       <Routes>
         <Route
           path="/"
@@ -80,12 +83,13 @@ function App() {
             <Layout
               page={page}
               logged={logged}
+              canEdit={logged && userHasEditPerms}
               loginAction={loginAction}
               logoutAction={logoutAction}
-              setLogging={setLogging}
-              startLogging={startLogging}
               setLogged={setLogged}
-              showCookies={!cookies.cookie}
+              cookies={cookies}
+              setCookies={setCookies}
+              removeCookies={removeCookies}
             />
           }
         >
@@ -93,19 +97,31 @@ function App() {
             index
             element={<Home setPage={setPage} fetchFromAPI={fetchFromAPI} />}
           />
-          <Route path="aktualnosci" element={<News setPage={setPage} fetchFromAPI={fetchFromAPI} />}>
-            <Route path="post" element={<Post setPage={setPage} fetchFromAPI={fetchFromAPI} />}>
-              <Route path=":postID" element={<Post setPage={setPage} fetchFromAPI={fetchFromAPI} />} />
+          <Route
+            path="aktualnosci"
+            element={<News setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+          >
+            <Route
+              path="post"
+              element={<Post setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+            >
+              <Route
+                path=":postID"
+                element={<Post setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+              />
             </Route>
           </Route>
-          <Route path="wydarzenia" element={<Events setPage={setPage} fetchFromAPI={fetchFromAPI} />} />
+          <Route
+            path="wydarzenia"
+            element={<Events setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+          />
           <Route path="kontakt" element={<Contact setPage={setPage} />} />
           <Route
             path="edycja"
             element={
               <Edit
                 setPage={setPage}
-                logged={logged}
+                canEdit={logged && userHasEditPerms}
                 loginAction={loginAction}
               />
             }
@@ -128,12 +144,10 @@ function App() {
 const Layout = ({
   page,
   logged,
+  canEdit,
   loginAction,
   logoutAction,
-  startLogging,
-  setLogging,
   setLogged,
-  showCookies,
 }) => {
   return (
     <main>
@@ -170,16 +184,15 @@ const Layout = ({
       <NavBar
         page={page}
         logged={logged}
+        canEdit={canEdit}
         loginAction={loginAction}
         logoutAction={logoutAction}
       />
       <ScrollToTop />
       <Outlet />
-      <CookiesAlert showCookies={showCookies} />
+      <CookiesAlert />
       <LoginScreen
-        setLogging={setLogging}
         setLogged={setLogged}
-        startLogging={startLogging}
       />
       <Footer />
     </main>

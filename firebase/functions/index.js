@@ -35,7 +35,7 @@ app.use(cors());
 
 // uncomment to enable token verification (doesn't work when tested?)
 // use authentication middleware for individual HTTP methods
-/*
+//*
 app.get("*", authMiddleware("any"));
 app.put("*", authMiddleware("edit"));
 app.post("*", authMiddleware("admin"));
