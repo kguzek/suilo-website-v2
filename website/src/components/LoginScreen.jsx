@@ -12,7 +12,7 @@ const LoginScreen = ({ setLogged, fetchFromAPI, setUserEditPerms }) => {
   const [opacity, setOpacity] = useState(0);
   const [yPos, setYPos] = useState("10vh");
   const [isSafeToChange, setSafety] = useState(true);
-  const [cookies, setCookies, removeCookies] = useCookies();
+  const [cookies, setCookies, removeCookies] = useCookies(["apiToken", "processingLogin"]);
 
   useEffect(() => {
     if (isSafeToChange) {
@@ -40,12 +40,18 @@ const LoginScreen = ({ setLogged, fetchFromAPI, setUserEditPerms }) => {
         // create Date object for the time when the API token expires
         const expires = new Date(new Date().getTime() + expiresIn);
 
+        setCookies("apiToken", token, { sameSite: "lax", expires });
+
         // check if the user has edit permissions by performing a dummy PUT request to the API
         console.log("Checking user permissions...");
-        fetchFromAPI("/", "put").then((res) => {
-          setUserEditPerms(res.ok);
-          res.json().then(console.log);
-        });
+        fetchFromAPI("/", "put")
+          .then((res) => {
+            setUserEditPerms(res.ok);
+            res.json().then(console.log);
+          })
+          .catch((error) => {
+            console.log("Error setting user permissions!", error);
+          });
       } else {
         setErrorMessage(errMsg);
         setCookies("processingLogin", "postRedirect", { sameSite: "lax" });

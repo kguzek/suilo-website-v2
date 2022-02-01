@@ -5,7 +5,7 @@ const CookiesAlert = () => {
   const [yPos, setY] = useState("-140px");
   const [display, setDisplay] = useState("none");
   const { height, width } = useWindowDimensions();
-  const [cookies, setCookies] = useCookies();
+  const [cookies, setCookies] = useCookies(["cookie"]);
   // user agreed to cookies policy
   const _cookieAgree = () => {
     //action

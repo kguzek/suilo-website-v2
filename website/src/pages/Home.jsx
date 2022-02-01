@@ -14,7 +14,7 @@ const Home = ({ setPage, fetchFromAPI }) => {
   const [loadedNews, setLoadedNews] = useState(false);
   const [forDate, setForDate] = useState(formatDate());
   const [newsData, setNewsData] = useState([]);
-  const [cookies, setCookies, removeCookies] = useCookies();
+  const [cookies, setCookies] = useCookies(["lucky_numbers_cache"]);
 
   function fetchLuckyNumbers() {
     const cache = cookies.lucky_numbers_cache;

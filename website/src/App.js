@@ -21,9 +21,8 @@ import { API_URL } from "./misc";
 function App() {
   const [page, setPage] = useState(null);
   const [logged, setLogged] = useState(false); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
-  const [currentUser, setCurrentUser] = useState({});
   const [userHasEditPerms, setUserEditPerms] = useState(false);
-  const [cookies, setCookies, removeCookies] = useCookies();
+  const [cookies, setCookies] = useCookies(["apiToken", "processingLogin"]);
 
   useEffect(() => {
     if (page !== null) {
@@ -34,8 +33,10 @@ function App() {
 
   function setUserCallback(user) {
     if (user) {
+      // user.getIdTokenResult().then((token) => {
+      //   console.log("Token on refresh:", token.token)
+      // });
       if (user.email.endsWith("@lo1.gliwice.pl")) {
-        setCurrentUser(user);
         if (!cookies.processingLogin) {
           setLogged(true);
         }
@@ -70,10 +71,8 @@ function App() {
     });
   }
 
-
-  
   return (
-    <AuthProvider setUserCallback={setUserCallback} currentUser={currentUser}>
+    <AuthProvider setUserCallback={setUserCallback} >
       <Routes>
         <Route
           path="/"
@@ -198,6 +197,6 @@ function Layout({
       <Footer />
     </main>
   );
-};
+}
 
 export default App;
