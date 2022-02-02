@@ -16,13 +16,12 @@ import LoginScreen from "./components/LoginScreen";
 import CookiesAlert from "./components/CookiesAlert";
 import ScrollToTop, { scrollToTop } from "./components/ScrollToTop";
 import { logOut, AuthProvider } from "./firebase";
-import { API_URL } from "./misc";
 
 function App() {
   const [page, setPage] = useState(null);
   const [logged, setLogged] = useState(false); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [userHasEditPerms, setUserEditPerms] = useState(false);
-  const [cookies, setCookies] = useCookies(["apiToken", "processingLogin"]);
+  const [cookies, setCookies] = useCookies(["processingLogin"]);
 
   useEffect(() => {
     if (page !== null) {
@@ -33,9 +32,6 @@ function App() {
 
   function setUserCallback(user) {
     if (user) {
-      // user.getIdTokenResult().then((token) => {
-      //   console.log("Token on refresh:", token.token)
-      // });
       if (user.email.endsWith("@lo1.gliwice.pl")) {
         if (!cookies.processingLogin) {
           setLogged(true);
@@ -60,17 +56,6 @@ function App() {
     // LOGOUT (to integrate with backend) !!!!!! -------------------------- !!!!
   }
 
-  /** Performs a 'fetch' with the auth header set to the user's API token. */
-  function fetchFromAPI(relativeURL, method = "get") {
-    return fetch(API_URL + relativeURL, {
-      method,
-      headers: new Headers({
-        "Content-Type": "application/json",
-        authorization: `Bearer ${cookies.apiToken}`,
-      }),
-    });
-  }
-
   return (
     <AuthProvider setUserCallback={setUserCallback} >
       <Routes>
@@ -85,31 +70,30 @@ function App() {
               setLogged={setLogged}
               canEdit={logged && userHasEditPerms}
               setUserEditPerms={setUserEditPerms}
-              fetchFromAPI={fetchFromAPI}
             />
           }
         >
           <Route
             index
-            element={<Home setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+            element={<Home setPage={setPage} />}
           />
           <Route
             path="aktualnosci"
-            element={<News setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+            element={<News setPage={setPage} />}
           >
             <Route
               path="post"
-              element={<Post setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+              element={<Post setPage={setPage} />}
             >
               <Route
                 path=":postID"
-                element={<Post setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+                element={<Post setPage={setPage} />}
               />
             </Route>
           </Route>
           <Route
             path="wydarzenia"
-            element={<Events setPage={setPage} fetchFromAPI={fetchFromAPI} />}
+            element={<Events setPage={setPage} />}
           />
           <Route path="kontakt" element={<Contact setPage={setPage} />} />
           <Route
@@ -127,7 +111,6 @@ function App() {
             element={
               <ShortLinkRedirect
                 setPage={setPage}
-                fetchFromAPI={fetchFromAPI}
               />
             }
           />
@@ -145,7 +128,6 @@ function Layout({
   setLogged,
   canEdit,
   setUserEditPerms,
-  fetchFromAPI,
 }) {
   return (
     <main>
@@ -191,7 +173,6 @@ function Layout({
       <CookiesAlert />
       <LoginScreen
         setLogged={setLogged}
-        fetchFromAPI={fetchFromAPI}
         setUserEditPerms={setUserEditPerms}
       />
       <Footer />

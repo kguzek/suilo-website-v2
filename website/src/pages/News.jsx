@@ -5,7 +5,7 @@ import { Bars } from "react-loader-spinner";
 import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
 import { removeSearchParam } from "../misc";
 
-const News = ({ setPage, fetchFromAPI }) => {
+const News = ({ setPage }) => {
   const [loaded, setLoaded] = useState(false);
   const [newsData, setNewsData] = useState([]);
   const params = useParams();
@@ -28,7 +28,6 @@ const News = ({ setPage, fetchFromAPI }) => {
       setLoaded,
       updateCache,
       pageNumber,
-      fetchFromAPI,
     });
   }, [params.postID]);
 

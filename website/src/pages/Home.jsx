@@ -8,8 +8,9 @@ import PostCardPreview, { fetchNewsData } from "../components/PostCardPreview";
 import { SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
 import SuPhoto from "../media/su-photo.jpg";
 import { formatDate } from "../misc";
+import { fetchWithToken } from "../firebase";
 
-const Home = ({ setPage, fetchFromAPI }) => {
+const Home = ({ setPage }) => {
   const [luckyNumbers, setLuckyNumbers] = useState(["...", "..."]);
   const [loadedNews, setLoadedNews] = useState(false);
   const [forDate, setForDate] = useState(formatDate());
@@ -20,7 +21,7 @@ const Home = ({ setPage, fetchFromAPI }) => {
     const cache = cookies.lucky_numbers_cache;
     // check if there is a cache
     if (cache) {
-      console.log("Found existing cache for lucky numbers data.");
+      console.log("Found existing lucky numbers cache for:", cache.date);
 
       // set the lucky numbers to the cached data, even if it's not from today
       setLuckyNumbers(cache.luckyNumbers);
@@ -31,8 +32,8 @@ const Home = ({ setPage, fetchFromAPI }) => {
       }
     }
     console.log("Checking if there are updated lucky numbers...");
-    fetchFromAPI("/luckyNumbers/v2/")
-      .then((res) => {
+    fetchWithToken("/luckyNumbers/v2/").then(
+      (res) => {
         res.json().then((data) => {
           if (!res.ok || !data) {
             console.log("Error retrieving lucky numbers data.", data);
@@ -61,10 +62,11 @@ const Home = ({ setPage, fetchFromAPI }) => {
           setForDate(newCache.date);
           setCookies("lucky_numbers_cache", newCache, { sameSite: "lax" });
         });
-      })
-      .catch((error) => {
+      },
+      (error) => {
         console.log("Error retrieving lucky numbers data!", error);
-      });
+      }
+    );
   }
 
   useEffect(() => {
@@ -74,7 +76,6 @@ const Home = ({ setPage, fetchFromAPI }) => {
       setNewsData,
       setLoaded: setLoadedNews,
       maxItems: SECONDARY_ITEMS_DEFAULT,
-      fetchFromAPI,
     });
   }, []);
 

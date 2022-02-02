@@ -1,7 +1,6 @@
-export const MAX_CACHE_AGE = 2; // hours
+import { fetchWithToken } from "./firebase";
 
-export const API_URL = // "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
-  "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
+export const MAX_CACHE_AGE = 2; // hours
 
 // Temporary image URL if an article has none specified
 export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
@@ -84,8 +83,7 @@ export function fetchCachedData(
     cacheArgument,
     onSuccessCallback,
     onFailData,
-  },
-  fetchFromAPI
+  }
 ) {
   // check if there is a valid data cache
   const cache = JSON.parse(localStorage.getItem(cacheName));
@@ -102,7 +100,10 @@ export function fetchCachedData(
           // compare arguments for cache, such as maxItems for news fetches.
           // this ensures that if the current request is for e.g. 8 news articles and we find
           // a cache containing only 4, that we do not use the old cache and instead make a new request.
-          if (cache.arg >= cacheArgument) {
+          if (
+            (cache.arg === undefined && cacheArgument === undefined) ||
+            cache.arg >= cacheArgument
+          ) {
             setData(cache.data);
             return setLoaded(true);
           }
@@ -121,8 +122,8 @@ export function fetchCachedData(
   }
 
   // fetch new data
-  fetchFromAPI(fetchURL)
-    .then((res) => {
+  fetchWithToken(fetchURL).then(
+    (res) => {
       res.json().then((data) => {
         const newCache = {
           date: new Date(),
@@ -145,10 +146,11 @@ export function fetchCachedData(
         }
         setLoaded(true);
       });
-    })
-    .catch((error) => {
-      console.log(`Error retrieving: '${fetchURL}'`, error);
+    },
+    (error) => {
+      console.log(`Error retrieving: '/api${fetchURL}'`, error);
       onFailData && setData(onFailData);
       setLoaded(true);
-    });
+    }
+  );
 }

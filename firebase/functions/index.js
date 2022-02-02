@@ -14,12 +14,7 @@ const {
   sendListResponse,
   deleteSingleDocument,
 } = require("./util");
-const luckyNumbersRoute = require("./routes/luckyNumbers");
-const newsRoute = require("./routes/news");
-const linksRoute = require("./routes/links");
-const calendarRoute = require("./routes/calendar");
-const eventsRoute = require("./routes/events");
-const authMiddleware = require("./authMiddleware");
+const authMiddleware = require("./authMiddlewareV2");
 
 // initialise express
 const app = express();
@@ -33,21 +28,14 @@ const app = express();
 } */
 app.use(cors());
 
-// uncomment to enable token verification (doesn't work when tested?)
-// use authentication middleware for individual HTTP methods
-//*
-app.get("*", authMiddleware("any"));
-app.put("*", authMiddleware("edit"));
-app.post("*", authMiddleware("admin"));
-app.delete("*", authMiddleware("admin"));
-//*/
+app.use(authMiddleware);
 
 // set individual API routes
-app.use("/api/luckyNumbers/", luckyNumbersRoute);
-app.use("/api/news/", newsRoute);
-app.use("/api/links/", linksRoute);
-app.use("/api/calendar/", calendarRoute);
-app.use("/api/events/", eventsRoute);
+app.use("/api/luckyNumbers/", require("./routes/luckyNumbers"));
+app.use("/api/news/", require("./routes/news"));
+app.use("/api/links/", require("./routes/links"));
+app.use("/api/calendar/", require("./routes/calendar"));
+app.use("/api/events/", require("./routes/events"));
 
 // define server region name for Firebase app
 const SERVER_REGION = "europe-west1";
@@ -98,6 +86,22 @@ for (const route of definedRoutes) {
     });
   }
 }
+
+// define dummy route for user permissions verification
+app.all("/api/", (req, res) => {
+  if (req.userInfo) {
+    return res.status(200).json({
+      msg: "User verification passed!",
+      userID: req.userInfo.uid,
+      userEmail: req.userInfo.email,
+      userIsAdmin: req.userInfo.isAdmin,
+      userIsEditor: req.userInfo.isEditor,
+    });
+  }
+  return res.status(403).json({
+    msg: "User verification failed: no API token. You may still access public endpoints.",
+  });
+});
 
 // catch all requests to paths that are not listed above
 app.all("*", (req, res) => {

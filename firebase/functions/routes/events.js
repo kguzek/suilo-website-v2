@@ -53,14 +53,14 @@ router
     createSingleDocument(data, res, { collectionName: "events" });
   })
 
-  // CREATE (toggle) event participation status
-  .post("/:id", (req, res) => {
-    // ?user_id=null
-
-    // TODO: add proper user ID verification -- now it just checks if it's an integer
-    const userID = parseInt(req.query.user_id);
-    if (isNaN(userID)) {
-      return res.status(400).json({ errorDescription: "Invalid user ID." });
+  // UPDATE (toggle) event participation status
+  .patch("/:id", (req, res) => {
+    const user = req.userInfo || {};
+    const userID = user.uid;
+    if (!userID || isNaN(parseInt(userID))) {
+      return res.status(403).json({
+        errorDescription: "You must be signed in to perform this action.",
+      });
     }
     getDocRef(req, res, "events").then((docRef) => {
       docRef.get().then((doc) => {

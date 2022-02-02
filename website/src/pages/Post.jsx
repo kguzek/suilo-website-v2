@@ -16,7 +16,7 @@ import {
 } from "../misc";
 import { Bars } from "react-loader-spinner";
 
-const Post = ({ setPage, fetchFromAPI }) => {
+const Post = ({ setPage }) => {
   const [loaded, setLoaded] = useState(false);
   const [postData, setPostData] = useState({});
   const [newsData, setNewsData] = useState([]);
@@ -48,14 +48,13 @@ const Post = ({ setPage, fetchFromAPI }) => {
     fetchCachedData(
       cacheName,
       `/news/${encodeURIComponent(params.postID)}`,
-      args,
-      fetchFromAPI
+      args
     );
   }
 
   useEffect(() => {
     const updateCache = searchParams.get("refresh");
-    fetchNewsData({ setNewsData, updateCache, fetchFromAPI });
+    fetchNewsData({ setNewsData, updateCache });
   }, []);
 
   useEffect(() => {

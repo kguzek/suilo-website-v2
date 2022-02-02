@@ -3,14 +3,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bars } from "react-loader-spinner";
 import NotFound from "./NotFound";
+import { fetchWithToken } from "../firebase";
 
-export default function ShortLinkRedirect({ setPage, fetchFromAPI }) {
+export default function ShortLinkRedirect({ setPage }) {
   const [redirected, setRedirected] = useState(null);
   const navigate = useNavigate();
 
   function fetchShortLinkData() {
-    fetchFromAPI("/links" + window.location.pathname)
-      .then((res) => {
+    fetchWithToken("/links" + window.location.pathname).then(
+      (res) => {
         res.json().then((data) => {
           if (!res.ok) {
             console.log("No such short URL (no entry in database).", data);
@@ -27,11 +28,12 @@ export default function ShortLinkRedirect({ setPage, fetchFromAPI }) {
           setRedirected(true);
           navigate(data.destination);
         });
-      })
-      .catch((error) => {
+      },
+      (error) => {
         console.log("Error retrieving short link data!", error);
         setRedirected(false);
-      });
+      }
+    );
   }
   useEffect(() => {
     setPage("redirect");

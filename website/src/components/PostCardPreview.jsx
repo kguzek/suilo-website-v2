@@ -21,7 +21,6 @@ export function fetchNewsData({
   updateCache = false,
   pageNumber = 1,
   maxItems = ITEMS_PER_PAGE,
-  fetchFromAPI,
 }) {
   /** Verifies that the API response is valid and returns the processed data. */
   function processJsonData(data) {
@@ -44,7 +43,7 @@ export function fetchNewsData({
     cacheArgument: maxItems,
     onSuccessCallback: processJsonData,
   };
-  fetchCachedData(`news_page_${pageNumber}`, url, args, fetchFromAPI);
+  fetchCachedData(`news_page_${pageNumber}`, url, args);
 }
 
 export function PostCardPreview({

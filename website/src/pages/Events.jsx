@@ -20,13 +20,7 @@ const calendarEventTypes = [
   "matury i inne egzaminy",
 ];
 
-function fetchEventsData(
-  cacheName,
-  updateCache = false,
-  setData,
-  setLoaded,
-  fetchFromAPI
-) {
+function fetchEventsData(cacheName, updateCache = false, setData, setLoaded) {
   /** Verifies that the API response is valid and returns the processed data. */
   function processJsonData(data) {
     if (data && !data.errorDescription) {
@@ -39,7 +33,7 @@ function fetchEventsData(
     updateCache,
     onSuccessCallback: processJsonData,
   };
-  fetchCachedData(cacheName, `/${cacheName}`, args, fetchFromAPI);
+  fetchCachedData(cacheName, `/${cacheName}`, args);
 }
 
 function getNextEvent(eventContainer) {
@@ -69,7 +63,7 @@ function getNextEvent(eventContainer) {
   }
 }
 
-function Events({ setPage, fetchFromAPI }) {
+function Events({ setPage }) {
   const [loadedA, setLoadedA] = useState(false);
   const [loadedB, setLoadedB] = useState(false);
   const [eventsData, setEventsData] = useState({ contents: [] });
@@ -84,20 +78,8 @@ function Events({ setPage, fetchFromAPI }) {
       setSearchParams,
       "refresh"
     );
-    fetchEventsData(
-      "events",
-      updateCache,
-      setEventsData,
-      setLoadedA,
-      fetchFromAPI
-    );
-    fetchEventsData(
-      "calendar",
-      updateCache,
-      setCalendarData,
-      setLoadedB,
-      fetchFromAPI
-    );
+    fetchEventsData("events", updateCache, setEventsData, setLoadedA);
+    fetchEventsData("calendar", updateCache, setCalendarData, setLoadedB);
   }, [params.postID]);
 
   if (!(loadedA && loadedB)) {

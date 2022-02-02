@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 // import { CSSTransition } from 'react-transition-group';
 import { Bars } from "react-loader-spinner";
-import { signInWithGoogle, getResults } from "../firebase";
+import { signInWithGoogle, getResults, fetchWithToken } from "../firebase";
 
-const LoginScreen = ({ setLogged, fetchFromAPI, setUserEditPerms }) => {
+const LoginScreen = ({ setLogged, setUserEditPerms }) => {
   // startLogging opens login window :boolean
   const [errorMessage, setErrorMessage] = useState(null);
   const { height, width } = useWindowDimensions();
@@ -12,7 +12,7 @@ const LoginScreen = ({ setLogged, fetchFromAPI, setUserEditPerms }) => {
   const [opacity, setOpacity] = useState(0);
   const [yPos, setYPos] = useState("10vh");
   const [isSafeToChange, setSafety] = useState(true);
-  const [cookies, setCookies, removeCookies] = useCookies(["apiToken", "processingLogin"]);
+  const [cookies, setCookies, removeCookies] = useCookies(["processingLogin"]);
 
   useEffect(() => {
     if (isSafeToChange) {
@@ -29,32 +29,26 @@ const LoginScreen = ({ setLogged, fetchFromAPI, setUserEditPerms }) => {
     if (!cookies.processingLogin) {
       return;
     }
-    getResults((token, errMsg) => {
-      if (token) {
+    getResults((error) => {
+      if (error) {
+        setErrorMessage(error);
+        setCookies("processingLogin", "postRedirect", { sameSite: "lax" });
+      } else {
         setLogged(true);
         removeCookies("processingLogin");
 
-        // on success, the second argument is the number of seconds the token expires in
-        const expiresIn = errMsg * 1000;
-
-        // create Date object for the time when the API token expires
-        const expires = new Date(new Date().getTime() + expiresIn);
-
-        setCookies("apiToken", token, { sameSite: "lax", expires });
-
         // check if the user has edit permissions by performing a dummy PUT request to the API
         console.log("Checking user permissions...");
-        fetchFromAPI("/", "put")
-          .then((res) => {
+        fetchWithToken("/", "put").then(
+          (res) => {
             setUserEditPerms(res.ok);
+            // log user permissions
             res.json().then(console.log);
-          })
-          .catch((error) => {
+          },
+          (error) => {
             console.log("Error setting user permissions!", error);
-          });
-      } else {
-        setErrorMessage(errMsg);
-        setCookies("processingLogin", "postRedirect", { sameSite: "lax" });
+          }
+        );
       }
     });
   }, []);
