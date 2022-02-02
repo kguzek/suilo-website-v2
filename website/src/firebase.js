@@ -11,7 +11,7 @@ import { initializeApp } from "firebase/app";
 import React, { useEffect } from "react";
 
 export const API_URL = // "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
-"https://europe-west1-suilo-page.cloudfunctions.net/app/api";
+  "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
 
 // CONFIDENTIAL DATA
 const firebaseConfig = {
@@ -39,7 +39,9 @@ let userLoaded = false;
 
 /** Iterates through the fetch stack backwards and executes each callback function, removing it from the array. */
 function _executeFetchStack(token) {
-  for (let i = 0; i < _fetchStack.length; i++) {
+  for (let i = _fetchStack.length; i > 0; i--) {
+    // console.log(`Executing fetch stack item ${i}.`);
+
     // remove last item -- we don't need the item index for this
     // the pop method returns the deleted object so we can call it once it's removed from the array
     _fetchStack.pop()(token);
@@ -51,6 +53,7 @@ export function fetchWithToken(relativeURL, method = "get") {
   function then(resolve, reject) {
     /** Performs the fetch request with the provided success and failure handlers. */
     function _fetch(token) {
+      // console.log(`Fetching '/api${relativeURL}'...`);
       fetch(API_URL + relativeURL, {
         method,
         headers: new Headers({
@@ -64,7 +67,9 @@ export function fetchWithToken(relativeURL, method = "get") {
       console.log(`Sending request to '/api${relativeURL}'.`);
     } else {
       // add the request to the stack to be called once the user token is determined
-      console.log(`Adding request to '/api${relativeURL}' to the fetch stack...`);
+      console.log(
+        `Adding request to '/api${relativeURL}' to the fetch stack...`
+      );
       _fetchStack.push(_fetch);
     }
   }
