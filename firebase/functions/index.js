@@ -61,19 +61,21 @@ for (const endpoint of ["events", "links", "news"]) {
       sendListResponse(docListQuery, req.query, res);
     })
 
-    // READ single event/link/news
-    .get(`/api/${endpoint}/:id`, (req, res) => {
-      getDocRef(req, res, endpoint).then((docRef) =>
-        sendSingleResponse(docRef, res)
-      );
-    })
-
     // DELETE single event/link/news
     .delete(`/api/${endpoint}/:id`, (req, res) => {
       getDocRef(req, res, endpoint).then((docRef) =>
         deleteSingleDocument(docRef, res)
       );
     });
+
+  // READ single link/news
+  if (endpoint !== "events") {
+    app.get(`/api/${endpoint}/:id`, (req, res) => {
+      getDocRef(req, res, endpoint).then((docRef) =>
+        sendSingleResponse(docRef, res)
+      );
+    });
+  }
 }
 
 for (const route of definedRoutes) {

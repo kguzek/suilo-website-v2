@@ -3,6 +3,7 @@ const {
   HTTP,
   getDocRef,
   createSingleDocument,
+  sendSingleResponse,
   updateSingleDocument,
 } = require("../util");
 
@@ -53,11 +54,26 @@ router
     createSingleDocument(data, res, { collectionName: "events" });
   })
 
+  // READ single event/link/news
+  .get(`/:id`, (req, res) => {
+    const userInfo = req.userInfo || {};
+    const userID = parseInt(userInfo.uid) || false;
+
+    getDocRef(req, res, "events").then((docRef) =>
+      sendSingleResponse(docRef, res, (dataToSend) => {
+        // check if the user who sent the request is in the participants list
+        const participants = dataToSend.participants || [];
+        const participating = userID && participants.includes(userID);
+        return { ...dataToSend, participating };
+      })
+    );
+  })
+
   // UPDATE (toggle) event participation status
   .patch("/:id", (req, res) => {
     const user = req.userInfo || {};
-    const userID = user.uid;
-    if (!userID || isNaN(parseInt(userID))) {
+    const userID = parseInt(user.uid);
+    if (!userID) {
       return res.status(403).json({
         errorDescription: "You must be signed in to perform this action.",
       });

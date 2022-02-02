@@ -92,7 +92,7 @@ function createSingleDocument(data, res, { collectionName, collectionRef }) {
 }
 
 /** Sends a response containing the data of the specified document query. */
-function sendSingleResponse(docQuery, res) {
+function sendSingleResponse(docQuery, res, sendData = (d) => d) {
   // send the query to database
   docQuery.get().then((doc) => {
     // check if the document was found
@@ -110,7 +110,7 @@ function sendSingleResponse(docQuery, res) {
     // update views count in database
     docQuery.update({ views }).then(() => {
       // send document id with rest of the data
-      return res.status(200).json({ id: doc.id, ...data, views });
+      return res.status(200).json(sendData({ id: doc.id, ...data, views }));
     });
   });
 }
