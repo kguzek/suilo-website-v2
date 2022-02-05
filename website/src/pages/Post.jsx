@@ -100,12 +100,12 @@ const Post = ({ setPage }) => {
           <div className="post-info">
             <span style={{ fontWeight: "500" }}>{createdDate}</span>
             &nbsp;&nbsp;·&nbsp;&nbsp;{views}
-            {postData.modified && (
+            {/* {postData.modified && (
               <span>
                 &nbsp;&nbsp;·&nbsp;&nbsp;
                 <i>Ostatnia modyfikacja: {modifiedDate}</i>
               </span>
-            )}
+            )} */}
           </div>
           <h1 className="article-title">{postData.title}</h1>
           <p className="article-content">{postData.content}</p>
@@ -117,7 +117,7 @@ const Post = ({ setPage }) => {
           startIndex={MAIN_ITEMS_DEFAULT}
         />
       </div>
-      <PostCardPreview type="main" data={newsData} startIndex={0} />
+      <PostCardPreview type="main" data={newsData} startIndex={0} numItems={4} />
     </div>
   );
 };
