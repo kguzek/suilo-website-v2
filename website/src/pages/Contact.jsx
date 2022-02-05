@@ -27,22 +27,22 @@ const Contact = ({ setPage }) => {
         <div className="contact-left">
           <MailBox />
         </div>
-        <div className="constact-right">
+        <div className="contact-right">
           <h3 className="contact-header">
             Skontaktuj się z nami poprzez:
           </h3>
           <div className="contact-media-container">
-            <div className="contact-media-btn">
-              <img src={GmailSVG} className="social-image" alt="gamil logo" />
-              <p className="contact-media-name">Email</p>
-            </div>
-            <div className="contact-media-btn">
-              <img src={FacebookSVG} className="social-image" alt="facebook logo" />
-              <p className="contact-media-name">Facebook</p>
-            </div>
-            <div className="contact-media-btn" >
-              <img src={DiscordSVG} className="social-image" alt="discord logo" />
-            </div>
+            <a className="contact-media-btn" href="mailto:su.lo1.gliwice@gmail.com">
+              <img src={GmailSVG} className="social-image" alt="gamil logo" style={{ height: "2em" }} />
+              <p className="contact-media-name" style={{ color: "#ff4c2b" }}>Email</p>
+            </a>
+            <a className="contact-media-btn" href="https://www.facebook.com/SUILOGliwice" target="_blank">
+              <img src={FacebookSVG} className="social-image" alt="facebook logo" style={{ height: "2.3em" }} />
+              <p className="contact-media-name" style={{ color: "#1977F3" }}>Facebook</p>
+            </a>
+            <a className="contact-media-btn" href="https://discord.gg/upPdWMc8GJ" target="_blank">
+              <img src={DiscordSVG} className="social-image" alt="discord logo" style={{ height: "2.7em" }} />
+            </a>
           </div>
           <h4 className="contact-subheader">
             Lub stacjonarnie w szkole:
