@@ -1149,8 +1149,8 @@ h5 {
 .secondary-grid {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (calc(25% - 1em))[4];
-      grid-template-columns: repeat(4, calc(25% - 1em));
+  -ms-grid-columns: (calc(25% - 1.45em))[4];
+      grid-template-columns: repeat(4, calc(25% - 1.45em));
   grid-gap: 2em;
   margin-top: 3em;
   max-width: 100%;
@@ -1213,9 +1213,9 @@ h5 {
 .main-grid {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (auto)[2];
-      grid-template-columns: repeat(2, auto);
-  grid-gap: 4em;
+  -ms-grid-columns: (calc(50% - 1.5em))[2];
+      grid-template-columns: repeat(2, calc(50% - 1.5em));
+  grid-gap: 3em;
   margin: 4em 0;
   margin-top: 5em;
   max-width: 100%;
@@ -1234,7 +1234,6 @@ h5 {
       -ms-flex-align: start;
           align-items: flex-start;
   position: relative;
-  margin-top: -1em;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
@@ -1242,15 +1241,17 @@ h5 {
 
 .main-post-date {
   position: absolute;
-  top: -2.45em;
+  top: -1.6em;
   left: 0;
   font-weight: 400;
   color: #6E6E6E;
   font-size: .85em;
+  padding: 0;
+  margin: 0;
 }
 
 .main-post-right {
-  width: 75%;
+  width: 76%;
 }
 
 .main-post-image {
@@ -1264,7 +1265,7 @@ h5 {
 }
 
 .main-post-header {
-  font-size: 1.2em;
+  font-size: 1.25em;
   font-weight: 600;
   max-width: 100%;
   letter-spacing: .0125em;
