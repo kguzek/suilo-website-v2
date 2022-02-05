@@ -297,11 +297,7 @@ const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
 };
 
 function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
+  return { width: window.innerWidth, height: window.innerHeight };
 }
 function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState(

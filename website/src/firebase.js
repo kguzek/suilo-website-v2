@@ -63,7 +63,11 @@ export function fetchWithToken(relativeURL, method = "get") {
       }).then(resolve, reject);
     }
     if (userLoaded) {
-      auth.currentUser.getIdToken().then(_fetch);
+      if (auth.currentUser) {
+        auth.currentUser.getIdToken().then(_fetch);
+      } else {
+        _fetch();
+      }
       console.log(`Sending request to '/api${relativeURL}'.`);
     } else {
       // add the request to the stack to be called once the user token is determined
