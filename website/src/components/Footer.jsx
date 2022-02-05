@@ -12,7 +12,7 @@ const Footer = ({ isVisible }) => {
         textAlign: "center",
         justifyContent: "center",
         marginTop: "5em",
-        display: isVisible ? "flex" : "none"
+        opacity: isVisible ? 1 : 0
       }}
     >
       <p style={{ padding: "0", margin: "9px" }}>

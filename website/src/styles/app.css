@@ -1417,7 +1417,6 @@ article {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  inset: 0;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
