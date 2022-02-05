@@ -17,7 +17,7 @@ const NO_NEWS_MESSAGE = "Brak aktualności.";
 /** Fetch the data for the news article previews. */
 export function fetchNewsData({
   setNewsData,
-  setLoaded = () => {},
+  setLoaded = () => { },
   updateCache = false,
   pageNumber = 1,
   maxItems = ITEMS_PER_PAGE,

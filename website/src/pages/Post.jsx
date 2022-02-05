@@ -69,11 +69,13 @@ const Post = ({ setPage }) => {
 
   if (!loaded) {
     return (
-      <div
-        className="loading-whole-screen"
-        style={{ backgroundColor: "transparent" }}
-      >
-        <Bars color="#FFA900" height={50} width={50} />
+      <div className="page-main" style={{ minHeight: "100vh" }}>
+        <div
+          className="loading-whole-screen"
+          style={{ backgroundColor: "transparent" }}
+        >
+          <Bars color="#FFA900" height={50} width={50} />
+        </div>
       </div>
     );
   }
@@ -93,7 +95,7 @@ const Post = ({ setPage }) => {
       </MetaTags>
       <div className="post-division">
         <article>
-          <img className="post-image" src={postData.photo} alt={postData.alt} />
+          <img className="post-image" src={postData.photo} alt={postData.alt} />&nbsp;
           {postData.imageAuthor && (
             <p className="image-author">Zdjęcie: {postData.imageAuthor}</p>
           )}
