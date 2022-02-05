@@ -4,8 +4,7 @@ import MetaTags from "react-meta-tags";
 import { useCookies } from "react-cookie";
 import { Bars } from "react-loader-spinner";
 import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
-import PostCardPreview, { fetchNewsData } from "../components/PostCardPreview";
-import { SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
+import PostCardPreview, { fetchNewsData, SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
 import SuPhoto from "../media/su-photo.jpg";
 import { formatDate } from "../misc";
 import { fetchWithToken } from "../firebase";
@@ -243,6 +242,7 @@ const Home = ({ setPage }) => {
           linkPrefix="aktualnosci/post/"
           classOverride="home-3"
           startIndex={0}
+          numItems={5}
         />
       ) : (
         <div
