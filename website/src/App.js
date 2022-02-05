@@ -22,8 +22,14 @@ function App() {
   const [logged, setLogged] = useState(false); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [userHasEditPerms, setUserEditPerms] = useState(false);
   const [cookies, setCookies] = useCookies(["processingLogin"]);
+  const [isFooterVisible, setFooterVisible] = useState(true)
 
   useEffect(() => {
+    if (page === "contact") {
+      setFooterVisible(false)
+    } else {
+      setFooterVisible(true)
+    }
     if (page !== null) {
       scrollToTop();
     }
@@ -70,6 +76,7 @@ function App() {
               setLogged={setLogged}
               canEdit={logged && userHasEditPerms}
               setUserEditPerms={setUserEditPerms}
+              isFooterVisible={isFooterVisible}
             />
           }
         >
@@ -128,6 +135,7 @@ function Layout({
   setLogged,
   canEdit,
   setUserEditPerms,
+  isFooterVisible
 }) {
   return (
     <main>
@@ -175,7 +183,7 @@ function Layout({
         setLogged={setLogged}
         setUserEditPerms={setUserEditPerms}
       />
-      <Footer />
+      <Footer isVisible={isFooterVisible} />
     </main>
   );
 }

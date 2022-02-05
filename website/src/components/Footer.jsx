@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const Footer = () => {
+const Footer = ({ isVisible }) => {
   return (
     <div
       style={{
@@ -12,6 +12,7 @@ const Footer = () => {
         textAlign: "center",
         justifyContent: "center",
         marginTop: "5em",
+        display: isVisible ? "flex" : "none"
       }}
     >
       <p style={{ padding: "0", margin: "9px" }}>
