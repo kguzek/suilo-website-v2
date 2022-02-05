@@ -4,14 +4,14 @@ import { ArrowRight } from "react-feather";
 import { formatDate } from "../misc";
 
 const PostCardMain = ({ data }) => {
-  const date = formatDate(data.date, true);
-  const modified = formatDate(data.modified, true);
+  const date = formatDate(data.date);
+  // const modified = formatDate(data.modified, true);
   const textShort = data.text;
   return (
     <div className="main-post-card">
-      {data.modified && (
+      {/* {data.modified && (
         <i className="main-post-date">Ostatnia edycja — {modified}</i>
-      )}
+      )} */}
       <p className="main-post-date">{date}</p>
       <img src={data.photo} className="main-post-image" />
       <div className="main-post-right">
