@@ -47,9 +47,9 @@ const Contact = ({ setPage }) => {
           <h4 className="contact-subheader">
             Lub stacjonarnie w szkole:
           </h4>
-          <p className="contact-localization">
+          <address className="contact-localization">
             ul. Zimnej Wody 8, 44-100 Gliwice
-          </p>
+          </address>
           <p className="contact-localization">
             Biblioteka - 3. piętro
           </p>
