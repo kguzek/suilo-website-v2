@@ -115,7 +115,7 @@ const LoginScreen = ({ setLogged, setUserEditPerms }) => {
               </p>
               {cookies.processingLogin === "preRedirect" ? (
                 <div style={{ backgroundColor: "transparent" }}>
-                  <Bars color="#FFA900" height={50} width={50} />
+                  <Bars color="#FFA900" height={35} width={35} />
                 </div>
               ) : (
                 <div
