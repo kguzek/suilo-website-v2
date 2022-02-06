@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
+import Calendar from "../components/Calendar";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   fetchCachedData,
@@ -84,6 +85,8 @@ function Events({ setPage }) {
 
   if (!(loadedA && loadedB)) {
     // wait until both events and calendar have loaded
+
+    //TO CHANGE!!!, calendar will have its own loading so we have to wait only for initial fetch
     return (
       <div
         className="loading-whole-screen"
@@ -117,12 +120,12 @@ function Events({ setPage }) {
       {calendarData.events.length === 0
         ? "Brak wydarzeń kalendarzowych."
         : calendarData.events.map((event, index) => (
-            <CalendarEventPreview
-              event={event}
-              key={index}
-              data={calendarData}
-            />
-          ))}
+          <CalendarEventPreview
+            event={event}
+            key={index}
+            data={calendarData}
+          />
+        ))}
       <br />
       <h2>Wydarzenia szkolne</h2>
       <h3>Następne wydarzenie szkolne</h3>
@@ -131,6 +134,8 @@ function Events({ setPage }) {
       ) : (
         "Nie ma w najbliższym czasie żadnych wydarzeń."
       )}
+      <Calendar />
+
     </div>
   );
 }

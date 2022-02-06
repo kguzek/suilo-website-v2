@@ -1502,6 +1502,7 @@ article {
 .contact-media-btn:hover {
   -webkit-box-shadow: 0 5px 15px rgba(80, 60, 0, 0.08);
           box-shadow: 0 5px 15px rgba(80, 60, 0, 0.08);
+  background-color: #fcfcfc;
 }
 
 .social-image {
