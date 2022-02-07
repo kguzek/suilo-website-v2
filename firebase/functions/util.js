@@ -156,7 +156,14 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
     docListQuery = docListQuery.offset(startIndex).limit(items);
   }
 
-  function defaultCallback(responseArray, collectionDocs) {
+  function defaultCallback(error, responseArray, collectionDocs) {
+    if (error) {
+      console.log(error);
+      return res.status(500).json({
+        errorDescription: HTTP500 + "Could not retrieve documents.",
+        error,
+      });
+    }
     return res.status(200).json({
       // add extra info for messages such as "showing items X-Y of Z"
       firstOnPage: startIndex + !!collectionDocs.length, // increment by 1 if there is at least 1 document in the list
@@ -184,14 +191,9 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
           response.push({ id: doc.id, ...data });
         }
       });
-      return (callback || defaultCallback)(response, querySnapshot.docs);
+      return (callback || defaultCallback)(null, response, querySnapshot.docs);
     })
-    .catch((error) => {
-      return res.status(500).json({
-        errorDescription: HTTP500 + "Could not retrieve documents.",
-        error,
-      });
-    });
+    .catch(callback || defaultCallback);
 }
 
 /** Updates the document fields and sends a response containing the new data.
