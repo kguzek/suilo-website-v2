@@ -69,6 +69,26 @@ function getDocRef(req, res, collectionName) {
   return { then: resolve };
 }
 
+/** Splits the string with the given separator and casts each resulting array element into an integer.
+ * If any array element is NaN, the appropriate array for the default input argument is returned, or null.
+ */
+function getIntArray(string, separator, defaultInput) {
+  let anyNaN = false;
+
+  function parseNum(num) {
+    const int = parseInt(num);
+    // set anyNaN to true if 'int' is not a number
+    anyNaN = anyNaN || isNaN(int);
+    return int;
+  }
+
+  const tmp = (string || "").split(separator).map((num) => parseNum(num));
+  if (anyNaN) {
+    return defaultInput ? getIntArray(defaultInput, separator) : null;
+  }
+  return tmp;
+}
+
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
@@ -126,20 +146,21 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
   // initialise parameters
   const page = Math.max(parseInt(queryOptions.page || 1), 1);
   const items = Math.max(parseInt(queryOptions.items || 25), 1);
-  // will only get the documents after startIndex
-  const startIndex = items * (page - 1);
-  const endIndex = items * page;
 
   // don't limit the response length if the 'all' parameter is set to "true"
-  if (queryOptions.all !== "true") {
-    docListQuery = docListQuery.limit(endIndex);
+  if (queryOptions.all === "true") {
+    var startIndex = 0;
+  } else {
+    // will only get the documents after startIndex
+    var startIndex = items * (page - 1);
+    docListQuery = docListQuery.offset(startIndex).limit(items);
   }
 
   function defaultCallback(responseArray, collectionDocs) {
     return res.status(200).json({
       // add extra info for messages such as "showing items X-Y of Z"
       firstOnPage: startIndex + !!collectionDocs.length, // increment by 1 if there is at least 1 document in the list
-      lastOnPage: collectionDocs.length,
+      lastOnPage: startIndex + collectionDocs.length,
       contents: responseArray,
     });
   }
@@ -153,23 +174,14 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
     .then((querySnapshot) => {
       // initialise extra info variables
       // loop through every document
-      let index = 0;
       querySnapshot.forEach((doc) => {
         // increments index after evaluating it to see if it should be included in the response
-        if (index++ >= startIndex) {
-          // read the document
-          const data = doc.data();
-          if (data) {
-            // formats all specified date fields as strings if they exist
-            formatTimestamps(data);
-            response.push({ id: doc.id, ...data });
-          } else {
-            // return an error if any document was not found
-            // index has already been incremented so it is 1-based
-            return res.status(404).json({
-              errorDescription: `${HTTP404}Document ${index} was not located.`,
-            });
-          }
+        // read the document
+        const data = doc.data();
+        if (data) {
+          // formats all specified date fields as strings if they exist
+          formatTimestamps(data);
+          response.push({ id: doc.id, ...data });
         }
       });
       return (callback || defaultCallback)(response, querySnapshot.docs);
@@ -279,6 +291,7 @@ module.exports = {
   formatTimestamps,
   dateToTimestamp,
   getDocRef,
+  getIntArray,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,

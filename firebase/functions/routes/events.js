@@ -2,6 +2,7 @@ const express = require("express");
 const {
   HTTP,
   getDocRef,
+  getIntArray,
   createSingleDocument,
   sendSingleResponse,
   updateSingleDocument,
@@ -17,26 +18,6 @@ const eventAttributeSanitisers = {
   location: (location) => location || null,
   content: (content) => content || "Treść wydarzenia...",
 };
-
-/** Splits the string with the given separator and casts each resulting array element into an integer.
- * If any array element is NaN, the appropriate array for the default input argument is returned.
- */
-function getIntArray(string, separator, defaultInput = "0") {
-  let anyNaN = false;
-
-  function parseNum(num) {
-    const int = parseInt(num);
-    // set anyNaN to true if 'int' is not a number
-    anyNaN = anyNaN || isNaN(int);
-    return int;
-  }
-
-  const tmp = (string || "").split(separator).map((num) => parseNum(num));
-  if (anyNaN) {
-    return getIntArray(defaultInput, separator);
-  }
-  return tmp;
-}
 
 /*      ======== SCHOOL EVENT-SPECIFIC CRUD FUNCTIONS ========      */
 
