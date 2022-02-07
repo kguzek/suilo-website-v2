@@ -3,10 +3,9 @@ const {
   db,
   HTTP,
   getDocRef,
+  getIntArray,
   sendListResponse,
-  sendSingleResponse,
   createSingleDocument,
-  deleteSingleDocument,
   updateSingleDocument,
 } = require("../util");
 
@@ -15,17 +14,11 @@ const router = express.Router();
 const eventAttributeSanitisers = {
   title: (title) => title || "Nazwa wydarzenia kalendarzowego",
   type: (type) => parseInt(type) || 0,
-  startDate: (startDate) => sanitiseDate(startDate),
-  endDate: (endDate) => sanitiseDate(endDate),
+  startDate: (startDate) => getIntArray(startDate, "-", "1970-01-01"),
+  endDate: (endDate) => getIntArray(endDate, "-", "1970-01-01"),
 };
 
 /*      ======== CALENDAR FUNCTIONS ========      */
-
-/** Converts a day of the month string into an integer between 1 and the number of days in the month. */
-function sanitiseDate(dateString, maxDate = 31) {
-  // ensure that start date is between the first and last day of the month
-  return Math.min(Math.max(parseInt(dateString) || 1, 1), maxDate);
-}
 
 /** Returns the Polish name for the month of the year with the given one-based index. */
 function getMonthName(monthInt, yearInt) {
@@ -34,20 +27,28 @@ function getMonthName(monthInt, yearInt) {
   return date.toLocaleString("pl-PL", { month: "long" });
 }
 
-/** Returns an array containing the appropriate collection reference, year, and month from the request query.
- * If the query is invalid, sends a HTTP 400 response and returns void. */
-function getCollectionInfo(req, res) {
+/** Returns the calendar year and month ints from the request query.
+ * Validation conditions: `year >= 1970` & `1 <= month <= 12`.
+ * Doesn't validate the month if `yearOnly` is set to true.
+ * If the query is invalid, sends a HTTP 400 response and returns an array of null (or just `null` if yearOnly). */
+function getParams(req, res, yearOnly = false) {
   const yearStr = req.params.year;
   const monthStr = req.params.month;
   const yearInt = parseInt(yearStr);
   const monthInt = parseInt(monthStr);
 
   // check if the user-inputted year is valid
-  if (isNaN(yearInt) || yearInt.toString() !== yearStr || yearInt < 2022) {
+  if (isNaN(yearInt) || yearInt.toString() !== yearStr || yearInt < 1970) {
+    if (yearOnly) {
+      return null;
+    }
     res.status(400).json({
-      errorDescription: `${HTTP.err400}Invalid year '${yearStr}'. Must be an integer value representing a year from 2022 onwards.`,
+      errorDescription: `${HTTP.err400}Invalid year '${yearStr}'. Must be an integer value representing a year from 1970 onwards.`,
     });
-    return;
+    return [null, null];
+  }
+  if (yearOnly) {
+    return yearInt;
   }
   // check if the user-inputted month ID is valid
   if (
@@ -59,72 +60,112 @@ function getCollectionInfo(req, res) {
     res.status(400).json({
       errorDescription: `${HTTP.err400}Invalid month index '${monthStr}'. Must be an integer value from 1 to 12.`,
     });
-    return;
+    return [null, null];
   }
-  return [
-    db.collection("calendar").doc(yearStr).collection(monthStr),
-    yearInt,
-    monthInt,
-  ];
+  return [yearInt, monthInt];
 }
 
 /*      ======== CALENDAR EVENT-SPECIFIC CRUD FUNCTIONS ========      */
 
 router
   // CREATE new calendar event
-  .post("/:year/:month", (req, res) => {
+  .post("/", (req, res) => {
     // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1
-    const collectionInfo = getCollectionInfo(req, res);
-    if (!collectionInfo) {
-      return;
+
+    const startDate = new Date(req.query.startDate || 0);
+    const endDate = new Date(req.query.endDate || 0);
+
+    // ensure end date is the same or after the start date and convert the date to a string
+    const newEndDate = new Date(Math.max(startDate, endDate)).toJSON();
+    req.query.endDate = newEndDate;
+
+    // populate the event object
+    const event = {};
+    for (const attrib in eventAttributeSanitisers) {
+      const sanitiser = eventAttributeSanitisers[attrib];
+      event[attrib] = sanitiser(req.query[attrib]);
     }
-    const [collectionRef, yearInt, monthInt] = collectionInfo;
 
-    // determine the number of days in the month
-    const maxDate = new Date(yearInt, monthInt, 0).getDate();
-
-    // ensure that the dates are between the first and last day of the month
-    const startDate = sanitiseDate(req.query.startDate, maxDate);
-    const endDate = sanitiseDate(req.query.endDate, maxDate);
-
-    const event = {
-      title: eventAttributeSanitisers.title(req.query.title),
-      type: eventAttributeSanitisers.type(req.query.type),
-      startDate,
-      endDate: Math.max(endDate, startDate),
-    };
-
-    createSingleDocument(event, res, { collectionRef });
+    createSingleDocument(event, res, { collectionName: "calendar" });
   })
 
   // READ all current calendar events
   .get("/", (req, res) => {
     const now = new Date();
     const calendarURL = `${now.getFullYear()}/${now.getMonth() + 1}/`;
-    if (req.originalUrl.endsWith("/")) {
+    if (req.originalUrl.split("?").shift().endsWith("/")) {
       res.redirect(calendarURL);
     } else {
       res.redirect(`calendar/${calendarURL}`);
     }
   })
 
+  // READ all current year calendar events
+  .get("/:year/", (req, res, next) => {
+    // check if the URL parameter is a valid year
+    const yearInt = getParams(req, res, true);
+    if (yearInt === null) {
+      // use request handler for specific event ID, defined in index.js
+      // this sends the response treating the request as /api/calendar/[event ID]/ instead
+      return next();
+    }
+    // requesting /api/calendar/[year]/ might not be necessary but if it is then the code can be implemented here.
+    // the code only reaches here if the URL parameter is a valid integer > 1970, otherwise the next middleware
+    // function is executed above.
+    res.status(501).json({
+      errorDescription:
+        "501 Not Implemented: Requesting entire year calendars is under development.",
+    });
+  })
+
   // READ all current month calendar events
   .get("/:year/:month", (req, res) => {
-    const collectionInfo = getCollectionInfo(req, res);
-    if (!collectionInfo) {
+    const [yearInt, monthInt] = getParams(req, res);
+    // don't use boolean check in case of '0' value
+    // (although this would mean year===0000... kinda unlikely :p)
+    if (yearInt === null || monthInt === null) {
+      // query params invalid; HTTP 400 was sent
       return;
     }
-    const [collectionRef, yearInt, monthInt] = collectionInfo;
 
-    /** Sends the JSON response containing the events from the 'events' collection. */
-    function sendResponse(events, snapshotDocuments) {
+    const response = { numEvents: 0, events: [] };
+
+    /** Sends the JSON response containing the filtered events from the 'events' collection. */
+    function sendResponse(error, events = [], _rawSnapshotDocuments) {
+      // some kind of error occured while processing the collection contents
+      if (error) {
+        return void res.status(500).json({
+          errorDescription: HTTP.err500 + "Could not retrieve calendar data.",
+          error,
+        });
+      }
+
+      const firstDayOfThisMonth = new Date(yearInt, monthInt - 1, 1);
+      const firstDayOfNextMonth = new Date(yearInt, monthInt, 1);
+
+      for (const event of events) {
+        const startDate = new Date(event.startDate);
+        const endDate = new Date(event.endDate);
+        if (startDate >= firstDayOfNextMonth || endDate < firstDayOfThisMonth) {
+          // ignore events that don't start this month or have ended before this month
+          continue;
+        }
+        response.numEvents++;
+        response.events.push({
+          ...event,
+          startDate: startDate.getDate(),
+          endDate: endDate.getDate(),
+          startsInPastMonth: startDate < firstDayOfThisMonth,
+          endsInFutureMonth: endDate >= firstDayOfNextMonth,
+        });
+      }
+
       const monthName = getMonthName(monthInt, yearInt);
       const data = {
         yearInt,
         monthInt,
         monthName,
-        numEvents: snapshotDocuments.length,
-        events,
+        ...response,
       };
       return res.status(200).json(data);
     }
@@ -133,52 +174,17 @@ router
     // by default it's limited to 25 items
     // could also manually set the number of items with { items: xxx }
     sendListResponse(
-      collectionRef.orderBy("startDate", "asc"),
+      db.collection("calendar").orderBy("startDate", "asc"),
       { all: "true" },
       res,
       sendResponse
     );
   })
 
-  // READ specific calendar event
-  .get("/:year/:month/:id", (req, res) => {
-    const collectionInfo = getCollectionInfo(req, res);
-    if (!collectionInfo) {
-      return;
-    }
-    const collectionRef = collectionInfo[0];
-    const id = req.params.id;
-
-    getDocRef(req, res, "calendar").then((_docRef) => {
-      sendSingleResponse(collectionRef.doc(id), res);
-    });
-  })
-
   // UPDATE specific calendar event
-  .put("/:year/:month/:id", (req, res) => {
-    const collectionInfo = getCollectionInfo(req, res);
-    if (!collectionInfo) {
-      return;
-    }
-
-    const docRef = collectionInfo[0].doc(req.params.id);
-
-    getDocRef(req, res, "calendar").then(() => {
+  .put("/:id", (req, res) => {
+    getDocRef(req, res, "calendar").then((docRef) => {
       updateSingleDocument(docRef, res, req.query, eventAttributeSanitisers);
-    });
-  })
-
-  // DELETE specific calendar event
-  .delete("/:year/:month/:id", (req, res) => {
-    const collectionInfo = getCollectionInfo(req, res);
-    if (!collectionInfo) {
-      return;
-    }
-    const id = req.params.id;
-
-    const collectionRef = collectionInfo[0];
-    getDocRef(req, res, "calendar").then(() => {
-      deleteSingleDocument(collectionRef.doc(id), res);
     });
   });
 

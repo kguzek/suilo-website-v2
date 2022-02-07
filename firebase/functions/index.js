@@ -41,7 +41,14 @@ app.use("/api/events/", require("./routes/events"));
 const SERVER_REGION = "europe-west1";
 
 // define the routes that the API is able to serve
-const definedRoutes = ["luckyNumbers", "news", "links", "calendar", "events"];
+const definedRoutes = [
+  "calendar",
+  "calendar/:year",
+  "events",
+  "links",
+  "luckyNumbers",
+  "news",
+];
 
 // define sort options for sending list responses
 const sortOptions = {
@@ -49,26 +56,22 @@ const sortOptions = {
   links: ["destination", "asc"],
   news: ["date", "desc"],
 };
-// define routes that have similar structures
-for (const endpoint of ["events", "links", "news"]) {
-  app
-    // READ all events/links/news
-    .get(`/api/${endpoint}/`, (req, res) => {
+
+// define routes that have similar structures to avoid repeating the code in the separate route files
+for (const endpoint of ["calendar", "events", "links", "news"]) {
+  app;
+  // READ all events/links/news
+  if (endpoint !== "calendar") {
+    app.get(`/api/${endpoint}/`, (req, res) => {
       // ?page=1&items=25&all=false
       const docListQuery = db
         .collection(endpoint)
         .orderBy(...sortOptions[endpoint]);
       sendListResponse(docListQuery, req.query, res);
-    })
-
-    // DELETE single event/link/news
-    .delete(`/api/${endpoint}/:id`, (req, res) => {
-      getDocRef(req, res, endpoint).then((docRef) =>
-        deleteSingleDocument(docRef, res)
-      );
     });
+  }
 
-  // READ single link/news
+  // READ single calendar event/link/news
   if (endpoint !== "events") {
     app.get(`/api/${endpoint}/:id`, (req, res) => {
       getDocRef(req, res, endpoint).then((docRef) =>
@@ -76,12 +79,20 @@ for (const endpoint of ["events", "links", "news"]) {
       );
     });
   }
+
+  // DELETE single calendar event/event/link/news
+  app.delete(`/api/${endpoint}/:id`, (req, res) => {
+    getDocRef(req, res, endpoint).then((docRef) =>
+      deleteSingleDocument(docRef, res)
+    );
+  });
 }
 
 for (const route of definedRoutes) {
   // catch all requests to paths that are listed above but use the incorrect HTTP method
-  for (const pathSuffix of ["/", "/:foo/"]) {
+  for (const pathSuffix of ["/", "/:foo"]) {
     app.all("/api/" + route + pathSuffix, (req, res) => {
+      console.log(`Received invalid request method: ${req.method} ${req.path}`);
       return res.status(405).json({
         errorDescription: `${HTTP.err405}Cannot ${req.method} '${req.path}'.`,
       });
@@ -107,6 +118,7 @@ app.all("/api/", (req, res) => {
 
 // catch all requests to paths that are not listed above
 app.all("*", (req, res) => {
+  console.log(`Received invalid request path: ${req.method} ${req.path}`);
   return res.status(404).json({
     errorDescription: `${HTTP.err404}The server could not locate the resource at '${req.path}'.`,
   });
