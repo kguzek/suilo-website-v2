@@ -12,7 +12,7 @@ async function validateToken(req, res, next, authType) {
       .status(403)
       .json({ errorDescription: "403 Forbidden: " + msg, ...info });
     console.log(
-      `Rejected ${req.method} request to endpoint '${req.originalUrl}'.`,
+      `Rejected ${req.method} request to endpoint '${req.path}'.`,
       info
     );
   }
@@ -52,7 +52,7 @@ async function validateToken(req, res, next, authType) {
       }
       // accept the request
       console.log(
-        `Validated ${req.method} request to endpoint '${req.originalUrl}'.`
+        `Validated ${req.method} request to endpoint '${req.path}'.`
       );
       req.userInfo = {
         ...userInfo,
@@ -82,7 +82,7 @@ async function validateToken(req, res, next, authType) {
     if (authType === "any") {
       // allow users that are not signed in to make these requests
       console.log(
-        `Validating anonymous ${req.method} request to public endpoint '${req.originalUrl}'.`
+        `Validated anonymous ${req.method} request to public endpoint '${req.path}'.`
       );
       return next();
     }
@@ -117,8 +117,10 @@ async function determineAuthType(req, res, next) {
   // * edit -- only editors and admins
   // * admin -- only admins
 
+  const publicHTTPMethods = ["GET", "HEAD", "PATCH"];
+
   let authType = "admin";
-  if (req.method === "GET" || req.method === "PATCH") {
+  if (publicHTTPMethods.includes(req.method)) {
     authType = "any";
   } else if (req.method === "PUT") {
     authType = "edit";
