@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
-import Calendar from "../components/Calendar";
 import { Link, useParams, useSearchParams } from "react-router-dom";
+import Calendar from "../components/Calendar";
 import {
   fetchCachedData,
   formatDate,
@@ -11,53 +11,13 @@ import {
 } from "../misc";
 const { serialiseDateArray, dateToArray } = require("../common");
 
-const calendarEventTypes = [
-  "święta/wydarzenia szkolne",
-  "święta/wydarzenia ogólnopolskie",
-  "dzień wolny od zajęć dydaktycznych",
-  "ferie zimowe",
-  "przerwa wakacyjna",
-  "nauka zdalna/hybrydowa",
-  "matury i inne egzaminy",
-];
-
-function fetchEventsData(cacheName, updateCache = false, setData, setLoaded) {
-  /** Verifies that the API response is valid and returns the processed data. */
-  function processJsonData(data) {
-    if (data && !data.errorDescription) {
-      return data;
-    }
-  }
-  const args = {
-    setData,
-    setLoaded,
-    updateCache,
-    onSuccessCallback: processJsonData,
-  };
-  fetchCachedData(cacheName, `/${cacheName}`, args);
-}
-
-function getNextEvent(eventContainer) {
+function getNextEvent(events = []) {
   const now = new Date();
-  const container = eventContainer.events || eventContainer.contents;
 
-  for (let i = 0; i < container.length; i++) {
-    const event = container[i];
-    const eventDate = new Date(
-      serialiseDateArray([
-        eventContainer.yearInt,
-        eventContainer.monthInt,
-        event.startDate,
-      ])
-    );
+  for (const event of events) {
     // date comparison for 'event' objects
     if (new Date(event.date) < now) {
-      // these store the date as a three-element array, eg. [2022, 1, 1]
-      continue;
-    }
-    // date comparison for 'calendar event' objects
-    if (eventDate < now) {
-      // these store the date as an integer (day of the month)
+      // these store the date as a three-element array, e.g. [2022, 1, 1]
       continue;
     }
     return event;
@@ -65,28 +25,30 @@ function getNextEvent(eventContainer) {
 }
 
 function Events({ setPage }) {
-  const [loadedA, setLoadedA] = useState(false);
-  const [loadedB, setLoadedB] = useState(false);
+  const [loaded, setLoaded] = useState(false); // events loaded status
   const [eventsData, setEventsData] = useState({ contents: [] });
-  const [calendarData, setCalendarData] = useState({ events: [] });
   const [searchParams, setSearchParams] = useSearchParams({});
+  const [updateCache, setUpdateCache] = useState(false);
   const params = useParams();
 
   useEffect(() => {
     setPage("events");
-    const updateCache = removeSearchParam(
-      searchParams,
-      setSearchParams,
-      "refresh"
-    );
-    fetchEventsData("events", updateCache, setEventsData, setLoadedA);
-    fetchEventsData("calendar", updateCache, setCalendarData, setLoadedB);
+    // determines if the cache should be updated by checking the 'refresh' URL query parameter
+    const temp = !!removeSearchParam(searchParams, setSearchParams, "refresh");
+    setUpdateCache(temp);
+    // set the data fetch arguments
+    const fetchArgs = {
+      setData: setEventsData,
+      setLoaded,
+      updateCache: temp,
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
+    };
+    fetchCachedData("events", "/events", fetchArgs);
   }, [params.postID]);
 
-  if (!(loadedA && loadedB)) {
-    // wait until both events and calendar have loaded
-
-    //TO CHANGE!!!, calendar will have its own loading so we have to wait only for initial fetch
+  if (!loaded) {
+    // wait until events have loaded
     return (
       <div
         className="loading-whole-screen"
@@ -96,10 +58,8 @@ function Events({ setPage }) {
       </div>
     );
   }
-  const nextEvent = getNextEvent(eventsData);
-  const nextCalEvent = getNextEvent(calendarData);
+  const nextEvent = getNextEvent(eventsData.contents);
   nextEvent && console.log("Next event:", nextEvent.title);
-  nextCalEvent && console.log("Next calendar event:", nextCalEvent.title);
   return (
     <div style={{ minHeight: "89vh" }}>
       <MetaTags>
@@ -116,7 +76,7 @@ function Events({ setPage }) {
         <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
       </MetaTags>
       {/* TODO: replace temporary calendar events render */}
-      <h2>Kalendarz szkolny</h2>
+      {/* <h2>Kalendarz szkolny</h2>
       {calendarData.events.length === 0
         ? "Brak wydarzeń kalendarzowych."
         : calendarData.events.map((event, index) => (
@@ -126,7 +86,7 @@ function Events({ setPage }) {
             data={calendarData}
           />
         ))}
-      <br />
+      <br /> */}
       <h2>Wydarzenia szkolne</h2>
       <h3>Następne wydarzenie szkolne</h3>
       {nextEvent ? (
@@ -134,8 +94,7 @@ function Events({ setPage }) {
       ) : (
         "Nie ma w najbliższym czasie żadnych wydarzeń."
       )}
-      <Calendar />
-
+      <Calendar updateCache={updateCache} />
     </div>
   );
 }
@@ -171,16 +130,17 @@ function EventPreview({ event }) {
 
 // TODO: change this
 function CalendarEventPreview({ event, data }) {
-  const eventType = calendarEventTypes[event.type]; // undefined if the event type is invalid
   const elem = (
     <div>
       <p>
         <small>
           <i>
-            {formatDate([data.yearInt, data.monthInt, event.startDate])}
-            {event.startDate !== event.endDate &&
-              ` — ${formatDate([data.yearInt, data.monthInt, event.endDate])}`}
-            {eventType && <span>&nbsp;&nbsp;·&nbsp;&nbsp;[{eventType}]</span>}
+            {formatDate([data.yearInt, data.monthInt, event.date.start])}
+            {event.date.start !== event.date.end &&
+              ` — ${formatDate([data.yearInt, data.monthInt, event.date.end])}`}
+            {event.eventType && (
+              <span>&nbsp;&nbsp;·&nbsp;&nbsp;[{event.eventType}]</span>
+            )}
           </i>
         </small>
         <br />
@@ -190,9 +150,9 @@ function CalendarEventPreview({ event, data }) {
   );
   // temporary render style
   const eventEndDate = new Date(
-    serialiseDateArray([data.yearInt, data.monthInt, event.endDate])
+    serialiseDateArray([data.yearInt, data.monthInt, event.date.end])
   );
-  const todayMidnight = new Date(serialiseDateArray(dateToArray()));
+  const todayMidnight = new Date(dateToArray());
   const tomorrowMidnight = new Date();
   tomorrowMidnight.setHours(24, 0, 0, 0);
   if (eventEndDate < todayMidnight) {
