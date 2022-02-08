@@ -1,10 +1,12 @@
 const express = require("express");
+const { serialiseDateArray } = require("../common");
 const {
   db,
   HTTP,
   getDocRef,
   getIntArray,
   sendListResponse,
+  sendSingleResponse,
   createSingleDocument,
   updateSingleDocument,
 } = require("../util");
@@ -16,14 +18,46 @@ const eventAttributeSanitisers = {
   type: (type) => parseInt(type) || 0,
   startDate: (startDate) => getIntArray(startDate, "-", "1970-01-01"),
   endDate: (endDate) => getIntArray(endDate, "-", "1970-01-01"),
+  isPrimary: (isPrimary) => (isPrimary || "true").toLowerCase() !== "false",
+  colourTop: hexStringToDecimal,
+  colourBottom: hexStringToDecimal,
 };
+
+const calendarEventTypes = [
+  "święta/wydarzenia szkolne",
+  "święta/wydarzenia ogólnopolskie",
+  "dzień wolny od zajęć dydaktycznych",
+  "ferie zimowe",
+  "przerwa wakacyjna",
+  "nauka zdalna/hybrydowa",
+  "matury i inne egzaminy",
+];
 
 /*      ======== CALENDAR FUNCTIONS ========      */
 
+/** Converts a string containing a hexadecimal number either in plain digits or prepended with `#` or `0x` into a decimal number.*/
+function hexStringToDecimal(hexString = "#000000") {
+  // trim the leading hashtag
+  const iOffset = hexString.startsWith("#");
+  // starts substring at either index 0 or 1 and includes the next 6 characters
+  hexString = hexString.substring(iOffset, 6 + iOffset);
+  // convert the hexadecimal number string from base-16 into base-10
+  // parseInt automatically converts strings beginning with 0x... into HEX.
+  return parseInt(hexString, 16);
+}
+
+/** Converts base-10 into base-16 as a string with a leading `#`. */
+function decimalToHexString(decimal, hexLength = 6) {
+  const hex = decimal.toString(16).toUpperCase();
+  return "#" + hex.padStart(hexLength, "0");
+}
+
 /** Returns the Polish name for the month of the year with the given one-based index. */
-function getMonthName(monthInt, yearInt) {
-  yearInt === undefined && (yearInt = new Date().getFullYear());
-  const date = new Date(yearInt, monthInt, 0);
+function getMonthName(monthInt) {
+  const currentYear = new Date().getFullYear();
+  // setting the date as 0 will initialise the date object at the last day of the month before
+  // JS Date uses 0-based month indices so this will actually get the month we want
+  const date = new Date(currentYear, monthInt, 0);
   return date.toLocaleString("pl-PL", { month: "long" });
 }
 
@@ -63,6 +97,103 @@ function getParams(req, res, yearOnly = false) {
     return [null, null];
   }
   return [yearInt, monthInt];
+}
+
+/** Converts the raw database data into the JSON output by the API.
+ * - Converts the isPrimary boolean property into a `renderType` string that is either "PRIMARY" or "SECONDARY"
+ * - If the render type is PRIMARY, creates a `colour` object property containing the `topCorner` and `bottomCorner` HEX values
+ * - If the render type is SECONDARY, creates a `colour` string field with the HEX value of the raw data's `topCorner` property
+ * - Formats the start and end dates as string with format YYYY-MM-DD
+ * - Formats the event type (subtype) as the full event type string instead of an integer code
+ */
+function processEventData(data) {
+  if (data.isPrimary) {
+    data.renderType = "PRIMARY";
+    // include the top and bottom corner colours in the 'colour' property
+    data.colour = {
+      topCorner: decimalToHexString(data.colourTop),
+      bottomCorner: decimalToHexString(data.colourBottom),
+    };
+  } else {
+    data.renderType = "SECONDARY";
+    // include only the top colour (default) in the 'colour' property
+    data.colour = decimalToHexString(data.colourTop);
+  }
+  // convert the start and end date arrays into date strings in a single `date` object
+  data.date = {
+    start: serialiseDateArray(data.startDate),
+    end: serialiseDateArray(data.endDate),
+  };
+  // comment out the below line if the type conversion is to be made on the client side
+  data.eventType = calendarEventTypes[data.type];
+  // remove unused parameters from the new data object
+  const {
+    isPrimary,
+    colourTop,
+    colourBottom,
+    type,
+    startDate,
+    endDate,
+    ...newData
+  } = data;
+  return newData;
+}
+
+/** Queries the database for all the calendar events and sends a response containing those that fall within the defined time range.  */
+function sendEventsList(res, year, month, lowerLimit, upperLimit) {
+  function sendResponse(error, events = [], _rawSnapshotDocuments) {
+    // some kind of error occured while processing the collection contents
+    if (error) {
+      return void res.status(500).json({
+        errorDescription: HTTP.err500 + "Could not retrieve calendar data.",
+        error,
+      });
+    }
+    // initialise the base response info
+    const response = { numEvents: 0, events: [] };
+
+    // filter the events that are within the time range we specified
+    for (const rawEvent of events) {
+      // format all the data for the API
+      const event = processEventData(rawEvent);
+      // intialise the date string as Date objects which have a time of 00:00:00
+      const startDate = new Date(event.date.start);
+      const endDate = new Date(event.date.end);
+      // ignore events that don't fall within the time range
+      if (startDate > upperLimit || endDate < lowerLimit) {
+        continue;
+      }
+      if (month) {
+        // only include the day numbers if the month is provided
+        event.date = { start: startDate.getDate(), end: endDate.getDate() };
+      }
+      // initialise final event properties
+      if (!event.isPrimary) {
+        event.date.startsInPastMonth = startDate < lowerLimit;
+        event.date.endsInFutureMonth = endDate > upperLimit;
+      }
+      // add the event details to the response
+      response.numEvents++;
+      response.events.push(event);
+    }
+
+    const data = { year, ...response };
+    if (month) {
+      data.month = month;
+      data.monthName = getMonthName(month);
+    }
+    res.status(200).json(data);
+  }
+
+  // 'all' query parameter ensures the list response contains every document in the collection
+  // by default it's limited to 25 items
+  // could also manually set the number of items with { items: xxx }
+  sendListResponse(
+    db.collection("calendar").orderBy("startDate", "asc"),
+    { all: "true" },
+    res,
+    sendResponse
+  );
 }
 
 /*      ======== CALENDAR EVENT-SPECIFIC CRUD FUNCTIONS ========      */
@@ -109,13 +240,12 @@ router
       // this sends the response treating the request as /api/calendar/[event ID]/ instead
       return next();
     }
-    // requesting /api/calendar/[year]/ might not be necessary but if it is then the code can be implemented here.
     // the code only reaches here if the URL parameter is a valid integer > 1970, otherwise the next middleware
     // function is executed above.
-    res.status(501).json({
-      errorDescription:
-        "501 Not Implemented: Requesting entire year calendars is under development.",
-    });
+
+    const firstDayOfYear = new Date(yearInt, 0, 1);
+    const lastDayOfYear = new Date(yearInt + 1, 0, 0);
+    sendEventsList(res, yearInt, null, firstDayOfYear, lastDayOfYear);
   })
 
   // READ all current month calendar events
@@ -128,56 +258,15 @@ router
       return;
     }
 
-    const response = { numEvents: 0, events: [] };
+    const firstDayOfMonth = new Date(yearInt, monthInt - 1, 1);
+    const lastDayOfMonth = new Date(yearInt, monthInt, 0);
+    sendEventsList(res, yearInt, monthInt, firstDayOfMonth, lastDayOfMonth);
+  })
 
-    /** Sends the JSON response containing the filtered events from the 'events' collection. */
-    function sendResponse(error, events = [], _rawSnapshotDocuments) {
-      // some kind of error occured while processing the collection contents
-      if (error) {
-        return void res.status(500).json({
-          errorDescription: HTTP.err500 + "Could not retrieve calendar data.",
-          error,
-        });
-      }
-
-      const firstDayOfThisMonth = new Date(yearInt, monthInt - 1, 1);
-      const firstDayOfNextMonth = new Date(yearInt, monthInt, 1);
-
-      for (const event of events) {
-        const startDate = new Date(event.startDate);
-        const endDate = new Date(event.endDate);
-        if (startDate >= firstDayOfNextMonth || endDate < firstDayOfThisMonth) {
-          // ignore events that don't start this month or have ended before this month
-          continue;
-        }
-        response.numEvents++;
-        response.events.push({
-          ...event,
-          startDate: startDate.getDate(),
-          endDate: endDate.getDate(),
-          startsInPastMonth: startDate < firstDayOfThisMonth,
-          endsInFutureMonth: endDate >= firstDayOfNextMonth,
-        });
-      }
-
-      const monthName = getMonthName(monthInt, yearInt);
-      const data = {
-        yearInt,
-        monthInt,
-        monthName,
-        ...response,
-      };
-      return res.status(200).json(data);
-    }
-
-    // 'all' query parameter ensures the list response contains every document in the collection
-    // by default it's limited to 25 items
-    // could also manually set the number of items with { items: xxx }
-    sendListResponse(
-      db.collection("calendar").orderBy("startDate", "asc"),
-      { all: "true" },
-      res,
-      sendResponse
+  // READ single calendar event
+  .get(`/:id`, (req, res) => {
+    getDocRef(req, res, "calendar").then((docRef) =>
+      sendSingleResponse(docRef, res, processEventData)
     );
   })
 

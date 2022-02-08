@@ -71,8 +71,8 @@ for (const endpoint of ["calendar", "events", "links", "news"]) {
     });
   }
 
-  // READ single calendar event/link/news
-  if (endpoint !== "events") {
+  // READ single link/news
+  if (["links", "news"].includes(endpoint)) {
     app.get(`/api/${endpoint}/:id`, (req, res) => {
       getDocRef(req, res, endpoint).then((docRef) =>
         sendSingleResponse(docRef, res)
