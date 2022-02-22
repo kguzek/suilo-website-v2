@@ -1579,7 +1579,7 @@ a {
       -ms-flex-direction: column;
           flex-direction: column;
   position: relative;
-  margin: 1.2em 0;
+  margin: 1.3em 0;
   width: 100%;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
@@ -1748,7 +1748,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
   transition: all 150ms ease-in-out;
   letter-spacing: 0.015em;
   background-color: #F8F8F8;
-  padding-left: -.2em;
+  padding-left: -.5em;
 }
 
 .dropdown-header:focus, .dropdown-header:hover {
@@ -1830,6 +1830,14 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
 }
 
 .edit-segment {
-  margin-top: 1.4em;
+  margin-top: 2.5em;
+  width: 50%;
+}
+
+.from-to-indicator {
+  margin: 0;
+  padding: 0;
+  color: #111111;
+  padding-top: 1.7em;
 }
 /*# sourceMappingURL=app.css.map */
