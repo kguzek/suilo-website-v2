@@ -1840,4 +1840,88 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
   color: #111111;
   padding-top: 1.7em;
 }
+
+.add-btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  padding: .6em 1.5em;
+  border-radius: .65em;
+  height: 100%;
+  pointer-events: all;
+  cursor: pointer;
+  background: linear-gradient(170deg, #FFA000, #FFC300);
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+  border: none;
+  margin-left: 1em;
+  margin-top: 1em;
+  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
+          box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
+  transition: all 200ms ease-in-out;
+}
+
+.add-btn:hover {
+  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
+          box-shadow: 0 5px 22px rgba(60, 50, 0, 0.1);
+}
+
+.add-btn:active {
+  -webkit-transform: scale(0.98);
+          transform: scale(0.98);
+  -webkit-box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
+          box-shadow: 0 5px 22px rgba(60, 50, 0, 0);
+}
+
+.add-btn p {
+  font-size: 1.1em;
+  font-weight: 500;
+  padding: 0;
+  margin: 0;
+  margin-left: .3em;
+  color: white;
+  font-family: "Poppins";
+}
+
+.delete-btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  margin: .6em 1.5em;
+  padding: 0;
+  border-radius: .65em;
+  height: 100%;
+  pointer-events: all;
+  background: transparent;
+  cursor: pointer;
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+  border: none;
+  margin-left: 2.5em;
+  margin-top: 1.6em;
+}
+
+.delete-btn p {
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #fc3f1e;
+  padding: 0;
+  margin: 0;
+  margin-left: .3em;
+  font-family: "Poppins";
+}
 /*# sourceMappingURL=app.css.map */

@@ -1466,3 +1466,73 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
     color: #111111;
     padding-top: 1.7em;
 }
+
+
+// BUTTONS //
+
+.add-btn{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding: .6em 1.5em;
+    border-radius: .65em;
+    height: 100%;
+    pointer-events: all;
+    cursor: pointer;
+    background: linear-gradient(170deg, #FFA000,#FFC300);
+    transition: all 200ms ease-in-out;
+    // outline: none;
+    border:none;
+    margin-left: 1em;
+    margin-top: 1em;
+    box-shadow: 0 5px 22px rgba(60, 50, 0, .0);
+    transition: all 200ms ease-in-out;
+    &:hover{
+        // transform: scale(1.025);
+        box-shadow: 0 5px 22px rgba(60, 50, 0, .1);
+    }
+    &:active{
+        transform: scale(0.98);
+        box-shadow: 0 5px 22px rgba(60, 50, 0, .0);
+    }
+    p{
+        font-size: 1.1em;
+        font-weight: 500;
+        padding: 0;
+        margin: 0;
+        margin-left: .3em;
+        color: white;
+        font-family: "Poppins";
+    }
+}
+
+
+.delete-btn{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    margin: .6em 1.5em;
+    padding: 0;
+    border-radius: .65em;
+    height: 100%;
+    pointer-events: all;
+    background: transparent;
+    cursor: pointer;
+    transition: all 200ms ease-in-out;
+    // outline: none;
+    border:none;
+    margin-left: 2.5em;
+    margin-top: 1.6em;
+    p{
+        font-size: 1.1em;
+        font-weight: 500;
+        color:rgb(252, 63, 30);
+        padding: 0;
+        margin: 0;
+        margin-left: .3em;
+        font-family: "Poppins";
+    }
+}
+
+/////////////
+
