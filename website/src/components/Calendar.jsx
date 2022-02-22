@@ -58,7 +58,7 @@ import { fetchCachedData } from "../misc";
 
 */
 
-function Calendar({ typesOfEvents, updateCache = false }) {
+function Calendar({ updateCache = false }) {
   const [loaded, setLoaded] = useState(false);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -71,6 +71,11 @@ function Calendar({ typesOfEvents, updateCache = false }) {
     month: int,
     monthName: string,
     numEvents: int,
+    // TODO: eventSubtypes [Array<string>]
+    eventSubtypes: [
+      "subtype_1",
+      "subtype_2"
+    ]
     events: [
       {
         id: string,
@@ -109,7 +114,8 @@ function Calendar({ typesOfEvents, updateCache = false }) {
       setData: setCalendarData,
       setLoaded,
       updateCache,
-      onSuccessCallback: (data) => (data && !data.errorMessage ? data : null),
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
     };
     const fetchURL = `/calendar/${year}/${month}/`;
     const cacheName = `calendar_${year}_${month}`;
@@ -117,7 +123,6 @@ function Calendar({ typesOfEvents, updateCache = false }) {
   }, [updateCache]);
 
   if (!loaded) {
-    // TODO: loading anim
     return (
       <div style={{ backgroundColor: "transparent" }}>
         <Bars color="#FFA900" height={50} width={50} />
