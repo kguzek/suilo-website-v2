@@ -1,8 +1,5 @@
 const express = require("express");
-const {
-  dateToArray,
-  serialiseDateArray,
-} = require("../common");
+const { dateToArray, serialiseDateArray } = require("../common");
 const { db, HTTP, dateToTimestamp } = require("../util");
 
 const router = express.Router();
@@ -145,6 +142,8 @@ router
 
     const forceUpdate = req.query.force_update === "true";
 
+    const docRef = db.collection("_general").doc("luckyNumbers");
+
     function dataIsCurrent(data) {
       // return false if the update is forced or if there is no lucky numbers data
       if (forceUpdate || !data) {
@@ -199,19 +198,14 @@ router
         numberPoolA: numberPools[0],
         numberPoolB: numberPools[1],
       };
-      db.collection("numbers").doc("data").set(newData);
+      docRef.set(newData);
       sendNumbersData(newData);
     }
     try {
-      db.collection("numbers")
-        .doc("data")
-        .get()
-        .then((doc) => {
-          const data = doc.data();
-          dataIsCurrent(data)
-            ? sendNumbersData(data)
-            : generateNumbersData(data);
-        });
+      docRef.get().then((doc) => {
+        const data = doc.data();
+        dataIsCurrent(data) ? sendNumbersData(data) : generateNumbersData(data);
+      });
     } catch (error) {
       return res.status(500).json({
         errorDescription:

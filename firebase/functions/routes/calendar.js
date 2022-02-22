@@ -23,7 +23,7 @@ const eventAttributeSanitisers = {
   colourBottom: hexStringToDecimal,
 };
 
-const calendarEventTypes = [
+const defaultCalendarEventTypes = [
   "święta/wydarzenia szkolne",
   "święta/wydarzenia ogólnopolskie",
   "dzień wolny od zajęć dydaktycznych",
@@ -141,7 +141,48 @@ function processEventData(data) {
 
 /** Queries the database for all the calendar events and sends a response containing those that fall within the defined time range.  */
 function sendEventsList(res, year, month, lowerLimit, upperLimit) {
-  function sendResponse(error, events = [], _rawSnapshotDocuments) {
+  let response;
+  let eventSubtypes;
+
+  /** Function to call when one of the two document fetches finishes. */
+  function queryCallback(isResponse = false, data = []) {
+    // Check if the document fetch contains the response that is to be sent to the user
+    if (isResponse) {
+      response = data;
+    } else {
+      eventSubtypes = data;
+    }
+    // Check if both document fetches have completed
+    if (response && eventSubtypes) {
+      // User response and event subtypes are both defined; send the response
+      response.eventSubtypes = eventSubtypes;
+      res.status(200).json(response);
+    }
+  }
+
+  /** Sets the calendar event subtypes to the default values. */
+  function setDefaultSubtypes() {
+    // Set the default subtypes
+    docRef.set({ eventSubtypes: defaultCalendarEventTypes });
+    queryCallback(false, defaultCalendarEventTypes);
+  }
+
+  const docRef = db.collection("_general").doc("calendarInfo");
+  docRef
+    .get()
+    .then((doc) => {
+      const data = doc.data();
+      if (data?.eventSubtypes) {
+        return void queryCallback(false, data.eventSubtypes);
+      }
+      setDefaultSubtypes();
+    })
+    .catch((error) => {
+      console.log(error);
+      setDefaultSubtypes();
+    });
+
+  function generateResponse(error, events = [], _rawSnapshotDocuments) {
     // some kind of error occured while processing the collection contents
     if (error) {
       return void res.status(500).json({
@@ -149,7 +190,6 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
         error,
       });
     }
-    // initialise the base response info
     const response = { numEvents: 0, events: [] };
 
     // filter the events that are within the time range we specified
@@ -182,7 +222,7 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
       data.month = month;
       data.monthName = getMonthName(month);
     }
-    res.status(200).json(data);
+    queryCallback(true, data);
   }
 
   // 'all' query parameter ensures the list response contains every document in the collection
@@ -192,7 +232,7 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
     db.collection("calendar").orderBy("startDate", "asc"),
     { all: "true" },
     res,
-    sendResponse
+    generateResponse
   );
 }
 
