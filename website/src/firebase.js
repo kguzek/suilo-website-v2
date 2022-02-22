@@ -91,6 +91,10 @@ export function AuthProvider({ children, setUserCallback }) {
       // setUserCallback returns a boolean indicating if the user is from our school or not.
       if (setUserCallback(user)) {
         // execute any requests in the stack that were attempted before we got the user reference
+        if (_fetchStack.length === 0) {
+          // Skip if there are no pending fetches in the stack
+          return;
+        }
         if (user) {
           console.log(
             `Executing the fetch stack as ${user.displayName} <${user.email}>.`
