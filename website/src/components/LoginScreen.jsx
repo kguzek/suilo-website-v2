@@ -4,7 +4,7 @@ import { useCookies } from "react-cookie";
 import { Bars } from "react-loader-spinner";
 import { signInWithGoogle, getResults, fetchWithToken } from "../firebase";
 
-const LoginScreen = ({ setLogged, setUserEditPerms }) => {
+function LoginScreen() {
   // startLogging opens login window :boolean
   const [errorMessage, setErrorMessage] = useState(null);
   const { height, width } = useWindowDimensions();
@@ -12,11 +12,11 @@ const LoginScreen = ({ setLogged, setUserEditPerms }) => {
   const [opacity, setOpacity] = useState(0);
   const [yPos, setYPos] = useState("10vh");
   const [isSafeToChange, setSafety] = useState(true);
-  const [cookies, setCookies, removeCookies] = useCookies(["processingLogin"]);
+  const [cookies, setCookies, removeCookies] = useCookies(["loginStage"]);
 
   useEffect(() => {
     if (isSafeToChange) {
-      if (cookies.processingLogin) {
+      if (cookies.loginStage) {
         fadeInDom();
       } else {
         fadeOutDom();
@@ -26,29 +26,15 @@ const LoginScreen = ({ setLogged, setUserEditPerms }) => {
   }, [isSafeToChange]);
 
   useEffect(() => {
-    if (!cookies.processingLogin) {
+    if (!cookies.loginStage) {
       return;
     }
     getResults((error) => {
       if (error) {
         setErrorMessage(error);
-        setCookies("processingLogin", "postRedirect", { sameSite: "lax" });
+        setCookies("loginStage", "error", { sameSite: "lax" });
       } else {
-        setLogged(true);
-        removeCookies("processingLogin");
-
-        // check if the user has edit permissions by performing a dummy PUT request to the API
-        console.log("Checking user permissions...");
-        fetchWithToken("/", "put").then(
-          (res) => {
-            setUserEditPerms(res.ok);
-            // log user permissions
-            res.json().then(console.log);
-          },
-          (error) => {
-            console.log("Error setting user permissions!", error);
-          }
-        );
+        removeCookies("loginStage");
       }
     });
   }, []);
@@ -74,7 +60,7 @@ const LoginScreen = ({ setLogged, setUserEditPerms }) => {
 
   function _handleLogin() {
     setErrorMessage();
-    setCookies("processingLogin", "preRedirect", { sameSite: "lax" });
+    setCookies("loginStage", "redirectGoogle", { sameSite: "lax" });
     signInWithGoogle();
   }
 
@@ -91,7 +77,7 @@ const LoginScreen = ({ setLogged, setUserEditPerms }) => {
       >
         <div
           className="login-bg"
-          onClick={() => removeCookies("processingLogin")}
+          onClick={() => removeCookies("loginStage")}
         />
         <div className="login-box" style={{ transform: `translateY(${yPos})` }}>
           <img
@@ -113,7 +99,7 @@ const LoginScreen = ({ setLogged, setUserEditPerms }) => {
               <p className="disabled-p" style={{ padding: "7px" }}>
                 lub
               </p>
-              {cookies.processingLogin === "preRedirect" ? (
+              {cookies.loginStage === "redirectGoogle" ? (
                 <div style={{ backgroundColor: "transparent" }}>
                   <Bars color="#FFA900" height={35} width={35} />
                 </div>
@@ -163,7 +149,7 @@ const LoginScreen = ({ setLogged, setUserEditPerms }) => {
       >
         <div
           className="login-bg"
-          onClick={() => removeCookies("processingLogin")}
+          onClick={() => removeCookies("loginStage")}
         />
         <div
           className="login-box"

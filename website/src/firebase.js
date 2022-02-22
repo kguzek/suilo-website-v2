@@ -88,13 +88,21 @@ export function AuthProvider({ children, setUserCallback }) {
     // this triggers every time the logging state triggers
     onAuthStateChanged(auth, (user) => {
       userLoaded = true;
-      setUserCallback(user);
-
-      // execute any requests in the stack that were attempted before we got the user reference
-      if (user) {
-        user.getIdToken().then(_executeFetchStack);
+      // setUserCallback returns a boolean indicating if the user is from our school or not.
+      if (setUserCallback(user)) {
+        // execute any requests in the stack that were attempted before we got the user reference
+        if (user) {
+          console.log(
+            `Executing the fetch stack as ${user.displayName} <${user.email}>.`
+          );
+          user.getIdToken().then(_executeFetchStack);
+        } else {
+          console.log("Executing the fetch stack anonymously.");
+          _executeFetchStack();
+        }
       } else {
-        _executeFetchStack();
+        // The user is from outside the LO1 organisation.
+        logOut().then();
       }
     });
   }, []);
@@ -140,7 +148,9 @@ export function getResults(processLoginCallback) {
 
 export async function logOut() {
   signOut(auth)
-    .then(() => {})
+    .then(() => {
+      console.log("Successfully signed out from Google provider.");
+    })
     .catch((error) => {
       // no error handling as possible errors are currently unknown
       console.log("An error occured while logging out.", error);

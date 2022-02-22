@@ -15,20 +15,27 @@ import Footer from "./components/Footer";
 import LoginScreen from "./components/LoginScreen";
 import CookiesAlert from "./components/CookiesAlert";
 import ScrollToTop, { scrollToTop } from "./components/ScrollToTop";
-import { logOut, AuthProvider } from "./firebase";
+import { logOut, AuthProvider, fetchWithToken } from "./firebase";
 
 function App() {
   const [page, setPage] = useState(null);
-  const [logged, setLogged] = useState(false); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
-  const [userHasEditPerms, setUserEditPerms] = useState(false);
-  const [cookies, setCookies] = useCookies(["processingLogin"]);
-  const [isFooterVisible, setFooterVisible] = useState(true)
+  const [loggedInUser, setLoggedInUser] = useState(null); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
+  const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
+  const [isFooterVisible, setFooterVisible] = useState(true);
+
+  /** Sets the user accounts cookie to an empty object. */
+  function resetUserAccounts() {
+    setCookies("userAccounts", {}, { sameSite: "lax" });
+  }
+
+  // Default the user accounts to an empty object
+  cookies.userAccounts || resetUserAccounts();
 
   useEffect(() => {
     if (page === "contact") {
-      setFooterVisible(false)
+      setFooterVisible(false);
     } else {
-      setFooterVisible(true)
+      setFooterVisible(true);
     }
     if (page !== null) {
       scrollToTop();
@@ -36,91 +43,97 @@ function App() {
     return;
   }, [page]);
 
+  /** Callback to be executed whenever the state of the currently signed in user is changed.
+   * Returns true if the user is a valid option (i.e. actual user from @lo1.gliwice.pl or no user at all).
+   * Returns false if the user is from outside of the LO1 organisation.
+   */
   function setUserCallback(user) {
     if (user) {
       if (user.email.endsWith("@lo1.gliwice.pl")) {
-        if (!cookies.processingLogin) {
-          setLogged(true);
+        if (!cookies.userAccounts[user.email]) {
+          /** Update the cookie with the proper user pemissions. */
+          function setUserEditPermissions(isEditor) {
+            const userAccounts = cookies.userAccounts;
+            userAccounts[user.email] = { isEditor };
+            isEditor && console.log(`Enabled edit screen for ${user.email}.`);
+            setCookies("userAccounts", userAccounts, { sameSite: "lax" });
+          }
+
+          // check if the user has edit permissions by performing a dummy PUT request to the API
+          console.log("Checking user permissions...");
+          fetchWithToken("/", "put").then(
+            (res) => {
+              // Edit permissions = true if response is HTTP 200; otherwise false
+              setUserEditPermissions(res.ok);
+              // log user permissions
+              res.json().then(console.log);
+            },
+            (error) => {
+              console.log("Error setting user permissions!", error);
+              setUserEditPermissions(false);
+            }
+          );
         }
+        setLoggedInUser(user.email);
       } else {
         console.log("Invalid email. Logging out.");
-        logOut();
+        return false;
       }
     } else {
       console.log("No user. Logging out.");
-      setLogged(false);
-      setUserEditPerms(false);
+      setLoggedInUser(null);
+      // Remove all entries from the user accounts object
+      // This means that the next time someone logs in the API will have to verify if they are an editor
+      resetUserAccounts();
     }
+    return true;
   }
 
   function loginAction() {
     // CALL LOG SCREEN
-    setCookies("processingLogin", "waitForRedirect", { sameSite: "lax" });
+    setCookies("loginStage", "started", { sameSite: "lax" });
   }
   function logoutAction() {
-    logOut();
-    // LOGOUT (to integrate with backend) !!!!!! -------------------------- !!!!
+    logOut().then();
   }
 
+  const userIsEditor = (cookies.userAccounts[loggedInUser] || {}).isEditor;
+
   return (
-    <AuthProvider setUserCallback={setUserCallback} >
+    <AuthProvider setUserCallback={setUserCallback}>
       <Routes>
         <Route
           path="/"
           element={
             <Layout
               page={page}
-              logged={logged}
+              logged={loggedInUser}
               loginAction={loginAction}
               logoutAction={logoutAction}
-              setLogged={setLogged}
-              canEdit={logged && userHasEditPerms}
-              setUserEditPerms={setUserEditPerms}
+              canEdit={userIsEditor}
               isFooterVisible={isFooterVisible}
             />
           }
         >
-          <Route
-            index
-            element={<Home setPage={setPage} />}
-          />
-          <Route
-            path="aktualnosci"
-            element={<News setPage={setPage} />}
-          >
-            <Route
-              path="post"
-              element={<Post setPage={setPage} />}
-            >
-              <Route
-                path=":postID"
-                element={<Post setPage={setPage} />}
-              />
+          <Route index element={<Home setPage={setPage} />} />
+          <Route path="aktualnosci" element={<News setPage={setPage} />}>
+            <Route path="post" element={<Post setPage={setPage} />}>
+              <Route path=":postID" element={<Post setPage={setPage} />} />
             </Route>
           </Route>
-          <Route
-            path="wydarzenia"
-            element={<Events setPage={setPage} />}
-          />
+          <Route path="wydarzenia" element={<Events setPage={setPage} />} />
           <Route path="kontakt" element={<Contact setPage={setPage} />} />
           <Route
             path="edycja"
             element={
               <Edit
                 setPage={setPage}
-                canEdit={logged && userHasEditPerms}
+                canEdit={userIsEditor}
                 loginAction={loginAction}
               />
             }
           />
-          <Route
-            path="*"
-            element={
-              <ShortLinkRedirect
-                setPage={setPage}
-              />
-            }
-          />
+          <Route path="*" element={<ShortLinkRedirect setPage={setPage} />} />
         </Route>
       </Routes>
     </AuthProvider>
@@ -132,10 +145,8 @@ function Layout({
   logged,
   loginAction,
   logoutAction,
-  setLogged,
   canEdit,
-  setUserEditPerms,
-  isFooterVisible
+  isFooterVisible,
 }) {
   return (
     <main>
@@ -179,10 +190,7 @@ function Layout({
       <ScrollToTop />
       <Outlet />
       <CookiesAlert />
-      <LoginScreen
-        setLogged={setLogged}
-        setUserEditPerms={setUserEditPerms}
-      />
+      <LoginScreen />
       <Footer isVisible={isFooterVisible} />
     </main>
   );
