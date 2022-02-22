@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import { Plus, Trash, Edit3 } from "react-feather";
 import { Bars } from "react-loader-spinner";
@@ -7,37 +7,43 @@ import InputBox from "../components/InputBox";
 import InputArea from "../components/InputArea";
 import InputDropdown from "../components/InputDropdown";
 import InputFile from "../components/InputFile";
+import { fetchNewsData } from "../components/PostCardPreview";
+import { fetchCachedData, formatDate, removeSearchParam } from "../misc";
 
-const test = [
-  { value: "1", display: "1" },
-  { value: "2", display: "2" },
-  { value: "3", display: "3" },
-];
-const editPickerList = [
-  { value: "Aktualności", display: "Aktualności" },
-  { value: "Wydarzenia", display: "Wydarzenia" },
-  { value: "Kalendarz", display: "Kalendarz" },
-];
+const editPickerOptions = ["Aktualności", "Wydarzenia", "Kalendarz"];
 
-const PostEdit = () => {
-  const [currentlyActive, setCurrentlyActive] = useState("Nowy post");
+function PostEdit({ data, loaded }) {
+  const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [title, setTitle] = useState("");
-  const [postContent, setPostContent] = useState("");
 
-  const _handleSubmit = (e) => {
+  // Display loading screen if news data hasn't been retrieved yet
+  if (!loaded) {
+    return (
+      <div style={{ backgroundColor: "transparent" }}>
+        <Bars color="#FFA900" height={50} width={50} />
+      </div>
+    );
+  }
+
+  const posts = {};
+  for (const post of data) {
+    posts[post.id] = post.title;
+  }
+
+  function _handleSubmit(e) {
     e.preventDefault();
-  };
+  }
 
-  const _handleDelete = () => {};
+  function _handleDelete() {}
 
   return (
-    <form className="edit-segment" onSubmit={(e) => _handleSubmit}>
+    <form className="edit-segment" onSubmit={_handleSubmit}>
       <InputDropdown
-        label={"Post do edycji"}
+        label="Post do edycji"
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
-        defaultLabel={"Nowy post"}
-        valueDisplayArray={test}
+        defaultLabel="Nowy post"
+        valueDisplayObject={posts}
       />
       <InputBox
         name="post-title"
@@ -49,10 +55,10 @@ const PostEdit = () => {
       {/* PLACE FOR TEXT EDITOR */}
       <InputFile
         placeholder="Miniatura"
-        acceptedExtensions={".jpeg, .jpg, .png,"}
+        acceptedExtensions=".jpeg, .jpg, .png,"
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "Nowy post" && currentlyActive !== "" && (
+        {currentlyActive !== "_default" && (
           <button
             type="button"
             className="delete-btn"
@@ -63,24 +69,20 @@ const PostEdit = () => {
           </button>
         )}
         <button type="submit" className="add-btn">
-          {currentlyActive !== "Nowy post" && currentlyActive !== "" ? (
+          {currentlyActive !== "_default" ? (
             <Edit3 color="#FFFFFF" size={24} />
           ) : (
             <Plus color="#FFFFFF" size={24} />
           )}
-          <p>
-            {currentlyActive !== "Nowy post" && currentlyActive !== ""
-              ? "edytuj post"
-              : "dodaj post"}
-          </p>
+          <p>{currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}</p>
         </button>
       </div>
     </form>
   );
-};
+}
 
-const EventEdit = () => {
-  const [currentlyActive, setCurrentlyActive] = useState("Nowe wydarzenie");
+function EventEdit({ data, loaded }) {
+  const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
@@ -88,20 +90,35 @@ const EventEdit = () => {
   const [timeEnd, setTimeEnd] = useState("");
   const [place, setPlace] = useState("");
 
-  const _handleSubmit = (e) => {
-    e.preventDefault();
-  };
+  // Display loading screen if events data hasn't been retrieved yet
+  if (!loaded) {
+    return (
+      <div style={{ backgroundColor: "transparent" }}>
+        <Bars color="#FFA900" height={50} width={50} />
+      </div>
+    );
+  }
 
-  const _handleDelete = () => {};
+  const events = {};
+  for (const event of data?.contents || []) {
+    const date = formatDate(event.date);
+    events[event.id] = `${event.title} (${date})`;
+  }
+
+  function _handleSubmit(e) {
+    e.preventDefault();
+  }
+
+  function _handleDelete() {}
 
   return (
-    <form className="edit-segment" onSubmit={(e) => _handleSubmit}>
+    <form className="edit-segment" onSubmit={_handleSubmit}>
       <InputDropdown
-        label={"Wydarzenie do edycji"}
+        label="Wydarzenie do edycji"
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
-        defaultLabel={"Nowe wydarzenie"}
-        valueDisplayArray={test}
+        defaultLabel="Nowe wydarzenie"
+        valueDisplayObject={events}
       />
       <InputBox
         name="event-name"
@@ -163,10 +180,10 @@ const EventEdit = () => {
       {/* PLACE FOR TEXT EDITOR */}
       <InputFile
         placeholder="Miniatura"
-        acceptedExtensions={".jpeg, .jpg, .png,"}
+        acceptedExtensions=".jpeg, .jpg, .png,"
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "Nowe wydarzenie" && currentlyActive !== "" && (
+        {currentlyActive !== "_default" && (
           <button
             type="button"
             className="delete-btn"
@@ -177,13 +194,13 @@ const EventEdit = () => {
           </button>
         )}
         <button type="submit" className="add-btn">
-          {currentlyActive !== "Nowe wydarzenie" && currentlyActive !== "" ? (
+          {currentlyActive !== "_default" ? (
             <Edit3 color="#FFFFFF" size={24} />
           ) : (
             <Plus color="#FFFFFF" size={24} />
           )}
           <p>
-            {currentlyActive !== "Nowe wydarzenie" && currentlyActive !== ""
+            {currentlyActive !== "_default"
               ? "edytuj wydarzenie"
               : "dodaj wydarzenie"}
           </p>
@@ -191,29 +208,48 @@ const EventEdit = () => {
       </div>
     </form>
   );
-};
+}
 
-const CalendarEdit = () => {
-  const [currentlyActive, setCurrentlyActive] = useState("Nowe wydarzenie");
+function CalendarEdit({ data, loaded, setYear, setMonth }) {
+  const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
-  const [dateStart, setDateStart] = useState("");
+  const [dateStart, setDateStart] = useState("2020-01-01");
   const [dateEnd, setDateEnd] = useState("");
   const [type, setType] = useState("");
 
-  const _handleSubmit = (e) => {
-    e.preventDefault();
-  };
+  // Display loading screen if calendar data hasn't been retrieved yet
+  if (!loaded) {
+    return (
+      <div style={{ backgroundColor: "transparent" }}>
+        <Bars color="#FFA900" height={50} width={50} />
+      </div>
+    );
+  }
 
-  const _handleDelete = () => {};
+  const calendarEvents = {};
+  for (const event of data?.contents || []) {
+    calendarEvents[event.id] = event.title;
+  }
+
+  let eventSubtypes = data?.eventSubtypes || [
+    "Subtype A",
+    "Subtype B",
+    "Subtype C",
+  ];
+  function _handleSubmit(e) {
+    e.preventDefault();
+  }
+
+  function _handleDelete() {}
 
   return (
-    <form className="edit-segment" onSubmit={(e) => _handleSubmit}>
+    <form className="edit-segment" onSubmit={_handleSubmit}>
       <InputDropdown
-        label={"Typ wydarzenia"}
+        label="Typ wydarzenia"
         currentValue={type}
         onChangeCallback={setType}
-        defaultLabel={"Inne"}
-        valueDisplayArray={test}
+        // defaultLabel="Inne"
+        valueDisplayObject={Object.fromEntries(eventSubtypes.entries())}
       />
       <InputBox
         maxLength={60}
@@ -251,14 +287,14 @@ const CalendarEdit = () => {
         />
       </div>
       <InputDropdown
-        label={"Wydarzenie do edycji"}
+        label="Wydarzenie do edycji"
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
-        defaultLabel={"Nowe wydarzenie"}
-        valueDisplayArray={test}
+        defaultLabel="Nowe wydarzenie"
+        valueDisplayObject={calendarEvents}
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "Nowe wydarzenie" && currentlyActive !== "" && (
+        {currentlyActive !== "_default" && (
           <button
             type="button"
             className="delete-btn"
@@ -269,13 +305,13 @@ const CalendarEdit = () => {
           </button>
         )}
         <button type="submit" className="add-btn">
-          {currentlyActive !== "Nowe wydarzenie" && currentlyActive !== "" ? (
+          {currentlyActive !== "_default" ? (
             <Edit3 color="#FFFFFF" size={24} />
           ) : (
             <Plus color="#FFFFFF" size={24} />
           )}
           <p>
-            {currentlyActive !== "Nowe wydarzenie" && currentlyActive !== ""
+            {currentlyActive !== "_default"
               ? "edytuj wydarzenie"
               : "dodaj wydarzenie"}
           </p>
@@ -283,11 +319,77 @@ const CalendarEdit = () => {
       </div>
     </form>
   );
-};
+}
 
-function Edit({ setPage, canEdit, loginAction, user }) {
-  const [editPicker, setEditPicker] = useState("Aktualności");
+export default function Edit({ setPage, canEdit, loginAction, user }) {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // `editPicker` is an index of `editPickerOptions`
+  const [editPicker, setEditPicker] = useState(0);
+
+  // API data storage
+  const [newsData, setNewsData] = useState({});
+  const [eventsData, setEventsData] = useState({});
+  const [calendarData, setCalendarData] = useState({});
+  const [loadedNews, setLoadedNews] = useState(false);
+  const [loadedEvents, setLoadedEvents] = useState(false);
+  const [loadedCalendar, setLoadedCalendar] = useState(false);
+
+  // Calendar fetch options
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+
+  /** Fetch the news post data from the cache or API. */
+  function _fetchNews(forceUpdate = false) {
+    setLoadedNews(false);
+    fetchNewsData({
+      setNewsData,
+      setLoaded: setLoadedNews,
+      updateCache: forceUpdate,
+      allItems: true,
+    });
+  }
+
+  /** Fetch the events data from the cache or API. */
+  function _fetchEvents(forceUpdate = false) {
+    setLoadedEvents(false);
+    const fetchArgs = {
+      setData: setEventsData,
+      setLoaded: setLoadedEvents,
+      updateCache: forceUpdate,
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
+    };
+    fetchCachedData("events", "/events", fetchArgs);
+  }
+
+  /** Fetch the calendar data from the cache or API. */
+  function _fetchCalendar(forceUpdate = false) {
+    setLoadedCalendar(false);
+    const fetchArgs = {
+      setData: setCalendarData,
+      setLoaded: setLoadedCalendar,
+      updateCache: forceUpdate,
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
+    };
+    const fetchURL = `/calendar/${year}/${month}/`;
+    const cacheName = `calendar_${year}_${month}`;
+    fetchCachedData(cacheName, fetchURL, fetchArgs);
+  }
+
+  // Populate the API data
+  useEffect(() => {
+    const updateCache = !!removeSearchParam(
+      searchParams,
+      setSearchParams,
+      "refresh"
+    );
+
+    for (const fetchFunc of [_fetchNews, _fetchEvents, _fetchCalendar]) {
+      fetchFunc(updateCache);
+    }
+  }, []);
 
   useEffect(() => {
     if (canEdit || user === undefined) {
@@ -299,6 +401,7 @@ function Edit({ setPage, canEdit, loginAction, user }) {
     }
   }, [canEdit, user]);
 
+  // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {
     return (
       <div
@@ -329,18 +432,25 @@ function Edit({ setPage, canEdit, loginAction, user }) {
       </MetaTags>
       <div style={{ width: "50%" }}>
         <InputDropdown
-          label={"Element strony do edycji"}
+          label="Element strony do edycji"
           currentValue={editPicker}
           onChangeCallback={setEditPicker}
           defaultLabel={""}
-          valueDisplayArray={editPickerList}
+          valueDisplayObject={editPickerOptions}
         />
       </div>
-      {editPicker === editPickerList[0].value && <PostEdit />}
-      {editPicker === editPickerList[1].value && <EventEdit />}
-      {editPicker === editPickerList[2].value && <CalendarEdit />}
+      {/* use == instead of === to compare integers with number strings
+      (editPicker can be a string representing a number e.g. "1") */}
+      {editPicker == 0 && <PostEdit data={newsData} loaded={loadedNews} />}
+      {editPicker == 1 && <EventEdit data={eventsData} loaded={loadedEvents} />}
+      {editPicker == 2 && (
+        <CalendarEdit
+          data={calendarData}
+          loaded={loadedCalendar}
+          setYear={setYear}
+          setMonth={setMonth}
+        />
+      )}
     </div>
   );
 }
-
-export default Edit;

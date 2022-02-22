@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 
-function InputDropdown({
+export default function InputDropdown({
   onChangeCallback,
   currentValue,
   defaultLabel,
-  valueDisplayArray,
+  valueDisplayObject,
   label,
 }) {
   const [focused, setFocus] = useState(false);
 
-  const DEF = {
-    value: "",
-    display: defaultLabel,
-  };
-
   function _renderOption(data) {
-    return data.map((el) => <Option key={el.value} el={el} />);
+    const entries = Object.entries(data);
+    if (defaultLabel) {
+      // Add the default label to the beginning of the object entries
+      entries.splice(0, 0, ["_default", defaultLabel]);
+    }
+    return entries.map(([key, display]) => (
+      <option key={key} className="dropdown-option" value={key}>
+        {display}
+      </option>
+    ));
   }
 
   return (
@@ -36,19 +40,8 @@ function InputDropdown({
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
       >
-        {defaultLabel !== "" && <Option el={DEF} />}
-        {_renderOption(valueDisplayArray)}
+        {_renderOption(valueDisplayObject)}
       </select>
     </div>
   );
 }
-
-function Option({ el }) {
-  return (
-    <option className="dropdown-option" value={el.value}>
-      {el.display}
-    </option>
-  );
-}
-
-export default InputDropdown;
