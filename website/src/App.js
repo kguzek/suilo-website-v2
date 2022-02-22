@@ -20,8 +20,8 @@ import { logOut, AuthProvider, fetchWithToken } from "./firebase";
 function App() {
   const [page, setPage] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
-  const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
   const [isFooterVisible, setFooterVisible] = useState(true);
+  const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
 
   /** Sets the user accounts cookie to an empty object. */
   function resetUserAccounts() {
@@ -63,10 +63,10 @@ function App() {
           console.log("Checking user permissions...");
           fetchWithToken("/", "put").then(
             (res) => {
+              // Log user permissions
+              res.json().then(console.log);
               // Edit permissions = true if response is HTTP 200; otherwise false
               setUserEditPermissions(res.ok);
-              // log user permissions
-              res.json().then(console.log);
             },
             (error) => {
               console.log("Error setting user permissions!", error);
@@ -97,7 +97,9 @@ function App() {
     logOut().then();
   }
 
-  const userIsEditor = (cookies.userAccounts[loggedInUser] || {}).isEditor;
+  // || false at the end is not needed but it makes the variable `false` instead of `undefined`
+  // no practical advantages but more accurately describes the variable's status
+  const userIsEditor = cookies.userAccounts?.[loggedInUser]?.isEditor || false;
 
   return (
     <AuthProvider setUserCallback={setUserCallback}>
