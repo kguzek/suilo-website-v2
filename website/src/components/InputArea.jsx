@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const InputBox = ({
+const InputArea = ({
     value,
     type = "text",
     name,
@@ -19,7 +19,7 @@ const InputBox = ({
             className="main"
             style={{ width: width }}
         >
-            <input
+            <textarea
                 className="input"
                 required
                 onFocus={() => setFocus(true)}
@@ -27,6 +27,7 @@ const InputBox = ({
                 value={value}
                 type={type}
                 name={name}
+                style={{ maxWidth: width, maxHeight: "10em", height: "1.6em" }}
                 pattern={pattern}
                 maxLength={maxLength === 0 ? 512 : maxLength}
                 onChange={(e) => { onChange(e.target.value); setCharCount(e.target.value.length); if (cleanup !== undefined) { cleanup() } }}
@@ -55,4 +56,4 @@ const InputBox = ({
     );
 }
 
-export default InputBox;
+export default InputArea;

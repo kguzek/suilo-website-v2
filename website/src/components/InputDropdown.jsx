@@ -1,7 +1,45 @@
 import React, { useState } from "react";
+const InputDropdown = ({ onChangeCallback, currentValue, defaultLabel, valueDisplayArray, label }) => {
 
+    const [focused, setFocus] = useState(false)
 
-const Option = (el) => {
+    const DEF = {
+        value: "",
+        display: defaultLabel
+    }
+
+    const _renderOption = (data) => {
+        return data.map((el) => <Option el={el} />)
+    }
+
+    return (
+        <div style={{ marginTop: "-.9em" }}>
+            <p
+                className="select-label"
+                style={{
+                    transform: "scale(.75)",
+                    color: (focused) ? "#111111" : "rgb(100, 100, 100)"
+                }}
+            >
+                {label}
+            </p>
+            <select
+                className="dropdown-header"
+                value={currentValue}
+                onChange={(e) => onChangeCallback(e.target.value)}
+                onFocus={() => setFocus(true)}
+                onBlur={() => setFocus(false)}
+            >
+                {defaultLabel !== "" && <Option el={DEF} />}
+                {
+                    _renderOption(valueDisplayArray)
+                }
+            </select>
+        </div >
+    );
+}
+
+const Option = ({ el }) => {
     return (
         <option
             key={el.value}
@@ -13,39 +51,5 @@ const Option = (el) => {
     )
 }
 
-// MIKOŁAJ currentSchoolId nic nie robi nie chcę ci grzebać w kodzie zrób tak że jak się to przesyła to zmienia opcje na tą którą się przesłało jak ma się wyświetlić nowa szkoła przesyła ""
-const InputDropdown = (onChangeCallback, currentValue, defaultLabel, valueDisplayArray, label) => {
 
-    const DEF = {
-        value: "",
-        display: defaultLabel
-    }
-
-    return (
-        <div style={{ marginTop: "-15px" }} >
-            <h4 className="dropdown-label">
-                {label}
-            </h4>
-            <div className="spacer" />
-            <select
-                className="dropdown-header"
-                value={currentValue}
-                onChange={(e) => onChangeCallback(e.target.value)}
-            >
-                <Option value={DEF} />
-                {/* {
-                    valueDisplayArray.map(el => <Option el={el} />)
-                } */}
-                {/* { RENDER OPRIONS
-                    valueDisplayArray.map(Obj => <Option value={Obj} />)
-
-                /* {schools.filter(school => permisions.schoolList.includes(school.id || "") || permisions.admin).
-                    map(scholobj =>
-                        <Option value={scholobj} />
-                    )} */}
-            </select>
-        </div >
-    );
-}
-
-export default InputDropdown
+export default InputDropdown;

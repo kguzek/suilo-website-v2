@@ -32,7 +32,7 @@ function App() {
   cookies.userAccounts || resetUserAccounts();
 
   useEffect(() => {
-    if (page === "contact") {
+    if (page === "contact" || page === "edit") {
       setFooterVisible(false);
     } else {
       setFooterVisible(true);
