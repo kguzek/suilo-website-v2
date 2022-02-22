@@ -19,7 +19,7 @@ import { logOut, AuthProvider, fetchWithToken } from "./firebase";
 
 function App() {
   const [page, setPage] = useState(null);
-  const [loggedInUser, setLoggedInUser] = useState(null); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
+  const [loggedInUser, setLoggedInUser] = useState(undefined); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [isFooterVisible, setFooterVisible] = useState(true);
   const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
 
@@ -100,7 +100,6 @@ function App() {
   // || false at the end is not needed but it makes the variable `false` instead of `undefined`
   // no practical advantages but more accurately describes the variable's status
   const userIsEditor = cookies.userAccounts?.[loggedInUser]?.isEditor || false;
-
   return (
     <AuthProvider setUserCallback={setUserCallback}>
       <Routes>
@@ -131,6 +130,7 @@ function App() {
               <Edit
                 setPage={setPage}
                 canEdit={userIsEditor}
+                user={loggedInUser}
                 loginAction={loginAction}
               />
             }
