@@ -12,7 +12,7 @@ import { fetchCachedData, formatDate, removeSearchParam } from "../misc";
 
 const editPickerOptions = ["Aktualności", "Wydarzenia", "Kalendarz"];
 
-function PostEdit({ data, loaded }) {
+function PostEdit({ data, loaded, refetchData }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [title, setTitle] = useState("");
 
@@ -32,6 +32,7 @@ function PostEdit({ data, loaded }) {
 
   function _handleSubmit(e) {
     e.preventDefault();
+    refetchData();
   }
 
   function _handleDelete() {}
@@ -81,7 +82,7 @@ function PostEdit({ data, loaded }) {
   );
 }
 
-function EventEdit({ data, loaded }) {
+function EventEdit({ data, loaded, refetchData }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -107,6 +108,7 @@ function EventEdit({ data, loaded }) {
 
   function _handleSubmit(e) {
     e.preventDefault();
+    refetchData();
   }
 
   function _handleDelete() {}
@@ -210,10 +212,10 @@ function EventEdit({ data, loaded }) {
   );
 }
 
-function CalendarEdit({ data, loaded, setYear, setMonth }) {
+function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
-  const [dateStart, setDateStart] = useState("2020-01-01");
+  const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [type, setType] = useState("");
 
@@ -238,6 +240,7 @@ function CalendarEdit({ data, loaded, setYear, setMonth }) {
   ];
   function _handleSubmit(e) {
     e.preventDefault();
+    refetchData();
   }
 
   function _handleDelete() {}
@@ -441,14 +444,27 @@ export default function Edit({ setPage, canEdit, loginAction, user }) {
       </div>
       {/* use == instead of === to compare integers with number strings
       (editPicker can be a string representing a number e.g. "1") */}
-      {editPicker == 0 && <PostEdit data={newsData} loaded={loadedNews} />}
-      {editPicker == 1 && <EventEdit data={eventsData} loaded={loadedEvents} />}
+      {editPicker == 0 && (
+        <PostEdit
+          data={newsData}
+          loaded={loadedNews}
+          refetchData={() => _fetchNews(true)}
+        />
+      )}
+      {editPicker == 1 && (
+        <EventEdit
+          data={eventsData}
+          loaded={loadedEvents}
+          refetchData={() => _fetchEvents(true)}
+        />
+      )}
       {editPicker == 2 && (
         <CalendarEdit
           data={calendarData}
           loaded={loadedCalendar}
           setYear={setYear}
           setMonth={setMonth}
+          refetchData={() => _fetchCalendar(true)}
         />
       )}
     </div>
