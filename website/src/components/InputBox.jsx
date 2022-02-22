@@ -5,6 +5,7 @@ const InputBox = ({
     type = "text",
     name,
     placeholder,
+    width = "100%",
     onChange,
     cleanup,
     maxLength = 0,
@@ -16,6 +17,7 @@ const InputBox = ({
     return (
         <div
             className="main"
+            style={{ width: width }}
         >
             <input
                 className="input"
@@ -34,8 +36,8 @@ const InputBox = ({
                 style={{
                     transform: (focused || value !== "") ? ((type === "date" || type === "time") ? "translate(-.3em, -1.2em) scale(.75)" : "translate(-.3em, -1em) scale(.75)") : "translate(0,0) scale(1)",
                     color: (focused) ? "#111111" : "rgb(130, 130, 130)",
-                    padding: type === "date" ? ".2em 4em .2em .2em" : type === "time" ? ".1em .4em .25em .2em" : ".1em .2em",
-                    top: type === "date" ? ".85em" : type === "time" ? ".95em" : ".8em",
+                    padding: type === "date" ? ".3em 4em .25em .2em" : type === "time" ? ".1em .4em .25em .2em" : ".1em .2em",
+                    top: type === "date" ? ".75em" : type === "time" ? ".95em" : ".8em",
                 }}
             >
                 {placeholder}

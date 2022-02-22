@@ -13,7 +13,7 @@ const InputDropdown = ({ onChangeCallback, currentValue, defaultLabel, valueDisp
     }
 
     return (
-        <div style={{ marginTop: "-15px" }} >
+        <div style={{ marginTop: "-.9em" }}>
             <p
                 className="select-label"
                 style={{
