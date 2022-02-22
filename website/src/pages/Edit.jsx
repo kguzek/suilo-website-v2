@@ -3,14 +3,71 @@ import { useNavigate } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import InputBox from "../components/InputBox";
 import InputDropdown from "../components/InputDropdown";
+import InputFile from "../components/InputFile";
+
+const test = [
+  { value: "1", display: "1" },
+  { value: "2", display: "2" },
+  { value: "3", display: "3" }
+]
+const editPickerList = [
+  { value: "Aktualności", display: "Aktualności" },
+  { value: "Wydarzenia", display: "Wydarzenia" },
+  { value: "Kalendarz", display: "Kalendarz" }
+]
+
+const PostEdit = () => {
+  const [currentlyActive, setCurrentlyActive] = useState("")
+  const [title, setTitle] = useState("")
+  const [postContent, setPostContent] = useState("")
+
+  return (
+    <div className="edit-segment">
+      <InputDropdown label={"Post do edycji"} currentValue={currentlyActive} onChangeCallback={setCurrentlyActive} defaultLabel={"Nowy post"} valueDisplayArray={test} />
+      <InputBox name="post-title" placeholder="Tytuł" maxLength={64} value={title} onChange={setTitle} />
+      {/* PLACE FOR TEXT EDITOR */}
+      <InputFile placeholder="Miniatura" acceptedExtensions={".jpeg, .jpg, .png,"} />
+    </div>
+  );
+}
+
+const EventEdit = () => {
+  const [currentlyActive, setCurrentlyActive] = useState("")
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
+  const [date, setDate] = useState("")
+  const [time, setTime] = useState({ start: "", end: "" })
+  const [place, setPlace] = useState("")
+
+  return (
+    <div className="edit-segment">
+      <InputDropdown label={"Wydarzenie do edycji"} currentValue={currentlyActive} onChangeCallback={setCurrentlyActive} defaultLabel={"Nowe wydarzenie"} valueDisplayArray={test} />
+      <InputBox name="event-name" placeholder="Nazwa" maxLength={64} value={name} onChange={setName} />
+      <InputBox name="event-description" placeholder="Opis" maxLength={256} value={description} onChange={setDescription} />
+
+      {/* PLACE FOR TEXT EDITOR */}
+      <InputFile placeholder="Miniatura" acceptedExtensions={".jpeg, .jpg, .png,"} />
+    </div>
+  );
+}
+
+const CalendarEdit = () => {
+  const [name, setName] = useState("")
+  const [date, setDate] = useState({ start: "", end: "" })
+  const [type, setType] = useState("")
+
+  return (
+    <div className="edit-segment">
+
+      <InputDropdown label={"Typ wydarzenia"} currentValue={type} onChangeCallback={setType} defaultLabel={"Inne"} valueDisplayArray={test} />
+    </div>
+  );
+}
 
 const Edit = ({ setPage, canEdit, loginAction }) => {
   let navigate = useNavigate();
-  const [testValue, setTestValue] = useState("");
-  const [testValueDate, setTestValueDate] = useState(" ");
-  const [testValueNumber, setTestValueNumber] = useState("");
-  const [testValueHour, setTestValueHour] = useState(" ");
-  const [testValuePicker, setTestValuePicker] = useState("");
+  const [editPicker, setEditPicker] = useState("Aktualności");
+
 
   useEffect(() => {
     if (canEdit) {
@@ -23,7 +80,7 @@ const Edit = ({ setPage, canEdit, loginAction }) => {
   }, [canEdit]);
 
   return (
-    <div style={{ minHeight: "89vh" }}>
+    <div style={{ minHeight: "89vh" }} className="page-main">
       <MetaTags>
         <title>
           Edycja treści | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w
@@ -36,18 +93,10 @@ const Edit = ({ setPage, canEdit, loginAction }) => {
         <meta property="og:title" content="Edycja | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
       </MetaTags>
-      <p>Edit</p>
-      <InputBox name="" placeholder="Tytuł" value={testValue} onChange={setTestValue} />
-      <InputBox name="" placeholder="Data" type="date" value={testValueDate} onChange={setTestValueDate} />
-      <InputBox name="" placeholder="Numer" type="number" value={testValueNumber} onChange={setTestValueNumber} />
-      <InputBox name="" placeholder="Godzina" type="time" value={testValueHour} onChange={setTestValueHour} />
-      <InputDropdown
-        label="Post"
-        currentValue={testValuePicker}
-        onChangeCallback={setTestValuePicker}
-        defaultLabel={"Nowy post"}
-      // valueDisplayArray={[{ value: "1", display: "1" }, { value: "2", display: "2" }, { value: "3", display: "3" }]}
-      />
+      <InputDropdown label={"Element strony do edycji"} currentValue={editPicker} onChangeCallback={setEditPicker} defaultLabel={""} valueDisplayArray={editPickerList} />
+      {editPicker === editPickerList[0].value && <PostEdit />}
+      {editPicker === editPickerList[1].value && <EventEdit />}
+      {editPicker === editPickerList[2].value && <CalendarEdit />}
     </div>
   );
 };
