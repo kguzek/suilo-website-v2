@@ -28,6 +28,8 @@ function PostEdit({ data, loaded, refetchData }) {
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
 
+  const [clickedDelete, setClickedDelete] = useState(false);
+
   useEffect(() => {
     if (!loaded) {
       return;
@@ -38,17 +40,7 @@ function PostEdit({ data, loaded, refetchData }) {
       .shift();
     if (!post) {
       // No currently selected post
-      for (const setVar of [
-        setTitle,
-        setDescription,
-        setImageURL,
-        setImageAuthor,
-        setImageAltText,
-      ]) {
-        setVar("");
-      }
-      setAuthor(auth.currentUser?.displayName);
-      return;
+      return void _resetAllInputs();
     }
     setAuthor(post.author);
     setTitle(post.title);
@@ -56,13 +48,16 @@ function PostEdit({ data, loaded, refetchData }) {
     // photo properties are all nullable
     setImageURL(post.photo || "");
     setImageAuthor(post.photoAuthor || "");
-    setImageAltText(post.photoAlt || "");
+    setImageAltText(post.alt || "");
   }, [currentlyActive]);
 
   // Display loading screen if news data hasn't been retrieved yet
   if (!loaded) {
     return (
-      <div style={{ backgroundColor: "transparent" }}>
+      <div
+        className="loading-whole-screen"
+        style={{ backgroundColor: "transparent" }}
+      >
         <Bars color="#FFA900" height={50} width={50} />
       </div>
     );
@@ -71,6 +66,24 @@ function PostEdit({ data, loaded, refetchData }) {
   const posts = {};
   for (const post of data || []) {
     posts[post.id] = post.title;
+  }
+
+  // Bitwise AND to ensure both functions are called
+  const refresh = () => refetchData() & _resetAllInputs();
+
+  function _resetAllInputs() {
+    for (const setVar of [
+      setTitle,
+      setDescription,
+      setImageURL,
+      setImageAuthor,
+      setImageAltText,
+    ]) {
+      setVar("");
+    }
+    setCurrentlyActive("_default");
+
+    setAuthor(auth.currentUser?.displayName);
   }
 
   function _handleSubmit(e) {
@@ -94,14 +107,20 @@ function PostEdit({ data, loaded, refetchData }) {
       photoAuthor: imageAuthor,
       alt: imageAltText,
     };
-    fetchWithToken(url, method, params);
-    refetchData();
+    fetchWithToken(url, method, params).then((res) => {
+      // Update the data once request is processed
+      refresh();
+    });
   }
 
   function _handleDelete() {
+    setClickedDelete(true);
     // TODO: Are you sure you want to delete? etc. popup modal
-    fetchWithToken(`/news/${currentlyActive}`, "DELETE");
-    refetchData();
+    fetchWithToken(`/news/${currentlyActive}`, "DELETE").then((res) => {
+      // Update the data once request is processed
+      refresh();
+      setClickedDelete(false);
+    });
   }
 
   return (
@@ -143,7 +162,7 @@ function PostEdit({ data, loaded, refetchData }) {
       <InputBox
         name="image-url"
         placeholder="URL zdjęcia"
-        maxLength={60}
+        maxLength={256}
         value={imageURL}
         onChange={setImageURL}
       />
@@ -162,16 +181,23 @@ function PostEdit({ data, loaded, refetchData }) {
         onChange={setImageAltText}
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "_default" && (
-          <button
-            type="button"
-            className="delete-btn"
-            onClick={() => _handleDelete()}
-          >
-            <Trash color="rgb(252, 63, 30)" size={20} />
-            <p>usuń post</p>
-          </button>
-        )}
+        {currentlyActive !== "_default" &&
+          (clickedDelete ? (
+            <button type="button" className="delete-btn">
+              <div style={{ backgroundColor: "transparent" }}>
+                <Bars color="#FFA900" height={25} width={90} />
+              </div>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={() => _handleDelete()}
+            >
+              <Trash color="rgb(252, 63, 30)" size={20} />
+              <p>usuń post</p>
+            </button>
+          ))}
         <button type="submit" className="add-btn">
           {currentlyActive !== "_default" ? (
             <Edit3 color="#FFFFFF" size={24} />
@@ -194,6 +220,8 @@ function EventEdit({ data, loaded, refetchData }) {
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
 
+  const [clickedDelete, setClickedDelete] = useState(false);
+
   useEffect(() => {
     if (!loaded) {
       return;
@@ -204,17 +232,7 @@ function EventEdit({ data, loaded, refetchData }) {
       .shift();
     if (!event) {
       // No currently selected event
-      for (const setVar of [
-        setName,
-        setDescription,
-        setDate,
-        setStartTime,
-        setEndTime,
-        setLocation,
-      ]) {
-        setVar("");
-      }
-      return;
+      return void _resetAllInputs();
     }
     setName(event.title);
     setDescription(event.content);
@@ -225,9 +243,12 @@ function EventEdit({ data, loaded, refetchData }) {
   }, [currentlyActive]);
 
   // Display loading screen if events data hasn't been retrieved yet
-  if (!loaded) {
+  if (!true) {
     return (
-      <div style={{ backgroundColor: "transparent" }}>
+      <div
+        className="loading-whole-screen"
+        style={{ backgroundColor: "transparent" }}
+      >
         <Bars color="#FFA900" height={50} width={50} />
       </div>
     );
@@ -237,6 +258,23 @@ function EventEdit({ data, loaded, refetchData }) {
   for (const event of data?.contents || []) {
     const date = formatDate(event.date);
     events[event.id] = `${event.title} (${date})`;
+  }
+
+  // Bitwise AND to ensure both functions are called
+  const refresh = () => refetchData() & _resetAllInputs();
+
+  function _resetAllInputs() {
+    for (const setVar of [
+      setName,
+      setDescription,
+      setDate,
+      setStartTime,
+      setEndTime,
+      setLocation,
+    ]) {
+      setVar("");
+    }
+    setCurrentlyActive("_default");
   }
 
   function _handleSubmit(e) {
@@ -257,14 +295,18 @@ function EventEdit({ data, loaded, refetchData }) {
       location,
       content: description,
     };
-    fetchWithToken(url, method, params);
-    refetchData();
+    fetchWithToken(url, method, params).then((res) => {
+      // Update the data once request is processed
+      refresh();
+    });
   }
 
   function _handleDelete() {
     // TODO: Are you sure you want to delete? etc. popup modal
-    fetchWithToken(`/events/${currentlyActive}`, "DELETE");
-    refetchData();
+    fetchWithToken(`/events/${currentlyActive}`, "DELETE").then((res) => {
+      // Update the data once request is processed
+      refresh();
+    });
   }
 
   return (
@@ -329,7 +371,7 @@ function EventEdit({ data, loaded, refetchData }) {
       <InputBox
         name="location"
         placeholder="Miejsce wydarzenia"
-        maxLength={30}
+        maxLength={60}
         value={location}
         onChange={setLocation}
       />
@@ -339,16 +381,23 @@ function EventEdit({ data, loaded, refetchData }) {
         acceptedExtensions=".jpeg, .jpg, .png,"
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "_default" && (
-          <button
-            type="button"
-            className="delete-btn"
-            onClick={() => _handleDelete()}
-          >
-            <Trash color="rgb(252, 63, 30)" size={20} />
-            <p>usuń wydarzenie</p>
-          </button>
-        )}
+        {currentlyActive !== "_default" &&
+          (clickedDelete ? (
+            <button type="button" className="delete-btn">
+              <div style={{ backgroundColor: "transparent" }}>
+                <Bars color="#FFA900" height={25} width={90} />
+              </div>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={() => _handleDelete()}
+            >
+              <Trash color="rgb(252, 63, 30)" size={20} />
+              <p>usuń post</p>
+            </button>
+          ))}
         <button type="submit" className="add-btn">
           {currentlyActive !== "_default" ? (
             <Edit3 color="#FFFFFF" size={24} />
@@ -370,59 +419,77 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
   const [type, setType] = useState("");
-  const [subtype, setSubType] = useState("");
+  const [subtype, setSubtype] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [colourTop, setColourTop] = useState("");
   const [colourBottom, setColourBottom] = useState("");
+
+  const [clickedDelete, setClickedDelete] = useState(false);
 
   useEffect(() => {
     if (!loaded) {
       return;
     }
     // Get the currently selected event
-    const event = (data?.contents || [])
+    const event = (data?.events || [])
       .filter((event) => event.id === currentlyActive)
       .shift();
     if (!event) {
       // No currently selected event
-      for (const setVar of [
-        setName,
-        setType,
-        setSubType,
-        setStartDate,
-        setEndDate,
-        setColourTop,
-        setColourBottom,
-      ]) {
-        setVar("");
-      }
-      return;
+      return void _resetAllInputs();
     }
     setName(event.title);
-    setType(event.isPrimary ? "PRIMARY" : "SECONDARY");
-    setSubType(event.type);
-    setStartDate(formatTime(event.startDate));
-    setEndDate(formatTime(event.endDate));
-    setColourTop(event.colourTop);
-    setColourBottom(event.colourBottom);
+    setSubtype(event.type);
+    setStartDate(serialiseDateArray(event.startDate));
+    setEndDate(serialiseDateArray(event.endDate));
+    if (event.isPrimary) {
+      setType("PRIMARY");
+      setColourTop(event.colour.colourTop);
+      setColourBottom(event.colour.colourBottom);
+    } else {
+      setType("SECONDARY");
+      setColourTop(event.colour);
+      setColourBottom("");
+    }
   }, [currentlyActive]);
 
   // Display loading screen if calendar data hasn't been retrieved yet
   if (!loaded) {
     return (
-      <div style={{ backgroundColor: "transparent" }}>
+      <div
+        className="loading-whole-screen"
+        style={{ backgroundColor: "transparent" }}
+      >
         <Bars color="#FFA900" height={50} width={50} />
       </div>
     );
   }
 
+  const eventSubtypes = data?.eventSubtypes || [];
   const calendarEvents = {};
-  for (const event of data?.contents || []) {
+  for (const event of data?.events || []) {
     calendarEvents[event.id] = event.title;
   }
 
-  let eventSubtypes = data?.eventSubtypes || [];
+  // Bitwise AND to ensure both functions are called
+  const refresh = () => refetchData() & _resetAllInputs();
+
+  function _resetAllInputs() {
+    for (const setVar of [
+      setName,
+      setType,
+      setSubtype,
+      setStartDate,
+      setEndDate,
+      setColourTop,
+      setColourBottom,
+    ]) {
+      setVar("");
+    }
+    setCurrentlyActive("_default");
+  }
+
   function _handleSubmit(e) {
     e.preventDefault();
     let url = "/calendar/";
@@ -442,14 +509,18 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
       colourTop,
       colourBottom,
     };
-    fetchWithToken(url, method, params);
-    refetchData();
+    fetchWithToken(url, method, params).then((res) => {
+      // Update the data once request is sent
+      refresh();
+    });
   }
 
   function _handleDelete() {
     // TODO: Are you sure you want to delete? etc. popup modal
-    fetchWithToken(`/calendar/${currentlyActive}`, "DELETE");
-    refetchData();
+    fetchWithToken(`/calendar/${currentlyActive}`, "DELETE").then((res) => {
+      // Update the data once request is sent
+      refresh();
+    });
   }
 
   return (
@@ -457,7 +528,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
       <InputDropdown
         label="Typ wydarzenia"
         currentValue={subtype}
-        onChangeCallback={setSubType}
+        onChangeCallback={setSubtype}
         defaultLabel="inne"
         valueDisplayObject={Object.fromEntries(eventSubtypes.entries())}
       />
@@ -504,16 +575,23 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
         valueDisplayObject={calendarEvents}
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "_default" && (
-          <button
-            type="button"
-            className="delete-btn"
-            onClick={() => _handleDelete()}
-          >
-            <Trash color="rgb(252, 63, 30)" size={20} />
-            <p>usuń wydarzenie</p>
-          </button>
-        )}
+        {currentlyActive !== "_default" &&
+          (clickedDelete ? (
+            <button type="button" className="delete-btn">
+              <div style={{ backgroundColor: "transparent" }}>
+                <Bars color="#FFA900" height={25} width={90} />
+              </div>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={() => _handleDelete()}
+            >
+              <Trash color="rgb(252, 63, 30)" size={20} />
+              <p>usuń post</p>
+            </button>
+          ))}
         <button type="submit" className="add-btn">
           {currentlyActive !== "_default" ? (
             <Edit3 color="#FFFFFF" size={24} />
