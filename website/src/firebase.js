@@ -10,8 +10,8 @@ import {
 import { initializeApp } from "firebase/app";
 import React, { useEffect } from "react";
 
-export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
-// "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
+export const API_URL = // "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
+"https://europe-west1-suilo-page.cloudfunctions.net/app/api";
 
 // CONFIDENTIAL DATA
 const firebaseConfig = {
