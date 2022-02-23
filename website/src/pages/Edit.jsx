@@ -8,13 +8,56 @@ import InputArea from "../components/InputArea";
 import InputDropdown from "../components/InputDropdown";
 import InputFile from "../components/InputFile";
 import { fetchNewsData } from "../components/PostCardPreview";
-import { fetchCachedData, formatDate, removeSearchParam } from "../misc";
+import {
+  fetchCachedData,
+  formatDate,
+  formatTime,
+  removeSearchParam,
+} from "../misc";
+import { serialiseDateArray } from "../common";
+import { auth, fetchWithToken } from "../firebase";
 
 const editPickerOptions = ["Aktualności", "Wydarzenia", "Kalendarz"];
 
 function PostEdit({ data, loaded, refetchData }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
+  const [author, setAuthor] = useState(auth.currentUser.displayName);
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [imageURL, setImageURL] = useState("");
+  const [imageAuthor, setImageAuthor] = useState("");
+  const [imageAltText, setImageAltText] = useState("");
+
+  useEffect(() => {
+    if (!loaded) {
+      return;
+    }
+    // Get the currently selected post
+    const post = (data || [])
+      .filter((post) => post.id === currentlyActive)
+      .shift();
+    if (!post) {
+      // No currently selected post
+      for (const setVar of [
+        setTitle,
+        setDescription,
+        setImageURL,
+        setImageAuthor,
+        setImageAltText,
+      ]) {
+        setVar("");
+      }
+      setAuthor(auth.currentUser.displayName);
+      return;
+    }
+    setAuthor(post.author);
+    setTitle(post.title);
+    setDescription(post.content);
+    // photo properties are all nullable
+    setImageURL(post.photo || "");
+    setImageAuthor(post.photoAuthor || "");
+    setImageAltText(post.photoAlt || "");
+  }, [currentlyActive]);
 
   // Display loading screen if news data hasn't been retrieved yet
   if (!loaded) {
@@ -26,16 +69,40 @@ function PostEdit({ data, loaded, refetchData }) {
   }
 
   const posts = {};
-  for (const post of data) {
+  for (const post of data || []) {
     posts[post.id] = post.title;
   }
 
   function _handleSubmit(e) {
     e.preventDefault();
+    let url = "/news/";
+    let method = "POST";
+    // Check if an existing post is selected
+    if (currentlyActive !== "_default") {
+      method = "PUT";
+      url += currentlyActive;
+    }
+    const shortDescription = description.substring(0, 180);
+    // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null
+    const params = {
+      date: new Date().toJSON(),
+      author,
+      title,
+      text: shortDescription,
+      content: description,
+      photo: imageURL,
+      photoAuthor: imageAuthor,
+      alt: imageAltText,
+    };
+    fetchWithToken(url, method, params);
     refetchData();
   }
 
-  function _handleDelete() {}
+  function _handleDelete() {
+    // TODO: Are you sure you want to delete? etc. popup modal
+    fetchWithToken(`/news/${currentlyActive}`, "DELETE");
+    refetchData();
+  }
 
   return (
     <form className="edit-segment" onSubmit={_handleSubmit}>
@@ -54,9 +121,45 @@ function PostEdit({ data, loaded, refetchData }) {
         onChange={setTitle}
       />
       {/* PLACE FOR TEXT EDITOR */}
+      <InputArea
+        name="post-description"
+        placeholder="Opis"
+        maxLength={256}
+        value={description}
+        onChange={setDescription}
+      />
+      <InputBox
+        name="post-author"
+        placeholder="Autor"
+        maxLength={60}
+        value={author}
+        disabled={true}
+      />
       <InputFile
-        placeholder="Miniatura"
-        acceptedExtensions=".jpeg, .jpg, .png,"
+        placeholder={"Miniatura"}
+        onChange={() => {} /* TODO: integrate backend image hosting */}
+        acceptedExtensions=".jpeg, .jpg, .png"
+      />
+      <InputBox
+        name="image-url"
+        placeholder="URL zdjęcia"
+        maxLength={60}
+        value={imageURL}
+        onChange={setImageURL}
+      />
+      <InputBox
+        name="image-author"
+        placeholder="Autor zdjęcia"
+        maxLength={60}
+        value={imageAuthor}
+        onChange={setImageAuthor}
+      />
+      <InputBox
+        name="image-alt-text"
+        placeholder="Tekst alternatywny do zdjęcia"
+        maxLength={60}
+        value={imageAltText}
+        onChange={setImageAltText}
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" && (
@@ -87,9 +190,39 @@ function EventEdit({ data, loaded, refetchData }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
-  const [timeStart, setTimeStart] = useState("");
-  const [timeEnd, setTimeEnd] = useState("");
-  const [place, setPlace] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [location, setLocation] = useState("");
+
+  useEffect(() => {
+    if (!loaded) {
+      return;
+    }
+    // Get the currently selected event
+    const event = (data?.contents || [])
+      .filter((event) => event.id === currentlyActive)
+      .shift();
+    if (!event) {
+      // No currently selected event
+      for (const setVar of [
+        setName,
+        setDescription,
+        setDate,
+        setStartTime,
+        setEndTime,
+        setLocation,
+      ]) {
+        setVar("");
+      }
+      return;
+    }
+    setName(event.title);
+    setDescription(event.content);
+    setDate(serialiseDateArray(event.date));
+    setStartTime(formatTime(event.startTime));
+    setEndTime(formatTime(event.endTime));
+    setLocation(event.location || ""); // location is nullable
+  }, [currentlyActive]);
 
   // Display loading screen if events data hasn't been retrieved yet
   if (!loaded) {
@@ -108,10 +241,31 @@ function EventEdit({ data, loaded, refetchData }) {
 
   function _handleSubmit(e) {
     e.preventDefault();
+    let url = "/events/";
+    let method = "POST";
+    // Check if an existing post is selected
+    if (currentlyActive !== "_default") {
+      method = "PUT";
+      url += currentlyActive;
+    }
+    // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&content=Treść wydarzenia...
+    const params = {
+      title: name,
+      date,
+      startTime,
+      endTime,
+      location,
+      content: description,
+    };
+    fetchWithToken(url, method, params);
     refetchData();
   }
 
-  function _handleDelete() {}
+  function _handleDelete() {
+    // TODO: Are you sure you want to delete? etc. popup modal
+    fetchWithToken(`/events/${currentlyActive}`, "DELETE");
+    refetchData();
+  }
 
   return (
     <form className="edit-segment" onSubmit={_handleSubmit}>
@@ -158,8 +312,8 @@ function EventEdit({ data, loaded, refetchData }) {
           type="time"
           pattern="HH:mm"
           placeholder="Godzina rozpoczęcia"
-          value={timeStart}
-          onChange={setTimeStart}
+          value={startTime}
+          onChange={setStartTime}
         />
         <p className="from-to-indicator">-</p>
         <InputBox
@@ -168,16 +322,16 @@ function EventEdit({ data, loaded, refetchData }) {
           type="time"
           pattern="HH:mm"
           placeholder="Godzina zakończenia"
-          value={timeEnd}
-          onChange={setTimeEnd}
+          value={endTime}
+          onChange={setEndTime}
         />
       </div>
       <InputBox
         name="location"
         placeholder="Miejsce wydarzenia"
         maxLength={30}
-        value={place}
-        onChange={setPlace}
+        value={location}
+        onChange={setLocation}
       />
       {/* PLACE FOR TEXT EDITOR */}
       <InputFile
@@ -215,9 +369,44 @@ function EventEdit({ data, loaded, refetchData }) {
 function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
-  const [dateStart, setDateStart] = useState("");
-  const [dateEnd, setDateEnd] = useState("");
   const [type, setType] = useState("");
+  const [subtype, setSubType] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [colourTop, setColourTop] = useState("");
+  const [colourBottom, setColourBottom] = useState("");
+
+  useEffect(() => {
+    if (!loaded) {
+      return;
+    }
+    // Get the currently selected event
+    const event = (data?.contents || [])
+      .filter((event) => event.id === currentlyActive)
+      .shift();
+    if (!event) {
+      // No currently selected event
+      for (const setVar of [
+        setName,
+        setType,
+        setSubType,
+        setStartDate,
+        setEndDate,
+        setColourTop,
+        setColourBottom,
+      ]) {
+        setVar("");
+      }
+      return;
+    }
+    setName(event.title);
+    setType(event.isPrimary ? "PRIMARY" : "SECONDARY");
+    setSubType(event.type);
+    setStartDate(formatTime(event.startDate));
+    setEndDate(formatTime(event.endDate));
+    setColourTop(event.colourTop);
+    setColourBottom(event.colourBottom);
+  }, [currentlyActive]);
 
   // Display loading screen if calendar data hasn't been retrieved yet
   if (!loaded) {
@@ -233,25 +422,43 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
     calendarEvents[event.id] = event.title;
   }
 
-  let eventSubtypes = data?.eventSubtypes || [
-    "Subtype A",
-    "Subtype B",
-    "Subtype C",
-  ];
+  let eventSubtypes = data?.eventSubtypes || [];
   function _handleSubmit(e) {
     e.preventDefault();
+    let url = "/calendar/";
+    let method = "POST";
+    // Check if an existing event is selected
+    if (currentlyActive !== "_default") {
+      method = "PUT";
+      url += currentlyActive;
+    }
+    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colourTop=#000000&colourBottom=#000000
+    const params = {
+      title: name,
+      type: subtype,
+      startDate,
+      endDate,
+      isPrimary: type === "PRIMARY",
+      colourTop,
+      colourBottom,
+    };
+    fetchWithToken(url, method, params);
     refetchData();
   }
 
-  function _handleDelete() {}
+  function _handleDelete() {
+    // TODO: Are you sure you want to delete? etc. popup modal
+    fetchWithToken(`/calendar/${currentlyActive}`, "DELETE");
+    refetchData();
+  }
 
   return (
     <form className="edit-segment" onSubmit={_handleSubmit}>
       <InputDropdown
         label="Typ wydarzenia"
-        currentValue={type}
-        onChangeCallback={setType}
-        // defaultLabel="Inne"
+        currentValue={subtype}
+        onChangeCallback={setSubType}
+        defaultLabel="inne"
         valueDisplayObject={Object.fromEntries(eventSubtypes.entries())}
       />
       <InputBox
@@ -275,8 +482,8 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
           type="date"
           pattern="dd/mm/yyyy"
           placeholder="Rozpoczęcie"
-          value={dateStart}
-          onChange={setDateStart}
+          value={startDate}
+          onChange={setStartDate}
         />
         <p className="from-to-indicator">-</p>
         <InputBox
@@ -285,8 +492,8 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
           type="date"
           pattern="dd/mm/yyyy"
           placeholder="Zakończenie"
-          value={dateEnd}
-          onChange={setDateEnd}
+          value={endDate}
+          onChange={setEndDate}
         />
       </div>
       <InputDropdown
@@ -331,7 +538,7 @@ export default function Edit({ setPage, canEdit, loginAction, user }) {
   const [editPicker, setEditPicker] = useState(0);
 
   // API data storage
-  const [newsData, setNewsData] = useState({});
+  const [newsData, setNewsData] = useState([]);
   const [eventsData, setEventsData] = useState({});
   const [calendarData, setCalendarData] = useState({});
   const [loadedNews, setLoadedNews] = useState(false);
