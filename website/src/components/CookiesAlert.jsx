@@ -1,34 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { useCookies } from "react-cookie";
 
 const CookiesAlert = () => {
   const [yPos, setY] = useState("-140px");
   const [display, setDisplay] = useState("none");
   const { height, width } = useWindowDimensions();
-  const [cookies, setCookies] = useCookies(["cookie"]);
   // user agreed to cookies policy
   const _cookieAgree = () => {
     //action
-    setCookies("cookie", true, { sameSite: "lax" });
+    localStorage.setItem("cookiesEnabled", "true");
     _fadeOut();
   };
 
   // user disagreed with cookies policy
   const _cookieDisagree = () => {
     //action
-    setCookies("cookie", false, { sameSite: "lax" });
+    localStorage.setItem("cookiesEnabled", "false");
     _fadeOut();
   };
 
   // animation on enter
   useEffect(() => {
-    if (!cookies.cookie) {
+    if (!localStorage.getItem("cookiesEnabled")) {
       setDisplay("flex");
       setTimeout(() => {
         setY("0");
       }, 100);
     }
-  }, [cookies.cookie]);
+  }, []);
 
   // animation on exit
   const _fadeOut = () => {
