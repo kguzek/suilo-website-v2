@@ -28,7 +28,7 @@ const app = express();
 } */
 app.use(cors());
 
-app.use(authMiddleware);
+app.use("/api/", authMiddleware);
 
 // set individual API routes
 app.use("/api/luckyNumbers/", require("./routes/luckyNumbers"));
@@ -100,19 +100,16 @@ for (const route of definedRoutes) {
   }
 }
 
-// define dummy route for user permissions verification
+// define dummy route for user permissions authentication
 app.all("/api/", (req, res) => {
   if (req.userInfo) {
     return res.status(200).json({
-      msg: "User verification passed!",
-      userID: req.userInfo.uid,
-      userEmail: req.userInfo.email,
-      userIsAdmin: req.userInfo.isAdmin,
-      userIsEditor: req.userInfo.isEditor,
+      msg: "User authentication passed!",
+      userInfo: req.userInfo,
     });
   }
   return res.status(403).json({
-    msg: "User verification failed: no API token. You may still access public endpoints.",
+    msg: "User authentication failed: no API token. You may still access public endpoints.",
   });
 });
 

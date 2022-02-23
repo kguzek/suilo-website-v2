@@ -8,6 +8,7 @@ admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 
 // Assign database reference
 const db = admin.firestore();
+db.settings({ ignoreUndefinedProperties: true });
 
 // Initialise HTTP error constants
 const HTTP400 = "400 Bad Request: ";

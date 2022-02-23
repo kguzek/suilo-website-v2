@@ -6,17 +6,36 @@ const { admin, db } = require("./util");
  * On success, checks the resulting user's credentials in the permissions database document to ensure the user
  * possesses the permissions necessary to access the API.
  */
-async function validateToken(req, res, next, authType) {
-  function send403(msg = "You are not authorised to do that.", info = {}) {
+async function validateToken(req, res, next, requiredPerm) {
+  function send403(msg = "You are not authorised to do that.", info) {
     res
       .status(403)
-      .json({ errorDescription: "403 Forbidden: " + msg, ...info });
+      .json({ errorDescription: "403 Forbidden: " + msg, ...(info ?? {}) });
     console.log(
-      `Rejected ${req.method} request to endpoint '${req.path}'.`,
-      info
+      `Rejected ${req.method} request to endpoint '${req.path}' (${requiredPerm}).`,
+      info ?? ""
     );
   }
 
+  /** If the permission level is set to public, calls the next middleware function (allows the request) and returns true.
+   * Otherwise, returns false.
+   * Argument `requestType` specifies the request description to be sent to the log. Defaults to "anonymous".
+   */
+  function allowPublicEndpoints(requestType = "anonymous") {
+    if (requiredPerm) {
+      return false;
+    }
+    // allow users that are not signed in to make these requests
+    console.log(
+      `Validated ${requestType} ${req.method} request to public endpoint '${req.path}'.`
+    );
+    next();
+    return true;
+  }
+
+  /** Checks the database record for the given user's credentials and allows the request if they have the appropriate permissions
+   * to access the requested resource. If the entry is not present, creates a default one with access only to public endpoints.
+   */
   function validateUserPermissions(userRecord) {
     console.log(`Validating ${userRecord.displayName}...`);
     const userIdentities = userRecord.providerData;
@@ -28,36 +47,29 @@ async function validateToken(req, res, next, authType) {
 
     docRef.get().then((doc) => {
       const data = doc.data();
-      let isAdmin = false;
-      let isEditor = false;
+      const isAdmin = data?.isAdmin ?? false;
+      const canEdit = data?.canEdit ?? [];
       if (data) {
-        isAdmin = data.admin;
-        isEditor = data.editor;
-        if (authType === "edit" && !(isAdmin || isEditor)) {
-          return send403();
-        } else if (authType === "admin" && !isAdmin) {
+        if (requiredPerm && !(isAdmin || canEdit.includes(requiredPerm))) {
           return send403();
         }
       } else {
         // user is not yet in the database; add default entry
         docRef.set({
-          name: userInfo.email,
-          editor: false,
-          admin: false,
-          event_ids: [],
+          ...userInfo,
+          isAdmin,
+          canEdit,
         });
-        if (authType !== "any") {
+        if (requiredPerm) {
           return send403();
         }
       }
       // accept the request
-      console.log(
-        `Validated ${req.method} request to endpoint '${req.path}'.`
-      );
+      console.log(`Validated ${req.method} request to endpoint '${req.path}'.`);
       req.userInfo = {
         ...userInfo,
         isAdmin,
-        isEditor,
+        canEdit,
       };
       next();
     });
@@ -79,14 +91,9 @@ async function validateToken(req, res, next, authType) {
   // if the token is provided but the user is not logged in, the
   // fetch method interpolates the token as literal "undefined".
   if (!idToken || idToken === "undefined") {
-    if (authType === "any") {
-      // allow users that are not signed in to make these requests
-      console.log(
-        `Validated anonymous ${req.method} request to public endpoint '${req.path}'.`
-      );
-      return next();
-    }
-    return send403("No authorisation token provided.");
+    return (
+      allowPublicEndpoints() || send403("No authorisation token provided.")
+    );
   }
   admin
     .auth()
@@ -105,28 +112,27 @@ async function validateToken(req, res, next, authType) {
       admin.auth().getUser(uid).then(validateUserPermissions);
     })
     .catch((error) => {
-      return send403("Encountered an error while validating the API token.", {
-        errorDetails: error.toString(),
-      });
+      return (
+        allowPublicEndpoints("malformed (invalid token)") ||
+        send403("Encountered an error while validating the API token.", error)
+      );
     });
 }
 
 async function determineAuthType(req, res, next) {
-  // authType shoud be one of:
-  // * any -- anyone with an account can access
-  // * edit -- only editors and admins
-  // * admin -- only admins
-
   const publicHTTPMethods = ["GET", "HEAD", "PATCH"];
 
-  let authType = "admin";
   if (publicHTTPMethods.includes(req.method)) {
-    authType = "any";
-  } else if (req.method === "PUT") {
-    authType = "edit";
-  }
+    validateToken(req, res, next);
+  } else {
+    // determine the path the request is attempting to access
 
-  validateToken(req, res, next, authType);
+    // request path without the leading forward slash ("/")
+    const trimmedPath = req.path.substring(1, req.path.length);
+    // get the first path element before the next "/"
+    const subPath = trimmedPath.split("/").shift();
+    validateToken(req, res, next, subPath);
+  }
 }
 
 module.exports = determineAuthType;
