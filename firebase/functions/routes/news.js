@@ -28,7 +28,7 @@ const postAttributeSanitisers = {
 router
   // CREATE news
   .post("/", (req, res) => {
-    // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null
+    // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null
 
     if (req.query.create_test_data) {
       return createTestData(res);

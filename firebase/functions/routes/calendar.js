@@ -241,7 +241,7 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
 router
   // CREATE new calendar event
   .post("/", (req, res) => {
-    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1
+    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colourTop=#000000&colourBottom=#000000
 
     const startDate = new Date(req.query.startDate || 0);
     const endDate = new Date(req.query.endDate || 0);
