@@ -10,8 +10,8 @@ import {
 import { initializeApp } from "firebase/app";
 import React, { useEffect } from "react";
 
-export const API_URL = // "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
-  "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
+export const API_URL = "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
+// "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
 
 // CONFIDENTIAL DATA
 const firebaseConfig = {
@@ -26,7 +26,7 @@ const firebaseConfig = {
 
 // setup Google Auth provider
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 auth.useDeviceLanguage();
 provider.setCustomParameters({ prompt: "select_account" });
@@ -49,12 +49,18 @@ function _executeFetchStack(token) {
 }
 
 /** Performs a 'fetch' with the auth header set to the user's API token. */
-export function fetchWithToken(relativeURL, method = "get") {
+export function fetchWithToken(relativeURL, method = "get", params) {
+  // Ensure the relative URL starts with a leading forward slash
+  if (!relativeURL.startsWith("/")) {
+    relativeURL = "/" + relativeURL;
+  }
   function then(resolve, reject) {
     /** Performs the fetch request with the provided success and failure handlers. */
     function _fetch(token) {
-      // console.log(`Fetching '/api${relativeURL}'...`);
-      fetch(API_URL + relativeURL, {
+      // Uncomment the below line to view the logged in user's API token
+      // console.log(token);
+      const url = `${API_URL}${relativeURL}?${new URLSearchParams(params)}`;
+      fetch(url, {
         method,
         headers: new Headers({
           "Content-Type": "application/json",
