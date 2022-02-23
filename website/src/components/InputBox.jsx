@@ -16,6 +16,10 @@ const InputBox = ({
   const [focused, setFocus] = useState(false);
   const [charCount, setCharCount] = useState(0);
 
+  useEffect(() => {
+    setCharCount(value.length);
+  }, [value])
+  
   return (
     <div className="main" style={{ width: width }}>
       <input
