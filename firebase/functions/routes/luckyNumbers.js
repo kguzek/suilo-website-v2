@@ -128,7 +128,7 @@ router
       return res.status(500).json({
         errorDescription:
           "500 Internal Server Error: Could not get the lucky numbers data.",
-        error,
+        errorDetails: error.toString(),
       });
     }
   })
@@ -210,7 +210,7 @@ router
       return res.status(500).json({
         errorDescription:
           "500 Internal Server Error: Could not get the lucky numbers data.",
-        error,
+        errorDetails: error.toString(),
       });
     }
   });

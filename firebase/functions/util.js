@@ -105,8 +105,9 @@ function createSingleDocument(data, res, { collectionName, collectionRef }) {
     .catch((error) => {
       // return an error when the document could not be added, e.g. invalid collection name
       return res.status(500).json({
-        errorDescription: HTTP500 + "Could not create document.",
-        error,
+        errorDescription:
+          HTTP500 + "The specified document could not be created.",
+        errorDetails: error.toString(),
       });
     });
 }
@@ -160,8 +161,8 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
     if (error) {
       console.log(error);
       return res.status(500).json({
-        errorDescription: HTTP500 + "Could not retrieve documents.",
-        error,
+        errorDescription: HTTP500 + "Could not retrieve the documents.",
+        errorDetails: error.toString(),
       });
     }
     return res.status(200).json({
@@ -193,7 +194,7 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
       });
       return (callback || defaultCallback)(null, response, querySnapshot.docs);
     })
-    .catch(callback || defaultCallback);
+    .catch(/*callback || */ defaultCallback);
 }
 
 /** Updates the document fields and sends a response containing the new data.
@@ -249,8 +250,9 @@ function updateSingleDocument(
       // return an error when the document was not found/could not be updated
       return res.status(400).json({
         errorDescription:
-          HTTP400 + "Could not update document. It most likely does not exist.",
-        error,
+          HTTP400 +
+          "Could not update the specified document. It most likely does not exist.",
+        errorDetails: error.toString(),
       });
     });
 }
@@ -275,8 +277,9 @@ function deleteSingleDocument(docQuery, res) {
     .catch((error) => {
       return res.status(500).json({
         errorDescription:
-          HTTP500 + "The specified document could not be deleted.",
-        error,
+          HTTP500 +
+          "Could not delete the specified document. This does not mean that it doesn't exist.",
+        errorDetails: error.toString(),
       });
     });
 }

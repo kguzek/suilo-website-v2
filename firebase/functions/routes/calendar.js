@@ -125,15 +125,15 @@ function processEventData(data) {
     end: serialiseDateArray(data.endDate),
   };
   // comment out the below line if the type conversion is to be made on the client side
-  data.eventType = calendarEventTypes[data.type];
+  // data.eventType = calendarEventTypes[data.type];
   // remove unused parameters from the new data object
   const {
     isPrimary,
     colourTop,
     colourBottom,
-    type,
-    startDate,
-    endDate,
+    // type,
+    // startDate,
+    // endDate,
     ...newData
   } = data;
   return newData;
@@ -187,7 +187,7 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
     if (error) {
       return void res.status(500).json({
         errorDescription: HTTP.err500 + "Could not retrieve calendar data.",
-        error,
+        errorDetails: error.toString(),
       });
     }
     const response = { numEvents: 0, events: [] };
