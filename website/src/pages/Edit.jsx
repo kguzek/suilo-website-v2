@@ -28,6 +28,7 @@ function PostEdit({ data, loaded, refetchData }) {
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
 
+  const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
   useEffect(() => {
@@ -88,6 +89,7 @@ function PostEdit({ data, loaded, refetchData }) {
 
   function _handleSubmit(e) {
     e.preventDefault();
+    setClickedSubmit(true);
     let url = "/news/";
     let method = "POST";
     // Check if an existing post is selected
@@ -110,6 +112,7 @@ function PostEdit({ data, loaded, refetchData }) {
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
       refresh();
+      setClickedSubmit(false);
     });
   }
 
@@ -183,11 +186,7 @@ function PostEdit({ data, loaded, refetchData }) {
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
-            <button type="button" className="delete-btn">
-              <div style={{ backgroundColor: "transparent" }}>
-                <Bars color="#FFA900" height={25} width={90} />
-              </div>
-            </button>
+            <LoadingButton />
           ) : (
             <button
               type="button"
@@ -198,14 +197,20 @@ function PostEdit({ data, loaded, refetchData }) {
               <p>usuń post</p>
             </button>
           ))}
-        <button type="submit" className="add-btn">
-          {currentlyActive !== "_default" ? (
-            <Edit3 color="#FFFFFF" size={24} />
-          ) : (
-            <Plus color="#FFFFFF" size={24} />
-          )}
-          <p>{currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}</p>
-        </button>
+        {clickedSubmit ? (
+          <LoadingButton style="opaque" />
+        ) : (
+          <button type="submit" className="add-btn">
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}
+            </p>
+          </button>
+        )}
       </div>
     </form>
   );
@@ -220,6 +225,7 @@ function EventEdit({ data, loaded, refetchData }) {
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
 
+  const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
   useEffect(() => {
@@ -279,6 +285,7 @@ function EventEdit({ data, loaded, refetchData }) {
 
   function _handleSubmit(e) {
     e.preventDefault();
+    setClickedSubmit(true);
     let url = "/events/";
     let method = "POST";
     // Check if an existing post is selected
@@ -298,14 +305,17 @@ function EventEdit({ data, loaded, refetchData }) {
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
       refresh();
+      setClickedSubmit(false);
     });
   }
 
   function _handleDelete() {
+    setClickedDelete(true);
     // TODO: Are you sure you want to delete? etc. popup modal
     fetchWithToken(`/events/${currentlyActive}`, "DELETE").then((res) => {
       // Update the data once request is processed
       refresh();
+      setClickedDelete(false);
     });
   }
 
@@ -383,11 +393,7 @@ function EventEdit({ data, loaded, refetchData }) {
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
-            <button type="button" className="delete-btn">
-              <div style={{ backgroundColor: "transparent" }}>
-                <Bars color="#FFA900" height={25} width={90} />
-              </div>
-            </button>
+            <LoadingButton />
           ) : (
             <button
               type="button"
@@ -398,18 +404,22 @@ function EventEdit({ data, loaded, refetchData }) {
               <p>usuń post</p>
             </button>
           ))}
-        <button type="submit" className="add-btn">
-          {currentlyActive !== "_default" ? (
-            <Edit3 color="#FFFFFF" size={24} />
-          ) : (
-            <Plus color="#FFFFFF" size={24} />
-          )}
-          <p>
-            {currentlyActive !== "_default"
-              ? "edytuj wydarzenie"
-              : "dodaj wydarzenie"}
-          </p>
-        </button>
+        {clickedSubmit ? (
+          <LoadingButton style="opaque" />
+        ) : (
+          <button type="submit" className="add-btn">
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "edytuj wydarzenie"
+                : "dodaj wydarzenie"}
+            </p>
+          </button>
+        )}
       </div>
     </form>
   );
@@ -418,13 +428,14 @@ function EventEdit({ data, loaded, refetchData }) {
 function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
-  const [type, setType] = useState("");
+  const [eventType, setEventType] = useState("");
   const [subtype, setSubtype] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [colourTop, setColourTop] = useState("");
   const [colourBottom, setColourBottom] = useState("");
 
+  const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
   useEffect(() => {
@@ -444,11 +455,11 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
     setStartDate(serialiseDateArray(event.startDate));
     setEndDate(serialiseDateArray(event.endDate));
     if (event.isPrimary) {
-      setType("PRIMARY");
+      setEventType("PRIMARY");
       setColourTop(event.colour.colourTop);
       setColourBottom(event.colour.colourBottom);
     } else {
-      setType("SECONDARY");
+      setEventType("SECONDARY");
       setColourTop(event.colour);
       setColourBottom("");
     }
@@ -478,7 +489,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   function _resetAllInputs() {
     for (const setVar of [
       setName,
-      setType,
+      setEventType,
       setSubtype,
       setStartDate,
       setEndDate,
@@ -492,6 +503,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
 
   function _handleSubmit(e) {
     e.preventDefault();
+    setClickedSubmit(true);
     let url = "/calendar/";
     let method = "POST";
     // Check if an existing event is selected
@@ -505,28 +517,45 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
       type: subtype,
       startDate,
       endDate,
-      isPrimary: type === "PRIMARY",
+      isPrimary: eventType.toUpperCase().trim() === "PRIMARY",
       colourTop,
       colourBottom,
     };
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is sent
       refresh();
+      setClickedSubmit(false);
     });
   }
 
   function _handleDelete() {
+    setClickedDelete(true);
     // TODO: Are you sure you want to delete? etc. popup modal
     fetchWithToken(`/calendar/${currentlyActive}`, "DELETE").then((res) => {
       // Update the data once request is sent
       refresh();
+      setClickedDelete(false);
     });
   }
 
   return (
     <form className="edit-segment" onSubmit={_handleSubmit}>
       <InputDropdown
-        label="Typ wydarzenia"
+        label="Wydarzenie do edycji"
+        currentValue={currentlyActive}
+        onChangeCallback={setCurrentlyActive}
+        defaultLabel="Nowe wydarzenie"
+        valueDisplayObject={calendarEvents}
+      />
+      <InputBox
+        maxLength={9}
+        name="event-type"
+        placeholder="Typ wydarzenia (PRIMARY/SECONDARY)"
+        value={eventType}
+        onChange={setEventType}
+      />
+      <InputDropdown
+        label="Subtyp wydarzenia"
         currentValue={subtype}
         onChangeCallback={setSubtype}
         defaultLabel="inne"
@@ -567,21 +596,11 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
           onChange={setEndDate}
         />
       </div>
-      <InputDropdown
-        label="Wydarzenie do edycji"
-        currentValue={currentlyActive}
-        onChangeCallback={setCurrentlyActive}
-        defaultLabel="Nowe wydarzenie"
-        valueDisplayObject={calendarEvents}
-      />
+
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
-            <button type="button" className="delete-btn">
-              <div style={{ backgroundColor: "transparent" }}>
-                <Bars color="#FFA900" height={25} width={90} />
-              </div>
-            </button>
+            <LoadingButton />
           ) : (
             <button
               type="button"
@@ -592,20 +611,45 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
               <p>usuń post</p>
             </button>
           ))}
-        <button type="submit" className="add-btn">
-          {currentlyActive !== "_default" ? (
-            <Edit3 color="#FFFFFF" size={24} />
-          ) : (
-            <Plus color="#FFFFFF" size={24} />
-          )}
-          <p>
-            {currentlyActive !== "_default"
-              ? "edytuj wydarzenie"
-              : "dodaj wydarzenie"}
-          </p>
-        </button>
+        {clickedSubmit ? (
+          <LoadingButton style="opaque" />
+        ) : (
+          <button type="submit" className="add-btn">
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "edytuj wydarzenie"
+                : "dodaj wydarzenie"}
+            </p>
+          </button>
+        )}
       </div>
     </form>
+  );
+}
+
+/** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
+function LoadingButton({ style = "transparent" }) {
+  let className = "delete-btn";
+  let colour = "#FFA900";
+  if (style === "opaque") {
+    className = "add-btn";
+    colour = "#FFFFFF";
+  }
+  return (
+    <button
+      type="button"
+      className={className}
+      style={{ cursor: "not-allowed" }}
+    >
+      <div style={{ backgroundColor: "transparent" }}>
+        <Bars color={colour} height={25} width={90} />
+      </div>
+    </button>
   );
 }
 
