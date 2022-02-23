@@ -11,7 +11,7 @@ import { initializeApp } from "firebase/app";
 import React, { useEffect } from "react";
 
 export const API_URL = // "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
-"https://europe-west1-suilo-page.cloudfunctions.net/app/api";
+  "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
 
 // CONFIDENTIAL DATA
 const firebaseConfig = {
@@ -59,7 +59,12 @@ export function fetchWithToken(relativeURL, method = "get", params) {
     function _fetch(token) {
       // Uncomment the below line to view the logged in user's API token
       // console.log(token);
-      const url = `${API_URL}${relativeURL}?${new URLSearchParams(params)}`;
+      let url = API_URL + relativeURL;
+      const searchParams = new URLSearchParams(params).toString();
+      // Append the URL search parameters
+      if (searchParams) {
+        url += "?" + searchParams;
+      }
       fetch(url, {
         method,
         headers: new Headers({
@@ -74,7 +79,7 @@ export function fetchWithToken(relativeURL, method = "get", params) {
       } else {
         _fetch();
       }
-      console.log(`Sending request to '/api${relativeURL}'.`);
+      console.log(`Sending ${method} request to '/api${relativeURL}'.`);
     } else {
       // add the request to the stack to be called once the user token is determined
       console.log(
