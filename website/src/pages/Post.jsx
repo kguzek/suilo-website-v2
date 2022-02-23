@@ -84,7 +84,7 @@ const Post = ({ setPage }) => {
   }
   const createdDate = formatDate(postData.date, true);
   const modifiedDate = formatDate(postData.modified, true);
-  const views = conjugatePolish(postData.views || 0, "wyświetle", "ni", "ń");
+  const views = conjugatePolish(postData.views, "wyświetle", "nie", "nia", "ń");
   return (
     <div className="page-main">
       <MetaTags>
@@ -95,7 +95,8 @@ const Post = ({ setPage }) => {
       </MetaTags>
       <div className="post-division">
         <article>
-          <img className="post-image" src={postData.photo} alt={postData.alt} />&nbsp;
+          <img className="post-image" src={postData.photo} alt={postData.alt} />
+          &nbsp;
           {postData.imageAuthor && (
             <p className="image-author">Zdjęcie: {postData.imageAuthor}</p>
           )}
@@ -119,7 +120,12 @@ const Post = ({ setPage }) => {
           startIndex={MAIN_ITEMS_DEFAULT}
         />
       </div>
-      <PostCardPreview type="main" data={newsData} startIndex={0} numItems={4} />
+      <PostCardPreview
+        type="main"
+        data={newsData}
+        startIndex={0}
+        numItems={4}
+      />
     </div>
   );
 };

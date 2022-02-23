@@ -6,15 +6,21 @@ export const MAX_CACHE_AGE = 2; // hours
 export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
 
 /**
- * (1, 'wyświetle', 'ni', 'ń') -> '1 wyświetlenie'
+ * (1, 'wyświetle', 'nie', 'nia', 'ń') -> '1 wyświetlenie'
  *
- * (2, 'wyświetle', 'ni', 'ń') -> '2 wyświetlenia'
+ * (2, 'wyświetle', 'nie', 'nia', 'ń') -> '2 wyświetlenia'
  *
- * (21, 'wyświetle', 'ni', 'ń') -> '21 wyświetleń'
+ * (21, 'wyświetle', 'nie', 'nia', 'ń') -> '21 wyświetleń'
  */
-export function conjugatePolish(value, base, suffix1, suffix2) {
+export function conjugatePolish(
+  value = 0,
+  base,
+  suffixSingular,
+  suffixPluralA,
+  suffixPluralB
+) {
   if (value === 1) {
-    return `1 ${base}${suffix1}e`;
+    return `1 ${base}${suffixSingular}`;
   }
   const lastLetter = value.toString()[value.toString().length - 1];
   const lastDigit = parseInt(lastLetter);
@@ -22,9 +28,9 @@ export function conjugatePolish(value, base, suffix1, suffix2) {
     [2, 3, 4].includes(lastDigit) &&
     ![12, 13, 14].includes(Math.abs(value))
   ) {
-    return `${value} ${base}${suffix1}a`;
+    return `${value} ${base}${suffixPluralA}`;
   }
-  return `${value} ${base}${suffix2}`;
+  return `${value} ${base}${suffixPluralB}`;
 }
 
 /** Format a timestamp string with format: `01 sty 2022`. */
