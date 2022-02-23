@@ -36,20 +36,20 @@ export function fetchNewsData({
   // ensure the pageNumber argument is a valid integer; prevent parameter injection
   pageNumber = encodeURIComponent(parseInt(pageNumber));
 
+  const args = {
+    setData: setNewsData,
+    setLoaded,
+    updateCache,
+    onSuccessCallback: processJsonData,
+  };
   if (allItems) {
     var url = "/news/?all=true";
     var cacheName = "news_all";
   } else {
     var url = `/news/?page=${pageNumber}&items=${maxItems}`;
     var cacheName = `news_page_${pageNumber}`;
+    args.cacheArgument = maxItems;
   }
-  const args = {
-    setData: setNewsData,
-    setLoaded,
-    updateCache,
-    cacheArgument: maxItems,
-    onSuccessCallback: processJsonData,
-  };
   fetchCachedData(cacheName, url, args);
 }
 
