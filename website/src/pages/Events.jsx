@@ -68,7 +68,7 @@ function Events({ setPage }) {
           Gliwicach
         </title>
         <meta name="description" content="Następne wydarzenie to:" />{" "}
-        {(nextEvent || {}).title}
+        {(nextEvent ?? {}).title}
         <meta
           property="og:title"
           content="Kalendarz i wydarzenia | SUILO Gliwice"

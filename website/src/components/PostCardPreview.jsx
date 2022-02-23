@@ -86,7 +86,7 @@ export function PostCardPreview({
   startIndex === undefined && (startIndex = defaultItems[type].startIndex);
   numItems === undefined && (numItems = defaultItems[type].numItems);
 
-  const className = classOverride || `${type}-grid`;
+  const className = classOverride ?? `${type}-grid`;
   const _data = [...data].splice(startIndex, numItems);
   if (_data.length === 0) {
     if (classOverride && classOverride.startsWith("home")) {

@@ -36,7 +36,7 @@ function PostEdit({ data, loaded, refetchData }) {
       return;
     }
     // Get the currently selected post
-    const post = (data || [])
+    const post = (data ?? [])
       .filter((post) => post.id === currentlyActive)
       .shift();
     if (!post) {
@@ -47,9 +47,9 @@ function PostEdit({ data, loaded, refetchData }) {
     setTitle(post.title);
     setDescription(post.content);
     // photo properties are all nullable
-    setImageURL(post.photo || "");
-    setImageAuthor(post.photoAuthor || "");
-    setImageAltText(post.alt || "");
+    setImageURL(post.photo ?? "");
+    setImageAuthor(post.photoAuthor ?? "");
+    setImageAltText(post.alt ?? "");
   }, [currentlyActive]);
 
   // Display loading screen if news data hasn't been retrieved yet
@@ -65,7 +65,7 @@ function PostEdit({ data, loaded, refetchData }) {
   }
 
   const posts = {};
-  for (const post of data || []) {
+  for (const post of data ?? []) {
     posts[post.id] = post.title;
   }
 
@@ -233,7 +233,7 @@ function EventEdit({ data, loaded, refetchData }) {
       return;
     }
     // Get the currently selected event
-    const event = (data?.contents || [])
+    const event = (data?.contents ?? [])
       .filter((event) => event.id === currentlyActive)
       .shift();
     if (!event) {
@@ -245,7 +245,7 @@ function EventEdit({ data, loaded, refetchData }) {
     setDate(serialiseDateArray(event.date));
     setStartTime(formatTime(event.startTime));
     setEndTime(formatTime(event.endTime));
-    setLocation(event.location || ""); // location is nullable
+    setLocation(event.location ?? ""); // location is nullable
   }, [currentlyActive]);
 
   // Display loading screen if events data hasn't been retrieved yet
@@ -261,7 +261,7 @@ function EventEdit({ data, loaded, refetchData }) {
   }
 
   const events = {};
-  for (const event of data?.contents || []) {
+  for (const event of data?.contents ?? []) {
     const date = formatDate(event.date);
     events[event.id] = `${event.title} (${date})`;
   }
@@ -443,7 +443,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
       return;
     }
     // Get the currently selected event
-    const event = (data?.events || [])
+    const event = (data?.events ?? [])
       .filter((event) => event.id === currentlyActive)
       .shift();
     if (!event) {
@@ -477,9 +477,9 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
     );
   }
 
-  const eventSubtypes = data?.eventSubtypes || [];
+  const eventSubtypes = data?.eventSubtypes ?? [];
   const calendarEvents = {};
-  for (const event of data?.events || []) {
+  for (const event of data?.events ?? []) {
     calendarEvents[event.id] = event.title;
   }
 

@@ -22,7 +22,7 @@ const News = ({ setPage }) => {
       "refresh"
     );
     // this raw value is later encoded in the fetchNewsData() function
-    const pageNumber = searchParams.get("page") || 1;
+    const pageNumber = searchParams.get("page") ?? 1;
     fetchNewsData({
       setNewsData,
       setLoaded,

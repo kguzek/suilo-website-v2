@@ -29,10 +29,10 @@ function App() {
   }
 
   // Default the user accounts to an empty object
-  cookies.userAccounts || resetUserAccounts();
+  cookies.userAccounts ?? resetUserAccounts();
 
   useEffect(() => {
-    if (page === "contact" || page === "edit") {
+    if (page === "contact" ?? page === "edit") {
       setFooterVisible(false);
     } else {
       setFooterVisible(true);
@@ -97,9 +97,9 @@ function App() {
     logOut().then();
   }
 
-  // || false at the end is not needed but it makes the variable `false` instead of `undefined`
+  // ?? false at the end is not needed but it makes the variable `false` instead of `undefined`
   // no practical advantages but more accurately describes the variable's status
-  const userIsEditor = cookies.userAccounts?.[loggedInUser]?.isEditor || false;
+  const userIsEditor = cookies.userAccounts?.[loggedInUser]?.isEditor ?? false;
   return (
     <AuthProvider setUserCallback={setUserCallback}>
       <Routes>

@@ -243,8 +243,8 @@ router
   .post("/", (req, res) => {
     // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colourTop=#000000&colourBottom=#000000
 
-    const startDate = new Date(req.query.startDate || 0);
-    const endDate = new Date(req.query.endDate || 0);
+    const startDate = new Date(req.query.startDate ?? 0);
+    const endDate = new Date(req.query.endDate ?? 0);
 
     // ensure end date is the same or after the start date and convert the date to a string
     const newEndDate = new Date(Math.max(startDate, endDate)).toJSON();
@@ -292,7 +292,7 @@ router
   .get("/:year/:month", (req, res) => {
     const [yearInt, monthInt] = getParams(req, res);
     // don't use boolean check in case of '0' value
-    // (although this would mean year===0000... kinda unlikely :p)
+    // (although this would mean year === 0000... kinda unlikely :p)
     if (yearInt === null || monthInt === null) {
       // query params invalid; HTTP 400 was sent
       return;

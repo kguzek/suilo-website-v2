@@ -37,14 +37,13 @@ router
 
   // READ single event/link/news
   .get(`/:id`, (req, res) => {
-    const userInfo = req.userInfo || {};
-    const userID = parseInt(userInfo.uid) || false;
+    const userID = parseInt(req?.userInfo?.uid);
 
     getDocRef(req, res, "events").then((docRef) =>
       sendSingleResponse(docRef, res, (dataToSend) => {
         // check if the user who sent the request is in the participants list
-        const participants = dataToSend.participants || [];
-        const participating = userID && participants.includes(userID);
+        const participants = dataToSend.participants ?? [];
+        const participating = !isNaN(userID) && participants.includes(userID);
         return { ...dataToSend, participating };
       })
     );
@@ -52,7 +51,7 @@ router
 
   // UPDATE (toggle) event participation status
   .patch("/:id", (req, res) => {
-    const user = req.userInfo || {};
+    const user = req.userInfo ?? {};
     const userID = parseInt(user.uid);
     if (!userID) {
       return res.status(403).json({
@@ -68,7 +67,7 @@ router
               HTTP.err404 + "There is no event with the given ID.",
           });
         }
-        let participants = data.participants || [];
+        let participants = data.participants ?? [];
         let msg;
         const participating = participants.includes(userID);
         if (participating) {

@@ -20,7 +20,7 @@ function arrayFromRange(start, end) {
 
 /** Returns the index of a random item in the given array. */
 function randomArraySelection(array) {
-  if (!array || !array.length) {
+  if (!array?.length) {
     return null;
   }
   const randomIndex = randomIntFromInterval(0, array.length - 1);
@@ -153,7 +153,7 @@ router
       if (data.date === todayString) {
         return true;
       }
-      const freeDays = data.freeDays || [];
+      const freeDays = data.freeDays ?? [];
       // return true if it's weekend or a free day
       return [0, 6].includes(weekday) || freeDays.includes(todayString);
     }
@@ -167,16 +167,16 @@ router
     function generateNumbersData(data = {}) {
       const luckyNumbers = [];
       // one number pool for each lucky number: 1:15 and 16:MAX
-      const splitPoints = data.splitPoints || [15, 16];
+      const splitPoints = data.splitPoints ?? [15, 16];
       const numberLimits = [
         [1, splitPoints[0]],
-        [splitPoints[1], data.maxNumber || MAX_LUCKY_NUMBER],
+        [splitPoints[1], data.maxNumber ?? MAX_LUCKY_NUMBER],
       ];
       const numberPools = [data.numberPoolA, data.numberPoolB];
       for (let i = 0; i < 2; i++) {
         let numberPool = numberPools[i];
         // reset the number pool if it's empty
-        if (!numberPool || numberPool.length === 0) {
+        if (!numberPool?.length) {
           numberPool = arrayFromRange(...numberLimits[i]);
         }
         const randomIndex = randomArraySelection(numberPool);
@@ -191,8 +191,8 @@ router
       const newData = {
         date: todayString,
         luckyNumbers,
-        excludedClasses: data.excludedClasses || [],
-        freeDays: data.freeDays || [],
+        excludedClasses: data.excludedClasses ?? [],
+        freeDays: data.freeDays ?? [],
         maxNumber: numberLimits[1][1],
         splitPoints,
         numberPoolA: numberPools[0],

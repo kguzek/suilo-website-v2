@@ -17,7 +17,7 @@ export default function ShortLinkRedirect({ setPage }) {
             console.log("No such short URL (no entry in database).", data);
             return setRedirected(false);
           }
-          if (!data || !data.destination) {
+          if (!data?.destination) {
             console.log(
               "No such short URL (data doesn't contain a destination URL).",
               data

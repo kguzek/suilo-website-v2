@@ -45,7 +45,7 @@ function dateToTimestamp(date) {
  * Otherwise calls the failure callback if specified, or sends a HTTP 400 response.  */
 function getDocRef(req, res, collectionName) {
   // get id from url parameters or arguments, e.g. /api/news/foo or /api/news/?id=foo
-  const id = req.params.id || req.query.id;
+  const id = req.params.id ?? req.query.id;
 
   function resolve(_resolve, _reject) {
     // check if the id was provided in the query parameters
@@ -82,7 +82,7 @@ function getIntArray(string, separator, defaultInput) {
     return int;
   }
 
-  const tmp = (string || "").split(separator).map((num) => parseNum(num));
+  const tmp = (string ?? "").split(separator).map((num) => parseNum(num));
   if (anyNaN) {
     return defaultInput ? getIntArray(defaultInput, separator) : null;
   }
@@ -94,7 +94,7 @@ function getIntArray(string, separator, defaultInput) {
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
 function createSingleDocument(data, res, { collectionName, collectionRef }) {
   // attempts to add the data to the given collection
-  collectionRef = collectionRef || db.collection(collectionName);
+  collectionRef ?? (collectionRef = db.collection(collectionName));
   collectionRef
     .add(data)
     .then((doc) => {
@@ -127,7 +127,7 @@ function sendSingleResponse(docQuery, res, sendData = (d) => d) {
     // formats all existing date fields as timestamp strings
     formatTimestamps(data);
     // increment the views count or start at 1 if it doesn't exist
-    const views = (data.views || 0) + 1;
+    const views = (data.views ?? 0) + 1;
     // update views count in database
     docQuery.update({ views }).then(() => {
       // send document id with rest of the data
@@ -145,8 +145,9 @@ function sendSingleResponse(docQuery, res, sendData = (d) => d) {
  */
 function sendListResponse(docListQuery, queryOptions, res, callback = null) {
   // initialise parameters
-  const page = Math.max(parseInt(queryOptions.page || 1), 1);
-  const items = Math.max(parseInt(queryOptions.items || 25), 1);
+  // ensure the values are >= 1
+  const page = Math.max(parseInt(queryOptions.page ?? 1), 1);
+  const items = Math.max(parseInt(queryOptions.items ?? 25), 1);
 
   // don't limit the response length if the 'all' parameter is set to "true"
   if (queryOptions.all === "true") {
@@ -192,9 +193,9 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
           response.push({ id: doc.id, ...data });
         }
       });
-      return (callback || defaultCallback)(null, response, querySnapshot.docs);
+      return (callback ?? defaultCallback)(null, response, querySnapshot.docs);
     })
-    .catch(/*callback || */ defaultCallback);
+    .catch(callback ?? defaultCallback);
 }
 
 /** Updates the document fields and sends a response containing the new data.
