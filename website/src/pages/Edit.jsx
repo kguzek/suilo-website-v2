@@ -21,7 +21,7 @@ const editPickerOptions = ["Aktualności", "Wydarzenia", "Kalendarz"];
 
 function PostEdit({ data, loaded, refetchData }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
-  const [author, setAuthor] = useState(auth.currentUser.displayName);
+  const [author, setAuthor] = useState(auth.currentUser?.displayName);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageURL, setImageURL] = useState("");
@@ -47,7 +47,7 @@ function PostEdit({ data, loaded, refetchData }) {
       ]) {
         setVar("");
       }
-      setAuthor(auth.currentUser.displayName);
+      setAuthor(auth.currentUser?.displayName);
       return;
     }
     setAuthor(post.author);
@@ -602,9 +602,13 @@ export default function Edit({ setPage, canEdit, loginAction, user }) {
   }, []);
 
   useEffect(() => {
+    // user is undefined when the page first loads
+    // it is later updated to either null or the user object once the Google API fetch executes
     if (canEdit || user === undefined) {
+      // Wait until the user is determined; don't kick out just yet in case the user is logged in
       setPage("edit");
     } else {
+      // User has been determined to be `null`, or they have no edit permissions
       navigate("/");
       setPage("home");
       loginAction();

@@ -4,7 +4,7 @@ import Hamburger from "hamburger-react";
 import LogoSU from "../media/LogoSU";
 import Blob from "../media/blob";
 
-const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
+const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
   const { height, width } = useWindowDimensions();
   const [isOpen, setOpen] = useState(false);
   const [display, setDisplay] = useState("none");
@@ -52,7 +52,7 @@ const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
   };
 
   const _handleLogin = () => {
-    if (logged) {
+    if (loggedInUser) {
       logoutAction();
     } else {
       loginAction();
@@ -73,7 +73,7 @@ const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
         if (!page.startsWith(key)) {
           continue;
         }
-        if (key === "edit" && !logged) {
+        if (key === "edit" && !(loggedInUser && canEdit)) {
           continue;
         }
         return widths[key];
@@ -96,7 +96,7 @@ const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
         if (!page.startsWith(key)) {
           continue;
         }
-        if (key === "edit" && !logged) {
+        if (key === "edit" && !loggedInUser) {
           continue;
         }
         return transforms[key];
@@ -166,7 +166,7 @@ const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
           </nav>
         </div>
         <button className="login-btn" onClick={() => _handleLogin()}>
-          {logged ? "Wyloguj się" : "Zaloguj się"}
+          {loggedInUser ? "Wyloguj się" : "Zaloguj się"}
         </button>
       </div>
     );
@@ -251,7 +251,7 @@ const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
               >
                 Kontakt
               </Link>
-              {logged ? (
+              {loggedInUser ? (
                 <Link
                   onClick={() => setOpen(false)}
                   to="edycja"
@@ -285,7 +285,7 @@ const NavBar = ({ page, logged, canEdit, loginAction, logoutAction }) => {
                 }}
               >
                 <p style={{ color: "#fff" }}>
-                  {logged ? "Wyloguj się" : "Zaloguj się"}
+                  {loggedInUser ? "Wyloguj się" : "Zaloguj się"}
                 </p>
               </div>
             </nav>

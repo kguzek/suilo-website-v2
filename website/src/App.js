@@ -108,7 +108,7 @@ function App() {
           element={
             <Layout
               page={page}
-              logged={loggedInUser}
+              loggedInUser={loggedInUser}
               loginAction={loginAction}
               logoutAction={logoutAction}
               canEdit={userIsEditor}
@@ -144,7 +144,7 @@ function App() {
 
 function Layout({
   page,
-  logged,
+  loggedInUser,
   loginAction,
   logoutAction,
   canEdit,
@@ -184,7 +184,7 @@ function Layout({
       />
       <NavBar
         page={page}
-        logged={logged}
+        loggedInUser={loggedInUser}
         canEdit={canEdit}
         loginAction={loginAction}
         logoutAction={logoutAction}
