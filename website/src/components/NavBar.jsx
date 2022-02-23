@@ -4,7 +4,7 @@ import Hamburger from "hamburger-react";
 import LogoSU from "../media/LogoSU";
 import Blob from "../media/blob";
 
-const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
+const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
   const { height, width } = useWindowDimensions();
   const [isOpen, setOpen] = useState(false);
   const [display, setDisplay] = useState("none");
@@ -13,6 +13,10 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
   const [yHeight, setYHeight] = useState("40px");
 
   const [isSafeToChange, setSafety] = useState(true);
+
+  // Determine if the current user is permitted to edit any pages
+  const userIsEditor =
+    userInfo?.isAdmin || (userInfo?.canEdit ?? []).length > 0;
 
   useEffect(() => {
     setSafety(false);
@@ -52,7 +56,7 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
   };
 
   const _handleLogin = () => {
-    if (loggedInUser) {
+    if (userInfo) {
       logoutAction();
     } else {
       loginAction();
@@ -73,8 +77,8 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
         if (!page.startsWith(key)) {
           continue;
         }
-        if (key === "edit" && !(loggedInUser && canEdit)) {
-          continue;
+        if (key === "edit" && !userIsEditor) {
+          break;
         }
         return widths[key];
       }
@@ -96,8 +100,8 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
         if (!page.startsWith(key)) {
           continue;
         }
-        if (key === "edit" && !loggedInUser) {
-          continue;
+        if (key === "edit" && !userIsEditor) {
+          break;
         }
         return transforms[key];
       }
@@ -154,7 +158,7 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
             >
               Kontakt
             </Link>
-            {canEdit ? (
+            {userIsEditor ? (
               <Link
                 to="edycja"
                 className="link-box"
@@ -166,7 +170,7 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
           </nav>
         </div>
         <button className="login-btn" onClick={() => _handleLogin()}>
-          {loggedInUser ? "Wyloguj się" : "Zaloguj się"}
+          {userInfo ? "Wyloguj się" : "Zaloguj się"}
         </button>
       </div>
     );
@@ -251,7 +255,7 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
               >
                 Kontakt
               </Link>
-              {loggedInUser ? (
+              {userInfo ? (
                 <Link
                   onClick={() => setOpen(false)}
                   to="edycja"
@@ -285,7 +289,7 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
                 }}
               >
                 <p style={{ color: "#fff" }}>
-                  {loggedInUser ? "Wyloguj się" : "Zaloguj się"}
+                  {userInfo ? "Wyloguj się" : "Zaloguj się"}
                 </p>
               </div>
             </nav>
@@ -299,6 +303,7 @@ const NavBar = ({ page, loggedInUser, canEdit, loginAction, logoutAction }) => {
 function getWindowDimensions() {
   return { width: window.innerWidth, height: window.innerHeight };
 }
+
 function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()

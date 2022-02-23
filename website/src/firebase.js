@@ -10,8 +10,15 @@ import {
 import { initializeApp } from "firebase/app";
 import React, { useEffect } from "react";
 
-export const API_URL = // "http://localhost:5001/suilo-page/europe-west1/app/api"; // Temporary emulator API URL assignment
-  "https://europe-west1-suilo-page.cloudfunctions.net/app/api";
+/** Enables some `console.log` statements and determines the API URL. */
+export const DEBUG_MODE = false;
+
+export const API_URL = DEBUG_MODE
+  ? "http://localhost:5001/suilo-page/europe-west1/app/api" // Temporary emulator API URL assignment
+  : "https://europe-west1-suilo-page.cloudfunctions.net/app/api"; // Production cloud function
+
+/** If true, logs the logged in user's API token in the console whenever a request to the API is made. */
+const DISPLAY_TOKEN_ON_REQUEST = false;
 
 // CONFIDENTIAL DATA
 const firebaseConfig = {
@@ -39,11 +46,8 @@ let userLoaded = false;
 
 /** Iterates through the fetch stack backwards and executes each callback function, removing it from the array. */
 function _executeFetchStack(token) {
-  for (let i = _fetchStack.length; i > 0; i--) {
-    // console.log(`Executing fetch stack item ${i}.`);
-
-    // remove last item -- we don't need the item index for this
-    // the pop method returns the deleted object so we can call it once it's removed from the array
+  while (_fetchStack.length > 0) {
+    // the pop method returns the deleted function object so we can call it once it's removed from the array
     _fetchStack.pop()(token);
   }
 }
@@ -57,8 +61,7 @@ export function fetchWithToken(relativeURL, method = "get", params) {
   function then(resolve, reject) {
     /** Performs the fetch request with the provided success and failure handlers. */
     function _fetch(token) {
-      // Uncomment the below line to view the logged in user's API token
-      // console.log(token);
+      DISPLAY_TOKEN_ON_REQUEST && console.log(token);
       let url = API_URL + relativeURL;
       const searchParams = new URLSearchParams(params).toString();
       // Append the URL search parameters
@@ -74,17 +77,19 @@ export function fetchWithToken(relativeURL, method = "get", params) {
       }).then(resolve, reject);
     }
     if (userLoaded) {
+      DEBUG_MODE &&
+        console.log(`Sending ${method} request to '/api${relativeURL}'.`);
       if (auth.currentUser) {
         auth.currentUser.getIdToken().then(_fetch);
       } else {
         _fetch();
       }
-      console.log(`Sending ${method} request to '/api${relativeURL}'.`);
     } else {
       // add the request to the stack to be called once the user token is determined
-      console.log(
-        `Adding request to '/api${relativeURL}' to the fetch stack...`
-      );
+      DEBUG_MODE &&
+        console.log(
+          `Adding request to '/api${relativeURL}' to the fetch stack...`
+        );
       _fetchStack.push(_fetch);
     }
   }
@@ -107,12 +112,13 @@ export function AuthProvider({ children, setUserCallback }) {
           return;
         }
         if (user) {
-          console.log(
-            `Executing the fetch stack as ${user.displayName} <${user.email}>.`
-          );
+          DEBUG_MODE &&
+            console.log(
+              `Executing the fetch stack as ${user.displayName} <${user.email}>.`
+            );
           user.getIdToken().then(_executeFetchStack);
         } else {
-          console.log("Executing the fetch stack anonymously.");
+          DEBUG_MODE && console.log("Executing the fetch stack anonymously.");
           _executeFetchStack();
         }
       } else {
@@ -164,7 +170,8 @@ export function getResults(processLoginCallback) {
 export async function logOut() {
   signOut(auth)
     .then(() => {
-      console.log("Successfully signed out from Google provider.");
+      DEBUG_MODE &&
+        console.log("Successfully signed out from Google provider.");
     })
     .catch((error) => {
       // no error handling as possible errors are currently unknown

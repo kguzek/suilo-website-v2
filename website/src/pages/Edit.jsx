@@ -17,7 +17,11 @@ import {
 import { serialiseDateArray } from "../common";
 import { auth, fetchWithToken } from "../firebase";
 
-const editPickerOptions = ["Aktualności", "Wydarzenia", "Kalendarz"];
+const PAGES = {
+  news: "Aktualności",
+  events: "Wydarzenia",
+  calendar: "Kalendarz",
+};
 
 function PostEdit({ data, loaded, refetchData }) {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -653,7 +657,7 @@ function LoadingButton({ style = "transparent" }) {
   );
 }
 
-export default function Edit({ setPage, canEdit, loginAction, user }) {
+export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   // `editPicker` is an index of `editPickerOptions`
@@ -726,26 +730,43 @@ export default function Edit({ setPage, canEdit, loginAction, user }) {
   useEffect(() => {
     // user is undefined when the page first loads
     // it is later updated to either null or the user object once the Google API fetch executes
-    if (canEdit || user === undefined) {
+    console.log(user, userPerms);
+    if (userPerms.isAdmin || userPerms.canEdit?.length > 0) {
       // Wait until the user is determined; don't kick out just yet in case the user is logged in
       setPage("edit");
     } else {
       // User has been determined to be `null`, or they have no edit permissions
       navigate("/");
       setPage("home");
-      loginAction();
+      // User is not logged in
+      if (user === null) {
+        loginAction();
+      }
     }
-  }, [canEdit, user]);
+  }, [userPerms, user]);
 
   // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {
     return (
       <div
-        className="loading-whole-screen"
-        style={{ backgroundColor: "transparent" }}
+        style={{ backgroundColor: "transparent", marginBottom: "100%" }}
       >
         <Bars color="#FFA900" height={50} width={50} />
       </div>
+    );
+  }
+
+  const userCanEdit = userPerms.canEdit ?? [];
+  const editPickerOptions = userPerms.isAdmin
+    ? Object.values(PAGES) // Give permission to edit all pages
+    : userCanEdit.map((perm) => PAGES[perm]); // Give permission for individual pages
+
+  // Failsafe to prevent the user seeing the edit UI in case of a bug
+  if (editPickerOptions.length === 0) {
+    return (
+      <p style={{ paddingBottom: "100%" }}>
+        Nie masz uprawnień do wyświetlania tej strony.
+      </p>
     );
   }
 

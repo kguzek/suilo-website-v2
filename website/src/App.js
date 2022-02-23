@@ -15,7 +15,7 @@ import Footer from "./components/Footer";
 import LoginScreen from "./components/LoginScreen";
 import CookiesAlert from "./components/CookiesAlert";
 import ScrollToTop, { scrollToTop } from "./components/ScrollToTop";
-import { logOut, AuthProvider, fetchWithToken } from "./firebase";
+import { logOut, AuthProvider, fetchWithToken, DEBUG_MODE } from "./firebase";
 
 function App() {
   const [page, setPage] = useState(null);
@@ -40,7 +40,6 @@ function App() {
     if (page !== null) {
       scrollToTop();
     }
-    return;
   }, [page]);
 
   /** Callback to be executed whenever the state of the currently signed in user is changed.
@@ -50,27 +49,35 @@ function App() {
   function setUserCallback(user) {
     if (user) {
       if (user.email.endsWith("@lo1.gliwice.pl")) {
-        if (!cookies.userAccounts[user.email]) {
+        if (!cookies.userAccounts[user.email] || DEBUG_MODE) {
           /** Update the cookie with the proper user pemissions. */
-          function setUserEditPermissions(isEditor) {
+          function setUserEditPermissions(userInfo) {
+            const perms = {
+              isAdmin: userInfo?.isAdmin ?? false,
+              canEdit: userInfo?.canEdit ?? [],
+            };
+            // Update the userAccounts cookie
             const userAccounts = cookies.userAccounts;
-            userAccounts[user.email] = { isEditor };
+            userAccounts[user.email] = perms;
+            // Determine if the user is permitted to edit any pages
+            const isEditor = perms.isAdmin || perms.canEdit.length > 0;
             isEditor && console.log(`Enabled edit screen for ${user.email}.`);
             setCookies("userAccounts", userAccounts, { sameSite: "lax" });
           }
 
-          // check if the user has edit permissions by performing a dummy PUT request to the API
+          // Check if the user has edit permissions by performing a dummy PUT request to the API
           console.log("Checking user permissions...");
-          fetchWithToken("/", "put").then(
+          fetchWithToken("/").then(
             (res) => {
               // Log user permissions
-              res.json().then(console.log);
-              // Edit permissions = true if response is HTTP 200; otherwise false
-              setUserEditPermissions(res.ok);
+              res.json().then((data) => {
+                console.log(data);
+                setUserEditPermissions(data.userInfo); // userInfo can be undefined
+              });
             },
             (error) => {
               console.log("Error setting user permissions!", error);
-              setUserEditPermissions(false);
+              setUserEditPermissions();
             }
           );
         }
@@ -97,9 +104,11 @@ function App() {
     logOut().then();
   }
 
-  // ?? false at the end is not needed but it makes the variable `false` instead of `undefined`
-  // no practical advantages but more accurately describes the variable's status
-  const userIsEditor = cookies.userAccounts?.[loggedInUser]?.isEditor ?? false;
+  // Determine the current logged in user's permissions
+  const users = cookies.userAccounts;
+  // If the user hasn't been determined yet, temporarily use the details of the last logged in user
+  const userInfo = users?.[loggedInUser] ?? users[Object.keys(users).shift()];
+
   return (
     <AuthProvider setUserCallback={setUserCallback}>
       <Routes>
@@ -108,10 +117,9 @@ function App() {
           element={
             <Layout
               page={page}
-              loggedInUser={loggedInUser}
               loginAction={loginAction}
               logoutAction={logoutAction}
-              canEdit={userIsEditor}
+              userInfo={userInfo}
               isFooterVisible={isFooterVisible}
             />
           }
@@ -129,8 +137,8 @@ function App() {
             element={
               <Edit
                 setPage={setPage}
-                canEdit={userIsEditor}
                 user={loggedInUser}
+                userPerms={userInfo}
                 loginAction={loginAction}
               />
             }
@@ -144,10 +152,9 @@ function App() {
 
 function Layout({
   page,
-  loggedInUser,
+  userInfo,
   loginAction,
   logoutAction,
-  canEdit,
   isFooterVisible,
 }) {
   return (
@@ -184,8 +191,7 @@ function Layout({
       />
       <NavBar
         page={page}
-        loggedInUser={loggedInUser}
-        canEdit={canEdit}
+        userInfo={userInfo}
         loginAction={loginAction}
         logoutAction={logoutAction}
       />
