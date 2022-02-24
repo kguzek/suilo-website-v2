@@ -105,9 +105,9 @@ function App() {
   }
 
   // Determine the current logged in user's permissions
-  const users = cookies.userAccounts;
+  const users = cookies.userAccounts ?? {};
   // If the user hasn't been determined yet, temporarily use the details of the last logged in user
-  const userInfo = users?.[loggedInUser] ?? users[Object.keys(users).shift()];
+  const userInfo = users[loggedInUser] ?? users[Object.keys(users).shift()];
 
   return (
     <AuthProvider setUserCallback={setUserCallback}>
