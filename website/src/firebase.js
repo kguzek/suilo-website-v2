@@ -55,7 +55,7 @@ function _executeFetchStack(token) {
 }
 
 /** Performs a 'fetch' with the auth header set to the user's API token. */
-export function fetchWithToken(relativeURL, method = "get", params) {
+export function fetchWithToken(relativeURL, method = "GET", params) {
   // Ensure the relative URL starts with a leading forward slash
   if (!relativeURL.startsWith("/")) {
     relativeURL = "/" + relativeURL;

@@ -1,7 +1,7 @@
 import { getDownloadURL, ref } from "firebase/storage";
 import { fetchWithToken, storage } from "./firebase";
 
-export const MAX_CACHE_AGE = 2; // hours
+export const MAX_CACHE_AGE = 24; // hours
 
 // Temporary image URL if an article has none specified
 export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
