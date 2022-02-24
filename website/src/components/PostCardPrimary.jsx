@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "react-feather";
+import { getURLfromFileName } from "../misc";
 
 const PostCardPrimary = ({ data }) => {
   const textShort = data.text;
+  const [photo,setphoto] = useState(data.photo);
+
+  useEffect(() => {
+    getURLfromFileName(data.photo,"800x600",setphoto)
+  }, []);
+
   return (
     <div className="primary-post-card">
-      <img src={data.photo} className="primary-post-image" />
+      <img src={photo} className="primary-post-image" />
       <h2 className="primary-post-header" title={data.title}>
         {data.title}
       </h2>

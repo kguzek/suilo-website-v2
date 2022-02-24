@@ -13,6 +13,7 @@ import {
   DEFAULT_IMAGE,
   formatDate,
   removeSearchParam,
+  getURLfromFileName,
 } from "../misc";
 import { Bars } from "react-loader-spinner";
 
@@ -24,20 +25,30 @@ const Post = ({ setPage }) => {
   const params = useParams();
 
   const cacheName = `news_post_${params.postID}`;
+  function changeImageLink(link){
+    let newData = {...postData};
+    newData.photo = link;
+    setPostData(newData);
 
+  }
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
     /** Verifies that the API response is valid and returns the processed data. */
     function processJsonData(data) {
       if (data && !data.errorDescription) {
         data.photo = data.photo || DEFAULT_IMAGE;
+        getURLfromFileName(data.photo,"1920x1080",changeImageLink)
         return data;
       }
       setPostData({ errorMessage: "Post nie istnieje." });
     }
-
+    function checkLinks(data){
+      getURLfromFileName(data.photo,"1920x1080",changeImageLink)
+         
+      setPostData(data);
+    }
     const args = {
-      setData: setPostData,
+      setData: checkLinks,
       setLoaded,
       updateCache,
       onSuccessCallback: processJsonData,

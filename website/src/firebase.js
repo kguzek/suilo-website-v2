@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { initializeApp } from "firebase/app";
+import {getStorage} from "firebase/storage";
 import React, { useEffect } from "react";
 
 /** Enables some `console.log` statements and determines the API URL. */
@@ -33,6 +34,7 @@ const firebaseConfig = {
 
 // setup Google Auth provider
 const app = initializeApp(firebaseConfig);
+export const storage = getStorage(app);
 export const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 auth.useDeviceLanguage();

@@ -12,10 +12,12 @@ import {
   fetchCachedData,
   formatDate,
   formatTime,
+  getFileNameFromFirebaseUrl,
   removeSearchParam,
 } from "../misc";
 import { serialiseDateArray } from "../common";
-import { auth, fetchWithToken } from "../firebase";
+import { auth, fetchWithToken, storage } from "../firebase";
+import { getDownloadURL, uploadBytesResumable, ref, updateMetadata} from "firebase/storage";
 
 const PAGES = {
   news: "Aktualności",
@@ -29,9 +31,10 @@ function PostEdit({ data, loaded, refetchData }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageURL, setImageURL] = useState("");
+  const [imagePath,setImagePath] = useState("");
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
-
+  const [imgRef,setImgRef] = useState();
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
@@ -102,10 +105,27 @@ function PostEdit({ data, loaded, refetchData }) {
       title,
       text: shortDescription,
       content: description,
-      photo: imageURL,
+      photo: imagePath,
+      //those two should be stored with the photo imo
       photoAuthor: imageAuthor,
       alt: imageAltText,
     };
+   /*
+    if(imgRef){
+      const metadata = {
+        customMetadata:{
+          photoAuthor: imageAuthor,
+          alt: imageAltText,
+        }
+      }
+      updateMetadata(imgRef, metadata)
+      .then((meta) => {
+        console.log(meta);
+      }).catch((error) => {
+        console.log(error);
+      })
+    }
+   */
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
       refresh();
@@ -122,7 +142,32 @@ function PostEdit({ data, loaded, refetchData }) {
       setClickedDelete(false);
     });
   }
+  function _handlePhotoUpdate(file){
+    if(!file) return;
+    const storageRef = ref(storage, `/photos/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef,file);
+    setImagePath(file.name.split(".")[0]);
+    uploadTask.on("state_changed",(snapshot) =>{
+      const prog = Math.round(100*snapshot.bytesTransferred/snapshot.totalBytes);
+      setImageURL(`Postęp: ${prog}%`);
+    },
+    (error) => console.log(error),
+    ()=>{
+      getDownloadURL(uploadTask.snapshot.ref).
+      then(()=>{
+        /*
+        console.log(url);
+        let basefileName = getFileNameFromFirebaseUrl(url);
+        console.log(basefileName);
+      
+        let fullHDfileName = basefileName.split(".")[0] + "_1920x1080.jpeg";
+        console.log(fullHDfileName);
+        setImagePath(fullHDfileName);
+        */
+      })
+    });
 
+  }
   return (
     <form className="edit-segment" onSubmit={_handleSubmit}>
       <InputDropdown
@@ -156,7 +201,7 @@ function PostEdit({ data, loaded, refetchData }) {
       />
       <InputFile
         placeholder={"Miniatura"}
-        onChange={() => {} /* TODO: integrate backend image hosting */}
+        onChange={(e) => {_handlePhotoUpdate(e.target.files[0])} /* TODO: integrate backend image hosting */}
         acceptedExtensions=".jpeg, .jpg, .png"
       />
       <InputBox
@@ -221,7 +266,11 @@ function EventEdit({ data, loaded, refetchData }) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
-
+  const [imageURL, setImageURL] = useState("");
+  const [imagePath,setImagePath] = useState();
+  const [imgRef,setImgRef] = useState();
+  const [imageAuthor, setImageAuthor] = useState("");
+  const [imageAltText, setImageAltText] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
@@ -292,6 +341,22 @@ function EventEdit({ data, loaded, refetchData }) {
       location,
       content: description,
     };
+    /*
+    if(imgRef){
+      const metadata = {
+        customMetadata:{
+          photoAuthor: imageAuthor,
+          alt: imageAltText,
+        }
+      }
+      updateMetadata(imgRef, metadata)
+      .then((meta) => {
+        console.log(meta);
+      }).catch((error) => {
+        console.log(error);
+      })
+    }
+   */
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
       refresh();
@@ -309,6 +374,31 @@ function EventEdit({ data, loaded, refetchData }) {
     });
   }
 
+  function _handlePhotoUpdate(file){
+    if(!file) return;
+    const storageRef = ref(storage, `/photos/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef,file);
+    setImagePath(file.name.split(".")[0]);
+    uploadTask.on("state_changed",(snapshot) =>{
+      const prog = Math.round(100*snapshot.bytesTransferred/snapshot.totalBytes);
+      setImageURL(`Postęp: ${prog}%`);
+    },
+    (error) => console.log(error),
+    ()=>{
+      getDownloadURL(uploadTask.snapshot.ref).
+      then(()=>{
+        /*
+        console.log(url);
+        let basefileName = getFileNameFromFirebaseUrl(url);
+        console.log(basefileName);
+      
+        let fullHDfileName = basefileName.split(".")[0] + "_1920x1080.jpeg";
+        console.log(fullHDfileName);
+        setImagePath(fullHDfileName);
+        */
+      })
+    });
+  }
   return (
     <form className="edit-segment" onSubmit={_handleSubmit}>
       <InputDropdown
@@ -377,8 +467,16 @@ function EventEdit({ data, loaded, refetchData }) {
       />
       {/* PLACE FOR TEXT EDITOR */}
       <InputFile
-        placeholder="Miniatura"
-        acceptedExtensions=".jpeg, .jpg, .png,"
+        placeholder={"Miniatura"}
+        onChange={(e) => {_handlePhotoUpdate(e.target.files[0])} }
+        acceptedExtensions=".jpeg, .jpg, .png"
+      />
+      <InputBox
+        name="image-url"
+        placeholder="URL zdjęcia"
+        maxLength={256}
+        value={imageURL}
+        onChange={setImageURL}
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&

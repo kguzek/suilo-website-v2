@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "react-feather";
-import { formatDate } from "../misc";
+import { formatDate, getURLfromFileName } from "../misc";
 
 const PostCardMain = ({ data }) => {
+  const [photo,setphoto] = useState(data.photo);
   const date = formatDate(data.date);
   // const modified = formatDate(data.modified, true);
   const textShort = data.text;
+  useEffect(() => {
+    getURLfromFileName(data.photo,"400x300",setphoto)
+  }, []);
+
   return (
     <div className="main-post-card">
       {/* {data.modified && (
         <i className="main-post-date">Ostatnia edycja — {modified}</i>
       )} */}
       <p className="main-post-date">{date}</p>
-      <img src={data.photo} className="main-post-image" />
+      <img src={photo} className="main-post-image" />
       <div className="main-post-right">
         <h2 className="main-post-header">{data.title}</h2>
         <div className="main-description-box">

@@ -1,4 +1,5 @@
-import { fetchWithToken } from "./firebase";
+import { getDownloadURL, ref } from "firebase/storage";
+import { fetchWithToken, storage } from "./firebase";
 
 export const MAX_CACHE_AGE = 2; // hours
 
@@ -159,4 +160,18 @@ export function fetchCachedData(
       setLoaded(true);
     }
   );
+}
+export function getURLfromFileName(name,size,callback){ //size 1920x1080  800x600, 600x400, 400x300, 200x2000, 100x100
+  if(name.includes("https://")||name.includes("http://")){
+    callback(name);
+  }
+  else{
+    const imageRef = ref(storage,`/photos/${name}_${size}.jpeg`);
+    getDownloadURL(imageRef).then(url=>{
+      callback(url);
+    })
+  }
+  
+
+
 }

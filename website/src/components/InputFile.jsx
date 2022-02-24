@@ -22,7 +22,7 @@ const InputFile = ({
                 <input
                     type="file"
                     accept={acceptedExtensions}
-                    onChange={(e) => setValue(e.target.value.replace(`C:\\fakepath\\`, ""))}
+                    onChange={(e) => {setValue(e.target.value.replace(`C:\\fakepath\\`, ""));onChange(e)}}
                 />
                 {value}
             </div>
