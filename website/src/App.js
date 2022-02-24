@@ -22,6 +22,7 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState(undefined); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
   const [isFooterVisible, setFooterVisible] = useState(true);
   const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
+  const [checkForUpdates, setCheckForUpdates] = useState(false);
 
   /** Sets the user accounts cookie to an empty object. */
   function resetUserAccounts() {
@@ -32,6 +33,11 @@ function App() {
   cookies.userAccounts ?? resetUserAccounts();
 
   useEffect(() => {
+    // Enable checking for updates from the API
+    setCheckForUpdates(true);
+  }, []);
+
+  useEffect(() => {
     if (page === "contact" ?? page === "edit") {
       setFooterVisible(false);
     } else {
@@ -39,6 +45,34 @@ function App() {
     }
     if (page !== null) {
       scrollToTop();
+    }
+    // Check for updates in the API
+    // TODO: Test this and actually refresh if data is updated
+    if (checkForUpdates) {
+      let shouldRefresh = false;
+      fetchWithToken("/lastUpdate/").then((res) => {
+        res.json().then((rawData) => {
+          // remove unnecessary fields
+          const { id, views, ...endpointsUpdated } = rawData;
+          for (const endpoint in endpointsUpdated) {
+            for (const cacheName in localStorage) {
+              if (!cacheName.startsWith(endpoint)) {
+                continue;
+              }
+              const cache = JSON.parse(localStorage.getItem(cacheName));
+              const endpointUpdated = new Date(endpointsUpdated[endpoint]);
+              const cacheDate = new Date(cache.date);
+              if (cacheDate >= endpointUpdated) {
+                // The cache is up to date
+                continue;
+              }
+              localStorage.removeItem(cacheName);
+              shouldRefresh = true;
+            }
+          }
+          console.log("Should refresh:", shouldRefresh);
+        });
+      });
     }
   }, [page]);
 
