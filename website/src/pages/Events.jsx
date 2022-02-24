@@ -9,43 +9,54 @@ import {
   formatTime,
   removeSearchParam,
 } from "../misc";
-const { serialiseDateArray, dateToArray } = require("../common");
+import { serialiseDateArray, dateToArray } from "../common";
 
 function getNextEvent(events = []) {
   const now = new Date();
 
   for (const event of events) {
     // date comparison for 'event' objects
-    if (new Date(event.date) < now) {
-      // these store the date as a three-element array, e.g. [2022, 1, 1]
-      continue;
+    if (new Date(event.date) >= now) {
+      return event;
     }
-    return event;
   }
 }
 
-function Events({ setPage }) {
+function Events({ setPage, reload }) {
   const [loaded, setLoaded] = useState(false); // events loaded status
   const [eventsData, setEventsData] = useState({ contents: [] });
   const [searchParams, setSearchParams] = useSearchParams({});
   const [updateCache, setUpdateCache] = useState(false);
   const params = useParams();
 
-  useEffect(() => {
-    setPage("events");
-    // determines if the cache should be updated by checking the 'refresh' URL query parameter
-    const temp = !!removeSearchParam(searchParams, setSearchParams, "refresh");
-    setUpdateCache(temp);
+  function _populatePageContents(forceUpdateCache = false) {
     // set the data fetch arguments
     const fetchArgs = {
       setData: setEventsData,
       setLoaded,
-      updateCache: temp,
+      updateCache: forceUpdateCache,
       onSuccessCallback: (data) =>
         data && !data.errorDescription ? data : null,
     };
     fetchCachedData("events", "/events", fetchArgs);
+  }
+
+  useEffect(() => {
+    setPage("events");
+    // determines if the cache should be updated by checking the 'refresh' URL query parameter
+    const _frce = !!removeSearchParam(searchParams, setSearchParams, "refresh");
+    setUpdateCache(_frce);
+    _populatePageContents(_frce);
   }, [params.postID]);
+
+  useEffect(() => {
+    if (!reload) {
+      return;
+    }
+    // The page content has updated on the server side; reload it
+    setLoaded(false);
+    _populatePageContents();
+  }, [reload]);
 
   if (!loaded) {
     // wait until events have loaded
@@ -59,7 +70,7 @@ function Events({ setPage }) {
     );
   }
   const nextEvent = getNextEvent(eventsData.contents);
-  nextEvent && console.log("Next event:", nextEvent.title);
+  console.log("Next event:", nextEvent?.title);
   return (
     <div style={{ minHeight: "89vh" }}>
       <MetaTags>

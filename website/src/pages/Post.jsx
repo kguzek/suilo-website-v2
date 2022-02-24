@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
+import { Bars } from "react-loader-spinner";
 import NotFound from "./NotFound";
 import {
   PostCardPreview,
@@ -15,9 +16,8 @@ import {
   removeSearchParam,
   getURLfromFileName,
 } from "../misc";
-import { Bars } from "react-loader-spinner";
 
-const Post = ({ setPage }) => {
+const Post = ({ setPage, reload }) => {
   const [loaded, setLoaded] = useState(false);
   const [postData, setPostData] = useState({});
   const [newsData, setNewsData] = useState([]);
@@ -25,28 +25,29 @@ const Post = ({ setPage }) => {
   const params = useParams();
 
   const cacheName = `news_post_${params.postID}`;
-  function changeImageLink(link){
-    let newData = {...postData};
-    newData.photo = link;
-    setPostData(newData);
 
+  function changeImageLink(link) {
+    setPostData({ ...postData, photo: link });
   }
+
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
     /** Verifies that the API response is valid and returns the processed data. */
     function processJsonData(data) {
       if (data && !data.errorDescription) {
         data.photo = data.photo || DEFAULT_IMAGE;
-        getURLfromFileName(data.photo,"1920x1080",changeImageLink)
+        getURLfromFileName(data.photo, "1920x1080", changeImageLink);
         return data;
       }
       setPostData({ errorMessage: "Post nie istnieje." });
     }
-    function checkLinks(data){
-      getURLfromFileName(data.photo,"1920x1080",changeImageLink)
-         
+
+    function checkLinks(data) {
+      getURLfromFileName(data.photo, "1920x1080", changeImageLink);
+
       setPostData(data);
     }
+
     const args = {
       setData: checkLinks,
       setLoaded,
@@ -77,6 +78,16 @@ const Post = ({ setPage }) => {
     );
     updatePostData(updateCache);
   }, [params.postID]);
+
+  useEffect(() => {
+    console.log(reload);
+    if (!reload) {
+      return;
+    }
+    // The page content has updated on the server side; reload it
+    setLoaded(false);
+    updatePostData();
+  }, [reload]);
 
   if (!loaded) {
     return (

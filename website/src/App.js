@@ -23,6 +23,7 @@ function App() {
   const [isFooterVisible, setFooterVisible] = useState(true);
   const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
   const [checkForUpdates, setCheckForUpdates] = useState(false);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
 
   /** Sets the user accounts cookie to an empty object. */
   function resetUserAccounts() {
@@ -47,33 +48,34 @@ function App() {
       scrollToTop();
     }
     // Check for updates in the API
-    // TODO: Test this and actually refresh if data is updated
-    if (checkForUpdates) {
-      let shouldRefresh = false;
-      fetchWithToken("/lastUpdate/").then((res) => {
-        res.json().then((rawData) => {
-          // remove unnecessary fields
-          const { id, views, ...endpointsUpdated } = rawData;
-          for (const endpoint in endpointsUpdated) {
-            for (const cacheName in localStorage) {
-              if (!cacheName.startsWith(endpoint)) {
-                continue;
-              }
-              const cache = JSON.parse(localStorage.getItem(cacheName));
-              const endpointUpdated = new Date(endpointsUpdated[endpoint]);
-              const cacheDate = new Date(cache.date);
-              if (cacheDate >= endpointUpdated) {
-                // The cache is up to date
-                continue;
-              }
-              localStorage.removeItem(cacheName);
-              shouldRefresh = true;
-            }
-          }
-          console.log("Should refresh:", shouldRefresh);
-        });
-      });
+    if (!checkForUpdates) {
+      return;
     }
+    fetchWithToken("/lastUpdate/").then((res) => {
+      res.json().then((rawData) => {
+        // remove unnecessary fields
+        const { id, views, ...endpointsUpdated } = rawData;
+        let _shouldRefresh = false;
+        for (const cacheName in localStorage) {
+          const endpoint = cacheName.split("_").shift();
+          const endpointUpdated = new Date(endpointsUpdated[endpoint]);
+          const cache = JSON.parse(localStorage.getItem(cacheName));
+          if (new Date(cache?.date) > endpointUpdated) {
+            // Cache is newer than the date it was updated; re
+            continue;
+          }
+          // Check if the cache name is a valid endpoint
+          if (endpointUpdated.toString() !== "Invalid Date") {
+            // The cache is too old
+            console.log("Removing cache", cacheName);
+            localStorage.removeItem(cacheName);
+            _shouldRefresh = true;
+          }
+        }
+        // Only update the state when all caches have been processed
+        _shouldRefresh && setShouldRefresh(true);
+      });
+    });
   }, [page]);
 
   /** Callback to be executed whenever the state of the currently signed in user is changed.
@@ -83,6 +85,7 @@ function App() {
   function setUserCallback(user) {
     if (user) {
       if (user.email.endsWith("@lo1.gliwice.pl")) {
+        // Refresh the user authentication level each time if debug mode is enabled
         if (!cookies.userAccounts[user.email] || DEBUG_MODE) {
           /** Update the cookie with the proper user pemissions. */
           function setUserEditPermissions(userInfo) {
@@ -159,12 +162,24 @@ function App() {
           }
         >
           <Route index element={<Home setPage={setPage} />} />
-          <Route path="aktualnosci" element={<News setPage={setPage} />}>
-            <Route path="post" element={<Post setPage={setPage} />}>
-              <Route path=":postID" element={<Post setPage={setPage} />} />
+          <Route
+            path="aktualnosci"
+            element={<News setPage={setPage} reload={shouldRefresh} />}
+          >
+            <Route
+              path="post"
+              element={<Post setPage={setPage} reload={shouldRefresh} />}
+            >
+              <Route
+                path=":postID"
+                element={<Post setPage={setPage} reload={shouldRefresh} />}
+              />
             </Route>
           </Route>
-          <Route path="wydarzenia" element={<Events setPage={setPage} />} />
+          <Route
+            path="wydarzenia"
+            element={<Events setPage={setPage} reload={shouldRefresh} />}
+          />
           <Route path="kontakt" element={<Contact setPage={setPage} />} />
           <Route
             path="edycja"

@@ -17,7 +17,12 @@ import {
 } from "../misc";
 import { serialiseDateArray } from "../common";
 import { auth, fetchWithToken, storage } from "../firebase";
-import { getDownloadURL, uploadBytesResumable, ref, updateMetadata} from "firebase/storage";
+import {
+  getDownloadURL,
+  uploadBytesResumable,
+  ref,
+  updateMetadata,
+} from "firebase/storage";
 
 const PAGES = {
   news: "Aktualności",
@@ -31,10 +36,10 @@ function PostEdit({ data, loaded, refetchData }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageURL, setImageURL] = useState("");
-  const [imagePath,setImagePath] = useState("");
+  const [imagePath, setImagePath] = useState("");
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
-  const [imgRef,setImgRef] = useState();
+  const [imgRef, setImgRef] = useState();
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
@@ -100,7 +105,7 @@ function PostEdit({ data, loaded, refetchData }) {
     const shortDescription = description.substring(0, 180);
     // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null
     const params = {
-      date: new Date().toJSON(),
+      date: new Date().toISOString(),
       author,
       title,
       text: shortDescription,
@@ -110,7 +115,7 @@ function PostEdit({ data, loaded, refetchData }) {
       photoAuthor: imageAuthor,
       alt: imageAltText,
     };
-   /*
+    /*
     if(imgRef){
       const metadata = {
         customMetadata:{
@@ -142,20 +147,23 @@ function PostEdit({ data, loaded, refetchData }) {
       setClickedDelete(false);
     });
   }
-  function _handlePhotoUpdate(file){
-    if(!file) return;
+  function _handlePhotoUpdate(file) {
+    if (!file) return;
     const storageRef = ref(storage, `/photos/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef,file);
+    const uploadTask = uploadBytesResumable(storageRef, file);
     setImagePath(file.name.split(".")[0]);
-    uploadTask.on("state_changed",(snapshot) =>{
-      const prog = Math.round(100*snapshot.bytesTransferred/snapshot.totalBytes);
-      setImageURL(`Postęp: ${prog}%`);
-    },
-    (error) => console.log(error),
-    ()=>{
-      getDownloadURL(uploadTask.snapshot.ref).
-      then(()=>{
-        /*
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const prog = Math.round(
+          (100 * snapshot.bytesTransferred) / snapshot.totalBytes
+        );
+        setImageURL(`Postęp: ${prog}%`);
+      },
+      (error) => console.log(error),
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(() => {
+          /*
         console.log(url);
         let basefileName = getFileNameFromFirebaseUrl(url);
         console.log(basefileName);
@@ -164,9 +172,9 @@ function PostEdit({ data, loaded, refetchData }) {
         console.log(fullHDfileName);
         setImagePath(fullHDfileName);
         */
-      })
-    });
-
+        });
+      }
+    );
   }
   return (
     <form className="edit-segment" onSubmit={_handleSubmit}>
@@ -201,7 +209,11 @@ function PostEdit({ data, loaded, refetchData }) {
       />
       <InputFile
         placeholder={"Miniatura"}
-        onChange={(e) => {_handlePhotoUpdate(e.target.files[0])} /* TODO: integrate backend image hosting */}
+        onChange={
+          (e) => {
+            _handlePhotoUpdate(e.target.files[0]);
+          } /* TODO: integrate backend image hosting */
+        }
         acceptedExtensions=".jpeg, .jpg, .png"
       />
       <InputBox
@@ -267,8 +279,8 @@ function EventEdit({ data, loaded, refetchData }) {
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
   const [imageURL, setImageURL] = useState("");
-  const [imagePath,setImagePath] = useState();
-  const [imgRef,setImgRef] = useState();
+  const [imagePath, setImagePath] = useState();
+  const [imgRef, setImgRef] = useState();
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
@@ -374,20 +386,23 @@ function EventEdit({ data, loaded, refetchData }) {
     });
   }
 
-  function _handlePhotoUpdate(file){
-    if(!file) return;
+  function _handlePhotoUpdate(file) {
+    if (!file) return;
     const storageRef = ref(storage, `/photos/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef,file);
+    const uploadTask = uploadBytesResumable(storageRef, file);
     setImagePath(file.name.split(".")[0]);
-    uploadTask.on("state_changed",(snapshot) =>{
-      const prog = Math.round(100*snapshot.bytesTransferred/snapshot.totalBytes);
-      setImageURL(`Postęp: ${prog}%`);
-    },
-    (error) => console.log(error),
-    ()=>{
-      getDownloadURL(uploadTask.snapshot.ref).
-      then(()=>{
-        /*
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const prog = Math.round(
+          (100 * snapshot.bytesTransferred) / snapshot.totalBytes
+        );
+        setImageURL(`Postęp: ${prog}%`);
+      },
+      (error) => console.log(error),
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(() => {
+          /*
         console.log(url);
         let basefileName = getFileNameFromFirebaseUrl(url);
         console.log(basefileName);
@@ -396,8 +411,9 @@ function EventEdit({ data, loaded, refetchData }) {
         console.log(fullHDfileName);
         setImagePath(fullHDfileName);
         */
-      })
-    });
+        });
+      }
+    );
   }
   return (
     <form className="edit-segment" onSubmit={_handleSubmit}>
@@ -468,7 +484,9 @@ function EventEdit({ data, loaded, refetchData }) {
       {/* PLACE FOR TEXT EDITOR */}
       <InputFile
         placeholder={"Miniatura"}
-        onChange={(e) => {_handlePhotoUpdate(e.target.files[0])} }
+        onChange={(e) => {
+          _handlePhotoUpdate(e.target.files[0]);
+        }}
         acceptedExtensions=".jpeg, .jpg, .png"
       />
       <InputBox

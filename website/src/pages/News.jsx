@@ -5,11 +5,23 @@ import { Bars } from "react-loader-spinner";
 import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
 import { removeSearchParam } from "../misc";
 
-const News = ({ setPage }) => {
+const News = ({ setPage, reload }) => {
   const [loaded, setLoaded] = useState(false);
   const [newsData, setNewsData] = useState([]);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams({});
+
+  /** Fetches the data from the cache or API. */
+  function _populatePageContents(updateCache = false) {
+    // This raw value is later encoded in the fetchNewsData() function
+    const pageNumber = searchParams.get("page") ?? 1;
+    fetchNewsData({
+      setNewsData,
+      setLoaded,
+      updateCache,
+      pageNumber,
+    });
+  }
 
   useEffect(() => {
     if (params.postID !== undefined) {
@@ -21,15 +33,17 @@ const News = ({ setPage }) => {
       setSearchParams,
       "refresh"
     );
-    // this raw value is later encoded in the fetchNewsData() function
-    const pageNumber = searchParams.get("page") ?? 1;
-    fetchNewsData({
-      setNewsData,
-      setLoaded,
-      updateCache,
-      pageNumber,
-    });
+    _populatePageContents(updateCache);
   }, [params.postID]);
+
+  useEffect(() => {
+    if (!reload) {
+      return;
+    }
+    // The page content has updated on the server side; reload it
+    setLoaded(false);
+    _populatePageContents();
+  }, [reload]);
 
   if (params.postID !== undefined) {
     return <Outlet />;
