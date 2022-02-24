@@ -163,12 +163,13 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
   /** Sets the calendar event subtypes to the default values. */
   function setDefaultSubtypes() {
     // Set the default subtypes
-    docRef.set({ eventSubtypes: defaultCalendarEventTypes });
+    infoDocRef.set({ eventSubtypes: defaultCalendarEventTypes });
     queryCallback(false, defaultCalendarEventTypes);
   }
 
-  const docRef = db.collection("_general").doc("calendarInfo");
-  docRef
+  // Get the calendar event subtypes
+  const infoDocRef = db.collection("_general").doc("calendarInfo");
+  infoDocRef
     .get()
     .then((doc) => {
       const data = doc.data();
@@ -257,7 +258,7 @@ router
       event[attrib] = sanitiser(req.query[attrib]);
     }
 
-    createSingleDocument(event, res, { collectionName: "calendar" });
+    createSingleDocument(event, res, "calendar");
   })
 
   // READ all current calendar events
@@ -311,10 +312,8 @@ router
   })
 
   // UPDATE specific calendar event
-  .put("/:id", (req, res) => {
-    getDocRef(req, res, "calendar").then((docRef) => {
-      updateSingleDocument(docRef, res, req.query, eventAttributeSanitisers);
-    });
-  });
+  .put("/:id", (req, res) =>
+    updateSingleDocument(req, res, "calendar", eventAttributeSanitisers)
+  );
 
 module.exports = router;

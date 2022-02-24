@@ -32,7 +32,7 @@ router
       const sanitiser = eventAttributeSanitisers[attrib];
       data[attrib] = sanitiser(req.query[attrib]);
     }
-    createSingleDocument(data, res, { collectionName: "events" });
+    createSingleDocument(data, res, "events");
   })
 
   // READ single event/link/news
@@ -86,10 +86,8 @@ router
   })
 
   // UPDATE single event
-  .put("/:id", (req, res) => {
-    getDocRef(req, res, "events").then((docRef) =>
-      updateSingleDocument(docRef, res, req.query, eventAttributeSanitisers)
-    );
-  });
+  .put("/:id", (req, res) =>
+    updateSingleDocument(req, res, "events", eventAttributeSanitisers)
+  );
 
 module.exports = router;

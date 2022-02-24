@@ -18,19 +18,21 @@ const HTTP500 = "500 Internal Server Error: ";
 
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
 
-/** If the object contains fields 'date' or 'modified', converts the
- * values from Firebase timestamps to JavaScript Date objects. */
+/** Converts each Firebase timestamp in the object into a JavaScript Date object. */
 function formatTimestamps(dataObject) {
   Object.keys(dataObject).forEach((key) => {
     try {
-      dataObject[key]._seconds;
+      // Check if the object contains Firebase timestamp fields
+      if (dataObject[key]._seconds === undefined) {
+        return;
+      }
     } catch {
+      // The field is not a Firebase timestamp
       return;
     }
-    const seconds = dataObject[key]._seconds;
-    if (seconds === undefined) {
-      return;
-    }
+    const nanoseconds = dataObject[key]._nanoseconds ?? 0;
+    const additionalSeconds = nanoseconds / Math.pow(10, 9);
+    const seconds = dataObject[key]._seconds + additionalSeconds;
     const date = new Date(seconds * 1000); // Date object constructor takes milliseconds
     dataObject[key] = date.toJSON();
   });
@@ -48,26 +50,26 @@ function getDocRef(req, res, collectionName) {
   // get id from url parameters or arguments, e.g. /api/news/foo or /api/news/?id=foo
   const id = req.params.id ?? req.query.id;
 
-  function resolve(_resolve, _reject) {
+  function defaultReject() {
+    // default to sending a HTTP 400 response
+    res
+      .status(400)
+      .json({ errorDescription: HTTP400 + "No document ID specified." });
+  }
+
+  function _getRef(resolve = (docRef) => docRef, reject = defaultReject) {
     // check if the id was provided in the query parameters
     if (id) {
       // initialise query
       const docRef = db.collection(collectionName).doc(id);
       // validation success; execute the given callback function
-      _resolve(docRef);
+      resolve(docRef);
     } else {
-      // id not provided, check if the failure callback is specified
-      if (_reject) {
-        // call the failure callback
-        return _reject();
-      }
-      // default to sending a HTTP 400 response
-      res
-        .status(400)
-        .json({ errorDescription: HTTP400 + "No document ID specified." });
+      // id not provided, call the failure callback
+      reject();
     }
   }
-  return { then: resolve };
+  return { then: _getRef };
 }
 
 /** Splits the string with the given separator and casts each resulting array element into an integer.
@@ -90,15 +92,24 @@ function getIntArray(string, separator, defaultInput) {
   return tmp;
 }
 
+/** This function is called whenever an update is made to any collection (POST/PUT/DELETE). It updates
+ * the information stored in the lastUpdated document to accurately show when the last update was made.
+ */
+function updateCollection(collectionName) {
+  // Set the last updated time for the collection to the current date
+  const newData = { [collectionName]: admin.firestore.Timestamp.now() };
+  db.collection("_general").doc("lastUpdate").set(newData, { merge: true });
+}
+
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
-function createSingleDocument(data, res, { collectionName, collectionRef }) {
+function createSingleDocument(data, res, collectionName) {
   // attempts to add the data to the given collection
-  collectionRef ?? (collectionRef = db.collection(collectionName));
-  collectionRef
+  db.collection(collectionName)
     .add(data)
     .then((doc) => {
+      updateCollection(collectionName);
       // success; return the data along with the document id
       formatTimestamps(data);
       return res.status(200).json({ id: doc.id, ...data });
@@ -114,9 +125,9 @@ function createSingleDocument(data, res, { collectionName, collectionRef }) {
 }
 
 /** Sends a response containing the data of the specified document query. */
-function sendSingleResponse(docQuery, res, sendData = (d) => d) {
+function sendSingleResponse(docRef, res, sendData = (data) => data) {
   // send the query to database
-  docQuery.get().then((doc) => {
+  docRef.get().then((doc) => {
     // check if the document was found
     const data = doc.data();
     if (!data) {
@@ -130,7 +141,7 @@ function sendSingleResponse(docQuery, res, sendData = (d) => d) {
     // increment the views count or start at 1 if it doesn't exist
     const views = (data.views ?? 0) + 1;
     // update views count in database
-    docQuery.update({ views }).then(() => {
+    docRef.update({ views }).then(() => {
       // send document id with rest of the data
       return res.status(200).json(sendData({ id: doc.id, ...data, views }));
     });
@@ -201,33 +212,28 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
 
 /** Updates the document fields and sends a response containing the new data.
  *
- * @param {FirebaseFirestore.DocumentReference} docQuery
+ * @param {FirebaseFirestore.DocumentReference} docRef
  * @param {response} res the HTTP response
  * @param {object} requestParams an object containing key-value pairs of the fields to update
  * @param {object} attributeSanitisers an object containing key-value pairs of attribute names and sanitation functions that validate the input
  */
-function updateSingleDocument(
-  docQuery,
-  res,
-  requestParams,
-  attributeSanitisers = {}
-) {
+function updateSingleDocument(req, res, collectionName, attributeSanitisers) {
   // initialise new data
   const newData = {
     // add parameter indicating when the news was last edited
-    modified: dateToTimestamp(new Date()),
+    modified: admin.firestore.Timestamp.now(),
   };
   // initialise boolean to indicate if any parameters were updated
   let dataUpdated = false;
   // loop through each attribute that should be set
   for (const attrib in attributeSanitisers) {
-    if (!requestParams[attrib]) {
+    if (!req.query[attrib]) {
       // the attribute is not present in the request query
       continue;
     }
     // sanitise the request query value
     const sanitiser = attributeSanitisers[attrib];
-    const sanitisedValue = sanitiser(requestParams[attrib]);
+    const sanitisedValue = sanitiser(req.query[attrib]);
 
     // assign the sanitised value to the updated data object
     newData[attrib] = sanitisedValue;
@@ -241,49 +247,56 @@ function updateSingleDocument(
       errorDescription: HTTP400 + "There were no updated fields provided.",
     });
   }
-  // send the query to database
-  docQuery
-    .update(newData)
-    .then(() => {
-      // send query to db
-      sendSingleResponse(docQuery, res);
-    })
-    .catch((error) => {
-      // return an error when the document was not found/could not be updated
-      return res.status(400).json({
-        errorDescription:
-          HTTP400 +
-          "Could not update the specified document. It most likely does not exist.",
-        errorDetails: error.toString(),
+  // get the document reference
+  getDocRef(req, res, collectionName).then((docRef) => {
+    // send the query to database
+    docRef
+      .update(newData)
+      .then(() => {
+        updateCollection(collectionName);
+        // send query to db
+        sendSingleResponse(docRef, res);
+      })
+      .catch((error) => {
+        // return an error when the document was not found/could not be updated
+        return res.status(400).json({
+          errorDescription:
+            HTTP400 +
+            "Could not update the specified document. It most likely does not exist.",
+          errorDetails: error.toString(),
+        });
       });
-    });
+  });
 }
 
 /** Deletes a document from the database and sends the appropriate response.
  * Note: the action will be treated as success even if the document didn't exist before.
  * This is due to how the Firebase Firestore API works.
  *
- * @param {FirebaseFirestore.DocumentReference} docQuery a reference to the document to delete
+ * @param {FirebaseFirestore.DocumentReference} docRef a reference to the document to delete
  * @param {response} res the HTTP response
  */
-function deleteSingleDocument(docQuery, res) {
-  docQuery
-    .delete()
-    .then(() => {
-      // success deleting document
-      // this may occur even if the document did not exist to begin with
-      return res.status(200).json({
-        msg: `Success! Document with ID '${docQuery.id}' has been deleted.`,
+function deleteSingleDocument(req, res, collectionName) {
+  getDocRef(req, res, collectionName).then((docRef) => {
+    docRef
+      .delete()
+      .then(() => {
+        // success deleting document
+        // this may occur even if the document did not exist to begin with
+        updateCollection(collectionName);
+        return res.status(200).json({
+          msg: `Success! Document with ID '${docRef.id}' has been deleted.`,
+        });
+      })
+      .catch((error) => {
+        return res.status(500).json({
+          errorDescription:
+            HTTP500 +
+            "Could not delete the specified document. This does not mean that it doesn't exist.",
+          errorDetails: error.toString(),
+        });
       });
-    })
-    .catch((error) => {
-      return res.status(500).json({
-        errorDescription:
-          HTTP500 +
-          "Could not delete the specified document. This does not mean that it doesn't exist.",
-        errorDetails: error.toString(),
-      });
-    });
+  });
 }
 
 module.exports = {
@@ -299,6 +312,7 @@ module.exports = {
   dateToTimestamp,
   getDocRef,
   getIntArray,
+  updateCollection,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,

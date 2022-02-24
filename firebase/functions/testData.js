@@ -105,12 +105,8 @@ function createTestData(res) {
         content: "Wydłużona treść postu.",
         photo: testData.photo,
       };
-      const dummyRes = {
-        status: () => {
-          return { json: (data) => data };
-        },
-      };
-      createSingleDocument(data, dummyRes, { collectionName: "news" });
+      const dummyRes = { status: () => ({ json: (data) => data }) };
+      createSingleDocument(data, dummyRes, "news");
     }
   }
   res.status(200).json({ msg: `Success! Created ${counter} documents.` });

@@ -19,6 +19,20 @@ const authMiddleware = require("./authMiddlewareV2");
 // initialise express
 const app = express();
 
+// define server region name for Firebase app
+const SERVER_REGION = "europe-west1";
+
+// define the routes that the API is able to serve
+const ROUTES = [
+  "news",
+  "links",
+  "events",
+  "calendar",
+  "lastUpdate",
+  "luckyNumbers",
+  // "calendar/:year",
+];
+
 // default CORS options:
 /* {
   "origin": "*",
@@ -31,24 +45,12 @@ app.use(cors());
 app.use("/api/", authMiddleware);
 
 // set individual API routes
-app.use("/api/luckyNumbers/", require("./routes/luckyNumbers"));
 app.use("/api/news/", require("./routes/news"));
 app.use("/api/links/", require("./routes/links"));
-app.use("/api/calendar/", require("./routes/calendar"));
 app.use("/api/events/", require("./routes/events"));
-
-// define server region name for Firebase app
-const SERVER_REGION = "europe-west1";
-
-// define the routes that the API is able to serve
-const definedRoutes = [
-  "calendar",
-  "calendar/:year",
-  "events",
-  "links",
-  "luckyNumbers",
-  "news",
-];
+app.use("/api/calendar/", require("./routes/calendar"));
+app.use("/api/lastUpdate/", require("./routes/lastUpdate")(ROUTES));
+app.use("/api/luckyNumbers/", require("./routes/luckyNumbers"));
 
 // define sort options for sending list responses
 const sortOptions = {
@@ -81,23 +83,9 @@ for (const endpoint of ["calendar", "events", "links", "news"]) {
   }
 
   // DELETE single calendar event/event/link/news
-  app.delete(`/api/${endpoint}/:id`, (req, res) => {
-    getDocRef(req, res, endpoint).then((docRef) =>
-      deleteSingleDocument(docRef, res)
-    );
-  });
-}
-
-for (const route of definedRoutes) {
-  // catch all requests to paths that are listed above but use the incorrect HTTP method
-  for (const pathSuffix of ["/", "/:foo"]) {
-    app.all("/api/" + route + pathSuffix, (req, res) => {
-      console.log(`Received invalid request method: ${req.method} ${req.path}`);
-      return res.status(405).json({
-        errorDescription: `${HTTP.err405}Cannot ${req.method} '${req.path}'.`,
-      });
-    });
-  }
+  app.delete(`/api/${endpoint}/:id`, (req, res) =>
+    deleteSingleDocument(req, res, endpoint)
+  );
 }
 
 // define dummy route for user permissions authentication
@@ -112,6 +100,18 @@ app.all("/api/", (req, res) => {
     msg: "User authentication failed: no API token. You may still access public endpoints.",
   });
 });
+
+for (const route of ROUTES) {
+  // catch all requests to paths that are listed above but use the incorrect HTTP method
+  for (const pathSuffix of ["/", "/:foo"]) {
+    app.all("/api/" + route + pathSuffix, (req, res) => {
+      console.log(`Received invalid request method: ${req.method} ${req.path}`);
+      return res.status(405).json({
+        errorDescription: `${HTTP.err405}Cannot ${req.method} '${req.path}'.`,
+      });
+    });
+  }
+}
 
 // catch all requests to paths that are not listed above
 app.all("*", (req, res) => {

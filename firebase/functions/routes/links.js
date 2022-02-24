@@ -68,7 +68,8 @@ function createShortenedURL(res, destination, customURL) {
       // already exists; return the existing short URL
       return res.status(400).json({
         errorDescription:
-          HTTP.err400 + `There is already a URL for destination '${destination}'.`,
+          HTTP.err400 +
+          `There is already a URL for destination '${destination}'.`,
         url: "/" + querySnapshot.docs[0].id,
       });
     }
@@ -113,20 +114,8 @@ router
   })
 
   // UPDATE shortened URL
-  .put("/:url", (req, res) => {
-    // ?destination=null
-    const destination = req.query.destination;
-
-    if (!destination) {
-      return res.status(400).json({
-        errorDescription: HTTP.err400 + "No new destination provided.",
-      });
-    }
-
-    const url = req.params.url;
-
-    const docRef = db.collection("links").doc(url);
-    updateSingleDocument(docRef, res, { destination }, linkAttributeSanitisers);
-  });
+  .put("/:id", (req, res) =>
+    updateSingleDocument(req, res, "links", linkAttributeSanitisers)
+  );
 
 module.exports = router;

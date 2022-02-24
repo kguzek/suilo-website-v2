@@ -1,6 +1,6 @@
 const express = require("express");
 const { dateToArray, serialiseDateArray } = require("../common");
-const { db, HTTP, dateToTimestamp } = require("../util");
+const { db, HTTP, dateToTimestamp, updateCollection } = require("../util");
 
 const router = express.Router();
 
@@ -188,6 +188,7 @@ router
         luckyNumbers.push(selection);
       }
       console.log("Generated new lucky numbers data:", luckyNumbers);
+      updateCollection("luckyNumbers");
       const newData = {
         date: todayString,
         luckyNumbers,

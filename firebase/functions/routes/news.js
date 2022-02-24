@@ -4,7 +4,6 @@ const {
   dateToTimestamp,
   createSingleDocument,
   updateSingleDocument,
-  getDocRef,
 } = require("../util");
 
 const router = express.Router();
@@ -41,14 +40,12 @@ router
       data[attrib] = sanitiser(req.query[attrib]);
     }
 
-    createSingleDocument(data, res, { collectionName: "news" });
+    createSingleDocument(data, res, "news");
   })
 
   // UPDATE news
-  .put("/:id", (req, res) => {
-    getDocRef(req, res, "news").then((docRef) =>
-      updateSingleDocument(docRef, res, req.query, postAttributeSanitisers)
-    );
-  });
+  .put("/:id", (req, res) =>
+    updateSingleDocument(req, res, "news", postAttributeSanitisers)
+  );
 
 module.exports = router;
