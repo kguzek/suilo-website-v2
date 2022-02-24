@@ -93,8 +93,8 @@ const Post = ({ setPage }) => {
   if (postData.errorMessage) {
     return <NotFound setPage={setPage} msg={postData.errorMessage} />;
   }
-  const createdDate = formatDate(postData.date, true);
-  const modifiedDate = formatDate(postData.modified, true);
+  const createdDate = formatDate(postData.date);
+  // const modifiedDate = formatDate(postData.modified, true);
   const views = conjugatePolish(postData.views, "wyświetle", "nie", "nia", "ń");
   return (
     <div className="page-main">
