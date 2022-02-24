@@ -58,14 +58,7 @@ function PostEdit({ data, loaded, refetchData }) {
 
   // Display loading screen if news data hasn't been retrieved yet
   if (!loaded) {
-    return (
-      <div
-        className="loading-whole-screen"
-        style={{ backgroundColor: "transparent" }}
-      >
-        <Bars color="#FFA900" height={50} width={50} />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   const posts = {};
@@ -253,15 +246,8 @@ function EventEdit({ data, loaded, refetchData }) {
   }, [currentlyActive]);
 
   // Display loading screen if events data hasn't been retrieved yet
-  if (!true) {
-    return (
-      <div
-        className="loading-whole-screen"
-        style={{ backgroundColor: "transparent" }}
-      >
-        <Bars color="#FFA900" height={50} width={50} />
-      </div>
-    );
+  if (!loaded) {
+    return <LoadingScreen />;
   }
 
   const events = {};
@@ -334,7 +320,7 @@ function EventEdit({ data, loaded, refetchData }) {
       />
       <InputBox
         name="event-name"
-        placeholder="Nazwa"
+        placeholder="Tytuł"
         maxLength={60}
         value={name}
         onChange={setName}
@@ -471,14 +457,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
 
   // Display loading screen if calendar data hasn't been retrieved yet
   if (!loaded) {
-    return (
-      <div
-        className="loading-whole-screen"
-        style={{ backgroundColor: "transparent" }}
-      >
-        <Bars color="#FFA900" height={50} width={50} />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   const eventSubtypes = data?.eventSubtypes ?? [];
@@ -551,6 +530,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
         defaultLabel="Nowe wydarzenie"
         valueDisplayObject={calendarEvents}
       />
+      {/* TODO: Change this InputBox to an input checkbox/radiobox/dropdown */}
       <InputBox
         maxLength={9}
         name="event-type"
@@ -636,27 +616,6 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   );
 }
 
-/** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
-function LoadingButton({ style = "transparent" }) {
-  let className = "delete-btn";
-  let colour = "#FFA900";
-  if (style === "opaque") {
-    className = "add-btn";
-    colour = "#FFFFFF";
-  }
-  return (
-    <button
-      type="button"
-      className={className}
-      style={{ cursor: "not-allowed" }}
-    >
-      <div style={{ backgroundColor: "transparent" }}>
-        <Bars color={colour} height={25} width={90} />
-      </div>
-    </button>
-  );
-}
-
 export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -728,9 +687,6 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
   }, []);
 
   useEffect(() => {
-    // user is undefined when the page first loads
-    // it is later updated to either null or the user object once the Google API fetch executes
-    console.log(user, userPerms);
     if (userPerms.isAdmin || userPerms.canEdit?.length > 0) {
       // Wait until the user is determined; don't kick out just yet in case the user is logged in
       setPage("edit");
@@ -738,22 +694,16 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
       // User has been determined to be `null`, or they have no edit permissions
       navigate("/");
       setPage("home");
-      // User is not logged in
       if (user === null) {
+        // User is not logged in; show popup
         loginAction();
       }
     }
-  }, [userPerms, user]);
+  }, [userPerms, user, navigate]);
 
   // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {
-    return (
-      <div
-        style={{ backgroundColor: "transparent", marginBottom: "100%" }}
-      >
-        <Bars color="#FFA900" height={50} width={50} />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   const userCanEdit = userPerms.canEdit ?? [];
@@ -821,6 +771,36 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
           refetchData={() => _fetchCalendar(true)}
         />
       )}
+    </div>
+  );
+}
+
+/** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
+function LoadingButton({ style = "transparent" }) {
+  let className = "delete-btn";
+  let colour = "#FFA900";
+  if (style === "opaque") {
+    className = "add-btn";
+    colour = "#FFFFFF";
+  }
+  return (
+    <button
+      type="button"
+      className={className}
+      style={{ cursor: "not-allowed" }}
+    >
+      <div style={{ backgroundColor: "transparent" }}>
+        <Bars color={colour} height={25} width={90} />
+      </div>
+    </button>
+  );
+}
+
+/** Renders a loading screen when the data hasn't loaded yet. */
+function LoadingScreen() {
+  return (
+    <div style={{ backgroundColor: "transparent", marginBottom: "100%" }}>
+      <Bars color="#FFA900" height={50} width={50} />
     </div>
   );
 }

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Hamburger from "hamburger-react";
 import LogoSU from "../media/LogoSU";
-import Blob from "../media/blob";
+// import Blob from "../media/blob";
 
 const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const [isOpen, setOpen] = useState(false);
   const [display, setDisplay] = useState("none");
   const [opacity, setOpacity] = useState(0);

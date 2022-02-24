@@ -4,7 +4,10 @@ import MetaTags from "react-meta-tags";
 import { useCookies } from "react-cookie";
 import { Bars } from "react-loader-spinner";
 import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
-import PostCardPreview, { fetchNewsData, SECONDARY_ITEMS_DEFAULT } from "../components/PostCardPreview";
+import PostCardPreview, {
+  fetchNewsData,
+  SECONDARY_ITEMS_DEFAULT,
+} from "../components/PostCardPreview";
 import SuPhoto from "../media/su-photo.jpg";
 import { formatDate } from "../misc";
 import { fetchWithToken } from "../firebase";
@@ -259,6 +262,7 @@ const Home = ({ setPage }) => {
           className="social-media-btn"
           href="https://www.facebook.com/SUILOGliwice"
           target="_blank"
+          rel="noreferrer"
         >
           <Facebook size={44} strokeWidth={1.35} color="#858585" />
           <p>/SUILOGliwice</p>
@@ -267,6 +271,7 @@ const Home = ({ setPage }) => {
           className="social-media-btn"
           href="https://www.instagram.com/suilo_gliwice/"
           target="_blank"
+          rel="noreferrer"
         >
           <Instagram
             size={44}
@@ -280,6 +285,7 @@ const Home = ({ setPage }) => {
           className="social-media-btn"
           href="https://www.youtube.com/channel/UCOHtZM1JWEVaWs8pZATmZ_g"
           target="_blank"
+          rel="noreferrer"
         >
           <Youtube
             size={44}
@@ -293,6 +299,7 @@ const Home = ({ setPage }) => {
           className="social-media-btn"
           href="https://www.instagram.com/jedynkatv/"
           target="_blank"
+          rel="noreferrer"
         >
           <Instagram
             size={44}
@@ -306,6 +313,7 @@ const Home = ({ setPage }) => {
           className="social-media-btn"
           href="https://www.youtube.com/channel/UC48_30_99lSOq_ZyuTe9yOA"
           target="_blank"
+          rel="noreferrer"
         >
           <Youtube
             size={44}

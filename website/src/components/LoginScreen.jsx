@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 // import { CSSTransition } from 'react-transition-group';
 import { Bars } from "react-loader-spinner";
-import { signInWithGoogle, getResults, fetchWithToken } from "../firebase";
+import { signInWithGoogle, getResults } from "../firebase";
 
 function LoginScreen() {
   // startLogging opens login window :boolean
   const [errorMessage, setErrorMessage] = useState(null);
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const [display, setDisplay] = useState("none");
   const [opacity, setOpacity] = useState(0);
   const [yPos, setYPos] = useState("10vh");
@@ -64,7 +64,8 @@ function LoginScreen() {
     signInWithGoogle();
   }
 
-  function _handleRegister() {
+  function _handleRegister(e) {
+    e && e.preventDefault();
     // TODO: HANDLE NEW USER :INTEGRATE:
     setErrorMessage("Rejestracja nowych kont jest niedostępna");
   }
@@ -75,10 +76,7 @@ function LoginScreen() {
         className="login-container"
         style={{ display: display, opacity: opacity }}
       >
-        <div
-          className="login-bg"
-          onClick={() => removeCookies("loginStage")}
-        />
+        <div className="login-bg" onClick={() => removeCookies("loginStage")} />
         <div className="login-box" style={{ transform: `translateY(${yPos})` }}>
           <img
             alt="Login screen"
@@ -133,7 +131,11 @@ function LoginScreen() {
             </div>
             <p className="register-p">
               Nie masz konta?{" "}
-              <a onClick={() => _handleRegister()} className="register-a">
+              <a
+                href="rejestracja"
+                onClick={_handleRegister}
+                className="register-a"
+              >
                 Zarejestruj się!
               </a>
             </p>
@@ -147,10 +149,7 @@ function LoginScreen() {
         className="login-container"
         style={{ display: display, opacity: opacity }}
       >
-        <div
-          className="login-bg"
-          onClick={() => removeCookies("loginStage")}
-        />
+        <div className="login-bg" onClick={() => removeCookies("loginStage")} />
         <div
           className="login-box"
           style={{
@@ -219,7 +218,11 @@ function LoginScreen() {
             </div>
             <p className="register-p">
               Nie masz konta?{" "}
-              <a onClick={() => _handleRegister()} className="register-a">
+              <a
+                href="rejestracja"
+                onClick={_handleRegister}
+                className="register-a"
+              >
                 Zarejestruj się!
               </a>
             </p>
@@ -228,7 +231,7 @@ function LoginScreen() {
       </div>
     );
   }
-};
+}
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const CookiesAlert = () => {
   const [yPos, setY] = useState("-140px");
   const [display, setDisplay] = useState("none");
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   // user agreed to cookies policy
   const _cookieAgree = () => {
     //action
