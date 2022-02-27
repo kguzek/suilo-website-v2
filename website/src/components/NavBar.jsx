@@ -65,12 +65,12 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
 
   function getIndicatorWidth() {
     const widths = {
-      home: 2.5,
-      news: 4.2,
-      events: 4,
-      contact: 3.1,
-      edit: 2.65,
-      default: 2.5,
+      home: "translate-x-[2rem]",
+      news: "translate-x-[8.425rem]",
+      events: "translate-x-[16.7rem]",
+      contact: "translate-x-[24.55rem]",
+      edit: "translate-x-[31rem]", //TODO
+      default: "translate-x-[2rem]",
     };
     if (page) {
       for (const key in widths) {
@@ -88,12 +88,12 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
 
   function getIndicatorTransform() {
     const transforms = {
-      home: 2,
-      news: 8.65,
-      events: 17.15,
-      contact: 25.35,
-      edit: 31.9,
-      default: 2,
+      home: "w-9",
+      news: "w-[4rem]",
+      events: "w-[3.8rem]",
+      contact: "w-11",
+      edit: "w-8",
+      default: "w-9",
     };
     if (page) {
       for (const key in transforms) {
@@ -111,59 +111,53 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
 
   if (width > 800) {
     return (
-      <div className="nav-bar">
-        <Link to="/" style={{ padding: 0, margin: 0, margionBottom: "-1vh" }}>
+      <div className="w-11/12 xl:w-10/12 flex flex-row justify-between align-middle m-auto relative mt-0">
+        <Link to="/" className="mt-3">
           <LogoSU width="3.5em" height="3.5em" />
         </Link>
-        <div className="nav-box">
+        <div className=" relative">
           <div
-            id="indicator"
-            style={{
-              width: `${getIndicatorWidth()}em`,
-              transform: `translateX(${getIndicatorTransform()}em)`,
-            }}
+            className={`absolute -top-[.1rem] bg-primary h-[.45rem] rounded-b-xl ${getIndicatorWidth()} ${getIndicatorTransform()} transition-all duration-300`}
           />
-          <nav className="nav-desktop">
+          <nav className="mt-5 w-fit m-auto">
             <Link
               to="/"
-              className="link-box"
-              style={{ color: page === "home" ? "#111111" : "#5B5B5B" }}
+              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "home" ? "text-text1" : "text-text4"}`}
             >
               Główna
             </Link>
             <Link
               to="aktualnosci"
-              className="link-box"
-              style={{ color: page === "news" ? "#111111" : "#5B5B5B" }}
+              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "news" ? "text-text1" : "text-text4"}`}
             >
               Aktualności
             </Link>
             <Link
               to="wydarzenia"
-              className="link-box"
-              style={{ color: page === "events" ? "#111111" : "#5B5B5B" }}
+              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "events" ? "text-text1" : "text-text4"}`}
             >
               Wydarzenia
             </Link>
             <Link
               to="kontakt"
-              className="link-box"
-              style={{ color: page === "contact" ? "#111111" : "#5B5B5B" }}
+              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "contact" ? "text-text1" : "text-text4"}`}
             >
               Kontakt
             </Link>
             {userIsEditor ? (
               <Link
                 to="edycja"
-                className="link-box"
-                style={{ color: page === "edit" ? "#111111" : "#5B5B5B" }}
+                className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "edit" ? "text-text1" : "text-text4"}`}
               >
                 Edycja
               </Link>
             ) : null}
           </nav>
         </div>
-        <button className="login-btn" onClick={() => _handleLogin()}>
+        <button
+          className="text-sm font-medium text-primary bg-white rounded-lg h-fit my-auto px-6 py-3 -ml-6"
+          onClick={() => _handleLogin()}
+        >
           {userInfo ? "Wyloguj się" : "Zaloguj się"}
         </button>
       </div>
@@ -171,7 +165,9 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
   } else {
     return (
       <div className="flex flex-row justify-between align-middle w-11/12 m-auto relative pt-4">
-        <LogoSU width={40} height={40} />
+        <Link to="/">
+          <LogoSU width={40} height={40} />
+        </Link>
         <div className="relative w-3/4">
           <div
             className={`
@@ -215,7 +211,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   ${isOpen ? "flex" : "hidden"}
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "home" ? "text-text1" : "text-text4"}
+                  ${page === "home" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
                   text-xl
                   px-6
@@ -234,7 +230,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   ${isOpen ? "flex" : "hidden"}
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "news" ? "text-text1" : "text-text4"}
+                  ${page === "news" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
                   text-xl
                   px-6
@@ -253,7 +249,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   ${isOpen ? "flex" : "hidden"}
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "events" ? "text-text1" : "text-text4"}
+                  ${page === "events" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
                   text-xl
                   px-6
@@ -272,7 +268,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   ${isOpen ? "flex" : "hidden"}
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "contact" ? "text-text1" : "text-text4"}
+                  ${page === "contact" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
                   text-xl
                   px-6
@@ -292,7 +288,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                   className={`
                   ${isOpen ? "flex" : "hidden"}
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "edit" ? "text-text1" : "text-text4"}
+                  ${page === "edit" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
                   text-xl
                   px-6
