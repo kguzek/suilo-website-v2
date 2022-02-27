@@ -13,6 +13,7 @@ module.exports = {
         text1: "#111111",
         text2: "#2E2E2E",
         text3: "#969696",
+        footer: "#434343"
       },
       fontFamily: {
         sans: [

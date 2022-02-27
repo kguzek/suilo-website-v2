@@ -21,8 +21,8 @@ const CookiesAlert = () => {
   }, [isOpen])
 
   if (isOpen === null) { //IDK WHY IT DOESNT WORK FIX OR CHECK PLS
-    console.log("ZGODA NA COOKIES:" + Boolean(localStorage.getItem("cookiesEnabled")))
-    setIsOpen(Boolean(!localStorage.getItem("cookiesEnabled")))
+    console.log("ZGODA NA COOKIES:" + localStorage.getItem("cookiesEnabled"))
+    setIsOpen(!localStorage.getItem("cookiesEnabled"))
     return null;
   }
   return (
@@ -37,10 +37,10 @@ const CookiesAlert = () => {
         </p>
       </div>
       <div className="flex flex-row-reverse md:flex-col justify-center align-middle">
-        <button className="cursor-pointer px-5 py-2 bg-gradient-to-br from-primary to-secondary text-white rounded-2lg drop-shadow-sm hover:drop-shadow-md transition-all duration-200 active:shadow-sm" onClick={() => _cookieAgree()}>
+        <button className="px-5 py-2 bg-gradient-to-br from-primary to-secondary text-white rounded-2lg drop-shadow-sm hover:drop-shadow-md transition-all duration-200 active:shadow-sm" onClick={() => _cookieAgree()}>
           <p className="my-px whitespace-nowrap font-regular">Wyrażam zgodę</p>
         </button>
-        <button className="cursor-pointer mt-3 mr-4 md:mr-0 lg:mt-4 lg:-mb-3 group" onClick={() => _cookieDisagree()}>
+        <button className="mt-3 mr-4 md:mr-0 lg:mt-4 lg:-mb-3 group" onClick={() => _cookieDisagree()}>
           <p className="my-px text-sm text-center text-primary whitespace-nowrap transition group-hover:text-amber-600">Nie wyrażam zgody</p>
         </button>
       </div>
