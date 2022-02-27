@@ -155,7 +155,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
           </nav>
         </div>
         <button
-          className="text-sm font-medium text-primary bg-white rounded-lg h-fit my-auto px-6 py-3 -ml-6"
+          className="text-sm font-medium text-primary bg-white rounded-lg h-fit my-auto px-6 py-3 -ml-7"
           onClick={() => _handleLogin()}
         >
           {userInfo ? "Wyloguj się" : "Zaloguj się"}
