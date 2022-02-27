@@ -112,12 +112,6 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
   if (width > 800) {
     return (
       <div className="nav-bar">
-        {/* <div className="blob" style={{ top: "-580px", left: "-830px", transform: "rotate(97deg)" }}>
-                    <Blob width="1000px" height="900px" />
-                </div>
-                <div className="blob" style={{ top: "-300px", right: "-750px", transform: "rotate(12deg)" }}>
-                    <Blob width="1200px" height="1400px" />
-                </div> */}
         <Link to="/" style={{ padding: 0, margin: 0, margionBottom: "-1vh" }}>
           <LogoSU width="3.5em" height="3.5em" />
         </Link>
@@ -176,22 +170,22 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
     );
   } else {
     return (
-      <div className="nav-bar" style={{ paddingLeft: "3em" }}>
-        <LogoSU width={38} height={38} />
-        <div style={{ position: "relative" }}>
+      <div className="flex flex-row justify-between align-middle w-11/12 m-auto relative pt-4">
+        <LogoSU width={40} height={40} />
+        <div className="relative w-3/4">
           <div
-            className="mobile-top"
-            style={{
-              backgroundColor: bgColor,
-              boxShadow: isOpen
-                ? "0 5px 25px rgba(60, 50, 0, .1)"
-                : "0 7px 40px rgba(60, 50, 0, 0)",
-              height: yHeight,
-              maxHeight: yHeight,
-              minHeight: yHeight,
-            }}
+            className={`
+              ${isOpen ? "bg-white" : "bg-transparent"}
+              ${isOpen ? "drop-shadow-2xl" : "drop-shadow-none"}
+              ${isOpen ? "h-fit" : "h-11"}
+              absolute right-0 -top-2
+              transition-all
+              w-full
+              z-50
+              duration-200
+            `}
           >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div className="flex justify-between">
               <div />
               <Hamburger
                 toggled={isOpen}
@@ -204,54 +198,90 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
               />
             </div>
             <nav
-              className="nav-mobile"
-              style={{ display: display, opacity: opacity }}
+              className={`
+                ${isOpen ? "flex" : "hidden"}
+                ${isOpen ? "opacity-100" : "opacity-0"}
+                flex-col
+                relative
+                justify-center
+                align-top
+                transition-all
+                duration-200
+              `}
             >
               <Link
                 onClick={() => setOpen(false)}
                 to="/"
-                className="link-box-mobile"
-                style={{
-                  color: page === "home" ? "#111111" : "#5B5B5B",
-                  opacity: isOpen | 0,
-                  pointerEvents: isOpen ? "all" : "none",
-                }}
+                className={`
+                  ${isOpen ? "flex" : "hidden"}
+                  ${isOpen ? "opacity-100" : "opacity-0"}
+                  ${page === "home" ? "text-text1" : "text-text4"}
+                  w-fit
+                  text-xl
+                  px-6
+                  py-2
+                  my-2
+                  m-auto
+                  transition-all
+                  duration-200
+                `}
               >
                 Główna
               </Link>
               <Link
                 onClick={() => setOpen(false)}
                 to="aktualnosci"
-                className="link-box-mobile"
-                style={{
-                  color: page === "news" ? "#111111" : "#5B5B5B",
-                  opacity: isOpen | 0,
-                  pointerEvents: isOpen ? "all" : "none",
-                }}
+                className={`
+                  ${isOpen ? "flex" : "hidden"}
+                  ${isOpen ? "opacity-100" : "opacity-0"}
+                  ${page === "news" ? "text-text1" : "text-text4"}
+                  w-fit
+                  text-xl
+                  px-6
+                  py-2
+                  my-2
+                  m-auto
+                  transition-all
+                  duration-200
+                `}
               >
                 Aktualności
               </Link>
               <Link
                 onClick={() => setOpen(false)}
                 to="wydarzenia"
-                className="link-box-mobile"
-                style={{
-                  color: page === "events" ? "#111111" : "#5B5B5B",
-                  opacity: isOpen | 0,
-                  pointerEvents: isOpen ? "all" : "none",
-                }}
+                className={`
+                  ${isOpen ? "flex" : "hidden"}
+                  ${isOpen ? "opacity-100" : "opacity-0"}
+                  ${page === "events" ? "text-text1" : "text-text4"}
+                  w-fit
+                  text-xl
+                  px-6
+                  py-2
+                  my-2
+                  m-auto
+                  transition-all
+                  duration-200
+                `}
               >
                 Wydarzenia
               </Link>
               <Link
                 onClick={() => setOpen(false)}
                 to="kontakt"
-                className="link-box-mobile"
-                style={{
-                  color: page === "contact" ? "#111111" : "#5B5B5B",
-                  opacity: isOpen | 0,
-                  pointerEvents: isOpen ? "all" : "none",
-                }}
+                className={`
+                  ${isOpen ? "flex" : "hidden"}
+                  ${isOpen ? "opacity-100" : "opacity-0"}
+                  ${page === "contact" ? "text-text1" : "text-text4"}
+                  w-fit
+                  text-xl
+                  px-6
+                  py-2
+                  my-2
+                  m-auto
+                  transition-all
+                  duration-200
+                `}
               >
                 Kontakt
               </Link>
@@ -259,36 +289,48 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 <Link
                   onClick={() => setOpen(false)}
                   to="edycja"
-                  className="link-box-mobile"
-                  style={{
-                    color: page === "edit" ? "#111111" : "#5B5B5B",
-                    opacity: isOpen | 0,
-                    pointerEvents: isOpen ? "all" : "none",
-                  }}
+                  className={`
+                  ${isOpen ? "flex" : "hidden"}
+                  ${isOpen ? "opacity-100" : "opacity-0"}
+                  ${page === "edit" ? "text-text1" : "text-text4"}
+                  w-fit
+                  text-xl
+                  px-6
+                  py-2
+                  my-2
+                  m-auto
+                  transition-all
+                  duration-200
+                `}
                 >
                   {" "}
                   Edycja
                 </Link>
               ) : null}
               <div
-                className="login-btn-mobile"
+                className={`
+                  ${isOpen ? "opacity-100" : "opacity-0"}
+                  bg-primary
+                  m-auto
+                  w-fit
+                  inline-flex
+                  justify-center
+                  mt-6
+                  py-3
+                  px-6 
+                  mb-7 
+                  drop-shadow-md
+                  cursor-pointer
+                  transition-all
+                  duration-200
+                  rounded-lg
+                `}
                 onClick={() => {
                   _handleLogin();
                   setOpen(false);
                 }}
-                style={{
-                  backgroundColor: "#FFA900",
-                  width: "25em",
-                  margin: "auto",
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "7em",
-                  opacity: isOpen | 0,
-                  pointerEvents: isOpen ? "all" : "none",
-                  transition: "all 200ms ease-in-out",
-                }}
               >
-                <p style={{ color: "#fff" }}>
+                <p className="text-white text-md font-medium">
                   {userInfo ? "Wyloguj się" : "Zaloguj się"}
                 </p>
               </div>
