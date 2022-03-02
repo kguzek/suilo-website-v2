@@ -611,106 +611,15 @@
   border: none;
 }
 
-.home-section-header {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  width: 100%;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-box-align: end;
-      -ms-flex-align: end;
-          align-items: flex-end;
-}
-
-.home-section-header h2 {
-  color: #111111;
-  font-weight: 600;
-  font-size: 1.7em;
-  margin: 0;
-  padding: 0;
-}
-
-.link-more {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  text-decoration: none;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  margin-top: 6em;
-}
-
-.link-more p {
-  color: #FFA900;
-  margin: 0;
-  padding: 0;
-  padding-right: .5em;
-  font-weight: 500;
-}
-
 .home-3 {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (calc(20% - 1.2em))[5];
-      grid-template-columns: repeat(5, calc(20% - 1.2em));
+  -ms-grid-columns: (calc(50% - .8em))[2];
+      grid-template-columns: repeat(2, calc(50% - .8em));
   grid-gap: 1.5em;
   margin-top: 1em;
   margin-bottom: 3.5em;
   max-width: 100%;
-}
-
-.home-4 {
-  display: -ms-grid;
-  display: grid;
-  -ms-grid-columns: (calc(20% - 5em))[5];
-      grid-template-columns: repeat(5, calc(20% - 5em));
-  grid-gap: 6em;
-  margin-top: 1.5em;
-  margin-bottom: 1em;
-  max-width: 100%;
-  width: 100%;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-
-.social-media-btn {
-  cursor: poiner;
-  pointer-events: all;
-  color: #858585;
-  font-weight: 600;
-  font-size: 1.1em;
-  padding: 0;
-  margin: 0;
-  letter-spacing: .0125em;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  opacity: .75;
-  -webkit-transition: all 200ms ease-in-out;
-  transition: all 200ms ease-in-out;
-}
-
-.social-media-btn:hover {
-  opacity: 1;
 }
 
 .primary-grid {

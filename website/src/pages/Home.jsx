@@ -83,11 +83,11 @@ const Home = ({ setPage }) => {
 
   const _scrollDown = () => {
     document
-      .getElementsByClassName("home-2")[0]
+      .getElementById("home-2")
       .scrollIntoView({ behavior: "smooth", block: "start" });
   };
   return (
-    <div className="page-main">
+    <div className="flex w-11/12 xl:w-10/12 flex-col justify-center align-top">
       <MetaTags>
         <title>
           Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach
@@ -102,139 +102,124 @@ const Home = ({ setPage }) => {
         />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
-      <div className="home-1">
-        <div className="CTA">
-          <h1>Samorząd Uczniowski</h1>
-          <h4>I Liceum Ogólnokształcącego w Gliwicach</h4>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              marginTop: "0em",
-            }}
-          >
-            <Link to="/aktualnosci" className="CTA-primary">
+      <div className="h-[87vh] w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
+        <div className="flex flex-col pb-3 col-span-1 lg:col-span-3">
+          <h1 className="font-bold text-text1 text-5xl pb-2 lg:text-10xl lg:pb-0">Samorząd Uczniowski</h1>
+          <h4 className="font-normal text-text4 pb-1 mb-4 text-xl sm:text-2xl ">I Liceum Ogólnokształcącego w Gliwicach</h4>
+          <div className="inline-flex flex-row justify-start align-middle">
+            <Link to="/aktualnosci" className="text-white text-md sm:text-lg font-medium whitespace-nowrap bg-gradient-to-br from-primary to-secondary rounded-2xl px-5 py-2 sm:py-[.625rem] sm:px-8 drop-shadow-3xl hover:drop-shadow-4xl active:drop-shadow-5xl hover:scale-[1.015] active:scale-[.985] animate-all">
               Nasze działania
             </Link>
             <Link
               to="/kontakt"
-              className="CTA-secondary"
-              style={{ marginLeft: "1.5em" }}
+              className="ml-9 sm:ml-10 etxt-primary py-2 sm:py-[.625rem] text-md sm:text-lg font-regular transition-all hover:text-primaryDark"
             >
               Kontakt
             </Link>
           </div>
         </div>
         <div
-          className="LN"
+          className="flex flex-col pt-14 lg:pt-0 col-span-1 lg:col-span-2 sm:pt-7 sm:-mb-6 lg:mb-0"
           title={`Szczęśliwe numerki na ${forDate} to ${luckyNumbers[0]} i ${luckyNumbers[1]}.`}
         >
-          <h5>Szczęśliwe numerki:</h5>
-          <div className="LN-box">
-            <div className="LN-container">
-              <p className="LN-txt">{luckyNumbers[0]}</p>
+          <h5 className="font-light text-text2 text-xl lg:text-white lg:text-2xl text-right mt-5 lg:mt-0 pt-3 pb-2 ">Szczęśliwe numerki:</h5>
+          <div className="flex flex-row justify-end">
+            <div className="bg-white rounded-2xl w-28 md:w-32 lg:w-[8.5rem] lg:rounded-[1.35rem] transition-all aspect-LN justify-center align-middle inline-flex drop-shadow-3xl ">
+              <p className="font-extrabold text-primary text-6xl md:text-7xl m-auto">{luckyNumbers[0]}</p>
             </div>
-            <div className="LN-container">
-              <p className="LN-txt">{luckyNumbers[1]}</p>
+            <div className="bg-white rounded-2xl w-28 md:w-32 lg:w-[8.5rem] lg:rounded-[1.35rem] transition-all aspect-LN justify-center align-middle inline-flex drop-shadow-3xl ml-5">
+              <p className="font-extrabold text-primary text-6xl md:text-7xl m-auto">{luckyNumbers[1]}</p>
             </div>
           </div>
-          <h5
-            style={{
-              paddingTop: ".45em",
-              fontSize: "1.4em",
-              opacity: ".9",
-              paddingBottom: "2vh",
-            }}
-          >
+          <h5 className="opacity-90 font-normal pt-2 text-lg lg:text-xl text-text2 lg:text-white text-right">
             {forDate}
           </h5>
         </div>
-        <div className="more" onClick={() => _scrollDown()}>
-          <div className="more1" />
-          <div className="more2">więcej</div>
+        <div className="more animate-bounce -rotate-90 duration-[5000]" onClick={() => _scrollDown()}>
+          <div className="-rotate-90 origin-bottom-left">
+            <div className="more1" />
+            <div className="more2">więcej</div>
+          </div>
         </div>
       </div>
-      <div className="home-2">
-        <div className="top-description">
-          <div className="description-image">
+      <div id="home-2" className="w-full my-24 py-9 pb-0 mb-14 lg:mb-16">
+        <div className="grid w-full grid-cols-1 lg:grid-cols-2 m-auto relative">
+          <div className="w-full rounded-xl relative lg:pr-10">
             <img
+              className="drop-shadow-2lg rounded-xl md:rounded-3xl"
               src={SuPhoto}
               alt="Zdjęcie przewodniczących wchodzących w główny skład Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
             />
           </div>
-          <div
-            className="info-part"
+          <article
+            className="w-full lg:pl-3 lg:m-auto"
             title="Kim jest Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <h2 className="description-header" title="informacje o Samorządzie">
+            <h2 className="text-text1 font-bold text-3xl xl:text-4xl pt-5 lg:pt-0">
               Nasza drużyna
             </h2>
-            <p className="description-p">
+            <p className="text-text2 font-normal leading-8 text-lg xl:text-xl xl:leading-9 text-justify pt-3">
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
               nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
               erat, sed diam voluptua. At vero eos et accusam et justo duo
               dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
               sanctus est Lorem ipsum dolor sit amet. Lorem
             </p>
-          </div>
+          </article>
         </div>
       </div>
-      <div className="main-roles">
-        <div className="person-container">
-          <p className="person-class">2C</p>
-          <img className="person-avatar" alt="Szymon Wróbel" />
+      <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-2 sm:gap-4 mb-20 place-content-stretch place-items-center lg:gap-8 xl:gap-16 lg:w-11/12 m-auto">
+        <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
+          <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">2C</p>
+          <img className="z-10 bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Szymon Wróbel" />
           <div
-            className="person-description"
+            className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Marszałek Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="person-name">Szymon Wróbel</p>
-            <p className="person-role">Marszałek</p>
+            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Szymon Wróbel</p>
+            <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">Marszałek</p>
           </div>
         </div>
-        <div className="person-container">
-          <p className="person-class">3Ap</p>
-          <img className="person-avatar" alt="Adam Kurzak" />
+        <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
+          <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">3Ap</p>
+          <img className="z-10 bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Adam Kurzak" />
           <div
-            className="person-description"
+            className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Sekretarz Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="person-name">Adam Kurzak</p>
-            <p className="person-role">Sekretarz</p>
+            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Adam Kurzak</p>
+            <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">Sekretarz</p>
           </div>
         </div>
-        <div className="person-container">
-          <p className="person-class">3Bg</p>
-          <img className="person-avatar" alt="Mikołaj Mrózek" />
+        <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
+          <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">3Bg</p>
+          <img className="z-10 bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Mikołaj Mrózek" />
           <div
-            className="person-description"
+            className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Skarbnik i Konsultant Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="person-name">Mikołaj Mrózek</p>
-            <p className="person-role">Skarbink; Konsultant</p>
+            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Mikołaj Mrózek</p>
+            <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">Skarbink; Konsultant</p>
           </div>
         </div>
-        <div className="person-container">
-          <img className="person-avatar" alt="Barbara Białowąs" />
+        <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
+          <img className="z-10 bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Barbara Białowąs" />
           <div
-            className="person-description"
+            className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Opiekun Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="person-name">Barbara Białowąs</p>
-            <p className="person-role">Opiekun</p>
+            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Barbara Białowąs</p>
+            <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">Opiekun</p>
           </div>
         </div>
       </div>
-      <div className="home-section-header">
-        <h2>Aktualności</h2>
-        <Link to="/aktualnosci" className="link-more">
-          <p>zobacz wszystko</p>
+      <div className="w-full justify-between inline-flex align-bottom flex-row mt-16">
+        <h2 className="text-text1 font-semibold text-2xl lg:text-3xl text-left">Aktualności</h2>
+        <Link to="/aktualnosci" className="inline-flex flex-row align-middle group transition-all pt-1">
+          <p className="text-primary font-medium m-auto group-hover:text-primaryDark transition-all text-sm sm:text-base">zobacz wszystko</p>
           <ArrowRight
             size={22}
-            strokeWidth={"2px"}
-            style={{ marginBottom: "-0em" }}
-            color="#FFA900"
+            className="m-auto mb-[.2rem] ml-1 stroke-primary group-hover:stroke-primaryDark transition-all stroke-[1.75] sm:stroke-2"
           />
         </Link>
       </div>
@@ -245,7 +230,7 @@ const Home = ({ setPage }) => {
           linkPrefix="aktualnosci/post/"
           classOverride="home-3"
           startIndex={0}
-          numItems={5}
+          numItems={2}
         />
       ) : (
         <div
@@ -257,18 +242,18 @@ const Home = ({ setPage }) => {
         </div>
       )}
 
-      <div className="home-4">
+      <div className="flex flex-row flex-wrap justify-center align-middle mb-5 mt-4">
         <a
-          className="social-media-btn"
+          className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
           href="https://www.facebook.com/SUILOGliwice"
           target="_blank"
           rel="noreferrer"
         >
           <Facebook size={44} strokeWidth={1.35} color="#858585" />
-          <p>/SUILOGliwice</p>
+          <p className="font-semibold text-lg tracking-wide m-auto">/SUILOGliwice</p>
         </a>
         <a
-          className="social-media-btn"
+          className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
           href="https://www.instagram.com/suilo_gliwice/"
           target="_blank"
           rel="noreferrer"
@@ -279,10 +264,10 @@ const Home = ({ setPage }) => {
             color="#858585"
             style={{ marginRight: ".4em" }}
           />
-          <p>/suilo_gliwice</p>
+          <p className="font-semibold text-lg tracking-wide m-auto">/suilo_gliwice</p>
         </a>
         <a
-          className="social-media-btn"
+          className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
           href="https://www.youtube.com/channel/UCOHtZM1JWEVaWs8pZATmZ_g"
           target="_blank"
           rel="noreferrer"
@@ -293,10 +278,10 @@ const Home = ({ setPage }) => {
             color="#858585"
             style={{ marginRight: ".4em" }}
           />
-          <p>/SUILOGliwice</p>
+          <p className="font-semibold text-lg tracking-wide m-auto">/SUILOGliwice</p>
         </a>
         <a
-          className="social-media-btn"
+          className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
           href="https://www.instagram.com/jedynkatv/"
           target="_blank"
           rel="noreferrer"
@@ -307,10 +292,10 @@ const Home = ({ setPage }) => {
             color="#858585"
             style={{ marginRight: ".4em" }}
           />
-          <p>/jedynkatv</p>
+          <p className="font-semibold text-lg tracking-wide m-auto">/jedynkatv</p>
         </a>
         <a
-          className="social-media-btn"
+          className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
           href="https://www.youtube.com/channel/UC48_30_99lSOq_ZyuTe9yOA"
           target="_blank"
           rel="noreferrer"
@@ -321,7 +306,7 @@ const Home = ({ setPage }) => {
             color="#858585"
             style={{ marginRight: ".4em" }}
           />
-          <p>/JedynkaTV</p>
+          <p className="font-semibold text-lg tracking-wide m-auto">/JedynkaTV</p>
         </a>
       </div>
     </div>
