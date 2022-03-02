@@ -209,7 +209,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 onClick={() => setOpen(false)}
                 to="/"
                 className={`
-                  ${isOpen ? "flex" : "hidden"}
+                  flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
                   ${page === "home" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
@@ -228,7 +228,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 onClick={() => setOpen(false)}
                 to="aktualnosci"
                 className={`
-                  ${isOpen ? "flex" : "hidden"}
+                  flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
                   ${page === "news" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
@@ -247,7 +247,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 onClick={() => setOpen(false)}
                 to="wydarzenia"
                 className={`
-                  ${isOpen ? "flex" : "hidden"}
+                  flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
                   ${page === "events" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
@@ -266,7 +266,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 onClick={() => setOpen(false)}
                 to="kontakt"
                 className={`
-                  ${isOpen ? "flex" : "hidden"}
+                  flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
                   ${page === "contact" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
@@ -286,7 +286,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                   onClick={() => setOpen(false)}
                   to="edycja"
                   className={`
-                  ${isOpen ? "flex" : "hidden"}
+                  flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
                   ${page === "edit" ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
