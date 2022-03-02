@@ -72,7 +72,7 @@ export function ScrollToTop() {
   return (
     <button
       title="scroll to top"
-      className={`${display} ${yPos} ${opacity} bg-white p-2 border-none justify-center align-middle fixed bottom-3 right-3 rounded-lg cursor-pointer drop-shadow-xl transition-all duration-300`}
+      className={`${display} ${yPos} ${opacity} bg-white z-50 p-2 border-none justify-center align-middle fixed bottom-3 right-3 rounded-lg cursor-pointer drop-shadow-xl transition-all duration-300`}
       onClick={() => scrollToTop()}
     >
       <ChevronsUp size="38" strokeWidth="1.5px" color="#FFA900" />
