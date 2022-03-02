@@ -245,8 +245,8 @@ function Layout({
         loginAction={loginAction}
         logoutAction={logoutAction}
       />
-      <ScrollToTop />
       <Outlet />
+      <ScrollToTop />
       <LoginScreen />
       <Footer isVisible={isFooterVisible} />
     </main>
