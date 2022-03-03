@@ -242,7 +242,7 @@ const Home = ({ setPage }) => {
         </div>
       )}
 
-      <div className="flex flex-row flex-wrap justify-center align-middle mb-5 mt-4">
+      <div className="flex flex-row flex-wrap justify-center align-middle mb-5 mt-4 lg:w-full lg:justify-around">
         <a
           className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
           href="https://www.facebook.com/SUILOGliwice"
