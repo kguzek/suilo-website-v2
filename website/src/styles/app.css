@@ -640,7 +640,6 @@
   width: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  height: 16em;
   border-radius: 1.4em;
   aspect-ratio: 16/9;
   -webkit-box-shadow: 0 5px 10px rgba(80, 60, 0, 0.05);
@@ -703,8 +702,8 @@
       -ms-flex-align: center;
           align-items: center;
   text-decoration: none;
-  -webkit-transition: all 150ms ease-in-out;
-  transition: all 150ms ease-in-out;
+  -webkit-transition: opacity 150ms ease-in-out;
+  transition: opacity 150ms ease-in-out;
 }
 
 .primary-post-btn p {
@@ -740,8 +739,10 @@
           flex-direction: column;
   position: relative;
   text-decoration: none;
-  -webkit-transition: all 200ms ease-in-out;
-  transition: all 200ms ease-in-out;
+  -webkit-transition: -webkit-transform 200ms ease-in-out;
+  transition: -webkit-transform 200ms ease-in-out;
+  transition: transform 200ms ease-in-out;
+  transition: transform 200ms ease-in-out, -webkit-transform 200ms ease-in-out;
 }
 
 .secondary-post-card:hover {
@@ -761,8 +762,10 @@
      object-fit: cover;
   aspect-ratio: 16/9;
   border-radius: 1.1em;
-  -webkit-transition: all 200ms ease-in-out;
-  transition: all 200ms ease-in-out;
+  -webkit-transition: -webkit-box-shadow 200ms ease-in-out;
+  transition: -webkit-box-shadow 200ms ease-in-out;
+  transition: box-shadow 200ms ease-in-out;
+  transition: box-shadow 200ms ease-in-out, -webkit-box-shadow 200ms ease-in-out;
   -webkit-box-shadow: 0 5px 10px rgba(80, 60, 0, 0.05);
           box-shadow: 0 5px 10px rgba(80, 60, 0, 0.05);
 }

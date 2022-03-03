@@ -824,7 +824,6 @@ $bg-color: #F8F8F8;
 .primary-post-image{
     width: 100%;
     object-fit: cover;
-    height: 16em;
     border-radius: 1.4em;
     aspect-ratio: 16/9;
     box-shadow: 0 5px 10px rgba(80, 60, 0, .05);
@@ -884,7 +883,7 @@ $bg-color: #F8F8F8;
         font-size: .95em;
         color: $color-primary
     }
-    transition: all 150ms ease-in-out;
+    transition: opacity 150ms ease-in-out;
     &:hover{
         opacity: .75;
     }
@@ -906,7 +905,7 @@ $bg-color: #F8F8F8;
     flex-direction: column;
     position: relative;
     text-decoration: none;
-    transition: all 200ms ease-in-out;
+    transition: transform 200ms ease-in-out;
     &:hover{
         transform: scale(1.00);
         .secondary-post-image{
@@ -921,7 +920,7 @@ $bg-color: #F8F8F8;
     object-fit: cover;
     aspect-ratio: 16/9;
     border-radius: 1.1em;
-    transition: all 200ms ease-in-out;
+    transition: box-shadow 200ms ease-in-out;
     box-shadow: 0 5px 10px rgba(80, 60, 0, .05);
 }
 
