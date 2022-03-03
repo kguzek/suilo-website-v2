@@ -641,7 +641,7 @@
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 1.4em;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16/10;
   -webkit-box-shadow: 0 5px 10px rgba(80, 60, 0, 0.05);
           box-shadow: 0 5px 10px rgba(80, 60, 0, 0.05);
 }
