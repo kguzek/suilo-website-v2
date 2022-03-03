@@ -4,16 +4,15 @@ import MetaTags from "react-meta-tags";
 import { useCookies } from "react-cookie";
 import { Bars } from "react-loader-spinner";
 import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
-import PostCardPreview, {
-  fetchNewsData,
-  SECONDARY_ITEMS_DEFAULT,
-} from "../components/PostCardPreview";
+import PostCardPreview, { fetchNewsData } from "../components/PostCardPreview";
 import SuPhoto from "../media/su-photo.jpg";
 import { formatDate } from "../misc";
 import { fetchWithToken } from "../firebase";
 
+
 const Home = ({ setPage }) => {
   const { width } = useWindowDimensions();
+  const HOMEPAGE_NEWS_POSTS = 5;
   const [luckyNumbers, setLuckyNumbers] = useState(["...", "..."]);
   const [loadedNews, setLoadedNews] = useState(false);
   const [forDate, setForDate] = useState(formatDate());
@@ -85,7 +84,7 @@ const Home = ({ setPage }) => {
     fetchNewsData({
       setNewsData,
       setLoaded: setLoadedNews,
-      maxItems: SECONDARY_ITEMS_DEFAULT,
+      maxItems: HOMEPAGE_NEWS_POSTS,
     });
   }, []);
 
@@ -321,6 +320,7 @@ const Home = ({ setPage }) => {
       </div>
     </div>
   );
+
 };
 
 function getWindowDimensions() {
