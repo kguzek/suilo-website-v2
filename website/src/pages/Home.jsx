@@ -13,6 +13,7 @@ import { formatDate } from "../misc";
 import { fetchWithToken } from "../firebase";
 
 const Home = ({ setPage }) => {
+  const { width } = useWindowDimensions();
   const [luckyNumbers, setLuckyNumbers] = useState(["...", "..."]);
   const [loadedNews, setLoadedNews] = useState(false);
   const [forDate, setForDate] = useState(formatDate());
@@ -71,6 +72,13 @@ const Home = ({ setPage }) => {
     );
   }
 
+  const _getNoItems = () => {
+    if (width > 1024) return 5;
+    if (width > 768) return 4;
+    if (width > 640) return 3;
+    return 2;
+  }
+
   useEffect(() => {
     setPage("home");
     fetchLuckyNumbers();
@@ -104,31 +112,31 @@ const Home = ({ setPage }) => {
       </MetaTags>
       <div className="h-[87vh] w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
         <div className="flex flex-col pb-3 col-span-1 lg:col-span-3">
-          <h1 className="font-bold text-text1 text-5xl pb-2 lg:text-10xl lg:pb-0">Samorząd Uczniowski</h1>
-          <h4 className="font-normal text-text4 pb-1 mb-4 text-xl sm:text-2xl ">I Liceum Ogólnokształcącego w Gliwicach</h4>
+          <h1 className="font-bold text-text1 text-5xl pb-2 lg:text-10xl lg:pb-0 xl:text-[3.5rem]">Samorząd Uczniowski</h1>
+          <h4 className="font-normal text-text4 pb-1 mb-4 xl:mb-6 text-xl sm:text-2xl  xl:text-[1.65rem]">I Liceum Ogólnokształcącego w Gliwicach</h4>
           <div className="inline-flex flex-row justify-start align-middle">
-            <Link to="/aktualnosci" className="text-white text-md sm:text-lg font-medium whitespace-nowrap bg-gradient-to-br from-primary to-secondary rounded-2xl px-5 py-2 sm:py-[.625rem] sm:px-8 drop-shadow-3xl hover:drop-shadow-4xl active:drop-shadow-5xl hover:scale-[1.015] active:scale-[.985] animate-all">
+            <Link to="/aktualnosci" className="text-white text-md sm:text-lg xl:text-xl font-medium whitespace-nowrap bg-gradient-to-br from-primary to-secondary rounded-[.95rem] px-5 py-2 sm:py-[.625rem] sm:px-8 xl:py-[.75rem] xl:px-10 drop-shadow-3xl hover:drop-shadow-4xl active:drop-shadow-5xl hover:scale-[1.015] active:scale-[.985] animate-all">
               Nasze działania
             </Link>
             <Link
               to="/kontakt"
-              className="ml-9 sm:ml-10 etxt-primary py-2 sm:py-[.625rem] text-md sm:text-lg font-regular transition-all hover:text-primaryDark"
+              className="ml-9 sm:ml-10 etxt-primary py-2 sm:py-[.625rem] text-md sm:text-lg  xl:text-xl xl:ml-12 xl:py-[.75rem] font-regular transition-all hover:text-primaryDark"
             >
               Kontakt
             </Link>
           </div>
         </div>
         <div
-          className="flex flex-col pt-14 lg:pt-0 col-span-1 lg:col-span-2 sm:pt-7 sm:-mb-6 lg:mb-0"
+          className="flex flex-col pt-8 md:pt-0 col-span-1 lg:col-span-2 sm:pt-7 sm:-mb-6 lg:mb-0"
           title={`Szczęśliwe numerki na ${forDate} to ${luckyNumbers[0]} i ${luckyNumbers[1]}.`}
         >
-          <h5 className="font-light text-text2 text-xl lg:text-white lg:text-2xl text-right mt-5 lg:mt-0 pt-3 pb-2 ">Szczęśliwe numerki:</h5>
+          <h5 className="font-light text-text2 text-xl lg:text-white lg:text-2xl xl:text-[1.6rem] text-right mt-5 lg:mt-0 pt-3 pb-2 lg:pt-0 ">Szczęśliwe numerki:</h5>
           <div className="flex flex-row justify-end">
-            <div className="bg-white rounded-2xl w-28 md:w-32 lg:w-[8.5rem] lg:rounded-[1.35rem] transition-all aspect-LN justify-center align-middle inline-flex drop-shadow-3xl ">
-              <p className="font-extrabold text-primary text-6xl md:text-7xl m-auto">{luckyNumbers[0]}</p>
+            <div className="bg-white rounded-2xl w-28 md:w-32 lg:w-[8.75rem] xl:w-[9.25rem] lg:rounded-[1.25rem] transition-all aspect-LN justify-center align-middle inline-flex drop-shadow-3xl ">
+              <p className="font-extrabold text-primary text-6xl md:text-7xl xl:text-[4.85rem] m-auto">{luckyNumbers[0]}</p>
             </div>
-            <div className="bg-white rounded-2xl w-28 md:w-32 lg:w-[8.5rem] lg:rounded-[1.35rem] transition-all aspect-LN justify-center align-middle inline-flex drop-shadow-3xl ml-5">
-              <p className="font-extrabold text-primary text-6xl md:text-7xl m-auto">{luckyNumbers[1]}</p>
+            <div className="bg-white rounded-2xl w-28 md:w-32 lg:w-[8.75rem] xl:w-[9.25rem] lg:rounded-[1.25rem] transition-all aspect-LN justify-center align-middle inline-flex drop-shadow-3xl ml-5">
+              <p className="font-extrabold text-primary text-6xl md:text-7xl xl:text-[4.85rem] m-auto">{luckyNumbers[1]}</p>
             </div>
           </div>
           <h5 className="opacity-90 font-normal pt-2 text-lg lg:text-xl text-text2 lg:text-white text-right">
@@ -224,14 +232,16 @@ const Home = ({ setPage }) => {
         </Link>
       </div>
       {loadedNews ? (
-        <PostCardPreview
-          type="secondary"
-          data={newsData}
-          linkPrefix="aktualnosci/post/"
-          classOverride="home-3"
-          startIndex={0}
-          numItems={2}
-        />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 w-full gap-3 grid-rows-1 sm:gap-4 my-2 mb-8 ">
+          <PostCardPreview
+            type="secondary"
+            data={newsData}
+            linkPrefix="aktualnosci/post/"
+            classOverride="home-3"
+            startIndex={0}
+            numItems={_getNoItems()}
+          />
+        </div>
       ) : (
         <div
           // Leave loading bars only in 'aktualności' section
@@ -242,14 +252,14 @@ const Home = ({ setPage }) => {
         </div>
       )}
 
-      <div className="flex flex-row flex-wrap justify-center align-middle mb-5 mt-4 lg:w-full lg:justify-around">
+      <div className="flex flex-row flex-wrap justify-center align-middle mb-5 mt-4 lg:mb-7 lg:mt-6 lg:w-full lg:justify-around">
         <a
           className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
           href="https://www.facebook.com/SUILOGliwice"
           target="_blank"
           rel="noreferrer"
         >
-          <Facebook size={44} strokeWidth={1.35} color="#858585" />
+          <Facebook size={38} strokeWidth={1.4} color="#858585" />
           <p className="font-semibold text-lg tracking-wide m-auto">/SUILOGliwice</p>
         </a>
         <a
@@ -259,8 +269,8 @@ const Home = ({ setPage }) => {
           rel="noreferrer"
         >
           <Instagram
-            size={44}
-            strokeWidth={1.35}
+            size={38}
+            strokeWidth={1.4}
             color="#858585"
             style={{ marginRight: ".4em" }}
           />
@@ -273,8 +283,8 @@ const Home = ({ setPage }) => {
           rel="noreferrer"
         >
           <Youtube
-            size={44}
-            strokeWidth={1.35}
+            size={38}
+            strokeWidth={1.4}
             color="#858585"
             style={{ marginRight: ".4em" }}
           />
@@ -287,8 +297,8 @@ const Home = ({ setPage }) => {
           rel="noreferrer"
         >
           <Instagram
-            size={44}
-            strokeWidth={1.35}
+            size={38}
+            strokeWidth={1.4}
             color="#858585"
             style={{ marginRight: ".4em" }}
           />
@@ -301,8 +311,8 @@ const Home = ({ setPage }) => {
           rel="noreferrer"
         >
           <Youtube
-            size={44}
-            strokeWidth={1.35}
+            size={38}
+            strokeWidth={1.4}
             color="#858585"
             style={{ marginRight: ".4em" }}
           />
@@ -313,4 +323,26 @@ const Home = ({ setPage }) => {
   );
 };
 
+function getWindowDimensions() {
+  return { width: window.innerWidth, height: window.innerHeight };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(
+    getWindowDimensions()
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
 export default Home;
+
