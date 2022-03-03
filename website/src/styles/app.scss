@@ -1048,71 +1048,71 @@ $bg-color: #F8F8F8;
     }
 }
 
-.post-division{
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items:flex-start;
-    width: 100%;
-    margin-top: 4em;
-}
+// .post-division{
+//     display:flex;
+//     flex-direction: row;
+//     justify-content: space-between;
+//     align-items:flex-start;
+//     width: 100%;
+//     margin-top: 4em;
+// }
 
-article{
-    width: 72.5%;
-    position: relative;
+// article{
+//     width: 72.5%;
+//     position: relative;
 
-}
+// }
 
-.post-image{
-    width: 100%;
-    aspect-ratio: 2;
-    object-fit: cover;
-    border-radius: 1.5em;
-    box-shadow: 0 5px 10px rgba(80, 60, 0, .08);
-}
+// .post-image{
+//     width: 100%;
+//     aspect-ratio: 2;
+//     object-fit: cover;
+//     border-radius: 1.5em;
+//     box-shadow: 0 5px 10px rgba(80, 60, 0, .08);
+// }
 
-.post-info{
-    color: #707070;
-    font-size: 1em;
-    margin: 0;
-    padding: 0;
-    font-weight: 400;
-    margin-top: -.2em;
-    margin-bottom: .1em;
-}
+// .post-info{
+//     color: #707070;
+//     font-size: 1em;
+//     margin: 0;
+//     padding: 0;
+//     font-weight: 400;
+//     margin-top: -.2em;
+//     margin-bottom: .1em;
+// }
 
-.image-author{
-    color: #444444;
-    font-size: .9em;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    text-align: right;
-}
+// .image-author{
+//     color: #444444;
+//     font-size: .9em;
+//     padding: 0;
+//     margin: 0;
+//     width: 100%;
+//     text-align: right;
+// }
 
-.article-title{
-    font-size: 2.5em;
-    font-weight: 700;
-    letter-spacing: 0.015em;
-    line-height: 1.25em;
-    color: #111111;
-    width: 100%
-}
+// .article-title{
+//     font-size: 2.5em;
+//     font-weight: 700;
+//     letter-spacing: 0.015em;
+//     line-height: 1.25em;
+//     color: #111111;
+//     width: 100%
+// }
 
-.article-content{
-    color: #222222;
-    font-size: 1.2em;
-    line-height: 1.95em;
-    margin-top: 1.5em;
-    margin-bottom: 3em;
-}
+// .article-content{
+//     color: #222222;
+//     font-size: 1.2em;
+//     line-height: 1.95em;
+//     margin-top: 1.5em;
+//     margin-bottom: 3em;
+// }
 
-.post-sidebar{
-    width: 22%;
-    display: grid;
-    grid-gap: 1.2em;
+// .post-sidebar{
+//     width: 22%;
+//     display: grid;
+//     grid-gap: 1.2em;
 
-}
+// }
 
 
 
