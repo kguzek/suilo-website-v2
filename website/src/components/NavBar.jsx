@@ -177,6 +177,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
               absolute right-0 -top-2
               transition-all
               w-full
+              rounded-2xl
               z-50
               duration-200
             `}
