@@ -1,21 +1,7 @@
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #F8F8F8;
-  overflow-x: hidden;
-  overflow-x: none;
-  scroll-behavior: smooth;
-  position: relative;
-  max-width: 100vw;
-  font-size: 1vw;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
 
 ::-webkit-scrollbar {
   width: 10px;

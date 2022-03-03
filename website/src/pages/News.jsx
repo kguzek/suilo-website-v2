@@ -61,7 +61,7 @@ const News = ({ setPage, reload }) => {
     );
   }
   return (
-    <div className="page-main" style={{ minHeight: "100vh" }}>
+    <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
         <title>
           Aktualności | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w
@@ -74,9 +74,15 @@ const News = ({ setPage, reload }) => {
         <meta property="og:title" content="Aktualności | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
       </MetaTags>
-      <PostCardPreview type="primary" data={newsData} linkPrefix="post/" />
-      <PostCardPreview type="secondary" data={newsData} linkPrefix="post/" />
-      <PostCardPreview type="main" data={newsData} linkPrefix="post/" />
+      <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-6 my-6 md:my-9 md:gap-4 lg:gap-7">
+        <PostCardPreview type="primary" data={newsData} linkPrefix="post/" />
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-4 mb-10 md:mb-8 md:gap-3 lg:gap-5">
+        <PostCardPreview type="secondary" data={newsData} linkPrefix="post/" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-11 my-5 md:my-7">
+        <PostCardPreview type="main" data={newsData} linkPrefix="post/" />
+      </div>
     </div>
   );
 };

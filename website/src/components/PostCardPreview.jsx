@@ -17,7 +17,7 @@ const NO_NEWS_MESSAGE = "Brak aktualności.";
 /** Fetch the data for the news article previews. */
 export function fetchNewsData({
   setNewsData,
-  setLoaded = () => {},
+  setLoaded = () => { },
   updateCache = false,
   pageNumber = 1,
   maxItems = ITEMS_PER_PAGE,
@@ -102,12 +102,12 @@ export function PostCardPreview({
     return null;
   }
   return (
-    <div className={className}>
+    <>
       {_data.map((el, idx) => {
         el.link = linkPrefix + el.id;
         return React.createElement(elem, { key: el.id + idx, data: el });
       })}
-    </div>
+    </>
   );
 }
 

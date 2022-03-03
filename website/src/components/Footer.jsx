@@ -3,19 +3,9 @@ import React, { useState, useEffect } from "react";
 const Footer = ({ isVisible }) => {
   return (
     <div
-      style={{
-        width: "100vw",
-        backgroundColor: "#434343",
-        color: "white",
-        fontWeight: "300",
-        fontSize: "12px",
-        textAlign: "center",
-        justifyContent: "center",
-        marginTop: "5em",
-        opacity: isVisible ? 1 : 0
-      }}
+      className={`flex w-screen bg-footer text-white font-light text-[.8rem] ${isVisible ? "block" : "hidden"} mt-7 justify-center align-middle`}
     >
-      <p style={{ padding: "0", margin: "9px" }}>
+      <p className="my-2 mt-3">
         suilo.org {new Date().getFullYear()} © Wszystkie prawa zastrzeżone.
       </p>
     </div>

@@ -11,8 +11,9 @@ export function scrollToTop() {
 export function ScrollToTop() {
   const [isActive, setActive] = useState(false);
   const [isSafe, setSafety] = useState(true);
-  const [yPos, setY] = useState("-70px");
-  const [display, setDisplay] = useState("none");
+  const [yPos, setY] = useState("translate-y-[120%]");
+  const [display, setDisplay] = useState("hidden");
+  const [opacity, setOpacity] = useState("opacity-0");
   const [scrollPosition, setScrollPosition] = useState(0);
 
   // Detect and set yOffset //
@@ -40,18 +41,22 @@ export function ScrollToTop() {
   const _fadeIn = () => {
     setDisplay("flex");
     setTimeout(() => {
-      setY("15px");
+      setY("translate-y-0");
+      setOpacity("opacity-100")
       setSafety(true);
     }, 100);
+    // console.log("FADE IN")
   };
 
   // animation on exit
   const _fadeOut = () => {
-    setY("-70px");
+    setY("translate-y-[120%]");
+    setOpacity("opacity-0")
     setTimeout(() => {
-      setDisplay("none");
+      setDisplay("hidden");
       setSafety(true);
     }, 500);
+    // console.log("FADE OUT")
   };
 
   // Animate button on fade in and out //
@@ -67,9 +72,8 @@ export function ScrollToTop() {
   return (
     <button
       title="scroll to top"
-      className="scroll-top"
+      className={`${display} ${yPos} ${opacity} bg-white z-50 p-2 border-none justify-center align-middle fixed bottom-3 right-3 rounded-lg cursor-pointer drop-shadow-xl transition-all duration-300`}
       onClick={() => scrollToTop()}
-      style={{ display: display, bottom: yPos }}
     >
       <ChevronsUp size="38" strokeWidth="1.5px" color="#FFA900" />
     </button>
