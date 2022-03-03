@@ -74,13 +74,13 @@ const News = ({ setPage, reload }) => {
         <meta property="og:title" content="Aktualności | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
       </MetaTags>
-      <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-6 my-6 md:my-7 md:gap-4 md:mt-8 lg:gap-7">
+      <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-6 my-6 md:my-9 md:gap-4 lg:gap-7">
         <PostCardPreview type="primary" data={newsData} linkPrefix="post/" />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-4 mb-10 md:mb-8 md:gap-3 lg:gap-5">
         <PostCardPreview type="secondary" data={newsData} linkPrefix="post/" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 my-5 md:my-7">
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-11 my-5 md:my-7">
         <PostCardPreview type="main" data={newsData} linkPrefix="post/" />
       </div>
     </div>
