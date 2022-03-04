@@ -165,7 +165,7 @@ const Home = ({ setPage }) => {
             <h2 className="text-text1 font-bold text-3xl xl:text-4xl pt-5 lg:pt-0">
               Nasza drużyna
             </h2>
-            <p className="text-text2 font-normal leading-8 text-lg xl:text-xl xl:leading-9 text-justify pt-3">
+            <p className="text-text2 select-all font-normal leading-8 text-lg xl:text-xl xl:leading-9 text-justify pt-3">
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
               nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
               erat, sed diam voluptua. At vero eos et accusam et justo duo
@@ -183,7 +183,7 @@ const Home = ({ setPage }) => {
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Marszałek Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Szymon Wróbel</p>
+            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base select-all lg:text-xl lg:mt-7">Szymon Wróbel</p>
             <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">Marszałek</p>
           </div>
         </div>
@@ -194,7 +194,7 @@ const Home = ({ setPage }) => {
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Sekretarz Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Adam Kurzak</p>
+            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl select-all lg:mt-7">Adam Kurzak</p>
             <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">Sekretarz</p>
           </div>
         </div>
@@ -205,7 +205,7 @@ const Home = ({ setPage }) => {
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Skarbnik i Konsultant Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Mikołaj Mrózek</p>
+            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl select-all sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Mikołaj Mrózek</p>
             <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">Skarbink; Konsultant</p>
           </div>
         </div>
@@ -215,7 +215,7 @@ const Home = ({ setPage }) => {
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Opiekun Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">Barbara Białowąs</p>
+            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base select-all lg:text-xl lg:mt-7">Barbara Białowąs</p>
             <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">Opiekun</p>
           </div>
         </div>
