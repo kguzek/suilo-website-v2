@@ -111,7 +111,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
 
   if (width > 800) {
     return (
-      <div className="w-11/12 xl:w-10/12 flex flex-row justify-between align-middle m-auto relative mt-0">
+      <div className={`w-11/12 xl:w-10/12 flex flex-row justify-between align-middle m-auto relative mt-0 ${page === "contact" ? "px-[4px]" : ""}`}>
         <Link to="/" className="mt-3">
           <LogoSU width="3.5em" height="3.5em" />
         </Link>
