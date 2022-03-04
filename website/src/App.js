@@ -219,7 +219,7 @@ function Layout({
         }}
       />
       <div
-        className={`-z-50 right-0 -top-[16.5rem] scale-[.275]  ${page === "home" ? "md:scale-[.475]" : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"} ${page === "home" ? "lg:scale-[.8] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12" : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"} ${page === "home" ? "xl:-rotate-[2.5deg] xl:-top-[17rem] xl:scale-[1.05]" : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"}  origin-top-right absolute`}
+        className={`-z-50 right-0 -top-[16.5rem] scale-[.275] ${page === "contact" ? "max-h-[100vh]" : ""} ${page === "home" ? "md:scale-[.475]" : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"} ${page === "home" ? "lg:scale-[.8] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12" : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"} ${page === "home" ? "xl:-rotate-[2.5deg] xl:-top-[17rem] xl:scale-[1.05]" : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"}  origin-top-right absolute`}
         style={{
           width: "33em",
           height: "175vh",
