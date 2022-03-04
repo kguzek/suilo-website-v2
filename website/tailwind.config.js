@@ -16,6 +16,8 @@ module.exports = {
         text3: "#969696",
         text4: "#5B5B5B",
         text5: "#222222",
+        text6: "#444444",
+        text7: "#6e6e6e",
         footer: "#434343"
       },
       fontFamily: {
@@ -35,6 +37,7 @@ module.exports = {
         '3xl': '0 7px 15px rgba(141, 113, 0, .07)',
         '4xl': '0 7px 30px rgba(141, 113, 0, .16)',
         '5xl': '0 5px 10px rgba(141, 113, 0, .05)',
+        '6xl': '0 4px 8px rgba(80, 60, 0, .04)',
       },
       aspectRatio: {
         'LN': '9.35 / 10.5',
@@ -44,10 +47,9 @@ module.exports = {
         '2/5': '40%',
       }),
     },
-    plugins: [
-      require('@tailwindcss/line-clamp'),
-      // ...
-    ],
-
-  }
+  },
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+    // ...
+  ],
 }
