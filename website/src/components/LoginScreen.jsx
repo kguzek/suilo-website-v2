@@ -39,7 +39,7 @@ function LoginScreen() {
     });
   }, []);
 
-  function fadeInDom() {
+  const fadeInDom = () => {
     setDisplay("flex");
     setTimeout(() => {
       setOpacity(1);
@@ -48,7 +48,7 @@ function LoginScreen() {
     }, 10);
   }
 
-  function fadeOutDom() {
+  const fadeOutDom = () => {
     setOpacity(0);
     setYPos("-10vh");
     setTimeout(() => {
@@ -79,7 +79,7 @@ function LoginScreen() {
         <div className="login-bg" onClick={() => removeCookies("loginStage")} />
         <div className="login-box" style={{ transform: `translateY(${yPos})` }}>
           <img
-            alt="Login screen"
+            alt="Login screen image"
             className="login-left"
             src={`https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80`}
           />
@@ -87,14 +87,14 @@ function LoginScreen() {
           <div className="login-right">
             <div />
             <div className="login-center">
-              <p className="login-header">Zaloguj się</p>
+              <p className="text-text1 font-extrabold text-[2rem]">Zaloguj się</p>
               <div className="login-disabled">
                 <p className="disabled-p">
                   Logowanie się z kont pozaszkolnych jest na chwilę obecną
                   niemożliwe. Przepraszamy.
                 </p>
               </div>
-              <p className="disabled-p" style={{ padding: "7px" }}>
+              <p className="text-text4 font-normal text-sm text-center p-2">
                 lub
               </p>
               {cookies.loginStage === "redirectGoogle" ? (
@@ -153,9 +153,11 @@ function LoginScreen() {
         <div
           className="login-box"
           style={{
-            width: "95vw",
+            width: "87%",
+            maxWidth: "auto",
+            minWidth: "auto",
             borderRadius: "20px",
-            maxWidth: "400px",
+            position: "relative",
             transform: `translateY(${yPos})`,
           }}
         >
@@ -181,7 +183,7 @@ function LoginScreen() {
               }}
             />
             <div className="login-center">
-              <p className="login-header" style={{ marginBottom: "20px" }}>
+              <p className="login-header">
                 Zaloguj się
               </p>
               <div className="login-disabled">
