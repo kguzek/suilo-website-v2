@@ -11,7 +11,7 @@ const Contact = ({ setPage }) => {
   });
 
   return (
-    <div className="page-main">
+    <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top lg:align-middle">
       <MetaTags>
         <title>
           Kontakt | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach
@@ -23,62 +23,59 @@ const Contact = ({ setPage }) => {
         <meta property="og:title" content="Kontakt | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
-      <div className="contact-info">
-        <div className="contact-left">
+      <div className="grid grid-cols-1 gap-7 md:gap-9 w-full lg:m-auto items-stretch mt-14 lg:grid-cols-2 lg:min-h-[88vh] ">
+        <div className="w-10/12 m-auto max-w-sm lg:max-w-md">
           <MailBox />
         </div>
-        <div className="contact-right">
-          <h3 className="contact-header">Skontaktuj się z nami poprzez:</h3>
-          <div className="contact-media-container">
+        <div className="grid grid-cols-1 w-full sm:w-fit sm:m-auto sm:text-center lg:text-left lg:pt-10">
+          <h3 className="text-text1 font-bold text-2xl md:text-3xl lg:text-[2rem]">Skontaktuj się z nami poprzez:</h3>
+          <div className="flex flex-wrap max-w-full py-3 ">
             <a
-              className="contact-media-btn"
+              className="bg-white rounded-lg inline-flex mr-4 md:mr-6  flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem]  px-6 md:px-7 drop-shadow-5xl hover:drop-shadow-4xl hover:bg-[rgb(252, 252, 252)] my-2 md:my-3"
               href="mailto:su.lo1.gliwice@gmail.com"
             >
               <img
                 src={GmailSVG}
-                className="social-image"
+                className="h-[1.5rem] md:h-[1.85rem]"
                 alt="Gmail logo"
-                style={{ height: "2em" }}
               />
-              <p className="contact-media-name" style={{ color: "#ff4c2b" }}>
+              <p className="text-[1.1rem] md:text-[1.25rem] font-medium pl-4 md:pt-px" style={{ color: "#ff4c2b" }}>
                 Email
               </p>
             </a>
             <a
-              className="contact-media-btn"
+              className="bg-white rounded-lg mr-4 md:mr-6 inline-flex flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem] px-6 md:px-7 drop-shadow-5xl hover:drop-shadow-4xl hover:bg-[rgb(252, 252, 252)] my-2 md:my-3"
               href="https://www.facebook.com/SUILOGliwice"
               target="_blank"
               rel="noreferrer"
             >
               <img
                 src={FacebookSVG}
-                className="social-image"
+                className="h-[1.9rem] -mt-[.185rem] md:-mt-px md:h-9"
                 alt="Facebook logo"
-                style={{ height: "2.3em" }}
               />
-              <p className="contact-media-name" style={{ color: "#1977F3" }}>
+              <p className="text-[1.1rem] md:text-[1.25rem]  font-medium pl-4 md:pt-px" style={{ color: "#1977F3" }}>
                 Facebook
               </p>
             </a>
             <a
-              className="contact-media-btn"
+              className="bg-white rounded-lg inline-flex mr-4 md:mr-6 flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem] px-6 md:px-7 drop-shadow-5xl hover:drop-shadow-4xl hover:bg-[rgb(252, 252, 252)] my-2 md:my-3"
               href="https://discord.gg/upPdWMc8GJ"
               target="_blank"
               rel="noreferrer"
             >
               <img
                 src={DiscordSVG}
-                className="social-image"
+                className="h-[2.2rem] -mt-[.325rem] md:h-10 md:-mt-[.2rem]"
                 alt="Discord logo"
-                style={{ height: "2.7em" }}
               />
             </a>
           </div>
-          <h4 className="contact-subheader">Lub stacjonarnie w szkole:</h4>
-          <address className="contact-localization">
+          <h4 className="font-medium text-[#1b1b1b] text-xl md:text-2xl mt-1 lg:mt-3">Lub stacjonarnie w szkole:</h4>
+          <address className="font-normal text-text1 mt-[.6rem] text-base not-italic md:text-[1.075rem] select-all">
             ul. Zimnej Wody 8, 44-100 Gliwice
           </address>
-          <p className="contact-localization">Biblioteka - 3. piętro</p>
+          <p className="font-normal text-text1 mt-[.6rem] text-base not-italic md:text-[1.075rem]">Biblioteka - 3. piętro</p>
         </div>
       </div>
     </div>
