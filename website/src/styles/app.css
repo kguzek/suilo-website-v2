@@ -397,8 +397,8 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  width: 53em;
-  height: 30em;
+  width: 40rem;
+  height: 28rem;
   min-width: 777px;
   min-height: 450px;
   position: fixed;
@@ -413,9 +413,7 @@
   height: 100%;
   -ms-flex-negative: 0;
       flex-shrink: 0;
-  max-width: 60%;
-  width: 60%;
-  min-width: 60%;
+  width: 55%;
   min-height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
@@ -424,7 +422,7 @@
 }
 
 .login-right {
-  width: 40%;
+  width: 45%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -473,7 +471,7 @@
   background-color: #F6F6F6;
   border: #979797 .15em dashed;
   border-radius: .6em;
-  width: 70%;
+  width: 75%;
 }
 
 .disabled-p {
@@ -487,7 +485,7 @@
 }
 
 .login-google-btn {
-  width: 70%;
+  width: 75%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -539,12 +537,10 @@
   font-weight: 400;
   font-size: .7em;
   text-align: right;
-  width: 80%;
+  width: 75%;
   color: #fc3f1e;
   margin: 0;
-  margin-top: .3em;
-  margin-bottom: -.3em;
-  padding: 0;
+  padding: 0.3em 0;
 }
 
 .register-p {
@@ -913,41 +909,6 @@
   opacity: .75;
 }
 
-.contact-info {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  width: 100%;
-  margin-top: 10em;
-}
-
-.contact-left {
-  width: 40%;
-}
-
-.contact-right {
-  width: 40%;
-  margin-top: .75em;
-}
-
-.contact-header {
-  font-weight: 700;
-  font-size: 1.8em;
-  color: #111111;
-  letter-spacing: 0.005em;
-  margin: 0;
-  padding: 0;
-}
-
 .contact-subheader {
   font-weight: 600;
   color: #1B1B1B;
@@ -963,21 +924,11 @@
   margin: .4em 0;
 }
 
-.contact-media-container {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  max-width: 100%;
-  margin-bottom: 3em;
-}
-
 .contact-media-btn {
   background-color: white;
   border-radius: .6em;
   padding: .8em 1.7em;
-  height: 2.7em;
+  height: 4rem;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
