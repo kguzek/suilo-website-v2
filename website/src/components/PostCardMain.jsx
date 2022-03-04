@@ -4,36 +4,36 @@ import { ArrowRight } from "react-feather";
 import { formatDate, getURLfromFileName } from "../misc";
 
 const PostCardMain = ({ data }) => {
-  const [photo,setphoto] = useState(data.photo);
+  const [photo, setphoto] = useState(data.photo);
   const date = formatDate(data.date);
   // const modified = formatDate(data.modified, true);
   const textShort = data.text;
   useEffect(() => {
-    getURLfromFileName(data.photo,"400x300",setphoto)
+    getURLfromFileName(data.photo, "400x300", setphoto)
   }, []);
-
+  //group-hover:ring-[.2rem] ring-primaryDark/30 transition-all duration-300
   return (
-    <div className="main-post-card">
+    <div className="group w-full inline-flex flex-row align-top relative justify-start">
       {/* {data.modified && (
         <i className="main-post-date">Ostatnia edycja — {modified}</i>
       )} */}
-      <p className="main-post-date">{date}</p>
-      <img src={photo} className="main-post-image" />
-      <div className="main-post-right">
-        <h2 className="main-post-header">{data.title}</h2>
-        <div className="main-description-box">
-          <h3 className="main-post-description">{textShort}</h3>
-          <div className="main-post-btn-box">
+      <p className="absolute -top-[1.15rem] lg:-top-[1.4rem]  left-0 font-normal text-text7 text-xs md:text-sm">{date}</p>
+      <img src={photo} className=" w-1/5 object-cover aspect-square rounded-lg lg:rounded-xl" />
+      <div className="w-full pl-4 flex flex-col justify-start relative">
+        <h2 className="text-text1 tracking-wide max-w-full font-semibold text-lg lg:text-xl lg:leading-6 line-clamp-2 leading-5">{data.title}</h2>
+        <div className="relative -mt-1">
+          <h3 className="hidden line-clamp-1 sm:line-clamp-2 md:line-clamp-1 lg:line-clap-3 main-post-description sm:block md:hidden lg:block">{textShort}</h3>
+          <div className="absolute -bottom-[.1rem] lg:bottom-[.025rem] right-0 py-[.1rem] px-1 pl-8"
+            style={{ background: "linear-gradient(90deg,transparent 0%,#F8F8F8 15%)" }}
+          >
             <Link
               to={data.link}
-              className="main-post-btn"
+              className="inline-flex flex-row justify-between align-middle transition-all duration-150 group"
             >
-              <p>czytaj dalej</p>
+              <p className="group-hover:text-primaryDark pr-1 text-primary font-medium text-sm lg:text-[.925rem]">czytaj dalej</p>
               <ArrowRight
                 size={16}
-                strokeWidth={"2.5px"}
-                style={{ marginBottom: "-.1em", paddingLeft: ".5em" }}
-                color="#FFA900"
+                className="group-hover:stroke-primaryDark stroke-primary stroke-[2.5] mt-[.1rem] lg:mt-[.13rem]"
               />
             </Link>
           </div>
