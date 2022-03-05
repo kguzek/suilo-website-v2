@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import Calendar from "../components/Calendar";
+import CalendarPreview from "../components/Calendar";
 import {
   fetchCachedData,
   formatDate,
@@ -105,7 +105,7 @@ function Events({ setPage, reload }) {
       ) : (
         "Nie ma w najbliższym czasie żadnych wydarzeń."
       )}
-      <Calendar updateCache={updateCache} />
+      <CalendarPreview updateCache={updateCache} />
     </div>
   );
 }
