@@ -80,6 +80,7 @@ export function removeSearchParam(
   return value;
 }
 
+/** Attempts to retrieved data from the local storage if it exists, otherwise fetches it from the API. */
 export function fetchCachedData(
   cacheName,
   fetchURL,
@@ -161,17 +162,19 @@ export function fetchCachedData(
     }
   );
 }
-export function getURLfromFileName(name,size,callback){ //size 1920x1080  800x600, 600x400, 400x300, 200x2000, 100x100
-  if(name.includes("https://")||name.includes("http://")){
+
+/** Valid sizes:
+ *  - 1920x1080
+ *  - 800x600
+ *  - 600x400
+ *  - 400x300
+ *  - 200x2000
+ *  - 100x100 */
+export function getURLfromFileName(name, size, callback) {
+  if (name.startsWith("http://") || name.startsWith("https://")) {
     callback(name);
+  } else {
+    const imageRef = ref(storage, `/photos/${name}_${size}.jpeg`);
+    getDownloadURL(imageRef).then(callback);
   }
-  else{
-    const imageRef = ref(storage,`/photos/${name}_${size}.jpeg`);
-    getDownloadURL(imageRef).then(url=>{
-      callback(url);
-    })
-  }
-  
-
-
 }
