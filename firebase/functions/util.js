@@ -101,6 +101,20 @@ function updateCollection(collectionName) {
   db.collection("_general").doc("lastUpdate").set(newData, { merge: true });
 }
 
+/** Generates a random integer between the given interval, inclusively. */
+function randomIntFromInterval(min, max) {
+  return Math.floor(min + Math.random() * (max - min + 1));
+}
+
+/** Returns the index of a random item in the given array. */
+function randomArraySelection(array) {
+  if (!array?.length) {
+    return null;
+  }
+  const randomIndex = randomIntFromInterval(0, array.length - 1);
+  return randomIndex;
+}
+
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
@@ -125,7 +139,16 @@ function createSingleDocument(data, res, collectionName) {
 }
 
 /** Sends a response containing the data of the specified document query. */
-function sendSingleResponse(docRef, res, sendData = (data) => data) {
+function sendSingleResponse(
+  docRef,
+  res,
+  sendData = (data) => data,
+  incrementViewCount = true
+) {
+  function _sendResponse(data) {
+    res.status(200).json(sendData(data));
+  }
+
   // send the query to database
   docRef.get().then((doc) => {
     // check if the document was found
@@ -138,12 +161,15 @@ function sendSingleResponse(docRef, res, sendData = (data) => data) {
     }
     // formats all existing date fields as timestamp strings
     formatTimestamps(data);
+    if (!incrementViewCount) {
+      return void _sendResponse({ id: doc.id, ...data });
+    }
     // increment the views count or start at 1 if it doesn't exist
     const views = (data.views ?? 0) + 1;
     // update views count in database
     docRef.update({ views }).then(() => {
       // send document id with rest of the data
-      return res.status(200).json(sendData({ id: doc.id, ...data, views }));
+      _sendResponse({ id: doc.id, ...data, views });
     });
   });
 }
@@ -312,6 +338,7 @@ module.exports = {
   dateToTimestamp,
   getDocRef,
   getIntArray,
+  randomArraySelection,
   updateCollection,
   createSingleDocument,
   sendSingleResponse,

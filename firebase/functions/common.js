@@ -17,13 +17,21 @@ function dateToArray(date) {
 }
 
 /** Return the array's elements as a string separated by the '-' character. */
-function serialiseDateArray(dateArray = []) {
-  // OLD METHOD
-  // return dateArray.toString().replaceAll(",", "-");
-
-  // the Date.toJSON() function returns a string with format "yyyy-MM-ddThh:mm:ss.sssZ"
+function serialiseDateArray(dateArray = [], nextMidnight = false) {
+  // This formats the date as yyyy-m-d
+  const serialised = dateArray.toString().replaceAll(",", "-");
+  // Convert the date so it is always at exactly midnight
+  const date = new Date(serialised);
+  const userTimezone = -date.getTimezoneOffset();
+  date.setUTCMinutes(userTimezone);
+  if (nextMidnight) {
+    date.setUTCHours(24, 0, 0, -1);
+  } else {
+    date.setUTCHours(0, 0, 0, 0);
+  }
+  // This formats the date as yyyy-mm-dd
   // splitting the string at 'T' and returning the first element of the split only gets you "yyyy-MM-dd"
-  return new Date(dateArray).toJSON().split("T").shift();
+  return date.toISOString().split("T").shift();
 }
 
 module.exports = { dateToArray, serialiseDateArray };

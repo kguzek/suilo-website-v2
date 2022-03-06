@@ -17,10 +17,19 @@ export function dateToArray(date) {
 }
 
 /** Return the array's elements as a string separated by the '-' character. */
-export function serialiseDateArray(dateArray = []) {
+export function serialiseDateArray(dateArray = [], nextMidnight = false) {
   // This formats the date as yyyy-m-d
   const serialised = dateArray.toString().replaceAll(",", "-");
+  // Convert the date so it is always at exactly midnight
+  const date = new Date(serialised);
+  const userTimezone = -date.getTimezoneOffset();
+  date.setUTCMinutes(userTimezone);
   // This formats the date as yyyy-mm-dd
+  if (nextMidnight) {
+    date.setUTCHours(24, 0, 0, -1);
+    return date.toISOString();
+  }
+  date.setUTCHours(0, 0, 0, 0);
   // splitting the string at 'T' and returning the first element of the split only gets you "yyyy-MM-dd"
-  return new Date(serialised).toISOString().split("T").shift();
+  return date.toISOString().split("T").shift();
 }

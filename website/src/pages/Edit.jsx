@@ -538,8 +538,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   const [subtype, setSubtype] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [colourTop, setColourTop] = useState("");
-  const [colourBottom, setColourBottom] = useState("");
+  const [colour, setColour] = useState("");
 
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
@@ -558,17 +557,12 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
     }
     setName(event.title);
     setSubtype(event.type);
-    setStartDate(serialiseDateArray(event.startDate));
-    setEndDate(serialiseDateArray(event.endDate));
-    if (event.isPrimary) {
-      setEventType("PRIMARY");
-      setColourTop(event.colour.colourTop);
-      setColourBottom(event.colour.colourBottom);
-    } else {
-      setEventType("SECONDARY");
-      setColourTop(event.colour);
-      setColourBottom("");
-    }
+    // setStartDate(serialiseDateArray(event.startDate));
+    // setEndDate(serialiseDateArray(event.endDate));
+    setStartDate(event.date.start);
+    setEndDate(event.date.end);
+    setColour(event.colour);
+    setEventType(event.renderType);
   }, [currentlyActive]);
 
   // Display loading screen if calendar data hasn't been retrieved yet
@@ -592,8 +586,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
       setSubtype,
       setStartDate,
       setEndDate,
-      setColourTop,
-      setColourBottom,
+      setColour,
     ]) {
       setVar("");
     }
@@ -610,15 +603,14 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
       method = "PUT";
       url += currentlyActive;
     }
-    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colourTop=#000000&colourBottom=#000000
+    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colour=#000000
     const params = {
       title: name,
       type: subtype,
       startDate,
       endDate,
       isPrimary: eventType.toUpperCase().trim() === "PRIMARY",
-      colourTop,
-      colourBottom,
+      colour,
     };
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is sent
@@ -650,7 +642,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
       <InputBox
         maxLength={9}
         name="event-type"
-        placeholder="Typ wydarzenia (PRIMARY/SECONDARY)"
+        placeholder="Typ wydarzenia (PRIMARY | SECONDARY)"
         value={eventType}
         onChange={setEventType}
       />

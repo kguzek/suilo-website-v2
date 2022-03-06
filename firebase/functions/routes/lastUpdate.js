@@ -9,10 +9,15 @@ function getRouter(availableEndpoints) {
 
   return async (_req, res) => {
     const docRef = db.collection("_general").doc("lastUpdate");
-    sendSingleResponse(docRef, res, (dataToSend) => {
-      // Merge the default values with the data retrieved from the document
-      return { ...defaultValues, ...dataToSend };
-    });
+    sendSingleResponse(
+      docRef,
+      res,
+      (dataToSend) => {
+        // Merge the default values with the data retrieved from the document
+        return { ...defaultValues, ...dataToSend };
+      },
+      false
+    );
   };
 }
 

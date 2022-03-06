@@ -1,6 +1,6 @@
 const express = require("express");
 const { dateToArray, serialiseDateArray } = require("../common");
-const { db, HTTP, dateToTimestamp, updateCollection } = require("../util");
+const { db, HTTP, dateToTimestamp, randomArraySelection, updateCollection } = require("../util");
 
 const router = express.Router();
 
@@ -8,23 +8,9 @@ const MAX_LUCKY_NUMBER = 35;
 
 /*      ======== LUCKY NUMBERS FUNCTIONS ========      */
 
-/** Generates a random integer between the given interval, inclusively. */
-function randomIntFromInterval(min, max) {
-  return Math.floor(min + Math.random() * (max - min + 1));
-}
-
 /** Returns an array made from the given range. E.g. (2, 5) => [2, 3, 4, 5]. */
 function arrayFromRange(start, end) {
   return Array.from({ length: end - start + 1 }, (_, i) => i + start);
-}
-
-/** Returns the index of a random item in the given array. */
-function randomArraySelection(array) {
-  if (!array?.length) {
-    return null;
-  }
-  const randomIndex = randomIntFromInterval(0, array.length - 1);
-  return randomIndex;
 }
 
 /*      ======== LUCKY NUMBERS-SPECIFIC CRUD FUNCTIONS ========      */

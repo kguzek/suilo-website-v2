@@ -5,6 +5,7 @@ const {
   HTTP,
   getDocRef,
   getIntArray,
+  randomArraySelection,
   sendListResponse,
   sendSingleResponse,
   createSingleDocument,
@@ -19,8 +20,7 @@ const eventAttributeSanitisers = {
   startDate: (startDate) => getIntArray(startDate, "-", "1970-01-01"),
   endDate: (endDate) => getIntArray(endDate, "-", "1970-01-01"),
   isPrimary: (isPrimary) => (isPrimary || "true").toLowerCase() !== "false",
-  colourTop: hexStringToDecimal,
-  colourBottom: hexStringToDecimal,
+  colour: hexStringToDecimal,
 };
 
 const defaultCalendarEventTypes = [
@@ -33,10 +33,18 @@ const defaultCalendarEventTypes = [
   "matury i inne egzaminy",
 ];
 
+const defaultEventColours = [0xfd3153, 0x1ccb9e, 0x3694df];
+
 /*      ======== CALENDAR FUNCTIONS ========      */
 
 /** Converts a string containing a hexadecimal number either in plain digits or prepended with `#` or `0x` into a decimal number.*/
-function hexStringToDecimal(hexString = "#000000") {
+function hexStringToDecimal(hexString) {
+  if (!hexString) {
+    const randIdx = randomArraySelection(defaultEventColours);
+    const randomColour = defaultEventColours[randIdx];
+    console.log("Defaulting to event colour", randomColour);
+    return randomColour;
+  }
   // trim the leading hashtag
   const iOffset = hexString.startsWith("#");
   // starts substring at either index 0 or 1 and includes the next 6 characters
@@ -48,6 +56,7 @@ function hexStringToDecimal(hexString = "#000000") {
 
 /** Converts base-10 into base-16 as a string with a leading `#`. */
 function decimalToHexString(decimal, hexLength = 6) {
+  decimal ?? (decimal = hexStringToDecimal());
   const hex = decimal.toString(16).toUpperCase();
   return "#" + hex.padStart(hexLength, "0");
 }
@@ -101,24 +110,12 @@ function getParams(req, res, yearOnly = false) {
 
 /** Converts the raw database data into the JSON output by the API.
  * - Converts the isPrimary boolean property into a `renderType` string that is either "PRIMARY" or "SECONDARY"
- * - If the render type is PRIMARY, creates a `colour` object property containing the `topCorner` and `bottomCorner` HEX values
- * - If the render type is SECONDARY, creates a `colour` string field with the HEX value of the raw data's `topCorner` property
  * - Formats the start and end dates as string with format YYYY-MM-DD
  * - Formats the event type (subtype) as the full event type string instead of an integer code
  */
 function processEventData(data) {
-  if (data.isPrimary) {
-    data.renderType = "PRIMARY";
-    // include the top and bottom corner colours in the 'colour' property
-    data.colour = {
-      topCorner: decimalToHexString(data.colourTop),
-      bottomCorner: decimalToHexString(data.colourBottom),
-    };
-  } else {
-    data.renderType = "SECONDARY";
-    // include only the top colour (default) in the 'colour' property
-    data.colour = decimalToHexString(data.colourTop);
-  }
+  data.renderType = data.isPrimary ? "PRIMARY" : "SECONDARY";
+  data.colour = decimalToHexString(data.colour);
   // convert the start and end date arrays into date strings in a single `date` object
   data.date = {
     start: serialiseDateArray(data.startDate),
@@ -129,8 +126,6 @@ function processEventData(data) {
   // remove unused parameters from the new data object
   const {
     isPrimary,
-    colourTop,
-    colourBottom,
     // type,
     // startDate,
     // endDate,
@@ -204,15 +199,15 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
       if (startDate > upperLimit || endDate < lowerLimit) {
         continue;
       }
-      if (month) {
-        // only include the day numbers if the month is provided
-        event.date = { start: startDate.getDate(), end: endDate.getDate() };
-      }
+      // if (month) {
+      //   // only include the day numbers if the month is provided
+      //   event.date = { start: startDate.getDate(), end: endDate.getDate() };
+      // }
       // initialise final event properties
-      if (!event.isPrimary) {
-        event.date.startsInPastMonth = startDate < lowerLimit;
-        event.date.endsInFutureMonth = endDate > upperLimit;
-      }
+      // if (!event.isPrimary) {
+      //   event.date.startsInPastMonth = startDate < lowerLimit;
+      //   event.date.endsInFutureMonth = endDate > upperLimit;
+      // }
       // add the event details to the response
       response.numEvents++;
       response.events.push(event);
@@ -242,7 +237,7 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
 router
   // CREATE new calendar event
   .post("/", (req, res) => {
-    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colourTop=#000000&colourBottom=#000000
+    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colour=#000000
 
     const startDate = new Date(req.query.startDate ?? 0);
     const endDate = new Date(req.query.endDate ?? 0);

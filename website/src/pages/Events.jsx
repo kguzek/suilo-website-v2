@@ -139,43 +139,4 @@ function EventPreview({ event }) {
   );
 }
 
-// TODO: change this
-function CalendarEventPreview({ event, data }) {
-  const elem = (
-    <div>
-      <p>
-        <small>
-          <i>
-            {formatDate([data.yearInt, data.monthInt, event.date.start])}
-            {event.date.start !== event.date.end &&
-              ` — ${formatDate([data.yearInt, data.monthInt, event.date.end])}`}
-            {event.eventType && (
-              <span>&nbsp;&nbsp;·&nbsp;&nbsp;[{event.eventType}]</span>
-            )}
-          </i>
-        </small>
-        <br />
-        {event.title}
-      </p>
-    </div>
-  );
-  // temporary render style
-  const eventEndDate = new Date(
-    serialiseDateArray([data.yearInt, data.monthInt, event.date.end])
-  );
-  const todayMidnight = new Date(dateToArray());
-  const tomorrowMidnight = new Date();
-  tomorrowMidnight.setHours(24, 0, 0, 0);
-  if (eventEndDate < todayMidnight) {
-    // cross out past events
-    return <s>{elem}</s>;
-  }
-  if (eventEndDate <= tomorrowMidnight) {
-    // bolden events that are today
-    return <b>{elem}</b>;
-  }
-  // no style effect for future events
-  return elem;
-}
-
 export default Events;
