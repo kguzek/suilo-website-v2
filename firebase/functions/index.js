@@ -14,7 +14,6 @@ const {
   sendListResponse,
   deleteSingleDocument,
 } = require("./util");
-const authMiddleware = require("./authMiddlewareV2");
 
 // initialise express
 const app = express();
@@ -26,6 +25,7 @@ const SERVER_REGION = "europe-west1";
 const ROUTES = [
   "news",
   "links",
+  "photos",
   "events",
   "calendar",
   "lastUpdate",
@@ -41,16 +41,7 @@ const ROUTES = [
   "optionsSuccessStatus": 204
 } */
 app.use(cors());
-
-app.use("/api/", authMiddleware);
-
-// set individual API routes
-app.use("/api/news/", require("./routes/news"));
-app.use("/api/links/", require("./routes/links"));
-app.use("/api/events/", require("./routes/events"));
-app.use("/api/calendar/", require("./routes/calendar"));
-app.use("/api/lastUpdate/", require("./routes/lastUpdate")(ROUTES));
-app.use("/api/luckyNumbers/", require("./routes/luckyNumbers"));
+app.use("/api/", require("./authMiddlewareV2"));
 
 // define sort options for sending list responses
 const sortOptions = {
@@ -61,7 +52,6 @@ const sortOptions = {
 
 // define routes that have similar structures to avoid repeating the code in the separate route files
 for (const endpoint of ["calendar", "events", "links", "news"]) {
-  app;
   // READ all events/links/news
   if (endpoint !== "calendar") {
     app.get(`/api/${endpoint}/`, (req, res) => {
@@ -75,11 +65,11 @@ for (const endpoint of ["calendar", "events", "links", "news"]) {
 
   // READ single link/news
   if (["links", "news"].includes(endpoint)) {
-    app.get(`/api/${endpoint}/:id`, (req, res) => {
+    app.get(`/api/${endpoint}/:id`, (req, res) =>
       getDocRef(req, res, endpoint).then((docRef) =>
         sendSingleResponse(docRef, res)
-      );
-    });
+      )
+    );
   }
 
   // DELETE single calendar event/event/link/news
@@ -102,6 +92,13 @@ app.all("/api/", (req, res) => {
 });
 
 for (const route of ROUTES) {
+  // set individual API routes
+  let routeMiddleware = require("./routes/" + route);
+  if (route === "lastUpdate") {
+    // Get the middlware by passing the list of routes
+    routeMiddleware = routeMiddleware(ROUTES);
+  }
+  app.use(`/api/${route}/`, routeMiddleware);
   // catch all requests to paths that are listed above but use the incorrect HTTP method
   for (const pathSuffix of ["/", "/:foo"]) {
     app.all("/api/" + route + pathSuffix, (req, res) => {
