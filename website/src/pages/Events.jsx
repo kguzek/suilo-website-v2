@@ -99,7 +99,7 @@ function Events({ setPage, reload }) {
         ))}
       <br /> */}
       <h2>Wydarzenia szkolne</h2>
-      <h3>Następne wydarzenie szkolne</h3>
+      <h3>Następne wydarzenie szkolne essunia widzowie kochani</h3>
       {nextEvent ? (
         <EventPreview event={nextEvent} />
       ) : (
