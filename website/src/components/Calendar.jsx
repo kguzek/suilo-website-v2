@@ -4,7 +4,7 @@ import { Bars } from "react-loader-spinner";
 import { fetchCachedData } from "../misc";
 import Calendar from "react-awesome-calendar";
 import { serialiseDateArray } from "../common";
-import Fuckers from "./MyCalendarFuckers";
+import CustomCalendar from "./CustomCalendar";
 
 const CalendarPreview = ({ updateCache = false }) => {
   const d = new Date()
@@ -95,7 +95,7 @@ const CalendarPreview = ({ updateCache = false }) => {
         onClickEvent={onClickEvent}
         onClickTimeLine={onClickTimeLine}
       /> */}
-      <Fuckers
+      <CustomCalendar
         events={events ?? []}
         onClickDate={onCalendarClick}
         onMonthChange={onMonthChange}

@@ -221,7 +221,7 @@ const CalendarCell = ({ daysInPrevMonth, daysInMonth, onPress, idx, type, daysBe
     )
 }
 
-const Fuckers = ({ events, onMonthChange, onClickDate }) => {
+const CustomCalendar = ({ events, onMonthChange, onClickDate }) => {
     const d = new Date;
     const [currentMonth, setCurrMonth] = useState(d.getMonth())
     const [currentYear, setCurrYear] = useState(d.getFullYear())
@@ -373,4 +373,4 @@ const Fuckers = ({ events, onMonthChange, onClickDate }) => {
     )
 }
 
-export default Fuckers
+export default CustomCalendar
