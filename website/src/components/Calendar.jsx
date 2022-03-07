@@ -4,35 +4,13 @@ import { Bars } from "react-loader-spinner";
 import { fetchCachedData } from "../misc";
 import Calendar from "react-awesome-calendar";
 import { serialiseDateArray } from "../common";
+import Fuckers from "./MyCalendarFuckers";
 
-const testEvents = [
-  {
-    id: 1,
-    color: "#fd3153",
-    from: "2022-03-02T18:00:00+00:00",
-    to: "2022-03-05T19:00:00+00:00",
-    title: "This is an event",
-  },
-  {
-    id: 2,
-    color: "#1ccb9e",
-    from: "2022-03-01T13:00:00+00:00",
-    to: "2022-03-05T14:00:00+00:00",
-    title: "This is another event",
-  },
-  {
-    id: 3,
-    color: "#3694DF",
-    from: "2022-03-05T13:00:00+00:00",
-    to: "2022-03-05T20:00:00+00:00",
-    title: "This is also another event",
-  },
-];
-
-function CalendarPreview({ updateCache = false }) {
+const CalendarPreview = ({ updateCache = false }) => {
+  const d = new Date()
   const [loaded, setLoaded] = useState(false);
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(d.getFullYear());
+  const [month, setMonth] = useState(d.getMonth() + 1);
   const [calendarMode, setCalendarMode] = useState("monthlyMode");
   const [events, setEvents] = useState(null);
 
@@ -57,7 +35,7 @@ function CalendarPreview({ updateCache = false }) {
   }, [updateCache, year, month, calendarMode]);
 
   /** Callback function to be called when the calendar data is fetched. */
-  function setData(data) {
+  const setData = (data) => {
     setEvents(
       // data.events.map((event) => ({
       //   id: event.id,
@@ -84,29 +62,45 @@ function CalendarPreview({ updateCache = false }) {
     );
   }
 
-  function onChange({ day, mode, month, year }) {
+  const onChange = ({ day, mode, month, year }) => {
     setMonth(month + 1);
     setYear(year);
     setCalendarMode(mode);
   }
 
-  function onClickEvent(id) {
+  const onClickEvent = (id) => {
     console.log("User clicked calendar event with ID", id);
     // TODO: integrate individual calendar event pages
     // navigate(`/wydarzenia/kalendarz/${id}`);
   }
 
-  function onClickTimeLine({ year, month, day, hour }) {
+  const onClickTimeLine = ({ year, month, day, hour }) => {
     console.log("User clicked calendar timeline");
   }
 
+  const onCalendarClick = ({ day, month, year, eventIDs }) => {
+    //EVERYTHING HERE FOR CLICK INFO
+    console.log(day + "/" + month + "/" + year, eventIDs[0] !== undefined ? "event IDs for chosen day: " + eventIDs : "")
+  }
+  const onMonthChange = (month) => {
+    //EVERYTHING HERE FOR MONTH CHANGE
+    console.log("calendar month: " + month)
+  }
+
   return (
-    <Calendar
-      events={events ?? []}
-      onChange={onChange}
-      onClickEvent={onClickEvent}
-      onClickTimeLine={onClickTimeLine}
-    />
+    <div className="">
+      {/* <Calendar
+        events={events ?? []}
+        onChange={onChange}
+        onClickEvent={onClickEvent}
+        onClickTimeLine={onClickTimeLine}
+      /> */}
+      <Fuckers
+        events={events ?? []}
+        onClickDate={onCalendarClick}
+        onMonthChange={onMonthChange}
+      />
+    </div>
   );
 }
 
