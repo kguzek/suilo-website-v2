@@ -1,3 +1,13 @@
+::-moz-selection {
+  background-color: rgba(235, 156, 0, 0.7);
+  color: white;
+}
+
+::selection {
+  background-color: rgba(235, 156, 0, 0.7);
+  color: white;
+}
+
 .scroll-top {
   background-color: white;
   width: 4em;
