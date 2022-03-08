@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bars } from "react-loader-spinner";
 import { fetchCachedData } from "../misc";
-import Calendar from "react-awesome-calendar";
 import { serialiseDateArray } from "../common";
 import CustomCalendar from "./CustomCalendar";
 
@@ -15,6 +14,16 @@ const CalendarPreview = ({ updateCache = false }) => {
   const [events, setEvents] = useState(null);
 
   const navigate = useNavigate();
+
+  const legendColors = [
+    { top: "#FFA600", bottom: "#FFC100" },
+    { top: "#CC00FF", bottom: "#FF0000" },
+    "#00E308",
+    "#01B3FF",
+    "#FFCC00",
+    "#FF0000",
+    "#E600FF"
+  ]
 
   useEffect(() => {
     const fetchArgs = {
@@ -99,6 +108,7 @@ const CalendarPreview = ({ updateCache = false }) => {
         events={events ?? []}
         onClickDate={onCalendarClick}
         onMonthChange={onMonthChange}
+        baseColors={legendColors}
       />
     </div>
   );

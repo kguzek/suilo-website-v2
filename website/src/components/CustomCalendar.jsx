@@ -96,6 +96,7 @@ const testData = [
         endDate: [2022, 3, 17],
         id: "P7NyRsWsN5Y4iD68NkYF",
         renderType: "PRIMARY",
+        type: 1,
         startDate: [2022, 3, 17],
         title: "Ess",
     },
@@ -104,14 +105,16 @@ const testData = [
         endDate: [2022, 3, 17],
         id: "P7NyRsWsN5Y4iD68NkYF",
         renderType: "SECONDARY",
+        type: 4,
         startDate: [2022, 3, 17],
-        title: "Ferie Zimowe 2022 (Śląsk)",
+        title: "Idkdfsfd",
     },
     {
         color: "#FD3153",
         endDate: [2022, 3, 17],
         id: "P7NyRsWsN5Y4iD68NkYF",
         renderType: "SECONDARY",
+        type: 3,
         startDate: [2022, 3, 17],
         title: "Ferie Zimowe 2022 (Śląsk)",
     },
@@ -120,6 +123,7 @@ const testData = [
         endDate: [2022, 3, 18],
         id: "P7NyRsWsN5Y4iD68NkYF",
         renderType: "SECONDARY",
+        type: 2,
         startDate: [2022, 3, 18],
         title: "Idk teścik",
     },
@@ -128,8 +132,18 @@ const testData = [
         endDate: [2022, 3, 8],
         id: "P7NyRsWsN5Y4iD68NkYF",
         renderType: "PRIMARY",
+        type: 0,
         startDate: [2022, 3, 8],
         title: "Wybory do młodzieżowej rady miasta",
+    },
+    {
+        color: "#FD3153",
+        endDate: [2022, 3, 8],
+        id: "P7NyRsWsN5Y4iD68NkYF",
+        renderType: "SECONDARY",
+        type: 5,
+        startDate: [2022, 3, 8],
+        title: "Dzień kobiet",
     },
 ]
 
@@ -143,7 +157,7 @@ const getDaysInMonth = (month, year) => {
     return days;
 }
 
-const CalendarCell = ({ daysInPrevMonth, daysInMonth, onPress, idx, type, daysBefore, daysCurrent, length, events, changeMonth }) => {
+const CalendarCell = ({ daysInPrevMonth, baseColors, daysInMonth, onPress, idx, type, daysBefore, daysCurrent, length, events, changeMonth }) => {
     const beginningOfTheWeek = ((String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Mon") || (idx === 0)) ? true : false;
     const endOfTheWeek = ((String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun") || (idx === length - 1)) ? true : false;
     let newPrimEvents = [];
@@ -151,6 +165,8 @@ const CalendarCell = ({ daysInPrevMonth, daysInMonth, onPress, idx, type, daysBe
     let eventIDs = [];
     const d = new Date()
     const isToday = ((idx - daysBefore + 1) === d.getDate()) ? true : false
+    let title = "";
+    let delay = 0;
 
     events.forEach((el, i) => {
         if (el.startDate[2] === (idx + 1 - daysBefore)) {
@@ -162,27 +178,41 @@ const CalendarCell = ({ daysInPrevMonth, daysInMonth, onPress, idx, type, daysBe
         }
     })
 
+    // save all ids for current date
     newPrimEvents.forEach(el => eventIDs.push(el.id))
     newSecEvents.forEach(el => eventIDs.push(el.id))
 
+    // make one title string for date
+    newPrimEvents.forEach((el, i) => title = ((title.length !== 0 ? "\n" : "") + title + el.title))
+    newSecEvents.forEach((el, i) => title = (title + "\n" + el.title))
 
     return (
         <div
             onClick={() => { return type === "_BEFORE_" ? changeMonth("_PREV_") : type === "_AFTER_" ? changeMonth("_NEXT_") : onPress((idx - daysBefore + 1), eventIDs) }}
-            title={newPrimEvents[0] !== undefined ? (newSecEvents[0] !== undefined ? (newPrimEvents[0].title + "\n" + newSecEvents[0].title) : newPrimEvents[0].title) : newSecEvents[0] !== undefined ? newSecEvents[0].title : null}
+            title={title}
             className={`
                 w-full relative inline-flex justify-center font-medium align-middle aspect-square
                 ${isToday ? "bg-primary/20 hover:bg-primaryDark/30" : "hover:bg-gray-200/75"}
                  transition duration-[75ms] border-gray-200/70 
                 ${endOfTheWeek ? "border-r-[0px]" : "border-r-[1px]"} ${idx < 7 ? "border-t-white" : "border-t-gray-200/70"} 
                 border-t-[1px] group select-none ${newPrimEvents[0] && "cursor-pointer"}
+                text-base lg:text-lg
             `}
         >
             {
                 newPrimEvents[0] &&
-                <div
-                    className={`m-auto -translate-y-1/2  top-1/2 w-2/3 aspect-square absolute rounded-full bg-gradient-to-br from-primary to-secondary`}
-                />
+                <>
+                    <div
+                        style={{ animationDelay: (String(idx * 35) + "ms") }}
+                        className={`m-auto animate-slow-ping origin-bottom -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full 
+                    bg-gradient-to-br ${!newPrimEvents[0].type ? "from-primary to-secondary" : "from-[#CC00FF] to-[#FF0000]"}`}
+                    />
+                    <div
+                        className={`m-auto shadow-md -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full 
+                    bg-gradient-to-br ${!newPrimEvents[0].type ? "from-primary to-secondary" : "from-[#CC00FF] to-[#FF0000]"}`}
+                    />
+                </>
+
             }
             {type === "_BEFORE_" ?
                 <p
@@ -210,10 +240,10 @@ const CalendarCell = ({ daysInPrevMonth, daysInMonth, onPress, idx, type, daysBe
             }{
                 newSecEvents[0] &&
                 <div className="absolute top-px right-px flex flex-row justify-end py-px">
-                    {newSecEvents[0] && <div className="mr-[2px] z-20"><div className={`w-2 h-2 rounded-full `} style={{ backgroundColor: newSecEvents[0].color }} /></div>}
-                    {newSecEvents[1] && <div className="mr-[2px] z-20"><div className={`w-2 h-2 rounded-full `} style={{ backgroundColor: newSecEvents[0].color }} /></div>}
-                    {newSecEvents[2] && <div className="mr-[2px] z-20"><div className={`w-2 h-2 rounded-full `} style={{ backgroundColor: newSecEvents[0].color }} /></div>}
-                    {newSecEvents[3] && <div className="mr-[2px] z-20"><div className={`w-2 h-2 rounded-full `} style={{ backgroundColor: newSecEvents[0].color }} /></div>}
+                    {newSecEvents[0] && <div className="mr-[2px] z-20 "><div className={`w-2 h-2 rounded-full absolute animate-slow-ping `} style={{ backgroundColor: baseColors[newSecEvents[0].type], animationDelay: (String(idx * 50) + "ms") }} /><div className={`w-2 h-2 rounded-full `} style={{ backgroundColor: baseColors[newSecEvents[0].type] }} /></div>}
+                    {newSecEvents[1] && <div className="mr-[2px] z-20"><div className={`w-2 h-2 rounded-full absolute animate-slow-ping `} style={{ backgroundColor: baseColors[newSecEvents[1].type], animationDelay: (String(idx * 50 + 25) + "ms") }} /><div className={`w-2 h-2 rounded-full `} style={{ backgroundColor: baseColors[newSecEvents[1].type] }} /></div>}
+                    {newSecEvents[2] && <div className="mr-[2px] z-20"><div className={`w-2 h-2 rounded-full absolute animate-slow-ping `} style={{ backgroundColor: baseColors[newSecEvents[2].type], animationDelay: (String(idx * 50 + 50) + "ms") }} /><div className={`w-2 h-2 rounded-full `} style={{ backgroundColor: baseColors[newSecEvents[2].type] }} /></div>}
+                    {newSecEvents[3] && <div className="mr-[2px] z-20"><div className={`w-2 h-2 rounded-full absolute animate-slow-ping `} style={{ backgroundColor: baseColors[newSecEvents[3].type], animationDelay: (String(idx * 50 + 75) + "ms") }} /><div className={`w-2 h-2 rounded-full `} style={{ backgroundColor: baseColors[newSecEvents[3].type] }} /></div>}
                 </div>
             }
 
@@ -221,7 +251,7 @@ const CalendarCell = ({ daysInPrevMonth, daysInMonth, onPress, idx, type, daysBe
     )
 }
 
-const CustomCalendar = ({ events, onMonthChange, onClickDate }) => {
+const CustomCalendar = ({ events, onMonthChange, onClickDate, baseColors }) => {
     const d = new Date;
     const [currentMonth, setCurrMonth] = useState(d.getMonth())
     const [currentYear, setCurrYear] = useState(d.getFullYear())
@@ -325,7 +355,7 @@ const CustomCalendar = ({ events, onMonthChange, onClickDate }) => {
             renderArray.push("_AFTER_")
         }
 
-        return renderArray.map((el, idx) => <CalendarCell onPress={_clickAction} changeMonth={_changeMonth} events={testData} key={el + idx} type={el} idx={idx} daysInMonth={daysInMonth} length={renderArray.length} daysBefore={daysBefore} daysCurrent={(renderArray.length - (daysBefore + daysAfter))} daysInPrevMonth={daysInPrevMonth.length} />)
+        return renderArray.map((el, idx) => <CalendarCell baseColors={baseColors} onPress={_clickAction} changeMonth={_changeMonth} events={testData} key={el + idx} type={el} idx={idx} daysInMonth={daysInMonth} length={renderArray.length} daysBefore={daysBefore} daysCurrent={(renderArray.length - (daysBefore + daysAfter))} daysInPrevMonth={daysInPrevMonth.length} />)
 
     }
 

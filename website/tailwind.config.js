@@ -47,7 +47,7 @@ module.exports = {
         '2/5': '40%',
       }),
       animation: {
-        'slow-ping': 'ping 1500ms cubic-bezier(0, 0, 0.2, 1) infinite;',
+        'slow-ping': 'ping 1500ms cubic-bezier(0, 0, 0.2, 1) forwards;',
       }
     },
   },
