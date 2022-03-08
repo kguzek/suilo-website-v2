@@ -10,6 +10,7 @@ import {
   removeSearchParam,
 } from "../misc";
 import { serialiseDateArray, dateToArray } from "../common";
+import EventPreview from "../components/EventPreview";
 
 function getNextEvent(events = []) {
   const now = new Date();
@@ -98,45 +99,47 @@ function Events({ setPage, reload }) {
           />
         ))}
       <br /> */}
-      <h2>Wydarzenia szkolne</h2>
-      <h3>Następne wydarzenie szkolne essunia widzowie kochani</h3>
-      {nextEvent ? (
+      {/* <h2>Wydarzenia szkolne</h2>
+      <h3>Następne wydarzenie szkolne essunia widzowie kochani</h3> */}
+      <EventPreview eventType="NEXT" />
+      {/* {nextEvent ? (
         <EventPreview event={nextEvent} />
       ) : (
         "Nie ma w najbliższym czasie żadnych wydarzeń."
-      )}
+      )} */}
       <CalendarPreview updateCache={updateCache} />
+      <EventPreview />
     </div>
   );
 }
 
-function EventPreview({ event }) {
-  const numParticipants = event.participants.length;
-  const suffix = numParticipants === 1 ? "" : "ów";
-  return (
-    <div>
-      <small>
-        <i>
-          {formatDate(event.date)}&nbsp;&nbsp;·&nbsp;&nbsp;{numParticipants}{" "}
-          uczestnik
-          {suffix}
-        </i>
-      </small>
-      <br />
-      <b>
-        <Link to={event.id}>{event.title}</Link>
-      </b>
-      <br />
-      <i>
-        Godz. {formatTime(event.startTime)}—{formatTime(event.endTime)}
-        {event.location && (
-          <span>&nbsp;&nbsp;·&nbsp;&nbsp;Miejsce: {event.location}</span>
-        )}
-      </i>
-      <br />
-      {event.content}
-    </div>
-  );
-}
+// function EventPreview({ event }) {
+//   const numParticipants = event.participants.length;
+//   const suffix = numParticipants === 1 ? "" : "ów";
+//   return (
+//     <div>
+//       <small>
+//         <i>
+//           {formatDate(event.date)}&nbsp;&nbsp;·&nbsp;&nbsp;{numParticipants}{" "}
+//           uczestnik
+//           {suffix}
+//         </i>
+//       </small>
+//       <br />
+//       <b>
+//         <Link to={event.id}>{event.title}</Link>
+//       </b>
+//       <br />
+//       <i>
+//         Godz. {formatTime(event.startTime)}—{formatTime(event.endTime)}
+//         {event.location && (
+//           <span>&nbsp;&nbsp;·&nbsp;&nbsp;Miejsce: {event.location}</span>
+//         )}
+//       </i>
+//       <br />
+//       {event.content}
+//     </div>
+//   );
+// }
 
 export default Events;

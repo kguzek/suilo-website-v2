@@ -380,11 +380,11 @@ const CustomCalendar = ({ events, onMonthChange, onClickDate, baseColors }) => {
 
     return (
         <div className="drop-shadow-3xl">
-            <div className="rounded-t-2xl inline-flex px-2 py-1 w-full justify-between align-middle bg-gradient-to-br from-primary to-secondary">
+            <div className="rounded-t-2xl inline-flex px-2 py-1 lg:py-[.35rem] lg:px-[.65rem] w-full justify-between align-middle bg-gradient-to-br from-primary to-secondary">
                 <div onClick={() => _changeMonth("_PREV_")} className="cursor-pointer group select-none inline-flex justify-center align-middle  my-auto rounded-full transition-all p-1 -m-1 duration-150 hover:bg-black/10 active:bg-black/20">
                     <ChevronLeft size={18} className="stroke-white stroke-[2.5px] m-auto" />
                 </div>
-                <p className="capitalize text-white text-lg font-semibold m-auto cursor-pointer pt-px" onClick={() => _setDateToday()}>
+                <p className="capitalize text-white text-lg lg:text-xl font-semibold m-auto cursor-pointer pt-px" onClick={() => _setDateToday()}>
                     {monthsOfYear[currentMonth].long.toUpperCase()}&nbsp;{currentYear}
                 </p>
                 <div onClick={() => _changeMonth("_NEXT_")} className="cursor-pointer group inline-flex justify-center align-middle select-none my-auto rounded-full transition-all p-1 -m-1 duration-150 hover:bg-black/10 active:bg-black/20">

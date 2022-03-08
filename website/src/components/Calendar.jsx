@@ -118,7 +118,7 @@ const CalendarPreview = ({ updateCache = false }) => {
         onClickEvent={onClickEvent}
         onClickTimeLine={onClickTimeLine}
       /> */}
-      <div className="w-full mx-auto max-w-[26rem] lg:w-[26rem] lg:mx-auto">
+      <div className="w-full mx-auto max-w-[27rem] lg:w-[27rem] lg:mx-auto mb-8">
         <CustomCalendar
           events={events ?? []}
           onClickDate={onCalendarClick}
