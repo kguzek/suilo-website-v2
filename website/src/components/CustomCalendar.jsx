@@ -216,14 +216,14 @@ const CalendarCell = ({ daysInPrevMonth, baseColors, daysInMonth, onPress, idx, 
             }
             {type === "_BEFORE_" ?
                 <p
-                    className="m-auto text-slate-300"
+                    className="m-auto text-slate-300 text-center"
                 >
                     {(daysInPrevMonth - daysBefore + idx + 1)}
                 </p> :
                 type === "_CURRENT_" ?
                     <p
                         className={`
-                            m-auto z-10 ${newPrimEvents[0] !== undefined ? "text-white" : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun" ? "text-[#FF1818]" :
+                            m-auto text-center z-10 ${newPrimEvents[0] !== undefined ? "text-white" : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun" ? "text-[#FF1818]" :
                                 String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sat" ? "text-text4" : "text-text2"}
                         `}
                     >
@@ -232,7 +232,7 @@ const CalendarCell = ({ daysInPrevMonth, baseColors, daysInMonth, onPress, idx, 
                     :
                     type === "_AFTER_" ?
                         <p
-                            className="m-auto text-slate-300"
+                            className="m-auto text-center text-slate-300"
                         >
                             {(idx + 1 - (daysBefore + daysCurrent))}
                         </p> :
