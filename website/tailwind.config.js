@@ -18,7 +18,8 @@ module.exports = {
         text5: "#222222",
         text6: "#444444",
         text7: "#6e6e6e",
-        footer: "#434343"
+        footer: "#434343",
+        aspect: "#ffe6b5",
       },
       fontFamily: {
         sans: [
