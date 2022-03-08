@@ -72,7 +72,7 @@ function Events({ setPage, reload }) {
   const nextEvent = getNextEvent(eventsData.contents);
   console.log("Next event:", nextEvent?.title);
   return (
-    <div style={{ minHeight: "89vh" }}>
+    <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
         <title>
           Wydarzenia | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w
