@@ -17,7 +17,7 @@ const InputArea = ({
   useEffect(() => {
     setCharCount(value.length);
   }, [value])
-  
+
   return (
     <div className="main" style={{ width: width }}>
       <textarea
@@ -28,7 +28,7 @@ const InputArea = ({
         value={value}
         type={type}
         name={name}
-        style={{ maxWidth: width, maxHeight: "10em", height: "1.6em" }}
+        style={{ maxWidth: width, maxHeight: "10em", height: "2em" }}
         pattern={pattern}
         maxLength={maxLength === 0 ? 512 : maxLength}
         onChange={(e) => {
@@ -53,8 +53,8 @@ const InputArea = ({
             type === "date"
               ? ".3em 4em .25em .2em"
               : type === "time"
-              ? ".1em .4em .25em .2em"
-              : ".1em .2em",
+                ? ".1em .4em .25em .2em"
+                : ".1em .2em",
           top: type === "date" ? ".75em" : type === "time" ? ".95em" : ".8em",
         }}
       >

@@ -1264,7 +1264,8 @@ a{
     font-family: "Poppins";
     transition: all 150ms ease-in-out;
     letter-spacing: 0.015em;
-    background-color: $bg-color;
+    // background-color: $bg-color;
+    background: transparent;
 
     &:focus,
     &:hover {
@@ -1455,10 +1456,6 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
 }
 
 
-.edit-segment{
-    margin-top: 2.5em;
-    width: 50%
-}
 
 .from-to-indicator{
     margin: 0;
@@ -1474,7 +1471,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
     display: flex;
     align-items: center;
     flex-direction: row;
-    padding: .6em 1.5em;
+    padding: .5em 1.2em;
     border-radius: .65em;
     height: 100%;
     pointer-events: all;
@@ -1496,7 +1493,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
         box-shadow: 0 5px 22px rgba(60, 50, 0, .0);
     }
     p{
-        font-size: 1.1em;
+        font-size: .9rem;
         font-weight: 500;
         padding: 0;
         margin: 0;
@@ -1511,7 +1508,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
     display: flex;
     align-items: center;
     flex-direction: row;
-    margin: .6em 1.5em;
+    margin: .5em 1.2em;
     padding: 0;
     border-radius: .65em;
     height: 100%;
@@ -1524,7 +1521,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
     margin-left: 2.5em;
     margin-top: 1.6em;
     p{
-        font-size: 1.1em;
+        font-size: .9em;
         font-weight: 500;
         color:rgb(252, 63, 30);
         padding: 0;

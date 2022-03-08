@@ -207,7 +207,7 @@ function Layout({
   isFooterVisible,
 }) {
   return (
-    <main>
+    <main className="min-h-screen">
       <div
         className="-z-50 -left-12  -top-0 scale-[.4] md:scale-[.5] lg:scale-[.575] xl:scale-[.65] xl:-left-0 xl:-top-[1rem] origin-top-left absolute"
         style={{
@@ -223,10 +223,10 @@ function Layout({
           -z-50 right-0 
           ${page === "contact" ? "md:max-h-[100vh] -translate-x-[10px]" : "md:max-h-[100vh]"} 
           ${page === "home" ? "-top-[16.5rem] scale-[.275]" : "-top-[16.5rem] scale-[.275]"} 
-          ${page === "home" ? "max-h-[175vh] md:scale-[.475]" : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"} 
-          ${page === "home" ? "lg:scale-[.8] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12" :
+          ${page === "home" ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]" : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"} 
+          ${page === "home" ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12" :
             "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"} 
-          ${page === "home" ? "xl:-rotate-[2.5deg] xl:-top-[17rem] xl:scale-[1.05]" :
+          ${page === "home" ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]" :
             "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"}  
           origin-top-right absolute
         `}

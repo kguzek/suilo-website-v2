@@ -19,9 +19,9 @@ const InputBox = ({
   useEffect(() => {
     setCharCount(value.length);
   }, [value])
-  
+
   return (
-    <div className="main" style={{ width: width }}>
+    <div className="main my-1" style={{ width: width }}>
       <input
         className="input"
         required
@@ -55,8 +55,8 @@ const InputBox = ({
             type === "date"
               ? ".3em 4em .25em .2em"
               : type === "time"
-              ? ".1em .4em .25em .2em"
-              : ".1em .2em",
+                ? ".1em .4em .25em .2em"
+                : ".1em .2em",
           top: type === "date" ? ".75em" : type === "time" ? ".95em" : ".8em",
         }}
       >

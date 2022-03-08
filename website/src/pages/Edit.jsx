@@ -177,7 +177,7 @@ function PostEdit({ data, loaded, refetchData }) {
     );
   }
   return (
-    <form className="edit-segment" onSubmit={_handleSubmit}>
+    <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <InputDropdown
         label="Post do edycji"
         currentValue={currentlyActive}
@@ -416,7 +416,7 @@ function EventEdit({ data, loaded, refetchData }) {
     );
   }
   return (
-    <form className="edit-segment" onSubmit={_handleSubmit}>
+    <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <InputDropdown
         label="Wydarzenie do edycji"
         currentValue={currentlyActive}
@@ -630,7 +630,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   }
 
   return (
-    <form className="edit-segment" onSubmit={_handleSubmit}>
+    <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <InputDropdown
         label="Wydarzenie do edycji"
         currentValue={currentlyActive}
@@ -830,8 +830,7 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
 
   return (
     <div
-      style={{ paddingTop: "2.5em", justifyContent: "left" }}
-      className="page-main"
+      className="w-11/12 xl:w-10/12 min-h-[83vh] mt-16 flex flex-col justify-start align-middle "
     >
       <MetaTags>
         <title>
@@ -845,40 +844,46 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
         <meta property="og:title" content="Edycja | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
       </MetaTags>
-      <div style={{ width: "50%" }}>
-        <InputDropdown
-          label="Element strony do edycji"
-          currentValue={editPicker}
-          onChangeCallback={setEditPicker}
-          defaultLabel={""}
-          valueDisplayObject={editPickerOptions}
-        />
+      <div className="mx-auto w-2/3">
+        <div className=" m-auto w-1/2">
+          <InputDropdown
+            label="Element strony do edycji"
+            currentValue={editPicker}
+            onChangeCallback={setEditPicker}
+            defaultLabel={""}
+            valueDisplayObject={editPickerOptions}
+          />
+        </div>
+
+        {/* use == instead of === to compare integers with number strings
+        (editPicker can be a string representing a number e.g. "1") */}
+        <div className="w-full m-auto">
+          {editPicker == 0 && (
+            <PostEdit
+              data={newsData}
+              loaded={loadedNews}
+              refetchData={() => _fetchNews(true)}
+            />
+          )}
+          {editPicker == 1 && (
+            <EventEdit
+              data={eventsData}
+              loaded={loadedEvents}
+              refetchData={() => _fetchEvents(true)}
+            />
+          )}
+          {editPicker == 2 && (
+            <CalendarEdit
+              data={calendarData}
+              loaded={loadedCalendar}
+              setYear={setYear}
+              setMonth={setMonth}
+              refetchData={() => _fetchCalendar(true)}
+            />
+          )}
+        </div>
+
       </div>
-      {/* use == instead of === to compare integers with number strings
-      (editPicker can be a string representing a number e.g. "1") */}
-      {editPicker == 0 && (
-        <PostEdit
-          data={newsData}
-          loaded={loadedNews}
-          refetchData={() => _fetchNews(true)}
-        />
-      )}
-      {editPicker == 1 && (
-        <EventEdit
-          data={eventsData}
-          loaded={loadedEvents}
-          refetchData={() => _fetchEvents(true)}
-        />
-      )}
-      {editPicker == 2 && (
-        <CalendarEdit
-          data={calendarData}
-          loaded={loadedCalendar}
-          setYear={setYear}
-          setMonth={setMonth}
-          refetchData={() => _fetchCalendar(true)}
-        />
-      )}
     </div>
   );
 }

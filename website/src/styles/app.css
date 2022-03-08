@@ -159,7 +159,7 @@
 .cookies-disagree p {
   font-size: .75em;
   font-weight: 400;
-  color: #FFA900;
+  color: #ffa900;
   padding: 0;
   margin: 0;
   white-space: nowrap;
@@ -241,7 +241,7 @@
   font-family: 'Poppins';
   font-size: .87em;
   font-weight: 500;
-  color: #FFA900;
+  color: #ffa900;
   padding: .68em 1.6em;
   background-color: white;
   border-radius: .55em;
@@ -281,7 +281,7 @@
 .login-btn-mobile p {
   font-size: 4em;
   font-weight: 500;
-  color: #FFA900;
+  color: #ffa900;
   padding: 0;
   margin: 0;
 }
@@ -301,7 +301,7 @@
 #indicator {
   position: absolute;
   top: -.17vh;
-  background-color: #FFA900;
+  background-color: #ffa900;
   height: .475em;
   border-bottom-left-radius: .6em;
   border-bottom-right-radius: .6em;
@@ -499,7 +499,7 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  background-color: #FFA900;
+  background-color: #ffa900;
   border-radius: .6em;
   padding: .8em .95em;
   -webkit-box-pack: center;
@@ -561,7 +561,7 @@
 }
 
 .register-a {
-  color: #FFA900;
+  color: #ffa900;
   text-decoration: none;
   cursor: pointer;
   pointer-events: all;
@@ -593,7 +593,7 @@
 
 .more1 {
   height: 1em;
-  border-left: 0.1rem solid #FFA900;
+  border-left: 0.1rem solid #ffa900;
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
   -webkit-transform: rotate(45deg);
@@ -606,8 +606,8 @@
   width: 6.5em;
   padding: 0;
   margin: 0;
-  color: #FFA900;
-  border-top: 0.1rem solid #FFA900;
+  color: #ffa900;
+  border-top: 0.1rem solid #ffa900;
 }
 
 .reset {
@@ -680,7 +680,7 @@
   padding: 0;
   font-weight: 500;
   font-size: .95em;
-  color: #FFA900;
+  color: #ffa900;
 }
 
 .main-post-btn:hover {
@@ -770,7 +770,7 @@ main {
 }
 
 a {
-  color: #FFA900;
+  color: #ffa900;
   text-decoration: none;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
@@ -826,13 +826,13 @@ a {
   -webkit-transition: all 150ms ease-in-out;
   transition: all 150ms ease-in-out;
   letter-spacing: 0.015em;
-  background-color: #F8F8F8;
+  background: transparent;
 }
 
 .input:focus, .input:hover {
   outline: none;
   text-decoration: none;
-  border-color: #FFA900;
+  border-color: #ffa900;
 }
 
 label.main {
@@ -983,7 +983,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
 .dropdown-header:focus, .dropdown-header:hover {
   outline: none;
   text-decoration: none;
-  border-color: #FFA900;
+  border-color: #ffa900;
 }
 
 .dropdown-option {
@@ -1058,11 +1058,6 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
   margin: 0;
 }
 
-.edit-segment {
-  margin-top: 2.5em;
-  width: 50%;
-}
-
 .from-to-indicator {
   margin: 0;
   padding: 0;
@@ -1081,7 +1076,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  padding: .6em 1.5em;
+  padding: .5em 1.2em;
   border-radius: .65em;
   height: 100%;
   pointer-events: all;
@@ -1110,7 +1105,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
 }
 
 .add-btn p {
-  font-size: 1.1em;
+  font-size: .9rem;
   font-weight: 500;
   padding: 0;
   margin: 0;
@@ -1130,7 +1125,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  margin: .6em 1.5em;
+  margin: .5em 1.2em;
   padding: 0;
   border-radius: .65em;
   height: 100%;
@@ -1145,7 +1140,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
 }
 
 .delete-btn p {
-  font-size: 1.1em;
+  font-size: .9em;
   font-weight: 500;
   color: #fc3f1e;
   padding: 0;

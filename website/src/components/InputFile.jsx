@@ -22,7 +22,7 @@ const InputFile = ({
                 <input
                     type="file"
                     accept={acceptedExtensions}
-                    onChange={(e) => {setValue(e.target.value.replace(`C:\\fakepath\\`, ""));onChange(e)}}
+                    onChange={(e) => { setValue(e.target.value.replace(`C:\\fakepath\\`, "")); onChange(e) }}
                 />
                 {value}
             </div>
@@ -32,7 +32,7 @@ const InputFile = ({
                     transform: (focused || value !== "") ? "translate(-.3em, -1em) scale(.75)" : "translate(0,0) scale(1)",
                     color: (focused) ? "#111111" : "rgb(130, 130, 130)",
                     padding: ".1em .2em",
-                    top: ".8em",
+                    top: ".2em",
                 }}
             >
                 {placeholder}
