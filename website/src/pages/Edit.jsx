@@ -279,6 +279,7 @@ function EventEdit({ data, loaded, refetchData }) {
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
   const [imageURL, setImageURL] = useState("");
+  const [eventURL, setEventURL] = useState("");
   const [imagePath, setImagePath] = useState();
   const [imgRef, setImgRef] = useState();
   const [imageAuthor, setImageAuthor] = useState("");
@@ -495,6 +496,13 @@ function EventEdit({ data, loaded, refetchData }) {
         maxLength={256}
         value={imageURL}
         onChange={setImageURL}
+      />
+      <InputBox
+        name="event-url"
+        placeholder="Zewnętrzny link do wydarzenia"
+        maxLength={256}
+        value={eventURL}
+        onChange={setEventURL}
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
