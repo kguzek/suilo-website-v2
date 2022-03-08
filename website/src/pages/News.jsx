@@ -98,9 +98,8 @@ const News = ({ setPage, reload }) => {
           </>
       }
       <div className="m-auto my-2">
-        <PagePicker initialPage={1} noPages={15} onChange={setNewsPage} />
+        <PagePicker initialPage={(searchParams.get("page") ?? 1)} noPages={15} onChange={setNewsPage} />
       </div>
-
     </div>
   );
 };

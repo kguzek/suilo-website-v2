@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PageBox = ({ page, activePage, changePage }) => {
     return (
@@ -14,7 +15,8 @@ const PageBox = ({ page, activePage, changePage }) => {
 }
 
 const PagePicker = ({ noPages, onChange, initialPage = 1 }) => {
-    const [page, setPage] = useState(initialPage)
+    const [page, setPage] = useState(Number(initialPage))
+    const navigate = useNavigate();
 
     useEffect(() => {
         onChange(page)
@@ -22,6 +24,11 @@ const PagePicker = ({ noPages, onChange, initialPage = 1 }) => {
 
     const _changePage = (noPage) => {
         setPage(noPage)
+        if (noPage > 1) {
+            navigate(`/aktualnosci?page=${noPage}`)
+        } else if (noPage === 1) {
+            navigate(`/aktualnosci`)
+        }
     }
 
     return (
@@ -30,11 +37,11 @@ const PagePicker = ({ noPages, onChange, initialPage = 1 }) => {
                 page > 2 && <PageBox changePage={_changePage} page={1} activePage={page} />
             }
             {
-                page > 1 && <PageBox changePage={_changePage} page={page - 1} activePage={page} />
+                (page > 1 && (page - 1 < noPages)) && <PageBox changePage={_changePage} page={page - 1} activePage={page} />
             }
             <PageBox changePage={_changePage} page={page} activePage={page} />
             {
-                page !== noPages && <PageBox changePage={_changePage} page={page + 1} activePage={page} />
+                page < noPages && <PageBox changePage={_changePage} page={page + 1} activePage={page} />
             }
             {
                 page === 1 && <PageBox changePage={_changePage} page={page + 2} activePage={page} />
