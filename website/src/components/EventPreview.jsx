@@ -44,7 +44,8 @@ const EventPreview = ({ eventType }) => {
                     <div className="inline-flex flex-row align-middle">
                         <Users size={26} className="aspect-square h-[1.3rem] my-auto sm:h-[1.45rem] lg:h-[1.7rem] stroke-2 stroke-text7" />
                         <p className="my-auto text-sm sm:text-[.9rem] lg:text-base lg:pl-3 font-medium pt-1 pl-1 sm:pl-2 text-text7">
-                            {"<30 uczestników"}
+                            {"<20 uczestników"}
+                            {/* IF IS LESS THAN 20 DONT SHOW EXACT NUMBER */}
                         </p>
                     </div>
                     <div className="inline-flex flex-row align-middle">

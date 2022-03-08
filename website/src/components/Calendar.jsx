@@ -111,14 +111,14 @@ const CalendarPreview = ({ updateCache = false }) => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row mx-auto justify-center lg:justify-evenly align-middle my-5 md:my-8 w-full sm:w-10/12 md:w-full lg:w-10/12 xl:-translate-x-10">
+    <div className="flex flex-col md:flex-row mx-auto justify-center lg:justify-evenly align-middle my-6 md:my-8 w-full sm:w-10/12 md:w-full lg:w-10/12 xl:-translate-x-10">
       {/* <Calendar
         events={events ?? []}
         onChange={onChange}
         onClickEvent={onClickEvent}
         onClickTimeLine={onClickTimeLine}
       /> */}
-      <div className="w-full mx-auto max-w-[27rem] lg:w-[27rem] lg:mx-auto mb-8">
+      <div className="w-full mx-auto max-w-[27rem] lg:w-[27rem] lg:mx-auto mb-4">
         <CustomCalendar
           events={events ?? []}
           onClickDate={onCalendarClick}
