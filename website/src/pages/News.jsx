@@ -36,7 +36,7 @@ const News = ({ setPage, reload }) => {
       "refresh"
     );
     _populatePageContents(updateCache);
-  }, [params.postID]);
+  }, [params.postID, searchParams]);
 
   useEffect(() => {
     if (!reload) {
