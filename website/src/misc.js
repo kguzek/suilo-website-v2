@@ -4,7 +4,7 @@ import { fetchWithToken, storage } from "./firebase";
 export const MAX_CACHE_AGE = 24; // hours
 
 // Temporary image URL if an article has none specified
-export const DEFAULT_IMAGE = "https://i.stack.imgur.com/6M513.png";
+export const DEFAULT_IMAGE = "https://i.imgur.com/Rwygn8m.jpg";
 
 /**
  * (1, 'wyświetle', 'nie', 'nia', 'ń') -> '1 wyświetlenie'
