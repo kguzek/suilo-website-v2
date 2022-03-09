@@ -35,6 +35,63 @@ const CalendarPreview = ({ updateCache = false }) => {
     "inne",
   ]
 
+  const testData = [
+    {
+      color: "#FD3153",
+      endDate: [2022, 3, 17],
+      id: "P7NyRsWsN5Y4iD68NkYF",
+      renderType: "PRIMARY",
+      type: 1,
+      startDate: [2022, 3, 17],
+      title: "Ess",
+    },
+    {
+      color: "#FD3153",
+      endDate: [2022, 3, 17],
+      id: "P7NyRsWsN5Y4iD68NkYF",
+      renderType: "SECONDARY",
+      type: 4,
+      startDate: [2022, 3, 17],
+      title: "Idkdfsfd",
+    },
+    {
+      color: "#FD3153",
+      endDate: [2022, 3, 17],
+      id: "P7NyRsWsN5Y4iD68NkYF",
+      renderType: "SECONDARY",
+      type: 3,
+      startDate: [2022, 3, 17],
+      title: "Ferie Zimowe 2022 (Śląsk)",
+    },
+    {
+      color: "#FD3153",
+      endDate: [2022, 3, 18],
+      id: "P7NyRsWsN5Y4iD68NkYF",
+      renderType: "SECONDARY",
+      type: 2,
+      startDate: [2022, 3, 18],
+      title: "Idk teścik",
+    },
+    {
+      color: "#FD3153",
+      endDate: [2022, 3, 8],
+      id: "P7NyRsWsN5Y4iD68NkYF",
+      renderType: "PRIMARY",
+      type: 0,
+      startDate: [2022, 3, 8],
+      title: "Wybory do młodzieżowej rady miasta",
+    },
+    {
+      color: "#FD3153",
+      endDate: [2022, 3, 8],
+      id: "P7NyRsWsN5Y4iD68NkYF",
+      renderType: "SECONDARY",
+      type: 5,
+      startDate: [2022, 3, 8],
+      title: "Dzień kobiet",
+    },
+  ]
+
   useEffect(() => {
     const fetchArgs = {
       setData,
@@ -120,7 +177,7 @@ const CalendarPreview = ({ updateCache = false }) => {
       /> */}
       <div className="w-full mx-auto max-w-[27rem] lg:w-[27rem] lg:mx-auto mb-4">
         <CustomCalendar
-          events={events ?? []}
+          events={testData ?? []}
           onClickDate={onCalendarClick}
           onMonthChange={onMonthChange}
           baseColors={legendColors}

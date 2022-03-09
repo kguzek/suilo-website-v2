@@ -90,63 +90,6 @@ const monthsOfYear = [
     }
 ]
 
-const testData = [
-    {
-        color: "#FD3153",
-        endDate: [2022, 3, 17],
-        id: "P7NyRsWsN5Y4iD68NkYF",
-        renderType: "PRIMARY",
-        type: 1,
-        startDate: [2022, 3, 17],
-        title: "Ess",
-    },
-    {
-        color: "#FD3153",
-        endDate: [2022, 3, 17],
-        id: "P7NyRsWsN5Y4iD68NkYF",
-        renderType: "SECONDARY",
-        type: 4,
-        startDate: [2022, 3, 17],
-        title: "Idkdfsfd",
-    },
-    {
-        color: "#FD3153",
-        endDate: [2022, 3, 17],
-        id: "P7NyRsWsN5Y4iD68NkYF",
-        renderType: "SECONDARY",
-        type: 3,
-        startDate: [2022, 3, 17],
-        title: "Ferie Zimowe 2022 (Śląsk)",
-    },
-    {
-        color: "#FD3153",
-        endDate: [2022, 3, 18],
-        id: "P7NyRsWsN5Y4iD68NkYF",
-        renderType: "SECONDARY",
-        type: 2,
-        startDate: [2022, 3, 18],
-        title: "Idk teścik",
-    },
-    {
-        color: "#FD3153",
-        endDate: [2022, 3, 8],
-        id: "P7NyRsWsN5Y4iD68NkYF",
-        renderType: "PRIMARY",
-        type: 0,
-        startDate: [2022, 3, 8],
-        title: "Wybory do młodzieżowej rady miasta",
-    },
-    {
-        color: "#FD3153",
-        endDate: [2022, 3, 8],
-        id: "P7NyRsWsN5Y4iD68NkYF",
-        renderType: "SECONDARY",
-        type: 5,
-        startDate: [2022, 3, 8],
-        title: "Dzień kobiet",
-    },
-]
-
 const getDaysInMonth = (month, year) => {
     let date = new Date(Date.UTC(year, month, 1));
     let days = [];
@@ -164,9 +107,8 @@ const CalendarCell = ({ daysInPrevMonth, baseColors, daysInMonth, onPress, idx, 
     let newSecEvents = [];
     let eventIDs = [];
     const d = new Date()
-    const isToday = ((idx - daysBefore + 1) === d.getDate()) ? true : false
+    const isToday = ((idx - daysBefore + 1) === d.getDate()) ? true : false;
     let title = "";
-    let delay = 0;
 
     events.forEach((el, i) => {
         if (el.startDate[2] === (idx + 1 - daysBefore)) {
@@ -355,8 +297,7 @@ const CustomCalendar = ({ events, onMonthChange, onClickDate, baseColors }) => {
             renderArray.push("_AFTER_")
         }
 
-        return renderArray.map((el, idx) => <CalendarCell baseColors={baseColors} onPress={_clickAction} changeMonth={_changeMonth} events={testData} key={el + idx} type={el} idx={idx} daysInMonth={daysInMonth} length={renderArray.length} daysBefore={daysBefore} daysCurrent={(renderArray.length - (daysBefore + daysAfter))} daysInPrevMonth={daysInPrevMonth.length} />)
-
+        return renderArray.map((el, idx) => <CalendarCell baseColors={baseColors} onPress={_clickAction} changeMonth={_changeMonth} events={events} key={el + idx} type={el} idx={idx} daysInMonth={daysInMonth} length={renderArray.length} daysBefore={daysBefore} daysCurrent={(renderArray.length - (daysBefore + daysAfter))} daysInPrevMonth={daysInPrevMonth.length} />)
     }
 
     const _changeMonth = (typeOfChange) => {
