@@ -10,7 +10,7 @@ const InputFile = ({
 
     return (
         <label
-            className="main"
+            className="main pt-[.33rem]"
         >
             <div
                 className="input"
@@ -32,7 +32,7 @@ const InputFile = ({
                     transform: (focused || value !== "") ? "translate(-.3em, -1em) scale(.75)" : "translate(0,0) scale(1)",
                     color: (focused) ? "#111111" : "rgb(130, 130, 130)",
                     padding: ".1em .2em",
-                    top: ".2em",
+                    top: ".5em",
                 }}
             >
                 {placeholder}

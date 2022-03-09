@@ -866,7 +866,7 @@ input[type="file"] {
 
 .char-count {
   position: absolute;
-  bottom: -2.7em;
+  bottom: -1.8em;
   right: 0;
   font-size: .65em;
 }
