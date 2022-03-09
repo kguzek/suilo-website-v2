@@ -170,7 +170,9 @@ const Home = ({ setPage }) => {
               nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
               erat, sed diam voluptua. At vero eos et accusam et justo duo
               dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem
+              sanctus est Lorem ipsum dolor sit amet. Lorem kasd gubergren, no sea takimata
+              sanctus est Lorem ipsum dolor sit amet. Lorem kasd gubergren, no sea takimata
+              sanctus est Lorem ipsum dolor sit amet.
             </p>
           </article>
         </div>
@@ -178,7 +180,7 @@ const Home = ({ setPage }) => {
       <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-2 sm:gap-4 mb-20 place-content-stretch place-items-center lg:gap-8 xl:gap-16 lg:w-11/12 m-auto">
         <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
           <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">2C</p>
-          <img className="z-10 bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Szymon Wróbel" />
+          <img src={require("../media/wrobel.jpg")} className="z-10  drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Szymon Wróbel" />
           <div
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Marszałek Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
@@ -189,7 +191,7 @@ const Home = ({ setPage }) => {
         </div>
         <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
           <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">3Ap</p>
-          <img className="z-10 bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Adam Kurzak" />
+          <img src={require("../media/kurzak.jpg")} className="z-10  drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Adam Kurzak" />
           <div
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Sekretarz Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
@@ -200,7 +202,7 @@ const Home = ({ setPage }) => {
         </div>
         <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
           <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">3Bg</p>
-          <img className="z-10 bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Mikołaj Mrózek" />
+          <img src={require("../media/mruz.jpg")} className="z-10 drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Mikołaj Mrózek" />
           <div
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Skarbnik i Konsultant Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
@@ -210,7 +212,7 @@ const Home = ({ setPage }) => {
           </div>
         </div>
         <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
-          <img className="z-10 bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Barbara Białowąs" />
+          <img src={require("../media/bialowas.png")} className="z-10  drop-shadow-3xl aspect-square w-2/5 m-auto rounded-full translate-y-2/5" alt="Barbara Białowąs" />
           <div
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Opiekun Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
