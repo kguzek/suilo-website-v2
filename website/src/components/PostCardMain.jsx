@@ -18,7 +18,7 @@ const PostCardMain = ({ data }) => {
         <i className="main-post-date">Ostatnia edycja — {modified}</i>
       )} */}
       <p className="absolute -top-[1.15rem] lg:-top-[1.4rem]  left-0 font-normal text-text7 text-xs md:text-sm">{date}</p>
-      <img src={photo} className=" w-1/5 object-cover aspect-square rounded-lg lg:rounded-xl" />
+      <img src={photo} className="bg-gray-200/75 w-1/5 object-cover aspect-square rounded-lg lg:rounded-xl" />
       <div className="w-full pl-4 flex flex-col justify-start relative">
         <h2 className="text-text1 tracking-wide max-w-full font-semibold text-lg lg:text-xl lg:leading-6 line-clamp-2 leading-5">{data.title}</h2>
         <div className="relative -mt-1">

@@ -12,7 +12,7 @@ const PostCardSecondary = ({ data }) => {
       to={data.link}
       className="flex w-full relative flex-col group "
     >
-      <img src={photo} className="object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300" />
+      <img src={photo} className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300" />
       <p className="line-clamp-2 text-text1 font-semibold max-w-full text-[1.05rem] pt-1 leading-5 sm:text-lg sm:leading-6 md:text-[1.05rem] md:leading-5 lg:text-lg lg:leading-6" title={data.title}>
         {data.title}
       </p>

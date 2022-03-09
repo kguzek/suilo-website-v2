@@ -46,7 +46,7 @@ const EventPreview = ({ eventType }) => {
                     /> : null
             }
             <div className="relative lg:pr-10 h-fit">
-                <img className="max-h-96 aspect-[3/2] w-full object-cover rounded-xl sm:rounded-2xl drop-shadow-4xl" alt="" src="https://images.unsplash.com/photo-1637603170052-245ccc8eede1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80" />
+                <img className="bg-gray-200/75 max-h-96 aspect-[3/2] w-full object-cover rounded-xl sm:rounded-2xl drop-shadow-4xl" alt="" src="https://images.unsplash.com/photo-1637603170052-245ccc8eede1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80" />
                 <div className="absolute top-0 sm:px-6 sm:py-[.35rem] left-0 px-5 rounded-br-4xl sm:rounded-tl-[.95rem] rounded-tl-[.7rem] py-1 bg-gradient-to-br  from-primary to-secondary">
                     <p className="font-medium text-sm text-white tracking-tigh pr-1 sm:text-base">
                         {eventType === "NEXT" ? "Najbliższe wydarzenie" : "Wybrane wydarzenie"}
