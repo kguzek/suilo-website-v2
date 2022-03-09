@@ -130,6 +130,11 @@ const Post = ({ setPage, reload }) => {
               Zdjęcie: {postData.photoAuthor}
             </p>
           )}
+          {!postData.photoAuthor && (
+            <p className="text-bg font-light text-xs w-full text-right py-1 pr-px sm:font-normal sm:text-sm">
+              .
+            </p>
+          )}
           <div className="text-[#707070] text-sm sm:text-base font-normal lg:pb-1">
             <span className="font-medium">{createdDate}</span>
             &nbsp;&nbsp;·&nbsp;&nbsp;{views}
@@ -142,7 +147,7 @@ const Post = ({ setPage, reload }) => {
           </div>
 
           <h1 className="text-text1 w-full font-bold tracking-wide leading-8 text-[1.6rem] sm:text-3xl lg:max-w-prose md:text-4xl">{postData.title}</h1>
-          <p className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 lg:mt-5  lg:text-xl  font-normal text-lg">{postData.content}</p>
+          <div dangerouslySetInnerHTML={{ __html: postData.content }} className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 lg:mt-5  lg:text-xl  font-normal text-lg"></div>
           {
             postData.ytID &&
             <YouTube videoId={postData.ytID} opts={{ height: (width * (9 / 16)), width: width }} />
