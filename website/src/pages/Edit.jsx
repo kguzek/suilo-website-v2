@@ -757,7 +757,7 @@ const LinkEdit = ({}) => {
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
         defaultLabel="Nowy link"
-        valueDisplayObject={links}
+        valueDisplayObject={linksData}
       />
       <InputBox
         maxLength={126}
