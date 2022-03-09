@@ -4,7 +4,7 @@ import InputBox from "../components/InputBox";
 import InputDropdown from "../components/InputDropdown";
 import DialogBox from "../components/DialogBox";
 import { fetchWithToken } from "../firebase";
-import { LoadingScreen, LoadingButton } from "./Edit";
+import { LoadingScreen, LoadingButton } from "../pages/Edit";
 
 export const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");

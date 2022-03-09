@@ -16,7 +16,7 @@ import {
   uploadBytesResumable,
   ref
 } from "firebase/storage";
-import { LoadingScreen, LoadingButton } from "./Edit";
+import { LoadingScreen, LoadingButton } from "../pages/Edit";
 
 export const EventEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
