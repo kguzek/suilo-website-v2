@@ -23,7 +23,7 @@ const Footer = ({ isVisible }) => {
     >
       <DialogBox
         header="Hey, you! You're finally awake."
-        content="Strona została dostarczona dla Was dzięki pracy w pocie czoła przez drużynę w składzie: Konrad Gruzek, Adam Maciuga, Mikołaj Mrózek"
+        content="Strona została dostarczona dla Was dzięki pracy w pocie czoła przez drużynę w składzie: Konrad Guzek, Adam Maciuga, Mikołaj Mrózek"
         buttonOneLabel="Super!"
         buttonTwoLabel="Dziękuję"
         type="DIALOG"

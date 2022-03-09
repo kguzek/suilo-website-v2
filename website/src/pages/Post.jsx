@@ -40,7 +40,7 @@ const Post = ({ setPage, reload }) => {
     /** Verifies that the API response is valid and returns the processed data. */
     function processJsonData(data) {
       if (data && !data.errorDescription) {
-        data.photo = data.photo || DEFAULT_IMAGE;
+        data.photo ?? (data.photo = DEFAULT_IMAGE);
         getURLfromFileName(data.photo, "1920x1080", changeImageLink);
         return data;
       }

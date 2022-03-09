@@ -5,7 +5,7 @@ import InputDropdown from "../components/InputDropdown";
 import DialogBox from "../components/DialogBox";
 import { LoadingButton } from "../pages/Edit";
 
-export const PermissionEdit = ({ }) => {
+export const PermissionEdit = ({}) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [user, setUser] = useState("");
   const [userPermissions, setUserPermissions] = useState({
@@ -39,34 +39,41 @@ export const PermissionEdit = ({ }) => {
         content="Pomyślnie dokonano wszelkich zmian"
         duration={2000}
         isVisible={popupSuccess}
-        setVisible={setPopupSuccess} />
+        setVisible={setPopupSuccess}
+      />
       <DialogBox
         header="Uwaga!"
         content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
         type="DIALOG"
         buttonOneLabel="Kontynuuj edycje"
         buttonTwoLabel="Usuń"
-        buttonTwoCallback={setClickedDelete(true)}
+        buttonTwoCallback={() => setClickedDelete(true)}
         isVisible={popupDelete}
-        setVisible={setPopupDelete} />
+        setVisible={setPopupDelete}
+      />
       <InputDropdown
         label="Użytkownik do edycji"
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
         defaultLabel="Nowy użytkownik"
-        valueDisplayObject={[]} />
+        valueDisplayObject={{}}
+      />
       <InputBox
         name="email"
         placeholder="Mail użytkownika"
         value={user}
-        onChange={setUser} />
+        onChange={setUser}
+      />
       <div>
         <input
           type="checkbox"
           id="A1"
           name="news"
           value={userPermissions.news}
-          onChange={(e) => setUserPermissions({ ...userPermissions, news: e.target.value })} />
+          onChange={(e) =>
+            setUserPermissions({ ...userPermissions, news: e.target.value })
+          }
+        />
         <label htmlFor="A1">Edycja aktualności</label>
       </div>
       <div>
@@ -75,7 +82,10 @@ export const PermissionEdit = ({ }) => {
           id="E1"
           name="events"
           value={userPermissions.events}
-          onChange={(e) => setUserPermissions({ ...userPermissions, events: e.target.value })} />
+          onChange={(e) =>
+            setUserPermissions({ ...userPermissions, events: e.target.value })
+          }
+        />
         <label htmlFor="E1">Edycja wydarzeń</label>
       </div>
       <div>
@@ -84,7 +94,10 @@ export const PermissionEdit = ({ }) => {
           id="C1"
           name="calendar"
           value={userPermissions.calendar}
-          onChange={(e) => setUserPermissions({ ...userPermissions, calendar: e.target.value })} />
+          onChange={(e) =>
+            setUserPermissions({ ...userPermissions, calendar: e.target.value })
+          }
+        />
         <label htmlFor="C1">Edycja kalendarza</label>
       </div>
       <div>
@@ -93,10 +106,13 @@ export const PermissionEdit = ({ }) => {
           id="L1"
           name="link-shortener"
           value={userPermissions.linkShortener}
-          onChange={(e) => setUserPermissions({
-            ...userPermissions,
-            linkShortener: e.target.value,
-          })} />
+          onChange={(e) =>
+            setUserPermissions({
+              ...userPermissions,
+              linkShortener: e.target.value,
+            })
+          }
+        />
         <label htmlFor="L1">Skracanie linków</label>
       </div>
       <div>
@@ -105,10 +121,13 @@ export const PermissionEdit = ({ }) => {
           id="P1"
           name="permissions"
           value={userPermissions.permissions}
-          onChange={(e) => setUserPermissions({
-            ...userPermissions,
-            permissions: e.target.value,
-          })} />
+          onChange={(e) =>
+            setUserPermissions({
+              ...userPermissions,
+              permissions: e.target.value,
+            })
+          }
+        />
         <label htmlFor="P1">Strona uprawnień</label>
       </div>
       {/* <InputBox

@@ -6,7 +6,13 @@ import DialogBox from "../components/DialogBox";
 import { fetchWithToken } from "../firebase";
 import { LoadingScreen, LoadingButton } from "../pages/Edit";
 
-export const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
+export const CalendarEdit = ({
+  data,
+  loaded,
+  refetchData,
+  setYear,
+  setMonth,
+}) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
   const [eventType, setEventType] = useState("");
@@ -100,7 +106,6 @@ export const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) =
 
   function _handleDelete() {
     setClickedDelete(true);
-    // TODO: Are you sure you want to delete? etc. popup modal
     fetchWithToken(`/calendar/${currentlyActive}`, "DELETE").then((res) => {
       // Update the data once request is sent
       refresh();
@@ -115,41 +120,47 @@ export const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) =
         content="Pomyślnie dokonano wszelkich zmian"
         duration={2000}
         isVisible={popupSuccess}
-        setVisible={setPopupSuccess} />
+        setVisible={setPopupSuccess}
+      />
       <DialogBox
         header="Uwaga!"
         content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
         type="DIALOG"
         buttonOneLabel="Kontynuuj edycje"
         buttonTwoLabel="Usuń"
-        buttonTwoCallback={() => _handleDelete()}
+        buttonTwoCallback={_handleDelete}
         isVisible={popupDelete}
-        setVisible={setPopupDelete} />
+        setVisible={setPopupDelete}
+      />
       <InputDropdown
         label="Wydarzenie do edycji"
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
         defaultLabel="Nowe wydarzenie"
-        valueDisplayObject={calendarEvents} />
+        valueDisplayObject={calendarEvents}
+      />
       {/* TODO: Change this InputBox to an input checkbox/radiobox/dropdown */}
       <InputBox
         maxLength={9}
         name="event-type"
         placeholder="Typ wydarzenia (PRIMARY | SECONDARY)"
         value={eventType}
-        onChange={setEventType} />
+        onChange={setEventType}
+      />
       <InputDropdown
         label="Subtyp wydarzenia"
         currentValue={subtype}
         onChangeCallback={setSubtype}
         defaultLabel="inne"
-        valueDisplayObject={Object.fromEntries(eventSubtypes.entries())} />
+        valueDisplayObject={Object.fromEntries(eventSubtypes.entries())}
+      />
       <InputBox
         maxLength={60}
         name="event-name"
         placeholder="Nazwa wydarzenia"
         value={name}
-        onChange={setName} />
+        onChange={setName}
+      />
       <div
         className="fr"
         style={{
@@ -165,7 +176,8 @@ export const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) =
           pattern="dd/mm/yyyy"
           placeholder="Rozpoczęcie"
           value={startDate}
-          onChange={setStartDate} />
+          onChange={setStartDate}
+        />
         <p className="from-to-indicator">-</p>
         <InputBox
           width="47%"
@@ -174,7 +186,8 @@ export const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) =
           pattern="dd/mm/yyyy"
           placeholder="Zakończenie"
           value={endDate}
-          onChange={setEndDate} />
+          onChange={setEndDate}
+        />
       </div>
 
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>

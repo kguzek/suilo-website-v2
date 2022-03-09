@@ -131,7 +131,6 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
 
   function _handleDelete() {
     setClickedDelete(true);
-    // TODO: Are you sure you want to delete? etc. popup modal
     fetchWithToken(`/events/${currentlyActive}`, "DELETE").then((res) => {
       // Update the data once request is processed
       refresh();

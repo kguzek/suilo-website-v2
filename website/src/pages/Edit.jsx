@@ -9,9 +9,7 @@ import {
   getFileNameFromFirebaseUrl,
   removeSearchParam,
 } from "../misc";
-import {
-  updateMetadata,
-} from "firebase/storage";
+import { updateMetadata } from "firebase/storage";
 import { PostEdit } from "../components/PostEdit";
 import { EventEdit } from "../components/EventEdit";
 import { CalendarEdit } from "../components/CalendarEdit";
@@ -26,7 +24,7 @@ const PAGES = {
   permissions: "Uprawnienia",
 };
 
-const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
+export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   // `editPicker` is an index of `editPickerOptions`
@@ -141,7 +139,6 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
   const editPickerOptions = userPerms.isAdmin
     ? Object.values(PAGES) // Give permission to edit all pages
     : userCanEdit.map((perm) => PAGES[perm]); // Give permission for individual pages
-  console.log(editPickerOptions, userCanEdit, userPerms);
 
   // Failsafe to prevent the user seeing the edit UI in case of a bug
   if (editPickerOptions.length === 0) {
@@ -176,21 +173,19 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
           />
         </div>
         <div className="w-full m-auto">
-          {editPicker === 0 && (
+          {editPicker === 0 ? (
             <PostEdit
               data={newsData}
               loaded={loadedNews}
               refetchData={() => _fetchNews(true)}
             />
-          )}
-          {editPicker === 1 && (
+          ) : editPicker === 1 ? (
             <EventEdit
               data={eventsData}
               loaded={loadedEvents}
               refetchData={() => _fetchEvents(true)}
             />
-          )}
-          {editPicker === 2 && (
+          ) : editPicker === 2 ? (
             <CalendarEdit
               data={calendarData}
               loaded={loadedCalendar}
@@ -198,14 +193,22 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
               setMonth={setMonth}
               refetchData={() => _fetchCalendar(true)}
             />
+          ) : editPicker === 3 ? (
+            <LinkEdit
+              data={linksData}
+              loaded={loadedLinks}
+              refetchData={() => _fetchLinks(true)}
+            />
+          ) : editPicker === 4 ? (
+            <PermissionEdit />
+          ) : (
+            "Invalid edit picker option!"
           )}
-          {editPicker === 3 && <LinkEdit linksData={linksData} />}
-          {editPicker === 4 && <PermissionEdit />}
         </div>
       </div>
     </div>
   );
-};
+}
 
 /** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
 export function LoadingButton({ style = "transparent" }) {
@@ -236,5 +239,3 @@ export function LoadingScreen() {
     </div>
   );
 }
-
-export default Edit;
