@@ -6,7 +6,7 @@ import { serialiseDateArray } from "../common";
 import CustomCalendar from "./CustomCalendar";
 
 const CalendarPreview = ({ updateCache = false }) => {
-  const d = new Date()
+  const d = new Date();
   const [loaded, setLoaded] = useState(false);
   const [year, setYear] = useState(d.getFullYear());
   const [month, setMonth] = useState(d.getMonth() + 1);
@@ -22,8 +22,8 @@ const CalendarPreview = ({ updateCache = false }) => {
     "#01B3FF",
     "#FFCC00",
     "#FF0000",
-    "#E600FF"
-  ]
+    "#E600FF",
+  ];
 
   const legendItems = [
     "wydarzenia/święta szkolne",
@@ -33,7 +33,7 @@ const CalendarPreview = ({ updateCache = false }) => {
     "przerwa wakacyjna",
     "matury i inne egzaminy",
     "inne",
-  ]
+  ];
 
   const testData = [
     {
@@ -90,7 +90,7 @@ const CalendarPreview = ({ updateCache = false }) => {
       startDate: [2022, 3, 8],
       title: "Dzień kobiet",
     },
-  ]
+  ];
 
   useEffect(() => {
     const fetchArgs = {
@@ -128,7 +128,7 @@ const CalendarPreview = ({ updateCache = false }) => {
         to: serialiseDateArray(rawEvent.endDate, true),
       }))
     );
-  }
+  };
 
   if (!loaded) {
     return (
@@ -142,30 +142,58 @@ const CalendarPreview = ({ updateCache = false }) => {
     setMonth(month + 1);
     setYear(year);
     setCalendarMode(mode);
-  }
+  };
 
   const onClickEvent = (id) => {
     console.log("User clicked calendar event with ID", id);
     // TODO: integrate individual calendar event pages
     // navigate(`/wydarzenia/kalendarz/${id}`);
-  }
+  };
 
   const onClickTimeLine = ({ year, month, day, hour }) => {
     console.log("User clicked calendar timeline");
-  }
+  };
 
   const onCalendarClick = ({ day, month, year, eventIDs }) => {
     //EVERYTHING HERE FOR CLICK INFO
-    console.log(day + "/" + month + "/" + year, eventIDs[0] !== undefined ? "event IDs for chosen day: " + eventIDs : "")
-  }
+    console.log(
+      day + "/" + month + "/" + year,
+      eventIDs[0] !== undefined ? "event IDs for chosen day: " + eventIDs : ""
+    );
+  };
   const onMonthChange = (month) => {
     //EVERYTHING HERE FOR MONTH CHANGE
-    console.log("calendar month: " + month)
-  }
+    console.log("calendar month: " + month);
+  };
 
   const _generateLegend = () => {
-    return legendItems.map((el, i) => <li className={`flex flex-row justify-start align-middle w-full my-2 lg:my-3 ${i === 1 ? "mb-4 mt-3 lg:mt-4 lg:mb-5" : null} `}><div className={`${i < 2 ? "h-6 w-6 lg:h-7 lg:w-7 " : "w-3 h-3 lg:w-4 lg:h-4 ml-[1.1rem] lg:ml-[1.15rem]"} rounded-full my-auto m-3 drop-shadow-2xl`} style={{ background: (i < 2 ? `linear-gradient(135deg, ${legendColors[i].top}, ${legendColors[i].bottom})` : null), backgroundColor: (i >= 2 ? legendColors[i] : null) }} /><p className="my-auto text-[#292929] text-base -tracking-[.015rem] lg:text-[1.1rem]">{el}</p></li>)
-  }
+    return legendItems.map((el, i) => (
+      <li
+        key={i}
+        className={`flex flex-row justify-start align-middle w-full my-2 lg:my-3 ${
+          i === 1 ? "mb-4 mt-3 lg:mt-4 lg:mb-5" : null
+        } `}
+      >
+        <div
+          className={`${
+            i < 2
+              ? "h-6 w-6 lg:h-7 lg:w-7 "
+              : "w-3 h-3 lg:w-4 lg:h-4 ml-[1.1rem] lg:ml-[1.15rem]"
+          } rounded-full my-auto m-3 drop-shadow-2xl`}
+          style={{
+            background:
+              i < 2
+                ? `linear-gradient(135deg, ${legendColors[i].top}, ${legendColors[i].bottom})`
+                : null,
+            backgroundColor: i >= 2 ? legendColors[i] : null,
+          }}
+        />
+        <p className="my-auto text-[#292929] text-base -tracking-[.015rem] lg:text-[1.1rem]">
+          {el}
+        </p>
+      </li>
+    ));
+  };
 
   return (
     <div className="flex flex-col md:flex-row mx-auto justify-center lg:justify-evenly align-middle my-6 md:my-8 w-full sm:w-10/12 md:w-full lg:w-10/12 xl:-translate-x-10">
@@ -186,13 +214,13 @@ const CalendarPreview = ({ updateCache = false }) => {
       <div className="hidden lg:block lg:-mx-7 lg:-mr-8" />
 
       <div className=" w-fit pt-3 min-w-fit lg:mx-auto lg:ml-14 xl:mx-auto">
-        <h3 className="text-text1 font-semibold text-xl mx-2 mb-3 lg:text-2xl lg:mb-4">Legenda:</h3>
-        <ul>
-          {_generateLegend()}
-        </ul>
+        <h3 className="text-text1 font-semibold text-xl mx-2 mb-3 lg:text-2xl lg:mb-4">
+          Legenda:
+        </h3>
+        <ul>{_generateLegend()}</ul>
       </div>
     </div>
   );
-}
+};
 
 export default CalendarPreview;
