@@ -2,24 +2,25 @@ import React, { useState, useEffect } from "react";
 import DialogBox from "./DialogBox";
 
 const Footer = ({ isVisible }) => {
-  const [easterEgg, setEasterEgg] = useState(false)
-  const [clicks, setClicks] = useState(0)
+  const [easterEgg, setEasterEgg] = useState(false);
+  const [clicks, setClicks] = useState(0);
 
   useEffect(() => {
     if (clicks === 1) {
       setTimeout(() => {
-
-        setClicks(0)
+        setClicks(0);
       }, 2000);
     }
-    if (clicks > 10) {
-      setEasterEgg(true)
+    if (clicks >= 10) {
+      setEasterEgg(true);
     }
-  }, [clicks])
+  }, [clicks]);
 
   return (
     <div
-      className={`flex w-screen bg-footer text-white font-light text-[.8rem] ${isVisible ? "block" : "hidden"} mt-7 justify-center align-middle`}
+      className={`flex w-screen bg-footer text-white font-light text-[.8rem] ${
+        isVisible ? "block" : "hidden"
+      } mt-7 justify-center align-middle`}
     >
       <DialogBox
         header="Hey, you! You're finally awake."
@@ -30,7 +31,10 @@ const Footer = ({ isVisible }) => {
         isVisible={easterEgg}
         setVisible={setEasterEgg}
       />
-      <p className="my-2 mt-3 select-none" onClick={() => setClicks(clicks + 1)}>
+      <p
+        className="my-2 mt-3 select-none"
+        onClick={() => setClicks(clicks + 1)}
+      >
         suilo.org {new Date().getFullYear()} © Wszystkie prawa zastrzeżone.
       </p>
     </div>

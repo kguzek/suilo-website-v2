@@ -65,7 +65,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     const params = { destination: longLink };
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is sent
-      refresh();
+      res.ok && refresh();
       setClickedSubmit(false);
       setPopupSuccess(res.ok);
     });

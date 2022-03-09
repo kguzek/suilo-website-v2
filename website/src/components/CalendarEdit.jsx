@@ -98,15 +98,15 @@ export const CalendarEdit = ({
     };
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is sent
-      refresh();
+      res.ok && refresh();
       setClickedSubmit(false);
+      setPopupSuccess(res.ok);
     });
-    setPopupSuccess(true);
   }
 
   function _handleDelete() {
     setClickedDelete(true);
-    fetchWithToken(`/calendar/${currentlyActive}`, "DELETE").then((res) => {
+    fetchWithToken(`/calendar/${currentlyActive}`, "DELETE").then((_res) => {
       // Update the data once request is sent
       refresh();
       setClickedDelete(false);

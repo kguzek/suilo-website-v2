@@ -116,15 +116,15 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
        */
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
-      refresh();
+      res.ok && refresh();
       setClickedSubmit(false);
+      setPopupSuccess(res.ok);
     });
-    setPopupSuccess(true);
   }
 
   function _handleDelete() {
     setClickedDelete(true);
-    fetchWithToken(`/news/${currentlyActive}`, "DELETE").then((res) => {
+    fetchWithToken(`/news/${currentlyActive}`, "DELETE").then((_res) => {
       // Update the data once request is processed
       refresh();
       setClickedDelete(false);

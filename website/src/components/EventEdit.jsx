@@ -5,17 +5,10 @@ import InputArea from "../components/InputArea";
 import InputDropdown from "../components/InputDropdown";
 import InputFile from "../components/InputFile";
 import DialogBox from "../components/DialogBox";
-import {
-  formatDate,
-  formatTime
-} from "../misc";
+import { formatDate, formatTime } from "../misc";
 import { serialiseDateArray } from "../common";
 import { fetchWithToken, storage } from "../firebase";
-import {
-  getDownloadURL,
-  uploadBytesResumable,
-  ref
-} from "firebase/storage";
+import { getDownloadURL, uploadBytesResumable, ref } from "firebase/storage";
 import { LoadingScreen, LoadingButton } from "../pages/Edit";
 
 export const EventEdit = ({ data, loaded, refetchData }) => {
@@ -123,15 +116,15 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
    */
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
-      refresh();
+      res.ok && refresh();
       setClickedSubmit(false);
+      setPopupSuccess(res.ok);
     });
-    setPopupSuccess(true);
   }
 
   function _handleDelete() {
     setClickedDelete(true);
-    fetchWithToken(`/events/${currentlyActive}`, "DELETE").then((res) => {
+    fetchWithToken(`/events/${currentlyActive}`, "DELETE").then((_res) => {
       // Update the data once request is processed
       refresh();
       setClickedDelete(false);
@@ -139,8 +132,7 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
   }
 
   function _handlePhotoUpdate(file) {
-    if (!file)
-      return;
+    if (!file) return;
     const storageRef = ref(storage, `/photos/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
     setImagePath(file.name.split(".")[0]);
@@ -175,7 +167,8 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
         content="Pomyślnie dokonano wszelkich zmian"
         duration={2000}
         isVisible={popupSuccess}
-        setVisible={setPopupSuccess} />
+        setVisible={setPopupSuccess}
+      />
       <DialogBox
         header="Uwaga!"
         content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
@@ -184,32 +177,37 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
         buttonTwoLabel="Usuń"
         buttonTwoCallback={() => _handleDelete()}
         isVisible={popupDelete}
-        setVisible={setPopupDelete} />
+        setVisible={setPopupDelete}
+      />
       <InputDropdown
         label="Wydarzenie do edycji"
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
         defaultLabel="Nowe wydarzenie"
-        valueDisplayObject={events} />
+        valueDisplayObject={events}
+      />
       <InputBox
         name="event-name"
         placeholder="Tytuł"
         maxLength={60}
         value={name}
-        onChange={setName} />
+        onChange={setName}
+      />
       <InputArea
         name="event-description"
         placeholder="Opis"
         maxLength={256}
         value={description}
-        onChange={setDescription} />
+        onChange={setDescription}
+      />
       <InputBox
         name="event-date"
         type="date"
         pattern="dd/mm/yyyy"
         placeholder="Data wydarzenia"
         value={date}
-        onChange={setDate} />
+        onChange={setDate}
+      />
       <div
         className="fr"
         style={{
@@ -225,7 +223,8 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
           pattern="HH:mm"
           placeholder="Godzina rozpoczęcia"
           value={startTime}
-          onChange={setStartTime} />
+          onChange={setStartTime}
+        />
         <p className="from-to-indicator">-</p>
         <InputBox
           width="47%"
@@ -234,33 +233,38 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
           pattern="HH:mm"
           placeholder="Godzina zakończenia"
           value={endTime}
-          onChange={setEndTime} />
+          onChange={setEndTime}
+        />
       </div>
       <InputBox
         name="location"
         placeholder="Miejsce wydarzenia"
         maxLength={60}
         value={location}
-        onChange={setLocation} />
+        onChange={setLocation}
+      />
       {/* PLACE FOR TEXT EDITOR */}
       <InputFile
         placeholder={"Miniatura"}
         onChange={(e) => {
           _handlePhotoUpdate(e.target.files[0]);
         }}
-        acceptedExtensions=".jpeg, .jpg, .png" />
+        acceptedExtensions=".jpeg, .jpg, .png"
+      />
       <InputBox
         name="image-url"
         placeholder="URL zdjęcia"
         maxLength={256}
         value={imageURL}
-        onChange={setImageURL} />
+        onChange={setImageURL}
+      />
       <InputBox
         name="event-url"
         placeholder="Zewnętrzny link do wydarzenia"
         maxLength={256}
         value={eventURL}
-        onChange={setEventURL} />
+        onChange={setEventURL}
+      />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
