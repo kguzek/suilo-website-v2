@@ -997,6 +997,7 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
 
   // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {
+    console.log("Waiting for the user to be determined before displaying edit screen.")
     return <LoadingScreen />;
   }
 
@@ -1013,7 +1014,7 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
       </p>
     );
   }
-
+  console.log("Edit picker:", editPicker);
   return (
     <div
       className="w-11/12 xl:w-10/12 min-h-[83vh] mt-16 flex flex-col justify-start align-middle "
@@ -1035,14 +1036,11 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
           <InputDropdown
             label="Element strony do edycji"
             currentValue={editPicker}
-            onChangeCallback={setEditPicker}
+            onChangeCallback={(val) => setEditPicker(parseInt(val))}
             defaultLabel={""}
             valueDisplayObject={editPickerOptions}
           />
         </div>
-
-        {/* use == instead of === to compare integers with number strings
-        (editPicker can be a string representing a number e.g. "1") */}
         <div className="w-full m-auto">
           {editPicker === 0 && (
             <PostEdit
