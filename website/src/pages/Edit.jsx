@@ -7,6 +7,7 @@ import InputBox from "../components/InputBox";
 import InputArea from "../components/InputArea";
 import InputDropdown from "../components/InputDropdown";
 import InputFile from "../components/InputFile";
+import DialogBox from "../components/DialogBox"
 import { fetchNewsData } from "../components/PostCardPreview";
 import {
   fetchCachedData,
@@ -44,6 +45,9 @@ const PostEdit = ({ data, loaded, refetchData }) => {
   const [imgRef, setImgRef] = useState();
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
+
+  const [popupSuccess, setPopupSuccess] = useState(false)
+  const [popupDelete, setPopupDelete] = useState(false)
 
   useEffect(() => {
     if (!loaded) {
@@ -138,6 +142,7 @@ const PostEdit = ({ data, loaded, refetchData }) => {
       refresh();
       setClickedSubmit(false);
     });
+    setPopupSuccess(true)
   }
 
   function _handleDelete() {
@@ -180,6 +185,23 @@ const PostEdit = ({ data, loaded, refetchData }) => {
   }
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <DialogBox
+        header="Sukces!"
+        content="Pomyślnie dokonano wszelkich zmian"
+        duration={2000}
+        isVisible={popupSuccess}
+        setVisible={setPopupSuccess}
+      />
+      <DialogBox
+        header="Uwaga!"
+        content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
+        type="DIALOG"
+        buttonOneLabel="Kontynuuj edycje"
+        buttonTwoLabel="Usuń"
+        buttonTwoCallback={() => _handleDelete()}
+        isVisible={popupDelete}
+        setVisible={setPopupDelete}
+      />
       <InputDropdown
         label="Post do edycji"
         currentValue={currentlyActive}
@@ -247,7 +269,7 @@ const PostEdit = ({ data, loaded, refetchData }) => {
             <button
               type="button"
               className="delete-btn"
-              onClick={() => _handleDelete()}
+              onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń post</p>
@@ -288,6 +310,9 @@ const EventEdit = ({ data, loaded, refetchData }) => {
   const [imageAltText, setImageAltText] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
+
+  const [popupSuccess, setPopupSuccess] = useState(false)
+  const [popupDelete, setPopupDelete] = useState(false)
 
   useEffect(() => {
     if (!loaded) {
@@ -377,6 +402,7 @@ const EventEdit = ({ data, loaded, refetchData }) => {
       refresh();
       setClickedSubmit(false);
     });
+    setPopupSuccess(true)
   }
 
   function _handleDelete() {
@@ -420,6 +446,23 @@ const EventEdit = ({ data, loaded, refetchData }) => {
   }
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <DialogBox
+        header="Sukces!"
+        content="Pomyślnie dokonano wszelkich zmian"
+        duration={2000}
+        isVisible={popupSuccess}
+        setVisible={setPopupSuccess}
+      />
+      <DialogBox
+        header="Uwaga!"
+        content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
+        type="DIALOG"
+        buttonOneLabel="Kontynuuj edycje"
+        buttonTwoLabel="Usuń"
+        buttonTwoCallback={() => _handleDelete()}
+        isVisible={popupDelete}
+        setVisible={setPopupDelete}
+      />
       <InputDropdown
         label="Wydarzenie do edycji"
         currentValue={currentlyActive}
@@ -514,7 +557,7 @@ const EventEdit = ({ data, loaded, refetchData }) => {
             <button
               type="button"
               className="delete-btn"
-              onClick={() => _handleDelete()}
+              onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń post</p>
@@ -552,6 +595,9 @@ const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
 
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
+
+  const [popupSuccess, setPopupSuccess] = useState(false)
+  const [popupDelete, setPopupDelete] = useState(false)
 
   useEffect(() => {
     if (!loaded) {
@@ -627,6 +673,7 @@ const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
       refresh();
       setClickedSubmit(false);
     });
+    setPopupSuccess(true)
   }
 
   function _handleDelete() {
@@ -641,6 +688,23 @@ const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
 
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <DialogBox
+        header="Sukces!"
+        content="Pomyślnie dokonano wszelkich zmian"
+        duration={2000}
+        isVisible={popupSuccess}
+        setVisible={setPopupSuccess}
+      />
+      <DialogBox
+        header="Uwaga!"
+        content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
+        type="DIALOG"
+        buttonOneLabel="Kontynuuj edycje"
+        buttonTwoLabel="Usuń"
+        buttonTwoCallback={() => _handleDelete()}
+        isVisible={popupDelete}
+        setVisible={setPopupDelete}
+      />
       <InputDropdown
         label="Wydarzenie do edycji"
         currentValue={currentlyActive}
@@ -707,7 +771,7 @@ const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
             <button
               type="button"
               className="delete-btn"
-              onClick={() => _handleDelete()}
+              onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń post</p>
@@ -741,17 +805,39 @@ const LinkEdit = ({ linksData }) => {
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
+  const [popupSuccess, setPopupSuccess] = useState(false)
+  const [popupDelete, setPopupDelete] = useState(false)
+
   const _handleSubmit = (e) => {
     e.preventDefault();
     setClickedSubmit(true);
+    setPopupSuccess(true)
   };
 
   const _handleDelete = () => {
-    setClickedDelete(true);
+    setPopupDelete(true)
+
   };
 
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <DialogBox
+        header="Sukces!"
+        content="Pomyślnie dokonano wszelkich zmian"
+        duration={2000}
+        isVisible={popupSuccess}
+        setVisible={setPopupSuccess}
+      />
+      <DialogBox
+        header="Uwaga!"
+        content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
+        type="DIALOG"
+        buttonOneLabel="Kontynuuj edycje"
+        buttonTwoLabel="Usuń"
+        buttonTwoCallback={setClickedDelete(true)}
+        isVisible={popupDelete}
+        setVisible={setPopupDelete}
+      />
       <InputDropdown
         label="Link do edycji"
         currentValue={currentlyActive}
@@ -821,17 +907,38 @@ const PermissionEdit = ({ }) => {
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
+  const [popupSuccess, setPopupSuccess] = useState(false)
+  const [popupDelete, setPopupDelete] = useState(false)
+
   const _handleSubmit = (e) => {
     e.preventDefault();
     setClickedSubmit(true);
+    setPopupSuccess(true)
   };
 
   const _handleDelete = () => {
-    setClickedDelete(true);
+    setPopupDelete(true)
   };
 
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <DialogBox
+        header="Sukces!"
+        content="Pomyślnie dokonano wszelkich zmian"
+        duration={2000}
+        isVisible={popupSuccess}
+        setVisible={setPopupSuccess}
+      />
+      <DialogBox
+        header="Uwaga!"
+        content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
+        type="DIALOG"
+        buttonOneLabel="Kontynuuj edycje"
+        buttonTwoLabel="Usuń"
+        buttonTwoCallback={setClickedDelete(true)}
+        isVisible={popupDelete}
+        setVisible={setPopupDelete}
+      />
       <InputDropdown
         label="Użytkownik do edycji"
         currentValue={currentlyActive}

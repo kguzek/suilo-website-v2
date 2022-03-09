@@ -9,7 +9,8 @@ const DialogBox = ({
     buttonTwoLabel,
     buttonOneCallback = () => null,
     buttonTwoCallback = () => null,
-    isVisible,
+    afterCallback = () => null,
+    isVisible = false,
     setVisible
 }) => {
     const [display, setDisplay] = useState("none")
@@ -22,8 +23,6 @@ const DialogBox = ({
     useEffect(() => {
         if (isVisible) {
             fadeInDom();
-        } else {
-            fadeOutDom();
         }
     }, [isVisible]);
 
@@ -34,7 +33,8 @@ const DialogBox = ({
             setYPos("0");
             if (type === "NOTIFICATION") {
                 setTimeout(() => {
-                    setVisible(false)
+                    fadeOutDom();
+                    afterCallback()
                 }, duration);
             }
         }, 10);
@@ -45,22 +45,23 @@ const DialogBox = ({
         setYPos("-10rem");
         setTimeout(() => {
             setDisplay("none");
+            setVisible(false)
         }, 260);
     }
 
     const _onClickOne = () => {
         buttonOneCallback();
-        setVisible(false)
+        fadeOutDom();
     }
 
     const _onCLickTwo = () => {
         buttonTwoCallback();
-        setVisible(false)
+        fadeOutDom();
     }
 
     return (
-        <div style={{ display: display, transform: `translateY(${yPos})` }} className="w-full mx-auto transition-all duration-[250ms] fixed top-3 z-50 ">
-            <div className="mx-auto bg-white  py-3 px-5 rounded-xl shadow-2xl -translate-x-4 sm:-translate-x-8 md:-translate-x-12 xl:-translate-x-16">
+        <div style={{ display: display, transform: `translateY(${yPos})` }} className="right-0 left-0 mx-auto transition-all duration-[250ms] fixed top-3 z-50 ">
+            <div className="mx-auto bg-white  py-3 px-5 rounded-xl shadow-2xl">
                 {header && <h1 className="font-semibold text-base text-text1">{header}</h1>}
                 {content && <p className="font-normal text-sm text-text2 mt-1 max-w-[18rem] md:max-w-sm lg:max-w-md xl:max-w-lg whitespace-normal">{content}</p>}
                 {

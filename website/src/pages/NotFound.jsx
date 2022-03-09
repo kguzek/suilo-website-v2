@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import NotFoundGraphic from '../media/notfound.jsx'
 import { useLocation } from "react-router-dom";
 
-const NotFound = ({ setPage, msg }) => {
+const NotFound = ({ setPage }) => {
   const path = useLocation().pathname
 
   useEffect(() => {

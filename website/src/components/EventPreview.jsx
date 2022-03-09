@@ -1,12 +1,50 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Calendar, Clock, MapPin, Users, Bell, UserCheck, ExternalLink, User } from 'react-feather'
+import DialogBox from './DialogBox'
 
 const EventPreview = ({ eventType }) => {
     const [notification, setNotification] = useState(false)
     const [parcitipance, setParcitipance] = useState(false)
+    const [canParChange, setCanParChange] = useState(true)
+    const [canNotChange, setCanNotChange] = useState(true)
+
+    const [popupParcitipance, setPopupParcitipance] = useState(false)
+    const [popupNotification, setPopupNotification] = useState(false)
+
+    useEffect(() => {
+        if (!popupNotification) {
+            setCanNotChange(true)
+        }
+    }, [popupNotification])
+
+    useEffect(() => {
+        if (!popupParcitipance) {
+            setCanParChange(true)
+        }
+    }, [popupParcitipance])
 
     return (
         <article className="w-full grid mb-6 grid-cols-1 gap-3 lg:gap-8 lg:w-11/12 md:w-10/12 mx-auto lg:grid-cols-2 lg:my-12 mt-8">
+            {
+                popupNotification === true ?
+                    <DialogBox
+                        header={notification ? "Zrobione!" : "Zrobione!"}
+                        content={notification ? "Włączono powiadomienie o wydarzeniu." : "Wyłączono powiadomienie o wydarzeniu."}
+                        duration={2000}
+                        isVisible={popupNotification}
+                        setVisible={setPopupNotification}
+                    /> : null
+            }
+            {
+                popupParcitipance === true ?
+                    <DialogBox
+                        header={parcitipance ? "Super!" : "Szkoda."}
+                        content={parcitipance ? "Zadeklarowano udział w wydarzeniu." : "Cofnięto deklaracje o udział w wydarzeniu."}
+                        duration={2000}
+                        isVisible={popupParcitipance}
+                        setVisible={setPopupParcitipance}
+                    /> : null
+            }
             <div className="relative lg:pr-10 h-fit">
                 <img className="max-h-96 aspect-[3/2] w-full object-cover rounded-xl sm:rounded-2xl drop-shadow-4xl" alt="" src="https://images.unsplash.com/photo-1637603170052-245ccc8eede1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80" />
                 <div className="absolute top-0 sm:px-6 sm:py-[.35rem] left-0 px-5 rounded-br-4xl sm:rounded-tl-[.95rem] rounded-tl-[.7rem] py-1 bg-gradient-to-br  from-primary to-secondary">
@@ -66,13 +104,13 @@ const EventPreview = ({ eventType }) => {
                         <ExternalLink size={28} className="aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary" />
                     </a>
                     <div
-                        onClick={() => setNotification(!notification)}
+                        onClick={() => { if (canNotChange && canParChange) { setNotification(!notification); setPopupNotification(true); setCanNotChange(false) } }}
                         className="transition-all bg-white aspect-square cursor-pointer hover:ring-2 hover:ring-primary/30  p-[.5rem] pt-[.6rem] ml-2 drop-shadow-3xl rounded-xl"
                     >
                         <Bell size={28} className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"}`} />
                     </div>
                     <div
-                        onClick={() => setParcitipance(!parcitipance)}
+                        onClick={() => { if (canParChange && canNotChange) { setParcitipance(!parcitipance); setPopupParcitipance(true); setCanParChange(false) } }}
                         className={`transition-all inline-flex bg-primary py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem] `}
                     >
                         {
