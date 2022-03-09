@@ -8,7 +8,7 @@ import PagePicker from "../components/PagePicker";
 
 const News = ({ setPage, reload }) => {
   const [loaded, setLoaded] = useState(false);
-  const [newsPage, setNewsPage] = useState(1)
+  const [newsPage, setNewsPage] = useState(1);
   const [newsData, setNewsData] = useState([]);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -30,7 +30,7 @@ const News = ({ setPage, reload }) => {
       return;
     }
     setPage("news");
-    const updateCache = removeSearchParam(
+    const updateCache = !!removeSearchParam(
       searchParams,
       setSearchParams,
       "refresh"
@@ -78,27 +78,41 @@ const News = ({ setPage, reload }) => {
       </MetaTags>
       {
         //SHOW THIS LAYOUT ONLY ON FIRST PAGE
-        newsPage === 1 ?
+        newsPage === 1 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:mt-12 w-full gap-5 my-6 md:my-9 md:gap-4 lg:gap-7">
-              <PostCardPreview type="primary" data={newsData} linkPrefix="post/" />
+              <PostCardPreview
+                type="primary"
+                data={newsData}
+                linkPrefix="post/"
+              />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-4 mb-10 md:mb-8 md:gap-3 lg:gap-5">
-              <PostCardPreview type="secondary" data={newsData} linkPrefix="post/" />
+              <PostCardPreview
+                type="secondary"
+                data={newsData}
+                linkPrefix="post/"
+              />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-11 my-5 md:my-7">
               <PostCardPreview type="main" data={newsData} linkPrefix="post/" />
             </div>
-          </> :
+          </>
+        ) : (
           // OTHER PAGES SHOULD BE IN MAIN LAYOUT
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-11 mt-12 my-5 md:my-20">
               <PostCardPreview type="main" data={newsData} linkPrefix="post/" />
             </div>
           </>
+        )
       }
       <div className="m-auto my-2">
-        <PagePicker initialPage={(searchParams.get("page") ?? 1)} noPages={15} onChange={setNewsPage} />
+        <PagePicker
+          initialPage={searchParams.get("page") ?? 1}
+          noPages={15}
+          onChange={setNewsPage}
+        />
       </div>
     </div>
   );

@@ -28,6 +28,7 @@ function Events({ setPage, reload }) {
   const [eventsData, setEventsData] = useState({ contents: [] });
   const [searchParams, setSearchParams] = useSearchParams({});
   const [updateCache, setUpdateCache] = useState(false);
+  const [nextEvent, setNextEvent] = useState(undefined);
   const params = useParams();
 
   function _populatePageContents(forceUpdateCache = false) {
@@ -59,6 +60,15 @@ function Events({ setPage, reload }) {
     _populatePageContents();
   }, [reload]);
 
+  useEffect(() => {
+    // Determine the next school event
+    if (!eventsData) {
+      return;
+    }
+    getNextEvent(eventsData.contents);
+    console.log("Next event:", nextEvent?.title);
+  }, [eventsData]);
+
   if (!loaded) {
     // wait until events have loaded
     return (
@@ -70,8 +80,6 @@ function Events({ setPage, reload }) {
       </div>
     );
   }
-  const nextEvent = getNextEvent(eventsData.contents);
-  console.log("Next event:", nextEvent?.title);
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
@@ -80,7 +88,7 @@ function Events({ setPage, reload }) {
           Gliwicach
         </title>
         <meta name="description" content="Następne wydarzenie to:" />{" "}
-        {(nextEvent ?? {}).title}
+        {nextEvent?.title}
         <meta
           property="og:title"
           content="Kalendarz i wydarzenia | SUILO Gliwice"
@@ -102,11 +110,6 @@ function Events({ setPage, reload }) {
       {/* <h2>Wydarzenia szkolne</h2>
       <h3>Następne wydarzenie szkolne essunia widzowie kochani</h3> */}
       <EventPreview eventType="NEXT" />
-      {/* {nextEvent ? (
-        <EventPreview event={nextEvent} />
-      ) : (
-        "Nie ma w najbliższym czasie żadnych wydarzeń."
-      )} */}
       <CalendarPreview updateCache={updateCache} />
       <EventPreview />
     </div>
