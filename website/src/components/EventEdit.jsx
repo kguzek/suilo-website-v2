@@ -5,7 +5,7 @@ import InputArea from "../components/InputArea";
 import InputDropdown from "../components/InputDropdown";
 import InputFile from "../components/InputFile";
 import DialogBox from "../components/DialogBox";
-import { formatDate, formatTime } from "../misc";
+import { formatDate, formatTime, setErrorMessage } from "../misc";
 import { serialiseDateArray } from "../common";
 import { fetchWithToken, storage } from "../firebase";
 import { getDownloadURL, uploadBytesResumable, ref } from "firebase/storage";
@@ -30,6 +30,8 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
+  const [popupError, setPopupError] = useState(false);
+  const [errorCode, setErrorCode] = useState(null);
 
   useEffect(() => {
     if (!loaded) {
@@ -116,9 +118,14 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
    */
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
-      res.ok && refresh();
+      if (res.ok) {
+        refresh();
+        setPopupSuccess(true);
+      } else {
+        setErrorCode(res.status);
+        setErrorMessage(res, setPopupError);
+      }
       setClickedSubmit(false);
-      setPopupSuccess(res.ok);
     });
   }
 
@@ -178,6 +185,14 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
         buttonTwoCallback={() => _handleDelete()}
         isVisible={popupDelete}
         setVisible={setPopupDelete}
+      />
+      <DialogBox
+        header={`Bład! (HTTP ${errorCode})`}
+        content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
+        extra={popupError}
+        duration={10000}
+        isVisible={popupError}
+        setVisible={setPopupError}
       />
       <InputDropdown
         label="Wydarzenie do edycji"

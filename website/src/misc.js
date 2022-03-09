@@ -184,3 +184,10 @@ export function getURLfromFileName(name, size, callback) {
     getDownloadURL(imageRef).then(callback);
   }
 }
+
+/** Gets the error description from the HTTP response and calls the callback function with it. */
+export function setErrorMessage(res, setErrorFunc) {
+  res.json().then((data) => {
+    setErrorFunc(data.errorDescription ?? "brak");
+  })
+}

@@ -5,6 +5,7 @@ import InputDropdown from "../components/InputDropdown";
 import DialogBox from "../components/DialogBox";
 import { fetchWithToken } from "../firebase";
 import { LoadingScreen, LoadingButton } from "../pages/Edit";
+import { setErrorMessage } from "../misc";
 
 export const CalendarEdit = ({
   data,
@@ -26,6 +27,8 @@ export const CalendarEdit = ({
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
+  const [popupError, setPopupError] = useState(false);
+  const [errorCode, setErrorCode] = useState(null);
 
   useEffect(() => {
     if (!loaded) {
@@ -98,9 +101,14 @@ export const CalendarEdit = ({
     };
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is sent
-      res.ok && refresh();
+      if (res.ok) {
+        refresh();
+        setPopupSuccess(true);
+      } else {
+        setErrorCode(res.status);
+        setErrorMessage(res, setPopupError);
+      }
       setClickedSubmit(false);
-      setPopupSuccess(res.ok);
     });
   }
 
@@ -131,6 +139,14 @@ export const CalendarEdit = ({
         buttonTwoCallback={_handleDelete}
         isVisible={popupDelete}
         setVisible={setPopupDelete}
+      />
+      <DialogBox
+        header={`Bład! (HTTP ${errorCode})`}
+        content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
+        extra={popupError}
+        duration={10000}
+        isVisible={popupError}
+        setVisible={setPopupError}
       />
       <InputDropdown
         label="Wydarzenie do edycji"

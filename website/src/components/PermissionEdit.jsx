@@ -21,6 +21,8 @@ export const PermissionEdit = ({}) => {
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
+  const [popupError, setPopupError] = useState(false);
+  const [errorCode, setErrorCode] = useState(null);
 
   const _handleSubmit = (e) => {
     e.preventDefault();
@@ -50,6 +52,14 @@ export const PermissionEdit = ({}) => {
         buttonTwoCallback={() => setClickedDelete(true)}
         isVisible={popupDelete}
         setVisible={setPopupDelete}
+      />
+      <DialogBox
+        header={`Bład! (HTTP ${errorCode})`}
+        content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
+        extra={popupError}
+        duration={10000}
+        isVisible={popupError}
+        setVisible={setPopupError}
       />
       <InputDropdown
         label="Użytkownik do edycji"

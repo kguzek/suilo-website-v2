@@ -5,6 +5,7 @@ import InputDropdown from "../components/InputDropdown";
 import DialogBox from "../components/DialogBox";
 import { LoadingButton, LoadingScreen } from "../pages/Edit";
 import { fetchWithToken } from "../firebase";
+import { setErrorMessage } from "../misc";
 
 export const LinkEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -15,6 +16,8 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
+  const [popupError, setPopupError] = useState(false);
+  const [errorCode, setErrorCode] = useState(null);
 
   /** Gets the reference of the currently selected short link. */
   function _getCurrentlyActive() {
@@ -65,9 +68,14 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     const params = { destination: longLink };
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is sent
-      res.ok && refresh();
+      if (res.ok) {
+        refresh();
+        setPopupSuccess(true);
+      } else {
+        setErrorCode(res.status);
+        setErrorMessage(res, setPopupError);
+      }
       setClickedSubmit(false);
-      setPopupSuccess(res.ok);
     });
   };
 
@@ -84,7 +92,9 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
   };
 
   // Get array of short link URLs
-  const links = (data.contents ?? []).map((link) => `${link.id} > ${link.destination}`);
+  const links = (data.contents ?? []).map(
+    (link) => `${link.id} > ${link.destination}`
+  );
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <DialogBox
@@ -103,6 +113,14 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
         buttonTwoCallback={_handleDelete}
         isVisible={popupDelete}
         setVisible={setPopupDelete}
+      />
+      <DialogBox
+        header={`Bład! (HTTP ${errorCode})`}
+        content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
+        extra={popupError}
+        duration={10000}
+        isVisible={popupError}
+        setVisible={setPopupError}
       />
       <InputDropdown
         label="Link do edycji"
