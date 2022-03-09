@@ -28,9 +28,187 @@ const PAGES = {
   news: "Aktualności",
   events: "Wydarzenia",
   calendar: "Kalendarz",
+  linkShortener: "Linki",
+  permissions: "Uprawnienia",
 };
 
-function PostEdit({ data, loaded, refetchData }) {
+const LinkEdit = ({ }) => {
+  const [currentlyActive, setCurrentlyActive] = useState("_default")
+  const [longLink, setLongLink] = useState("")
+  const [shortLink, setShortLink] = useState("")
+  const [clickedSubmit, setClickedSubmit] = useState(false);
+  const [clickedDelete, setClickedDelete] = useState(false);
+
+  const _handleSubmit = (e) => {
+    e.preventDefault();
+    setClickedSubmit(true);
+  }
+
+  const _handleDelete = () => {
+    setClickedDelete(true);
+  }
+
+  return (
+    <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <InputDropdown
+        label="Link do edycji"
+        currentValue={currentlyActive}
+        onChangeCallback={setCurrentlyActive}
+        defaultLabel="Nowy link"
+        valueDisplayObject={[]}
+      />
+      <InputBox
+        maxLength={126}
+        name="long-link"
+        placeholder="Link do skrócenia"
+        value={longLink}
+        onChange={setLongLink}
+      />
+      <InputBox
+        maxLength={32}
+        name="short-link"
+        placeholder="Skrócony kod linku"
+        value={shortLink}
+        onChange={setShortLink}
+      />
+
+      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
+        {currentlyActive !== "_default" &&
+          (clickedDelete ? (
+            <LoadingButton />
+          ) : (
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={() => _handleDelete()}
+            >
+              <Trash color="rgb(252, 63, 30)" size={20} />
+              <p>usuń link</p>
+            </button>
+          ))}
+        {clickedSubmit ? (
+          <LoadingButton style="opaque" />
+        ) : (
+          <button type="submit" className="add-btn">
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "edytuj link"
+                : "dodaj link"}
+            </p>
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}
+
+const PermissionEdit = ({ }) => {
+  const [currentlyActive, setCurrentlyActive] = useState("_default")
+  const [user, setUser] = useState("")
+  const [userPermissions, setUserPermissions] = useState({
+    news: false,
+    events: false,
+    calendar: false,
+    linkShortener: false,
+    permissions: false,
+    isAdmin: false
+  })
+  const [clickedSubmit, setClickedSubmit] = useState(false);
+  const [clickedDelete, setClickedDelete] = useState(false);
+
+  const _handleSubmit = (e) => {
+    e.preventDefault();
+    setClickedSubmit(true);
+  }
+
+  const _handleDelete = () => {
+    setClickedDelete(true);
+  }
+
+  return (
+    <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <InputDropdown
+        label="Użytkownik do edycji"
+        currentValue={currentlyActive}
+        onChangeCallback={setCurrentlyActive}
+        defaultLabel="Nowy użytkownik"
+        valueDisplayObject={[]}
+      />
+      <InputBox
+        name="email"
+        placeholder="Mail użytkownika"
+        value={user}
+        onChange={setUser}
+      />
+      <div>
+        <input type="checkbox" id="A1" name="news" value={userPermissions.news} onChange={(e) => setUserPermissions({ ...userPermissions, news: e.target.value })} />
+        <label for="A1">Edycja aktualności</label>
+      </div>
+      <div>
+        <input type="checkbox" id="E1" name="events" value={userPermissions.events} onChange={(e) => setUserPermissions({ ...userPermissions, events: e.target.value })} />
+        <label for="E1">Edycja wydarzeń</label>
+      </div>
+      <div>
+        <input type="checkbox" id="C1" name="calendar" value={userPermissions.calendar} onChange={(e) => setUserPermissions({ ...userPermissions, calendar: e.target.value })} />
+        <label for="C1">Edycja kalendarza</label>
+      </div>
+      <div>
+        <input type="checkbox" id="L1" name="link-shortener" value={userPermissions.linkShortener} onChange={(e) => setUserPermissions({ ...userPermissions, linkShortener: e.target.value })} />
+        <label for="L1">Skracanie linków</label>
+      </div>
+      <div>
+        <input type="checkbox" id="P1" name="permissions" value={userPermissions.permissions} onChange={(e) => setUserPermissions({ ...userPermissions, permissions: e.target.value })} />
+        <label for="P1">Strona uprawnień</label>
+      </div>
+      {/* <InputBox
+        maxLength={32}
+        name="short-link"
+        placeholder="Skrócony kod linku"
+        value={shortLink}
+        onChange={setShortLink}
+      /> */}
+
+      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
+        {currentlyActive !== "_default" &&
+          (clickedDelete ? (
+            <LoadingButton />
+          ) : (
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={() => _handleDelete()}
+            >
+              <Trash color="rgb(252, 63, 30)" size={20} />
+              <p>usuń link</p>
+            </button>
+          ))}
+        {clickedSubmit ? (
+          <LoadingButton style="opaque" />
+        ) : (
+          <button type="submit" className="add-btn">
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "edytuj link"
+                : "dodaj link"}
+            </p>
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}
+
+const PostEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [author, setAuthor] = useState(auth.currentUser?.displayName);
   const [title, setTitle] = useState("");
@@ -195,7 +373,7 @@ function PostEdit({ data, loaded, refetchData }) {
       {/* PLACE FOR TEXT EDITOR */}
       <InputArea
         name="post-description"
-        placeholder="Opis"
+        placeholder="Treść"
         maxLength={256}
         value={description}
         onChange={setDescription}
@@ -270,7 +448,7 @@ function PostEdit({ data, loaded, refetchData }) {
   );
 }
 
-function EventEdit({ data, loaded, refetchData }) {
+const EventEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -539,7 +717,7 @@ function EventEdit({ data, loaded, refetchData }) {
   );
 }
 
-function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
+const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
   const [eventType, setEventType] = useState("");
@@ -732,7 +910,7 @@ function CalendarEdit({ data, loaded, refetchData, setYear, setMonth }) {
   );
 }
 
-export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
+const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   // `editPicker` is an index of `editPickerOptions`
@@ -866,27 +1044,37 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
         {/* use == instead of === to compare integers with number strings
         (editPicker can be a string representing a number e.g. "1") */}
         <div className="w-full m-auto">
-          {editPicker == 0 && (
+          {editPicker === 0 && (
             <PostEdit
               data={newsData}
               loaded={loadedNews}
               refetchData={() => _fetchNews(true)}
             />
           )}
-          {editPicker == 1 && (
+          {editPicker === 1 && (
             <EventEdit
               data={eventsData}
               loaded={loadedEvents}
               refetchData={() => _fetchEvents(true)}
             />
           )}
-          {editPicker == 2 && (
+          {editPicker === 2 && (
             <CalendarEdit
               data={calendarData}
               loaded={loadedCalendar}
               setYear={setYear}
               setMonth={setMonth}
               refetchData={() => _fetchCalendar(true)}
+            />
+          )}
+          {editPicker === 3 && (
+            <LinkEdit
+
+            />
+          )}
+          {editPicker === 4 && (
+            <PermissionEdit
+
             />
           )}
         </div>
@@ -925,3 +1113,5 @@ function LoadingScreen() {
     </div>
   );
 }
+
+export default Edit
