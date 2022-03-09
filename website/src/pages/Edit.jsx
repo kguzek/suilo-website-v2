@@ -734,7 +734,7 @@ const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
   );
 };
 
-const LinkEdit = ({}) => {
+const LinkEdit = ({ linksData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [longLink, setLongLink] = useState("");
   const [shortLink, setShortLink] = useState("");
@@ -807,7 +807,7 @@ const LinkEdit = ({}) => {
   );
 };
 
-const PermissionEdit = ({}) => {
+const PermissionEdit = ({ }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [user, setUser] = useState("");
   const [userPermissions, setUserPermissions] = useState({
@@ -1125,7 +1125,7 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
               refetchData={() => _fetchCalendar(true)}
             />
           )}
-          {editPicker === 3 && <LinkEdit />}
+          {editPicker === 3 && <LinkEdit linksData={linksData} />}
           {editPicker === 4 && <PermissionEdit />}
         </div>
       </div>
