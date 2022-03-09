@@ -23,6 +23,7 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
     const [imageAuthor, setImageAuthor] = useState("");
     const [imageAltText, setImageAltText] = useState("");
     const [imgRef, setImgRef] = useState();
+    const [ytID, setYtID] = useState("");
     const [clickedSubmit, setClickedSubmit] = useState(false);
     const [clickedDelete, setClickedDelete] = useState(false);
 
@@ -230,6 +231,14 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
                 maxLength={60}
                 value={imageAltText}
                 onChange={setImageAltText} />
+            <InputBox
+                name="yt-url"
+                placeholder="ID filmu na Youtubie"
+                maxLength={11}
+                value={ytID}
+                required={false}
+                onChange={setYtID}
+            />
             <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
                 {currentlyActive !== "_default" &&
                     (clickedDelete ? (

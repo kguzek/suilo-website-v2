@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import { Bars } from "react-loader-spinner";
@@ -16,14 +16,19 @@ import {
   removeSearchParam,
   getURLfromFileName,
 } from "../misc";
+import YouTube from 'react-youtube'
 
 const Post = ({ setPage, reload }) => {
   const [loaded, setLoaded] = useState(false);
   const [postData, setPostData] = useState({});
   const [newsData, setNewsData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams({});
+  const [width, setWidth] = useState(320);
   const params = useParams();
-
+  const ref = useRef(null);
+  useEffect(() => {
+    setWidth(ref.current ? ref.current.offsetWidth : 0);
+  }, [ref.current]);
   const cacheName = `news_post_${params.postID}`;
 
   function changeImageLink(link) {
@@ -117,12 +122,9 @@ const Post = ({ setPage, reload }) => {
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
       <div className="grid grid-cols-1 lg:grid-cols-4 mt-6 lg:mt-10 gap-10 xl:gap-12">
-        <article className="col-span-1 lg:col-span-3">
-          <img
-            className="aspect-video w-full object-cover rounded-xl lg:rounded-3xl drop-shadow-sm"
-            src={postData.photo}
-            alt={postData.alt}
-          />
+
+        <article ref={ref} className="col-span-1 lg:col-span-3">
+          <img className="aspect-video w-full object-cover rounded-xl lg:rounded-3xl drop-shadow-sm" src={postData.photo} alt={postData.alt} />
           {postData.photoAuthor && (
             <p className="text-[#444444]/75 font-light text-xs w-full text-right py-1 pr-px sm:font-normal sm:text-sm">
               Zdjęcie: {postData.photoAuthor}
@@ -138,18 +140,14 @@ const Post = ({ setPage, reload }) => {
               </span>
             )} */}
           </div>
-          <h1 className="text-text1 w-full font-bold tracking-wide leading-8 text-[1.6rem] sm:text-3xl lg:max-w-prose md:text-4xl">
-            {postData.title}
-          </h1>
-          <p className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 lg:mt-5  lg:text-xl  font-normal text-lg">
-            {postData.content}
-          </p>
-          <p className="mb-16 font-normal text-base w-full text-right mt-5 text-[#444444]/50">
-            Artykuł dodany przez:{" "}
-            <span className="font-medium text-[#444444]/100">
-              {postData.author}
-            </span>
-          </p>
+
+          <h1 className="text-text1 w-full font-bold tracking-wide leading-8 text-[1.6rem] sm:text-3xl lg:max-w-prose md:text-4xl">{postData.title}</h1>
+          <p className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 lg:mt-5  lg:text-xl  font-normal text-lg">{postData.content}</p>
+          {
+            postData.ytID &&
+            <YouTube videoId={postData.ytID} opts={{ height: (width * (9 / 16)), width: width }} />
+          }
+          <p className="mb-16 font-normal text-base w-full text-right mt-5 text-[#444444]/50">Artykuł dodany przez: <span className="font-medium text-[#444444]/100">{postData.author}</span></p>
         </article>
         <aside className="hidden lg:grid lg:grid-cols-1 lg:col-span-1 gap-3 mb-6">
           <PostCardPreview
