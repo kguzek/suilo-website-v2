@@ -32,182 +32,6 @@ const PAGES = {
   permissions: "Uprawnienia",
 };
 
-const LinkEdit = ({ }) => {
-  const [currentlyActive, setCurrentlyActive] = useState("_default")
-  const [longLink, setLongLink] = useState("")
-  const [shortLink, setShortLink] = useState("")
-  const [clickedSubmit, setClickedSubmit] = useState(false);
-  const [clickedDelete, setClickedDelete] = useState(false);
-
-  const _handleSubmit = (e) => {
-    e.preventDefault();
-    setClickedSubmit(true);
-  }
-
-  const _handleDelete = () => {
-    setClickedDelete(true);
-  }
-
-  return (
-    <form className="w-full mt-6" onSubmit={_handleSubmit}>
-      <InputDropdown
-        label="Link do edycji"
-        currentValue={currentlyActive}
-        onChangeCallback={setCurrentlyActive}
-        defaultLabel="Nowy link"
-        valueDisplayObject={[]}
-      />
-      <InputBox
-        maxLength={126}
-        name="long-link"
-        placeholder="Link do skrócenia"
-        value={longLink}
-        onChange={setLongLink}
-      />
-      <InputBox
-        maxLength={32}
-        name="short-link"
-        placeholder="Skrócony kod linku"
-        value={shortLink}
-        onChange={setShortLink}
-      />
-
-      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "_default" &&
-          (clickedDelete ? (
-            <LoadingButton />
-          ) : (
-            <button
-              type="button"
-              className="delete-btn"
-              onClick={() => _handleDelete()}
-            >
-              <Trash color="rgb(252, 63, 30)" size={20} />
-              <p>usuń link</p>
-            </button>
-          ))}
-        {clickedSubmit ? (
-          <LoadingButton style="opaque" />
-        ) : (
-          <button type="submit" className="add-btn">
-            {currentlyActive !== "_default" ? (
-              <Edit3 color="#FFFFFF" size={24} />
-            ) : (
-              <Plus color="#FFFFFF" size={24} />
-            )}
-            <p>
-              {currentlyActive !== "_default"
-                ? "edytuj link"
-                : "dodaj link"}
-            </p>
-          </button>
-        )}
-      </div>
-    </form>
-  );
-}
-
-const PermissionEdit = ({ }) => {
-  const [currentlyActive, setCurrentlyActive] = useState("_default")
-  const [user, setUser] = useState("")
-  const [userPermissions, setUserPermissions] = useState({
-    news: false,
-    events: false,
-    calendar: false,
-    linkShortener: false,
-    permissions: false,
-    isAdmin: false
-  })
-  const [clickedSubmit, setClickedSubmit] = useState(false);
-  const [clickedDelete, setClickedDelete] = useState(false);
-
-  const _handleSubmit = (e) => {
-    e.preventDefault();
-    setClickedSubmit(true);
-  }
-
-  const _handleDelete = () => {
-    setClickedDelete(true);
-  }
-
-  return (
-    <form className="w-full mt-6" onSubmit={_handleSubmit}>
-      <InputDropdown
-        label="Użytkownik do edycji"
-        currentValue={currentlyActive}
-        onChangeCallback={setCurrentlyActive}
-        defaultLabel="Nowy użytkownik"
-        valueDisplayObject={[]}
-      />
-      <InputBox
-        name="email"
-        placeholder="Mail użytkownika"
-        value={user}
-        onChange={setUser}
-      />
-      <div>
-        <input type="checkbox" id="A1" name="news" value={userPermissions.news} onChange={(e) => setUserPermissions({ ...userPermissions, news: e.target.value })} />
-        <label for="A1">Edycja aktualności</label>
-      </div>
-      <div>
-        <input type="checkbox" id="E1" name="events" value={userPermissions.events} onChange={(e) => setUserPermissions({ ...userPermissions, events: e.target.value })} />
-        <label for="E1">Edycja wydarzeń</label>
-      </div>
-      <div>
-        <input type="checkbox" id="C1" name="calendar" value={userPermissions.calendar} onChange={(e) => setUserPermissions({ ...userPermissions, calendar: e.target.value })} />
-        <label for="C1">Edycja kalendarza</label>
-      </div>
-      <div>
-        <input type="checkbox" id="L1" name="link-shortener" value={userPermissions.linkShortener} onChange={(e) => setUserPermissions({ ...userPermissions, linkShortener: e.target.value })} />
-        <label for="L1">Skracanie linków</label>
-      </div>
-      <div>
-        <input type="checkbox" id="P1" name="permissions" value={userPermissions.permissions} onChange={(e) => setUserPermissions({ ...userPermissions, permissions: e.target.value })} />
-        <label for="P1">Strona uprawnień</label>
-      </div>
-      {/* <InputBox
-        maxLength={32}
-        name="short-link"
-        placeholder="Skrócony kod linku"
-        value={shortLink}
-        onChange={setShortLink}
-      /> */}
-
-      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "_default" &&
-          (clickedDelete ? (
-            <LoadingButton />
-          ) : (
-            <button
-              type="button"
-              className="delete-btn"
-              onClick={() => _handleDelete()}
-            >
-              <Trash color="rgb(252, 63, 30)" size={20} />
-              <p>usuń link</p>
-            </button>
-          ))}
-        {clickedSubmit ? (
-          <LoadingButton style="opaque" />
-        ) : (
-          <button type="submit" className="add-btn">
-            {currentlyActive !== "_default" ? (
-              <Edit3 color="#FFFFFF" size={24} />
-            ) : (
-              <Plus color="#FFFFFF" size={24} />
-            )}
-            <p>
-              {currentlyActive !== "_default"
-                ? "edytuj link"
-                : "dodaj link"}
-            </p>
-          </button>
-        )}
-      </div>
-    </form>
-  );
-}
-
 const PostEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [author, setAuthor] = useState(auth.currentUser?.displayName);
@@ -446,7 +270,7 @@ const PostEdit = ({ data, loaded, refetchData }) => {
       </div>
     </form>
   );
-}
+};
 
 const EventEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -715,7 +539,7 @@ const EventEdit = ({ data, loaded, refetchData }) => {
       </div>
     </form>
   );
-}
+};
 
 const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -908,7 +732,225 @@ const CalendarEdit = ({ data, loaded, refetchData, setYear, setMonth }) => {
       </div>
     </form>
   );
-}
+};
+
+const LinkEdit = ({}) => {
+  const [currentlyActive, setCurrentlyActive] = useState("_default");
+  const [longLink, setLongLink] = useState("");
+  const [shortLink, setShortLink] = useState("");
+  const [clickedSubmit, setClickedSubmit] = useState(false);
+  const [clickedDelete, setClickedDelete] = useState(false);
+
+  const _handleSubmit = (e) => {
+    e.preventDefault();
+    setClickedSubmit(true);
+  };
+
+  const _handleDelete = () => {
+    setClickedDelete(true);
+  };
+
+  return (
+    <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <InputDropdown
+        label="Link do edycji"
+        currentValue={currentlyActive}
+        onChangeCallback={setCurrentlyActive}
+        defaultLabel="Nowy link"
+        valueDisplayObject={links}
+      />
+      <InputBox
+        maxLength={126}
+        name="long-link"
+        placeholder="Link do skrócenia"
+        value={longLink}
+        onChange={setLongLink}
+      />
+      <InputBox
+        maxLength={32}
+        name="short-link"
+        placeholder="Skrócony kod linku"
+        value={shortLink}
+        onChange={setShortLink}
+      />
+
+      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
+        {currentlyActive !== "_default" &&
+          (clickedDelete ? (
+            <LoadingButton />
+          ) : (
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={() => _handleDelete()}
+            >
+              <Trash color="rgb(252, 63, 30)" size={20} />
+              <p>usuń link</p>
+            </button>
+          ))}
+        {clickedSubmit ? (
+          <LoadingButton style="opaque" />
+        ) : (
+          <button type="submit" className="add-btn">
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default" ? "edytuj link" : "dodaj link"}
+            </p>
+          </button>
+        )}
+      </div>
+    </form>
+  );
+};
+
+const PermissionEdit = ({}) => {
+  const [currentlyActive, setCurrentlyActive] = useState("_default");
+  const [user, setUser] = useState("");
+  const [userPermissions, setUserPermissions] = useState({
+    news: false,
+    events: false,
+    calendar: false,
+    linkShortener: false,
+    permissions: false,
+    isAdmin: false,
+  });
+  const [clickedSubmit, setClickedSubmit] = useState(false);
+  const [clickedDelete, setClickedDelete] = useState(false);
+
+  const _handleSubmit = (e) => {
+    e.preventDefault();
+    setClickedSubmit(true);
+  };
+
+  const _handleDelete = () => {
+    setClickedDelete(true);
+  };
+
+  return (
+    <form className="w-full mt-6" onSubmit={_handleSubmit}>
+      <InputDropdown
+        label="Użytkownik do edycji"
+        currentValue={currentlyActive}
+        onChangeCallback={setCurrentlyActive}
+        defaultLabel="Nowy użytkownik"
+        valueDisplayObject={[]}
+      />
+      <InputBox
+        name="email"
+        placeholder="Mail użytkownika"
+        value={user}
+        onChange={setUser}
+      />
+      <div>
+        <input
+          type="checkbox"
+          id="A1"
+          name="news"
+          value={userPermissions.news}
+          onChange={(e) =>
+            setUserPermissions({ ...userPermissions, news: e.target.value })
+          }
+        />
+        <label htmlFor="A1">Edycja aktualności</label>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          id="E1"
+          name="events"
+          value={userPermissions.events}
+          onChange={(e) =>
+            setUserPermissions({ ...userPermissions, events: e.target.value })
+          }
+        />
+        <label htmlFor="E1">Edycja wydarzeń</label>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          id="C1"
+          name="calendar"
+          value={userPermissions.calendar}
+          onChange={(e) =>
+            setUserPermissions({ ...userPermissions, calendar: e.target.value })
+          }
+        />
+        <label htmlFor="C1">Edycja kalendarza</label>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          id="L1"
+          name="link-shortener"
+          value={userPermissions.linkShortener}
+          onChange={(e) =>
+            setUserPermissions({
+              ...userPermissions,
+              linkShortener: e.target.value,
+            })
+          }
+        />
+        <label htmlFor="L1">Skracanie linków</label>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          id="P1"
+          name="permissions"
+          value={userPermissions.permissions}
+          onChange={(e) =>
+            setUserPermissions({
+              ...userPermissions,
+              permissions: e.target.value,
+            })
+          }
+        />
+        <label htmlFor="P1">Strona uprawnień</label>
+      </div>
+      {/* <InputBox
+        maxLength={32}
+        name="short-link"
+        placeholder="Skrócony kod linku"
+        value={shortLink}
+        onChange={setShortLink}
+      /> */}
+
+      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
+        {currentlyActive !== "_default" &&
+          (clickedDelete ? (
+            <LoadingButton />
+          ) : (
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={() => _handleDelete()}
+            >
+              <Trash color="rgb(252, 63, 30)" size={20} />
+              <p>usuń link</p>
+            </button>
+          ))}
+        {clickedSubmit ? (
+          <LoadingButton style="opaque" />
+        ) : (
+          <button type="submit" className="add-btn">
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default" ? "edytuj link" : "dodaj link"}
+            </p>
+          </button>
+        )}
+      </div>
+    </form>
+  );
+};
 
 const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
   const navigate = useNavigate();
@@ -920,9 +962,11 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
   const [newsData, setNewsData] = useState([]);
   const [eventsData, setEventsData] = useState({});
   const [calendarData, setCalendarData] = useState({});
+  const [linksData, setLinksData] = useState({});
   const [loadedNews, setLoadedNews] = useState(false);
   const [loadedEvents, setLoadedEvents] = useState(false);
   const [loadedCalendar, setLoadedCalendar] = useState(false);
+  const [loadedLinks, setLoadedLinks] = useState(false);
 
   // Calendar fetch options
   const [year, setYear] = useState(new Date().getFullYear());
@@ -967,6 +1011,17 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
     fetchCachedData(cacheName, fetchURL, fetchArgs);
   }
 
+  function _fetchLinks(forceUpdate = false) {
+    const fetchArgs = {
+      setData: setLinksData,
+      setLoaded: setLoadedLinks,
+      updateCache: forceUpdate,
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
+    };
+    fetchCachedData("shortLinks", "links", fetchArgs);
+  }
+
   // Populate the API data
   useEffect(() => {
     const updateCache = !!removeSearchParam(
@@ -975,7 +1030,12 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
       "refresh"
     );
 
-    for (const fetchFunc of [_fetchNews, _fetchEvents, _fetchCalendar]) {
+    for (const fetchFunc of [
+      _fetchNews,
+      _fetchEvents,
+      _fetchCalendar,
+      _fetchLinks,
+    ]) {
       fetchFunc(updateCache);
     }
   }, []);
@@ -997,7 +1057,9 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
 
   // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {
-    console.log("Waiting for the user to be determined before displaying edit screen.")
+    console.log(
+      "Waiting for the user to be determined before displaying edit screen."
+    );
     return <LoadingScreen />;
   }
 
@@ -1005,6 +1067,7 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
   const editPickerOptions = userPerms.isAdmin
     ? Object.values(PAGES) // Give permission to edit all pages
     : userCanEdit.map((perm) => PAGES[perm]); // Give permission for individual pages
+  console.log(editPickerOptions, userCanEdit, userPerms);
 
   // Failsafe to prevent the user seeing the edit UI in case of a bug
   if (editPickerOptions.length === 0) {
@@ -1014,11 +1077,8 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
       </p>
     );
   }
-  console.log("Edit picker:", editPicker);
   return (
-    <div
-      className="w-11/12 xl:w-10/12 min-h-[83vh] mt-16 flex flex-col justify-start align-middle "
-    >
+    <div className="w-11/12 xl:w-10/12 min-h-[83vh] mt-16 flex flex-col justify-start align-middle ">
       <MetaTags>
         <title>
           Edycja treści | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w
@@ -1065,22 +1125,13 @@ const Edit = ({ setPage, user, userPerms = {}, loginAction }) => {
               refetchData={() => _fetchCalendar(true)}
             />
           )}
-          {editPicker === 3 && (
-            <LinkEdit
-
-            />
-          )}
-          {editPicker === 4 && (
-            <PermissionEdit
-
-            />
-          )}
+          {editPicker === 3 && <LinkEdit />}
+          {editPicker === 4 && <PermissionEdit />}
         </div>
-
       </div>
     </div>
   );
-}
+};
 
 /** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
 function LoadingButton({ style = "transparent" }) {
@@ -1112,4 +1163,4 @@ function LoadingScreen() {
   );
 }
 
-export default Edit
+export default Edit;
