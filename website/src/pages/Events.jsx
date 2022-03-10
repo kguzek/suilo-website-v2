@@ -14,7 +14,6 @@ import EventPreview from "../components/EventPreview";
 
 function getNextEvent(events = []) {
   const now = new Date();
-
   for (const event of events) {
     // date comparison for 'event' objects
     if (new Date(event.date) >= now) {
@@ -65,8 +64,8 @@ function Events({ setPage, reload }) {
     if (!eventsData) {
       return;
     }
-    getNextEvent(eventsData.contents);
-    console.log("Next event:", nextEvent?.title);
+    setNextEvent(getNextEvent(eventsData.contents));
+    // console.log("Next event:", nextEvent?.title);
   }, [eventsData]);
 
   if (!loaded) {
@@ -80,6 +79,24 @@ function Events({ setPage, reload }) {
       </div>
     );
   }
+
+  /** Returns the difference in milliseconds between the two events' start times. */
+  function _compareEventDates(eventA, eventB) {
+    const dateA = new Date(eventA.date);
+    const dateB = new Date(eventB.date);
+    dateA.setHours(...eventA.startTime);
+    dateB.setHours(...eventB.startTime);
+    return dateB - dateA;
+  }
+
+  function _generateEventPreviews() {
+    const events = eventsData?.contents ?? [];
+    // Sort the events by date and start time, in descending order? idk I didn't check this but it seems to work
+    return events
+      .sort(_compareEventDates)
+      .map((event, i) => <EventPreview key={i} event={event} />);
+  }
+
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
@@ -109,9 +126,9 @@ function Events({ setPage, reload }) {
       <br /> */}
       {/* <h2>Wydarzenia szkolne</h2>
       <h3>Następne wydarzenie szkolne essunia widzowie kochani</h3> */}
-      <EventPreview eventType="NEXT" />
+      <EventPreview event={nextEvent} isNextEvent={true} />
       <CalendarPreview updateCache={updateCache} />
-      <EventPreview />
+      {_generateEventPreviews()}
     </div>
   );
 }
