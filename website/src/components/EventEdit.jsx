@@ -303,7 +303,7 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
             </button>
           ))}
         {clickedSubmit ? (
-          <LoadingButton style="opaque" />
+          <LoadingButton isOpaque={true} />
         ) : (
           <button type="submit" className="add-btn">
             {currentlyActive !== "_default" ? (

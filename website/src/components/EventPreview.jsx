@@ -9,9 +9,18 @@ import {
   ExternalLink,
   User,
 } from "react-feather";
-import { fetchWithToken } from "../firebase";
-import { DEFAULT_IMAGE, formatDate, formatTime } from "../misc";
+import { fetchWithToken, auth } from "../firebase";
+import {
+  DEFAULT_IMAGE,
+  formatDate,
+  formatTime,
+  setErrorMessage,
+} from "../misc";
+import { LoadingButton } from "../pages/Edit";
 import DialogBox from "./DialogBox";
+
+const PARTICIPATE_BTN_CLASS =
+  "transition-all inline-flex bg-primary py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]";
 
 const testEvent = {
   photo:
@@ -23,7 +32,7 @@ const testEvent = {
   startTime: [9, 0],
   endTime: [11, 0],
   location: "Sala 204",
-  participants: 19,
+  participants: [],
   link: "https://youtu.be/dQw4w9WgXcQ",
 };
 
@@ -32,9 +41,13 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
   const [participance, setParticipance] = useState(false);
   const [canParChange, setCanParChange] = useState(true);
   const [canNotChange, setCanNotChange] = useState(true);
+  const [currentUserID, setCurrentUserID] = useState(undefined);
 
+  const [clickedParticipate, setClickedParticipate] = useState(false);
   const [popupParticipance, setPopupParticipance] = useState(false);
   const [popupNotification, setPopupNotification] = useState(false);
+  const [popupError, setPopupError] = useState(false);
+  const [errorCode, setErrorCode] = useState(null);
 
   useEffect(() => {
     if (!popupNotification) {
@@ -48,9 +61,17 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
     }
   }, [popupParticipance]);
 
+  useEffect(() => {
+    if (!auth.currentUser || !event) return;
+    const _uid = auth.currentUser.providerData?.[0]?.uid;
+    setCurrentUserID(_uid);
+    setParticipance(event.participants.includes(_uid));
+  }, [auth.currentUser]);
+
   // Display "<20" if there are fewer than 20 event participants
   const numParticipants =
-    (event.participants < 20 ? "<20" : event.participants) + " uczestników";
+    (event.participants.length < 20 ? "<20" : event.participants.length) +
+    " uczestników";
 
   function _toggleNotification(_clickEvent) {
     if (canNotChange && canParChange) {
@@ -60,29 +81,36 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
     }
   }
 
-  // TODO: Integrate toggle participance, add error popups etc.
-  function _toggleParticipance(e) {
+  function _toggleParticipance(_clickEvent) {
     if (!canParChange || !canNotChange) {
       return;
     }
-    setParticipance(!participance);
-    const eventID = e.target.id;
-    fetchWithToken(`/events/${eventID}`, "PATCH").then((res) => {
+    setClickedParticipate(true);
+    fetchWithToken(`/events/${event.id}`, "PATCH").then((res) => {
+      setClickedParticipate(false);
       if (res.ok) {
         setPopupParticipance(true);
         setCanParChange(false);
-        return;
+        res.json().then((data) => {
+          // Update the client-side data
+          setParticipance(data.participating);
+          event.participants = data.participants;
+        });
+        // Force cache update on next reload
+        localStorage.removeItem("events");
+      } else {
+        setErrorMessage(res, setPopupError);
+        setErrorCode(res.status);
       }
-
-    }, (error) => {
-      // User is not logged in
-    })
-    
+    });
   }
 
   return (
-    <article className="w-full grid mb-6 grid-cols-1 gap-3 lg:gap-8 lg:w-11/12 md:w-10/12 mx-auto lg:grid-cols-2 lg:my-12 mt-8">
-      {popupNotification === true ? (
+    <article
+      className="w-full grid mb-6 grid-cols-1 gap-3 lg:gap-8 lg:w-11/12 md:w-10/12 mx-auto lg:grid-cols-2 lg:my-12 mt-8"
+      id={isNextEvent ? "nextEvent" : "selectedEvent"}
+    >
+      {popupNotification && (
         <DialogBox
           header={notification ? "Zrobione!" : "Zrobione!"}
           content={
@@ -94,20 +122,29 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
           isVisible={popupNotification}
           setVisible={setPopupNotification}
         />
-      ) : null}
-      {popupParticipance === true ? (
+      )}
+      {popupParticipance && (
         <DialogBox
           header={participance ? "Super!" : "Szkoda."}
-          content={
-            participance
-              ? "Zadeklarowano udział w wydarzeniu."
-              : "Cofnięto deklaracje o udział w wydarzeniu."
-          }
+          content={`${
+            participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
+          } udział w wydarzeniu "${event.title}".`}
           duration={2000}
           isVisible={popupParticipance}
           setVisible={setPopupParticipance}
         />
-      ) : null}
+      )}
+      {popupError && (
+        <DialogBox
+          header={`Bład! (HTTP ${errorCode})`}
+          content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
+          extra={popupError}
+          type="DIALOG"
+          buttonOneLabel="Ok"
+          isVisible={popupError}
+          setVisible={setPopupError}
+        />
+      )}
       <div className="relative lg:pr-10 h-fit">
         <img
           className="bg-gray-200/75 max-h-96 aspect-[3/2] w-full object-cover rounded-xl sm:rounded-2xl drop-shadow-4xl"
@@ -181,6 +218,7 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
               className="transition-all bg-white aspect-square p-[.5rem] hover:ring-2 hover:ring-primary/30 drop-shadow-3xl pt-[.55rem] pl-[.55rem] rounded-xl"
               href={event.link}
               target="_blank"
+              rel="noreferrer"
             >
               <ExternalLink
                 size={28}
@@ -191,6 +229,7 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
           <div
             onClick={_toggleNotification}
             className="transition-all bg-white aspect-square cursor-pointer hover:ring-2 hover:ring-primary/30  p-[.5rem] pt-[.6rem] ml-2 drop-shadow-3xl rounded-xl"
+            style={{ cursor: canNotChange ? "pointer" : "not-allowed" }}
           >
             <Bell
               size={28}
@@ -199,26 +238,30 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
               }`}
             />
           </div>
-          <div
-            onClick={_toggleParticipance}
-            className={`transition-all inline-flex bg-primary py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem] `}
-          >
-            {participance ? (
-              <UserCheck
-                size={28}
-                className={`aspect-square  h-[1.5rem]  my-auto stroke-2 stroke-white `}
-              />
-            ) : (
-              <User
-                size={28}
-                className={`aspect-square  h-[1.5rem]  my-auto stroke-2 stroke-white `}
-              />
-            )}
-
-            <p className="text-white pl-1 my-auto font-medium text-base -tracking-[.015rem]">
-              {participance ? "Bierzesz udział" : "Wezmę udział"}
-            </p>
-          </div>
+          {clickedParticipate ? (
+            <LoadingButton className={PARTICIPATE_BTN_CLASS} isOpaque={true} />
+          ) : (
+            <div
+              onClick={_toggleParticipance}
+              className={PARTICIPATE_BTN_CLASS}
+              style={{ cursor: canParChange ? "pointer" : "not-allowed" }}
+            >
+              {participance ? (
+                <UserCheck
+                  size={28}
+                  className={`aspect-square  h-[1.5rem]  my-auto stroke-2 stroke-white `}
+                />
+              ) : (
+                <User
+                  size={28}
+                  className={`aspect-square  h-[1.5rem]  my-auto stroke-2 stroke-white `}
+                />
+              )}
+              <p className="text-white pl-1 my-auto font-medium text-base -tracking-[.015rem]">
+                {participance ? "Bierzesz udział" : "Wezmę udział"}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </article>

@@ -211,21 +211,21 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
 }
 
 /** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
-export function LoadingButton({ style = "transparent" }) {
-  let className = "delete-btn";
+export function LoadingButton({ isOpaque = false, height = 25, width = 90, className }) {
+  let _className = className ?? "delete-btn";
   let colour = "#FFA900";
-  if (style === "opaque") {
-    className = "add-btn";
+  if (isOpaque) {
+    className ?? (_className = "add-btn");
     colour = "#FFFFFF";
   }
   return (
     <button
       type="button"
-      className={className}
+      className={_className}
       style={{ cursor: "not-allowed" }}
     >
       <div style={{ backgroundColor: "transparent" }}>
-        <Bars color={colour} height={25} width={90} />
+        <Bars color={colour} height={height} width={width} />
       </div>
     </button>
   );
