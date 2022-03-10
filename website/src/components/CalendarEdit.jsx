@@ -144,7 +144,8 @@ export const CalendarEdit = ({
         header={`Bład! (HTTP ${errorCode})`}
         content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
         extra={popupError}
-        duration={10000}
+        type="DIALOG"
+        buttonOneLabel="Ok"
         isVisible={popupError}
         setVisible={setPopupError}
       />
