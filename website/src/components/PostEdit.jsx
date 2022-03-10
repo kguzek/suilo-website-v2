@@ -70,6 +70,7 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       setImageURL,
       setImageAuthor,
       setImageAltText,
+      setYtID,
     ]) {
       setVar("");
     }
@@ -89,7 +90,7 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       url += currentlyActive;
     }
     const shortDescription = description.substring(0, 180);
-    // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null
+    // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null&ytID=null
     const params = {
       date: new Date().toISOString(),
       author,
@@ -100,6 +101,7 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       //those two should be stored with the photo imo
       photoAuthor: imageAuthor,
       alt: imageAltText,
+      ytID,
     };
     /*
             if(imgRef){

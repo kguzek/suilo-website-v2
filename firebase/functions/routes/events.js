@@ -16,6 +16,8 @@ const eventAttributeSanitisers = {
   startTime: (startTime) => getIntArray(startTime, ":", "00:00"),
   endTime: (endTime) => getIntArray(endTime, ":", "23:59"),
   location: (location) => location || null,
+  photo: (photo) => photo || null,
+  link: (link) => link || null,
   content: (content) => content || "Treść wydarzenia...",
 };
 
@@ -24,7 +26,7 @@ const eventAttributeSanitisers = {
 router
   // CREATE new event
   .post("/", (req, res) => {
-    // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&content=Treść wydarzenia...
+    // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
 
     // initialise parameters
     const data = { participants: [] };

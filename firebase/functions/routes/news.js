@@ -20,6 +20,7 @@ const postAttributeSanitisers = {
   photo: (photo) => photo || null,
   photoAuthor: (photoAuthor) => photoAuthor || null,
   alt: (altPhotoText) => altPhotoText || null,
+  ytID: (link) => link?.length === 11 ? link : null,
 };
 
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
@@ -27,7 +28,7 @@ const postAttributeSanitisers = {
 router
   // CREATE news
   .post("/", (req, res) => {
-    // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null
+    // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null&ytID=null
 
     if (req.query.create_test_data) {
       return createTestData(res);

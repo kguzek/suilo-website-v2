@@ -50,7 +50,10 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
     setDate(serialiseDateArray(event.date));
     setStartTime(formatTime(event.startTime));
     setEndTime(formatTime(event.endTime));
-    setLocation(event.location ?? ""); // location is nullable
+    // location, image and external URL are all nullable
+    setLocation(event.location ?? "");
+    setImageURL(event.photo ?? "");
+    setEventURL(event.link ?? "");
   }, [currentlyActive]);
 
   // Display loading screen if events data hasn't been retrieved yet
@@ -75,6 +78,8 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
       setStartTime,
       setEndTime,
       setLocation,
+      setImageURL,
+      setEventURL,
     ]) {
       setVar("");
     }
@@ -91,13 +96,15 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
       method = "PUT";
       url += currentlyActive;
     }
-    // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&content=Treść wydarzenia...
+    // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
     const params = {
       title: name,
       date,
       startTime,
       endTime,
       location,
+      photo: imageURL,
+      link: eventURL,
       content: description,
     };
     /*
