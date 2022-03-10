@@ -53,8 +53,7 @@ router
 
   // UPDATE (toggle) event participation status
   .patch("/:id", (req, res) => {
-    const user = req.userInfo ?? {};
-    const userID = parseInt(user.uid);
+    const userID = req.userInfo?.uid;
     if (!userID) {
       return res.status(403).json({
         errorDescription: "You must be signed in to perform this action.",
