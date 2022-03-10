@@ -19,47 +19,48 @@ const eventAttributeSanitisers = {
   type: (type) => parseInt(type) || 0,
   startDate: (startDate) => getIntArray(startDate, "-", "1970-01-01"),
   endDate: (endDate) => getIntArray(endDate, "-", "1970-01-01"),
-  isPrimary: (isPrimary) => (isPrimary || "true").toLowerCase() !== "false",
-  colour: hexStringToDecimal,
+  // isPrimary: (isPrimary) => (isPrimary || "true").toLowerCase() !== "false",
+  // colour: hexStringToDecimal,
 };
 
-const defaultCalendarEventTypes = [
-  "święta/wydarzenia szkolne",
-  "święta/wydarzenia ogólnopolskie",
-  "dzień wolny od zajęć dydaktycznych",
-  "ferie zimowe",
-  "przerwa wakacyjna",
-  "nauka zdalna/hybrydowa",
-  "matury i inne egzaminy",
-];
+// const defaultCalendarEventTypes = [
+//   "inne",
+//   "święta/wydarzenia szkolne",
+//   "święta/wydarzenia ogólnopolskie",
+//   "dzień wolny od zajęć dydaktycznych",
+//   "ferie zimowe",
+//   "przerwa wakacyjna",
+//   "nauka zdalna/hybrydowa",
+//   "matury i inne egzaminy",
+// ];
 
-const defaultEventColours = [0xfd3153, 0x1ccb9e, 0x3694df];
+// const defaultEventColours = [0xfd3153, 0x1ccb9e, 0x3694df];
 
 /*      ======== CALENDAR FUNCTIONS ========      */
 
-/** Converts a string containing a hexadecimal number either in plain digits or prepended with `#` or `0x` into a decimal number.*/
-function hexStringToDecimal(hexString) {
-  if (!hexString) {
-    const randIdx = randomArraySelection(defaultEventColours);
-    const randomColour = defaultEventColours[randIdx];
-    console.log("Defaulting to event colour", randomColour);
-    return randomColour;
-  }
-  // trim the leading hashtag
-  const iOffset = hexString.startsWith("#");
-  // starts substring at either index 0 or 1 and includes the next 6 characters
-  hexString = hexString.substring(iOffset, 6 + iOffset);
-  // convert the hexadecimal number string from base-16 into base-10
-  // parseInt automatically converts strings beginning with 0x... into HEX.
-  return parseInt(hexString, 16);
-}
+// /** Converts a string containing a hexadecimal number either in plain digits or prepended with `#` or `0x` into a decimal number.*/
+// function hexStringToDecimal(hexString) {
+//   if (!hexString) {
+//     const randIdx = randomArraySelection(defaultEventColours);
+//     const randomColour = defaultEventColours[randIdx];
+//     console.log("Defaulting to event colour", randomColour);
+//     return randomColour;
+//   }
+//   // trim the leading hashtag
+//   const iOffset = hexString.startsWith("#");
+//   // starts substring at either index 0 or 1 and includes the next 6 characters
+//   hexString = hexString.substring(iOffset, 6 + iOffset);
+//   // convert the hexadecimal number string from base-16 into base-10
+//   // parseInt automatically converts strings beginning with 0x... into HEX.
+//   return parseInt(hexString, 16);
+// }
 
-/** Converts base-10 into base-16 as a string with a leading `#`. */
-function decimalToHexString(decimal, hexLength = 6) {
-  decimal ?? (decimal = hexStringToDecimal());
-  const hex = decimal.toString(16).toUpperCase();
-  return "#" + hex.padStart(hexLength, "0");
-}
+// /** Converts base-10 into base-16 as a string with a leading `#`. */
+// function decimalToHexString(decimal, hexLength = 6) {
+//   decimal ?? (decimal = hexStringToDecimal());
+//   const hex = decimal.toString(16).toUpperCase();
+//   return "#" + hex.padStart(hexLength, "0");
+// }
 
 /** Returns the Polish name for the month of the year with the given one-based index. */
 function getMonthName(monthInt) {
@@ -109,74 +110,64 @@ function getParams(req, res, yearOnly = false) {
 }
 
 /** Converts the raw database data into the JSON output by the API.
- * - Converts the isPrimary boolean property into a `renderType` string that is either "PRIMARY" or "SECONDARY"
- * - Formats the start and end dates as string with format YYYY-MM-DD
- * - Formats the event type (subtype) as the full event type string instead of an integer code
+ * Formats the start and end dates as string with format YYYY-MM-DD
  */
 function processEventData(data) {
-  data.renderType = data.isPrimary ? "PRIMARY" : "SECONDARY";
-  data.colour = decimalToHexString(data.colour);
+  // data.colour = decimalToHexString(data.colour);
   // convert the start and end date arrays into date strings in a single `date` object
-  data.date = {
-    start: serialiseDateArray(data.startDate),
-    end: serialiseDateArray(data.endDate),
+  return {
+    ...data,
+    date: {
+      start: serialiseDateArray(data.startDate),
+      end: serialiseDateArray(data.endDate),
+    },
+    renderType: "SECONDARY",
   };
-  // comment out the below line if the type conversion is to be made on the client side
-  // data.eventType = calendarEventTypes[data.type];
-  // remove unused parameters from the new data object
-  const {
-    isPrimary,
-    // type,
-    // startDate,
-    // endDate,
-    ...newData
-  } = data;
-  return newData;
 }
 
 /** Queries the database for all the calendar events and sends a response containing those that fall within the defined time range.  */
 function sendEventsList(res, year, month, lowerLimit, upperLimit) {
-  let response;
-  let eventSubtypes;
+  // let response;
+  // let eventSubtypes;
 
-  /** Function to call when one of the two document fetches finishes. */
-  function queryCallback(isResponse = false, data = []) {
-    // Check if the document fetch contains the response that is to be sent to the user
-    if (isResponse) {
-      response = data;
-    } else {
-      eventSubtypes = data;
-    }
-    // Check if both document fetches have completed
-    if (response && eventSubtypes) {
-      // User response and event subtypes are both defined; send the response
-      response.eventSubtypes = eventSubtypes;
-      res.status(200).json(response);
-    }
-  }
+  // /** Function to call when one of the two document fetches finishes. */
+  // function queryCallback(isResponse = false, data = []) {
+  //   // Check if the document fetch contains the response that is to be sent to the user
+  //   if (isResponse) {
+  //     response = data;
+  //   } else {
+  //     eventSubtypes = data;
+  //   }
+  //   // Check if both document fetches have completed
+  //   if (response && eventSubtypes) {
+  //     // User response and event subtypes are both defined; send the response
+  //     response.eventSubtypes = eventSubtypes;
+  //     res.status(200).json(response);
+  //   }
+  // }
 
-  /** Sets the calendar event subtypes to the default values. */
-  function setDefaultSubtypes() {
-    // Set the default subtypes
-    infoDocRef.set({ eventSubtypes: defaultCalendarEventTypes });
-    queryCallback(false, defaultCalendarEventTypes);
-  }
+  // /** Sets the calendar event subtypes to the default values. */
+  // function setDefaultSubtypes() {
+  //   // Set the default subtypes
+  //   infoDocRef.set({ eventSubtypes: defaultCalendarEventTypes });
+  //   queryCallback(false, defaultCalendarEventTypes);
+  // }
 
-  // Get the calendar event subtypes
-  const infoDocRef = db.collection("_general").doc("calendarInfo");
-  infoDocRef
-    .get()
-    .then((doc) => {
-      const data = doc.data();
-      if (data?.eventSubtypes) {
-        return void queryCallback(false, data.eventSubtypes);
-      }
-      setDefaultSubtypes();
-    })
-    .catch((error) => {
-      console.log(error);
-      setDefaultSubtypes();
-    });
+  // // Get the calendar event subtypes
+  // const infoDocRef = db.collection("_general").doc("calendarInfo");
+  // infoDocRef
+  //   .get()
+  //   .then((doc) => {
+  //     const data = doc.data();
+  //     if (data?.eventSubtypes) {
+  //       return void queryCallback(false, data.eventSubtypes);
+  //     }
+  //     setDefaultSubtypes();
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //     setDefaultSubtypes();
+  //   });
 
   function generateResponse(error, events = [], _rawSnapshotDocuments) {
     // some kind of error occured while processing the collection contents
@@ -218,7 +209,7 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
       data.month = month;
       data.monthName = getMonthName(month);
     }
-    queryCallback(true, data);
+    res.status(200).json(data);
   }
 
   // 'all' query parameter ensures the list response contains every document in the collection
