@@ -42,7 +42,7 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
 
   // Calendar fetch options
   const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [month, setMonth] = useState(new Date().getMonth());
 
   /** Fetch the news post data from the cache or API. */
   function _fetchNews(forceUpdate = false) {
@@ -71,6 +71,12 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
   /** Fetch the calendar data from the cache or API. */
   function _fetchCalendar(forceUpdate = false) {
     setLoadedCalendar(false);
+    // Remove calendar caches for all months
+    for (const cacheName in localStorage) {
+      if (cacheName.startsWith("calendar")) {
+        localStorage.removeItem(cacheName)
+      }
+    }
     const fetchArgs = {
       setData: setCalendarData,
       setLoaded: setLoadedCalendar,
@@ -78,8 +84,9 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
       onSuccessCallback: (data) =>
         data && !data.errorDescription ? data : null,
     };
-    const fetchURL = `/calendar/${year}/${month}/`;
-    const cacheName = `calendar_${year}_${month}`;
+    const _month = parseInt(month) + 1;
+    const fetchURL = `/calendar/${year}/${_month}/`;
+    const cacheName = `calendar_${year}_${_month}`;
     fetchCachedData(cacheName, fetchURL, fetchArgs);
   }
 
@@ -111,6 +118,11 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
       fetchFunc(updateCache);
     }
   }, []);
+
+  useEffect(() => {
+    // Update calendar when month changed
+    _fetchCalendar();
+  }, [month, year]);
 
   useEffect(() => {
     if (userPerms.isAdmin || userPerms.canEdit?.length > 0) {
@@ -168,7 +180,6 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
             label="Element strony do edycji"
             currentValue={editPicker}
             onChangeCallback={(val) => setEditPicker(parseInt(val))}
-            defaultLabel={""}
             valueDisplayObject={editPickerOptions}
           />
         </div>
@@ -189,6 +200,8 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
             <CalendarEdit
               data={calendarData}
               loaded={loadedCalendar}
+              year={year}
+              month={month}
               setYear={setYear}
               setMonth={setMonth}
               refetchData={() => _fetchCalendar(true)}
@@ -211,7 +224,12 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
 }
 
 /** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
-export function LoadingButton({ isOpaque = false, height = 25, width = 90, className }) {
+export function LoadingButton({
+  isOpaque = false,
+  height = 25,
+  width = 90,
+  className,
+}) {
   let _className = className ?? "delete-btn";
   let colour = "#FFA900";
   if (isOpaque) {

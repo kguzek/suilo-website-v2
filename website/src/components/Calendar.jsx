@@ -1,98 +1,94 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { Bars } from "react-loader-spinner";
-import { fetchCachedData } from "../misc";
 import { serialiseDateArray } from "../common";
+import { fetchCachedData } from "../misc";
 import CustomCalendar from "./CustomCalendar";
 
-const CalendarPreview = ({ updateCache = false }) => {
-  const d = new Date();
+const testData = [
+  {
+    id: "P7NyRsWsN5Y4iD68NkYF",
+    startDate: [2022, 3, 17],
+    endDate: [2022, 3, 17],
+    renderType: "PRIMARY",
+    type: 1,
+    title: "Ess",
+  },
+  {
+    id: "P7NyRsWsN5Y4iD68NkYF",
+    startDate: [2022, 3, 17],
+    endDate: [2022, 3, 17],
+    renderType: "SECONDARY",
+    type: 4,
+    title: "Idkdfsfd",
+  },
+  {
+    id: "P7NyRsWsN5Y4iD68NkYF",
+    startDate: [2022, 3, 17],
+    endDate: [2022, 3, 17],
+    renderType: "SECONDARY",
+    type: 3,
+    title: "Ferie Zimowe 2022 (Śląsk)",
+  },
+  {
+    id: "P7NyRsWsN5Y4iD68NkYF",
+    startDate: [2022, 3, 18],
+    endDate: [2022, 3, 18],
+    renderType: "SECONDARY",
+    type: 2,
+    title: "Idk teścik",
+  },
+  {
+    id: "P7NyRsWsN5Y4iD68NkYF",
+    startDate: [2022, 3, 8],
+    endDate: [2022, 3, 8],
+    renderType: "PRIMARY",
+    type: 0,
+    title: "Wybory do młodzieżowej rady miasta",
+  },
+  {
+    id: "P7NyRsWsN5Y4iD68NkYF",
+    startDate: [2022, 3, 8],
+    endDate: [2022, 3, 8],
+    renderType: "SECONDARY",
+    type: 5,
+    title: "Dzień kobiet",
+  },
+];
+
+const legendColours = [
+  { top: "#FFA600", bottom: "#FFC100" },
+  { top: "#CC00FF", bottom: "#FF0000" },
+  "#00E308",
+  "#01B3FF",
+  "#FFCC00",
+  "#FF0000",
+  "#E600FF",
+];
+
+export const eventSubtypes = [
+  "święta/wydarzenia szkolne",
+  "święta/wydarzenia ogólnopolskie",
+  "dzień wolny od zajęć dydaktycznych",
+  "ferie zimowe",
+  "przerwa wakacyjna",
+  "matury i inne egzaminy",
+  "inne",
+];
+
+const CalendarPreview = ({
+  data,
+  updateCache,
+  onCalendarClick,
+  onMonthChange,
+  onYearChange,
+  year,
+  month,
+}) => {
   const [loaded, setLoaded] = useState(false);
-  const [year, setYear] = useState(d.getFullYear());
-  const [month, setMonth] = useState(d.getMonth() + 1);
-  const [calendarMode, setCalendarMode] = useState("monthlyMode");
-  const [events, setEvents] = useState(null);
-
-  const navigate = useNavigate();
-
-  const legendColors = [
-    { top: "#FFA600", bottom: "#FFC100" },
-    { top: "#CC00FF", bottom: "#FF0000" },
-    "#00E308",
-    "#01B3FF",
-    "#FFCC00",
-    "#FF0000",
-    "#E600FF",
-  ];
-
-  const legendItems = [
-    "wydarzenia/święta szkolne",
-    "wydarzenia/święta państwowe",
-    "dzień wolny od zajęć dydaktycznych",
-    "ferie zimowe",
-    "przerwa wakacyjna",
-    "matury i inne egzaminy",
-    "inne",
-  ];
-
-  const testData = [
-    {
-      color: "#FD3153",
-      endDate: [2022, 3, 17],
-      id: "P7NyRsWsN5Y4iD68NkYF",
-      renderType: "PRIMARY",
-      type: 1,
-      startDate: [2022, 3, 17],
-      title: "Ess",
-    },
-    {
-      color: "#FD3153",
-      endDate: [2022, 3, 17],
-      id: "P7NyRsWsN5Y4iD68NkYF",
-      renderType: "SECONDARY",
-      type: 4,
-      startDate: [2022, 3, 17],
-      title: "Idkdfsfd",
-    },
-    {
-      color: "#FD3153",
-      endDate: [2022, 3, 17],
-      id: "P7NyRsWsN5Y4iD68NkYF",
-      renderType: "SECONDARY",
-      type: 3,
-      startDate: [2022, 3, 17],
-      title: "Ferie Zimowe 2022 (Śląsk)",
-    },
-    {
-      color: "#FD3153",
-      endDate: [2022, 3, 18],
-      id: "P7NyRsWsN5Y4iD68NkYF",
-      renderType: "SECONDARY",
-      type: 2,
-      startDate: [2022, 3, 18],
-      title: "Idk teścik",
-    },
-    {
-      color: "#FD3153",
-      endDate: [2022, 3, 8],
-      id: "P7NyRsWsN5Y4iD68NkYF",
-      renderType: "PRIMARY",
-      type: 0,
-      startDate: [2022, 3, 8],
-      title: "Wybory do młodzieżowej rady miasta",
-    },
-    {
-      color: "#FD3153",
-      endDate: [2022, 3, 8],
-      id: "P7NyRsWsN5Y4iD68NkYF",
-      renderType: "SECONDARY",
-      type: 5,
-      startDate: [2022, 3, 8],
-      title: "Dzień kobiet",
-    },
-  ];
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
+    if (year === undefined || month === undefined) return;
     const fetchArgs = {
       setData,
       setLoaded,
@@ -100,74 +96,30 @@ const CalendarPreview = ({ updateCache = false }) => {
       onSuccessCallback: (data) =>
         data && !data.errorDescription ? data : null,
     };
-    if (calendarMode === "yearlyMode") {
-      var fetchURL = `/calendar/${year}/`;
-      var cacheName = `calendar_${year}`;
-    } else {
-      var fetchURL = `/calendar/${year}/${month}/`;
-      var cacheName = `calendar_${year}_${month}`;
-    }
+    const fetchURL = `/calendar/${year}/${month}/`;
+    const cacheName = `calendar_${year}_${month}`;
+
     fetchCachedData(cacheName, fetchURL, fetchArgs);
-  }, [updateCache, year, month, calendarMode]);
+  }, [updateCache, year, month]);
+
+  useEffect(() => {
+    console.log("Calendar events:", events);
+  }, [events]);
 
   /** Callback function to be called when the calendar data is fetched. */
   const setData = (data) => {
-    setEvents(
-      // data.events.map((event) => ({
-      //   id: event.id,
-      //   color: event.colour,
-      //   from: event.date.start,
-      //   to: formatDate(event.date.end),
-      //   title: event.title,
-      // }))
-      data.events.map((rawEvent) => ({
-        id: rawEvent.id,
-        color: rawEvent.colour,
-        title: rawEvent.title,
-        from: rawEvent.date.start,
-        to: serialiseDateArray(rawEvent.endDate, true),
-      }))
-    );
+    setEvents(data.events);
   };
-
-  if (!loaded) {
-    return (
-      <div style={{ backgroundColor: "transparent" }}>
-        <Bars color="#FFA900" height={50} width={50} />
-      </div>
-    );
-  }
-
-  const onChange = ({ day, mode, month, year }) => {
-    setMonth(month + 1);
-    setYear(year);
-    setCalendarMode(mode);
-  };
-
-  const onClickEvent = (id) => {
-    console.log("User clicked calendar event with ID", id);
-    // TODO: integrate individual calendar event pages
-    // navigate(`/wydarzenia/kalendarz/${id}`);
-  };
-
-  const onClickTimeLine = ({ year, month, day, hour }) => {
-    console.log("User clicked calendar timeline");
-  };
-
-  const onCalendarClick = ({ day, month, year, eventIDs }) => {
-    //EVERYTHING HERE FOR CLICK INFO
-    console.log(
-      day + "/" + month + "/" + year,
-      eventIDs[0] !== undefined ? "event IDs for chosen day: " + eventIDs : ""
-    );
-  };
-  const onMonthChange = (month) => {
-    //EVERYTHING HERE FOR MONTH CHANGE
-    console.log("calendar month: " + month);
-  };
+  // if (!loaded) {
+  //   return (
+  //     <div style={{ backgroundColor: "transparent" }}>
+  //       <Bars color="#FFA900" height={50} width={50} />
+  //     </div>
+  //   );
+  // }
 
   const _generateLegend = () => {
-    return legendItems.map((el, i) => (
+    return eventSubtypes.map((el, i) => (
       <li
         key={i}
         className={`flex flex-row justify-start align-middle w-full my-2 lg:my-3 ${
@@ -183,9 +135,9 @@ const CalendarPreview = ({ updateCache = false }) => {
           style={{
             background:
               i < 2
-                ? `linear-gradient(135deg, ${legendColors[i].top}, ${legendColors[i].bottom})`
+                ? `linear-gradient(135deg, ${legendColours[i].top}, ${legendColours[i].bottom})`
                 : null,
-            backgroundColor: i >= 2 ? legendColors[i] : null,
+            backgroundColor: i >= 2 ? legendColours[i] : null,
           }}
         />
         <p className="my-auto text-[#292929] text-base -tracking-[.015rem] lg:text-[1.1rem]">
@@ -197,18 +149,13 @@ const CalendarPreview = ({ updateCache = false }) => {
 
   return (
     <div className="flex flex-col md:flex-row mx-auto justify-center lg:justify-evenly align-middle my-6 md:my-8 w-full sm:w-10/12 md:w-full lg:w-10/12 xl:-translate-x-10">
-      {/* <Calendar
-        events={events ?? []}
-        onChange={onChange}
-        onClickEvent={onClickEvent}
-        onClickTimeLine={onClickTimeLine}
-      /> */}
       <div className="w-full mx-auto max-w-[27rem] lg:w-[27rem] lg:mx-auto mb-4">
         <CustomCalendar
-          events={testData ?? []}
+          events={[...events, ...data]}
           onClickDate={onCalendarClick}
           onMonthChange={onMonthChange}
-          baseColors={legendColors}
+          onYearChange={onYearChange}
+          baseColors={legendColours}
         />
       </div>
       <div className="hidden lg:block lg:-mx-7 lg:-mr-8" />

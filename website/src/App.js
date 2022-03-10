@@ -61,7 +61,7 @@ function App() {
           const endpointUpdated = new Date(endpointsUpdated[endpoint]);
           const cache = JSON.parse(localStorage.getItem(cacheName));
           if (new Date(cache?.date) > endpointUpdated) {
-            // Cache is newer than the date it was updated; re
+            // Cache is newer than the date it was updated
             continue;
           }
           // Check if the cache name is a valid endpoint

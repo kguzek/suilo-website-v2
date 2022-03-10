@@ -6,6 +6,7 @@ export default function InputDropdown({
   defaultLabel,
   valueDisplayObject,
   label,
+  isFirst = true,
 }) {
   const [focused, setFocus] = useState(false);
 
@@ -23,7 +24,7 @@ export default function InputDropdown({
   }
 
   return (
-    <div style={{ marginTop: "-.9em" }}>
+    <div style={isFirst ? { marginTop: "-.9em" } : {}}>
       <p
         className="select-label"
         style={{

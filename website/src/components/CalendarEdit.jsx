@@ -6,18 +6,35 @@ import DialogBox from "../components/DialogBox";
 import { fetchWithToken } from "../firebase";
 import { LoadingScreen, LoadingButton } from "../pages/Edit";
 import { setErrorMessage } from "../misc";
+import { eventSubtypes } from "./Calendar";
+
+const MONTHS = [
+  "Styczeń",
+  "Luty",
+  "Marzec",
+  "Kwiecień",
+  "Maj",
+  "Czerwiec",
+  "Lipiec",
+  "Sierpień",
+  "Wrzesień",
+  "Październik",
+  "Listopad",
+  "Grudzień",
+];
 
 export const CalendarEdit = ({
   data,
   loaded,
   refetchData,
+  year,
+  month,
   setYear,
   setMonth,
 }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
-  const [eventType, setEventType] = useState("");
-  const [subtype, setSubtype] = useState("");
+  const [type, setType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [colour, setColour] = useState("");
@@ -43,21 +60,24 @@ export const CalendarEdit = ({
       return void _resetAllInputs();
     }
     setName(event.title);
-    setSubtype(event.type);
+    setType(event.type);
     // setStartDate(serialiseDateArray(event.startDate));
     // setEndDate(serialiseDateArray(event.endDate));
     setStartDate(event.date.start);
     setEndDate(event.date.end);
     setColour(event.colour);
-    setEventType(event.renderType);
   }, [currentlyActive]);
+
+  useEffect(() => {
+    // Set the selected option to "new event" when the calendar period is changed
+    setCurrentlyActive("_default");
+  }, [year, month]);
 
   // Display loading screen if calendar data hasn't been retrieved yet
   if (!loaded) {
     return <LoadingScreen />;
   }
 
-  const eventSubtypes = data?.eventSubtypes ?? [];
   const calendarEvents = {};
   for (const event of data?.events ?? []) {
     calendarEvents[event.id] = event.title;
@@ -69,8 +89,7 @@ export const CalendarEdit = ({
   function _resetAllInputs() {
     for (const setVar of [
       setName,
-      setEventType,
-      setSubtype,
+      setType,
       setStartDate,
       setEndDate,
       setColour,
@@ -90,13 +109,12 @@ export const CalendarEdit = ({
       method = "PUT";
       url += currentlyActive;
     }
-    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colour=#000000
+    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1
     const params = {
       title: name,
-      type: subtype,
+      type,
       startDate,
       endDate,
-      isPrimary: eventType.toUpperCase().trim() === "PRIMARY",
       colour,
     };
     fetchWithToken(url, method, params).then((res) => {
@@ -150,26 +168,25 @@ export const CalendarEdit = ({
         setVisible={setPopupError}
       />
       <InputDropdown
+        label="Miesiąc w kalendarzu"
+        currentValue={month}
+        onChangeCallback={setMonth}
+        valueDisplayObject={MONTHS}
+      />
+      <InputDropdown
         label="Wydarzenie do edycji"
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
         defaultLabel="Nowe wydarzenie"
         valueDisplayObject={calendarEvents}
-      />
-      {/* TODO: Change this InputBox to an input checkbox/radiobox/dropdown */}
-      <InputBox
-        maxLength={9}
-        name="event-type"
-        placeholder="Typ wydarzenia (PRIMARY | SECONDARY)"
-        value={eventType}
-        onChange={setEventType}
+        isFirst={false}
       />
       <InputDropdown
-        label="Subtyp wydarzenia"
-        currentValue={subtype}
-        onChangeCallback={setSubtype}
-        defaultLabel="inne"
+        label="Typ wydarzenia"
+        currentValue={type}
+        onChangeCallback={setType}
         valueDisplayObject={Object.fromEntries(eventSubtypes.entries())}
+        isFirst={false}
       />
       <InputBox
         maxLength={60}
@@ -222,7 +239,7 @@ export const CalendarEdit = ({
             </button>
           ))}
         {clickedSubmit ? (
-          <LoadingButton style="opaque" />
+          <LoadingButton isOpaque={true} />
         ) : (
           <button type="submit" className="add-btn">
             {currentlyActive !== "_default" ? (

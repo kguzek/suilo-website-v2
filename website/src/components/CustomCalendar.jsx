@@ -122,27 +122,29 @@ const CalendarCell = ({
     idx === length - 1
       ? true
       : false;
-  let newPrimEvents = [];
-  let newSecEvents = [];
-  let eventIDs = [];
+  const newPrimEvents = [];
+  const newSecEvents = [];
+  const eventIDs = [];
   const d = new Date();
   const isToday = idx - daysBefore + 1 === d.getDate() ? true : false;
   let title = "";
 
-  events.forEach((el, i) => {
-    if (el.startDate[2] === idx + 1 - daysBefore) {
+  events.forEach((el, _i) => {
+    // Ensure the event isn't past the max for this month
+    const day = el.startDate[2];
+    if (day > daysInMonth.length) return;
+    if (day === idx + 1 - daysBefore) {
       if (el.renderType === "PRIMARY") {
         newPrimEvents.push(el);
       } else if (el.renderType === "SECONDARY") {
         newSecEvents.push(el);
+      } else {
+        console.log("Invalid event render type:", el);
       }
+      // save all ids for current date
+      eventIDs.push(el.id);
     }
   });
-
-  // save all ids for current date
-  newPrimEvents.forEach((el) => eventIDs.push(el.id));
-  newSecEvents.forEach((el) => eventIDs.push(el.id));
-
   // make one title string for date
   newPrimEvents.forEach(
     (el, i) => (title = (title.length !== 0 ? "\n" : "") + title + el.title)
@@ -203,21 +205,15 @@ const CalendarCell = ({
         </p>
       ) : type === "_CURRENT_" ? (
         <p
-          className={`
-                            m-auto text-center z-10 ${
-                              newPrimEvents[0] !== undefined
-                                ? "text-white"
-                                : String(
-                                    daysInMonth[idx - daysBefore]
-                                  ).substring(0, 3) === "Sun"
-                                ? "text-[#FF1818]"
-                                : String(
-                                    daysInMonth[idx - daysBefore]
-                                  ).substring(0, 3) === "Sat"
-                                ? "text-text4"
-                                : "text-text2"
-                            }
-                        `}
+          className={`m-auto text-center z-10 ${
+            newPrimEvents[0] !== undefined
+              ? "text-white"
+              : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun"
+              ? "text-[#FF1818]"
+              : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sat"
+              ? "text-text4"
+              : "text-text2"
+          }`}
         >
           {idx + 1 - daysBefore}
         </p>
@@ -294,7 +290,13 @@ const CalendarCell = ({
   );
 };
 
-const CustomCalendar = ({ events, onMonthChange, onClickDate, baseColors }) => {
+const CustomCalendar = ({
+  events,
+  onMonthChange,
+  onYearChange,
+  onClickDate,
+  baseColors,
+}) => {
   const d = new Date();
   const [currentMonth, setCurrMonth] = useState(d.getMonth());
   const [currentYear, setCurrYear] = useState(d.getFullYear());
@@ -317,12 +319,16 @@ const CustomCalendar = ({ events, onMonthChange, onClickDate, baseColors }) => {
     onMonthChange(currentMonth + 1);
   }, [currentMonth]);
 
+  useEffect(() => {
+    onYearChange(currentYear);
+  }, [currentYear]);
+
   const _clickAction = (day, eventIDs) => {
     onClickDate({
       day: day,
       month: currentMonth + 1,
       year: currentYear,
-      eventIDs: eventIDs,
+      eventIDs,
     });
   };
 
@@ -349,56 +355,10 @@ const CustomCalendar = ({ events, onMonthChange, onClickDate, baseColors }) => {
     let daysBefore;
     let daysAfter;
 
-    switch (String(daysInMonth[0]).substring(0, 3)) {
-      case "Mon":
-        daysBefore = 0;
-        break;
-      case "Tue":
-        daysBefore = 1;
-        break;
-      case "Wed":
-        daysBefore = 2;
-        break;
-      case "Thu":
-        daysBefore = 3;
-        break;
-      case "Fri":
-        daysBefore = 4;
-        break;
-      case "Sat":
-        daysBefore = 5;
-        break;
-      case "Sun":
-        daysBefore = 6;
-        break;
-      default:
-        daysBefore = 0;
-    }
-    switch (String(daysInMonth[daysInMonth.length - 1]).substring(0, 3)) {
-      case "Mon":
-        daysAfter = 6;
-        break;
-      case "Tue":
-        daysAfter = 5;
-        break;
-      case "Wed":
-        daysAfter = 4;
-        break;
-      case "Thu":
-        daysAfter = 3;
-        break;
-      case "Fri":
-        daysAfter = 2;
-        break;
-      case "Sat":
-        daysAfter = 1;
-        break;
-      case "Sun":
-        daysAfter = 0;
-        break;
-      default:
-        daysAfter = 0;
-    }
+    daysBefore = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(
+      String(daysInMonth[0]).substring(0, 3)
+    );
+    daysAfter = 6 - daysBefore;
 
     let renderArray = [];
 
