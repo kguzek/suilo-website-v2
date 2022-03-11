@@ -66,7 +66,7 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
     const _uid = auth.currentUser.providerData?.[0]?.uid;
     setCurrentUserID(_uid);
     setParticipance(event.participants.includes(_uid));
-  }, [auth.currentUser]);
+  }, [auth.currentUser, event]);
 
   // Display "<20" if there are fewer than 20 event participants
   const numParticipants =

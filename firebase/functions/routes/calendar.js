@@ -16,7 +16,7 @@ const router = express.Router();
 
 const eventAttributeSanitisers = {
   title: (title) => title || "Nazwa wydarzenia kalendarzowego",
-  type: (type) => parseInt(type) || 0,
+  type: (type) => Math.min(Math.max(parseInt(type) || 2, 2), 7),
   startDate: (startDate) => getIntArray(startDate, "-", "1970-01-01"),
   endDate: (endDate) => getIntArray(endDate, "-", "1970-01-01"),
   // isPrimary: (isPrimary) => (isPrimary || "true").toLowerCase() !== "false",
@@ -228,7 +228,7 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
 router
   // CREATE new calendar event
   .post("/", (req, res) => {
-    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1&isPrimary=true&colour=#000000
+    // ?title=Nazwa wydarzenia kalendarzowego.&type=2&startDate=1&endDate=1&isPrimary=true&colour=#000000
 
     const startDate = new Date(req.query.startDate ?? 0);
     const endDate = new Date(req.query.endDate ?? 0);

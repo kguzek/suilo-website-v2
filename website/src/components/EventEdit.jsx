@@ -10,10 +10,12 @@ import { serialiseDateArray } from "../common";
 import { fetchWithToken, storage } from "../firebase";
 import { getDownloadURL, uploadBytesResumable, ref } from "firebase/storage";
 import { LoadingScreen, LoadingButton } from "../pages/Edit";
+import { eventSubtypes } from "./Calendar";
 
 export const EventEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
+  const [type, setType] = useState(0);
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -46,6 +48,7 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
       return void _resetAllInputs();
     }
     setName(event.title);
+    setType(event.type ?? 0);
     setDescription(event.content);
     setDate(serialiseDateArray(event.date));
     setStartTime(formatTime(event.startTime));
@@ -83,6 +86,7 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
     ]) {
       setVar("");
     }
+    setType(0);
     setCurrentlyActive("_default");
   }
 
@@ -96,9 +100,10 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
       method = "PUT";
       url += currentlyActive;
     }
-    // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
+    // ?title=Tytuł wydarzenia&type=0&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
     const params = {
       title: name,
+      type,
       date,
       startTime,
       endTime,
@@ -215,6 +220,12 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
         maxLength={60}
         value={name}
         onChange={setName}
+      />
+      <InputDropdown
+        label="Typ wydarzenia"
+        currentValue={type}
+        onChangeCallback={setType}
+        valueDisplayObject={eventSubtypes.slice(0, 2)}
       />
       <InputArea
         name="event-description"

@@ -109,7 +109,7 @@ export const CalendarEdit = ({
       method = "PUT";
       url += currentlyActive;
     }
-    // ?title=Nazwa wydarzenia kalendarzowego.&type=0&startDate=1&endDate=1
+    // ?title=Nazwa wydarzenia kalendarzowego.&type=2&startDate=1&endDate=1
     const params = {
       title: name,
       type,
@@ -185,7 +185,7 @@ export const CalendarEdit = ({
         label="Typ wydarzenia"
         currentValue={type}
         onChangeCallback={setType}
-        valueDisplayObject={Object.fromEntries(eventSubtypes.entries())}
+        valueDisplayObject={eventSubtypes.slice(2)}
         isFirst={false}
       />
       <InputBox

@@ -12,6 +12,7 @@ const router = express.Router();
 
 const eventAttributeSanitisers = {
   title: (title) => title || "Tytuł wydarzenia",
+  type: (type) => Number(!!parseInt(type)),
   date: (date) => getIntArray(date, "-", "1970-01-01"),
   startTime: (startTime) => getIntArray(startTime, ":", "00:00"),
   endTime: (endTime) => getIntArray(endTime, ":", "23:59"),
@@ -26,7 +27,7 @@ const eventAttributeSanitisers = {
 router
   // CREATE new event
   .post("/", (req, res) => {
-    // ?title=Tytuł wydarzenia&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
+    // ?title=Tytuł wydarzenia&type=0&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
 
     // initialise parameters
     const data = { participants: [] };

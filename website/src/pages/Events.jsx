@@ -65,7 +65,7 @@ function Events({ setPage, reload }) {
         startDate: event.date,
         endDate: event.date,
         renderType: "PRIMARY",
-        type: eventSubtypes.indexOf("inne"),
+        type: event.type,
         title: event.title,
       });
     }
