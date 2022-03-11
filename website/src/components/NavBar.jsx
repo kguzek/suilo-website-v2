@@ -111,7 +111,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
 
   if (width > 800) {
     return (
-      <div className={`w-11/12 xl:w-10/12 flex flex-row justify-between align-middle m-auto relative mt-0 ${page === "contact" ? "px-[4px]" : ""}`}>
+      <div className={`w-11/12 xl:w-10/12 flex flex-row justify-between align-middle m-auto relative mt-0 ${page === "contact" ? "px-[.31rem] pr-[0px] " : ""}`}>
         <Link to="/" className="mt-3">
           <LogoSU width="3.5em" height="3.5em" />
         </Link>
@@ -154,17 +154,21 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
             ) : null}
           </nav>
         </div>
-        <button
-          className="text-sm font-medium text-primary  bg-white transition-all hover:drop-shadow-4xl drop-shadow-3xl hover:ring-primaryDark hover:ring-4 rounded-[.6rem] h-fit my-auto px-[1.4rem] py-[.675rem] -ml-7"
-          onClick={() => _handleLogin()}
-        >
-          {userInfo ? "Wyloguj się" : "Zaloguj się"}
-        </button>
+        <div className={`my-auto ${page === "contact" ? "-mr-[.3rem]" : ""} `}>
+          <button
+            className="text-sm font-medium text-primary  bg-white transition-all hover:drop-shadow-4xl drop-shadow-3xl hover:ring-primaryDark hover:ring-4 rounded-[.6rem] h-fit my-auto px-[1.4rem] py-[.675rem] -ml-7"
+            onClick={() => _handleLogin()}
+          >
+            {userInfo ? "Wyloguj się" : "Zaloguj się"}
+          </button>
+        </div>
+
+
       </div>
     );
   } else {
     return (
-      <div className="flex flex-row justify-between align-middle w-11/12 m-auto relative pt-4">
+      <div className={`flex flex-row justify-between align-middle w-11/12 m-auto relative pt-4 ${page === "contact" ? "translate-x-[5px]" : ""}`}>
         <Link to="/">
           <LogoSU width={40} height={40} />
         </Link>

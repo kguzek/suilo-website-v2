@@ -39,7 +39,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (page === ("contact" || "edit")) {
+    if (page === "edit") {
       setFooterVisible(false);
     } else {
       setFooterVisible(true);
@@ -221,7 +221,7 @@ function Layout({
       <div
         className={`
           -z-50 right-0 
-          ${page === "contact" ? "md:max-h-[100vh] -translate-x-[10px]" : "md:max-h-[100vh]"} 
+          ${page === "contact" ? "md:max-h-[100vh] " : "md:max-h-[100vh]"} 
           ${page === "home" ? "-top-[16.5rem] scale-[.275]" : "-top-[16.5rem] scale-[.275]"} 
           ${page === "home" ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]" : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"} 
           ${page === "home" ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12" :
@@ -233,7 +233,7 @@ function Layout({
         style={{
           width: "33em",
           height: "175vh",
-          background: page === "contact" ? "linear-gradient(-140deg, #FF9900 40%,#FFC300)" : "linear-gradient(-140deg,#FF9900,#FFC300)",
+          background: "linear-gradient(-140deg,#FF9900,#FFC300)",
           clipPath:
             "path('M3.06834,441.14016C-4.9308,332.85221,80.8371,208.33,196.07717,130.88529,312.18791,52.99694,457.37432,21.40331,612.99757,8.14541,769.0214-4.3294,935.01226,2.75728,984.8191,89.74084c48.93589,87.42814-17.91579,255.53594,4.42167,415.65489,34.65721,248.4337,123.30154,275.577,109.95678,439.74689-17.19719,211.598-216.93908,479.33975-471.88772,475.5269-205.9757-3.0806-378.11958-182.363-427.608-343.962-38.42159-125.46014,19.86327-165.89369-28.81671-316.96933C113.17431,580.63135,12.27678,565.856,3.06834,441.14016')",
         }}
