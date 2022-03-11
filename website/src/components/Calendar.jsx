@@ -122,16 +122,14 @@ const CalendarPreview = ({
     return eventSubtypes.map((el, i) => (
       <li
         key={i}
-        className={`flex flex-row justify-start align-middle w-full my-2 lg:my-3 ${
-          i === 1 ? "mb-4 mt-3 lg:mt-4 lg:mb-5" : null
-        } `}
+        className={`flex flex-row justify-start align-middle w-full my-2 lg:my-3 ${i === 1 ? "mb-4 mt-3 lg:mt-4 lg:mb-5" : null
+          } `}
       >
         <div
-          className={`${
-            i < 2
-              ? "h-6 w-6 lg:h-7 lg:w-7 "
-              : "w-3 h-3 lg:w-4 lg:h-4 ml-[1.1rem] lg:ml-[1.15rem]"
-          } rounded-full my-auto m-3 drop-shadow-2xl`}
+          className={`${i < 2
+            ? "h-6 w-6 lg:h-7 lg:w-7 "
+            : "w-3 h-3 lg:w-4 lg:h-4 ml-[1.1rem] lg:ml-[1.15rem]"
+            } rounded-full my-auto m-3 drop-shadow-2xl`}
           style={{
             background:
               i < 2
@@ -158,7 +156,7 @@ const CalendarPreview = ({
           baseColors={legendColours}
         />
       </div>
-      <div className="hidden lg:block lg:-mx-7 lg:-mr-8" />
+      <div className="hidden lg:block lg:-mx-5 lg:-mr-6" />
 
       <div className=" w-fit pt-3 min-w-fit lg:mx-auto lg:ml-14 xl:mx-auto">
         <h3 className="text-text1 font-semibold text-xl mx-2 mb-3 lg:text-2xl lg:mb-4">

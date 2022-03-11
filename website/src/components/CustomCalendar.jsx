@@ -166,7 +166,7 @@ const CalendarCell = ({
         } 
                 border-t-[1px] group select-none ${newPrimEvents[0] && "cursor-pointer"
         }
-                text-base lg:text-lg
+                text-[.95rem] sm:text-base lg:text-lg
             `}
     >
       {newPrimEvents[0] && (
@@ -346,7 +346,11 @@ const CustomCalendar = ({
     daysBefore = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(
       String(daysInMonth[0]).substring(0, 3)
     );
-    daysAfter = 6 - daysBefore;
+    daysAfter = 6 - ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(
+      String(daysInMonth[daysInMonth.length - 1]).substring(0, 3)
+    );
+
+    console.log(daysBefore, daysAfter)
 
     let renderArray = [];
 
