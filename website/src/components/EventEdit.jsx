@@ -298,6 +298,7 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
         maxLength={256}
         value={eventURL}
         onChange={setEventURL}
+        required={false}
       />
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&

@@ -129,7 +129,12 @@ function Events({ setPage, reload }) {
         />
         <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
       </MetaTags>
-      <EventPreview event={nextEvent} isNextEvent={true} />
+      {nextEvent ? (
+        <EventPreview event={nextEvent} isNextEvent={true} />
+      ) : (
+        // TODO: Render something better if there are no future events
+        <p>Nie ma w najbliższym czasie żadnych wydarzeń.</p>
+      )}
       <CalendarPreview
         data={calendarEvents}
         updateCache={updateCache}

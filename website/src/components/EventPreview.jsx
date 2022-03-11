@@ -22,21 +22,21 @@ import DialogBox from "./DialogBox";
 const PARTICIPATE_BTN_CLASS =
   "transition-all inline-flex bg-primary py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]";
 
-const testEvent = {
-  photo:
-    "https://images.unsplash.com/photo-1637603170052-245ccc8eede1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80",
-  title: "Szkolny koncert z okazji dnia kobiet - edycja 2022",
-  content:
-    "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy.",
-  date: [2022, 3, 8],
-  startTime: [9, 0],
-  endTime: [11, 0],
-  location: "Sala 204",
-  participants: [],
-  link: "https://youtu.be/dQw4w9WgXcQ",
-};
+// const testEvent = {
+//   photo:
+//     "https://images.unsplash.com/photo-1637603170052-245ccc8eede1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80",
+//   title: "Szkolny koncert z okazji dnia kobiet - edycja 2022",
+//   content:
+//     "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy.",
+//   date: [2022, 3, 8],
+//   startTime: [9, 0],
+//   endTime: [11, 0],
+//   location: "Sala 204",
+//   participants: [],
+//   link: "https://youtu.be/dQw4w9WgXcQ",
+// };
 
-const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
+const EventPreview = ({ event, isNextEvent = false }) => {
   const [notification, setNotification] = useState(false);
   const [participance, setParticipance] = useState(false);
   const [canParChange, setCanParChange] = useState(true);
@@ -67,7 +67,7 @@ const EventPreview = ({ event = testEvent, isNextEvent = false }) => {
     setCurrentUserID(_uid);
     setParticipance(event.participants.includes(_uid));
   }, [auth.currentUser, event]);
-
+  
   // Display "<20" if there are fewer than 20 event participants
   const numParticipants =
     (event.participants.length < 20 ? "<20" : event.participants.length) +
