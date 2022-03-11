@@ -111,22 +111,16 @@ const CalendarCell = ({
   daysCurrent,
   length,
   events,
+  currentMonth,
   changeMonth,
 }) => {
-  const beginningOfTheWeek =
-    String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Mon" || idx === 0
-      ? true
-      : false;
-  const endOfTheWeek =
-    String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun" ||
-    idx === length - 1
-      ? true
-      : false;
+  const beginningOfTheWeek = String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Mon" || idx === 0 ? true : false;
+  const endOfTheWeek = String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun" || idx === length - 1 ? true : false;
   const newPrimEvents = [];
   const newSecEvents = [];
   const eventIDs = [];
   const d = new Date();
-  const isToday = idx - daysBefore + 1 === d.getDate() ? true : false;
+  const isToday = (idx - daysBefore + 1 === d.getDate() && currentMonth === d.getMonth()) ? true : false;
   let title = "";
 
   events.forEach((el, _i) => {
@@ -157,24 +151,21 @@ const CalendarCell = ({
         return type === "_BEFORE_"
           ? changeMonth("_PREV_")
           : type === "_AFTER_"
-          ? changeMonth("_NEXT_")
-          : onPress(idx - daysBefore + 1, eventIDs);
+            ? changeMonth("_NEXT_")
+            : onPress(idx - daysBefore + 1, eventIDs);
       }}
       title={title}
       className={`
                 w-full relative inline-flex justify-center font-medium align-middle aspect-square
-                ${
-                  isToday
-                    ? "bg-primary/20 hover:bg-primaryDark/30"
-                    : "hover:bg-gray-200/75"
-                }
+                ${isToday
+          ? "bg-primary/20 hover:bg-primaryDark/30"
+          : "hover:bg-gray-200/75"
+        }
                  transition duration-[75ms] border-gray-200/70 
-                ${endOfTheWeek ? "border-r-[0px]" : "border-r-[1px]"} ${
-        idx < 7 ? "border-t-white" : "border-t-gray-200/70"
-      } 
-                border-t-[1px] group select-none ${
-                  newPrimEvents[0] && "cursor-pointer"
-                }
+                ${endOfTheWeek ? "border-r-[0px]" : "border-r-[1px]"} ${idx < 7 ? "border-t-white" : "border-t-gray-200/70"
+        } 
+                border-t-[1px] group select-none ${newPrimEvents[0] && "cursor-pointer"
+        }
                 text-base lg:text-lg
             `}
     >
@@ -183,19 +174,17 @@ const CalendarCell = ({
           <div
             style={{ animationDelay: String(idx * 35) + "ms" }}
             className={`m-auto animate-slow-ping origin-bottom -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full 
-                    bg-gradient-to-br ${
-                      !newPrimEvents[0].type
-                        ? "from-primary to-secondary"
-                        : "from-[#CC00FF] to-[#FF0000]"
-                    }`}
+                    bg-gradient-to-br ${!newPrimEvents[0].type
+                ? "from-primary to-secondary"
+                : "from-[#CC00FF] to-[#FF0000]"
+              }`}
           />
           <div
             className={`m-auto shadow-md -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full 
-                    bg-gradient-to-br ${
-                      !newPrimEvents[0].type
-                        ? "from-primary to-secondary"
-                        : "from-[#CC00FF] to-[#FF0000]"
-                    }`}
+                    bg-gradient-to-br ${!newPrimEvents[0].type
+                ? "from-primary to-secondary"
+                : "from-[#CC00FF] to-[#FF0000]"
+              }`}
           />
         </>
       )}
@@ -205,15 +194,14 @@ const CalendarCell = ({
         </p>
       ) : type === "_CURRENT_" ? (
         <p
-          className={`m-auto text-center z-10 ${
-            newPrimEvents[0] !== undefined
-              ? "text-white"
-              : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun"
+          className={`m-auto text-center z-10 ${newPrimEvents[0] !== undefined
+            ? "text-white"
+            : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun"
               ? "text-[#FF1818]"
               : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sat"
-              ? "text-text4"
-              : "text-text2"
-          }`}
+                ? "text-text4"
+                : "text-text2"
+            }`}
         >
           {idx + 1 - daysBefore}
         </p>
@@ -380,6 +368,7 @@ const CustomCalendar = ({
         events={events}
         key={el + idx}
         type={el}
+        currentMonth={currentMonth}
         idx={idx}
         daysInMonth={daysInMonth}
         length={renderArray.length}
