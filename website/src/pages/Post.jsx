@@ -21,6 +21,7 @@ import YouTube from 'react-youtube'
 const Post = ({ setPage, reload }) => {
   const [loaded, setLoaded] = useState(false);
   const [postData, setPostData] = useState({});
+  const [photoLink, setPhotoLink] = useState(DEFAULT_IMAGE);
   const [newsData, setNewsData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams({});
   const [width, setWidth] = useState(320);
@@ -32,15 +33,15 @@ const Post = ({ setPage, reload }) => {
   const cacheName = `news_post_${params.postID}`;
 
   function changeImageLink(link) {
-    setPostData({ ...postData, photo: link });
+    setPhotoLink(link);
   }
 
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
-    /** Verifies that the API response is valid and returns the processed data. */
+    /** Verifies that the API response is fvalid and returns the processed data. */
     function processJsonData(data) {
       if (data && !data.errorDescription) {
-        data.photo ?? (data.photo = DEFAULT_IMAGE);
+        // data.photo ?? (data.photo = DEFAULT_IMAGE);
         getURLfromFileName(data.photo, "1920x1080", changeImageLink);
         return data;
       }
@@ -86,7 +87,6 @@ const Post = ({ setPage, reload }) => {
   }, [params.postID]);
 
   useEffect(() => {
-    console.log(reload);
     if (!reload) {
       return;
     }
@@ -124,7 +124,7 @@ const Post = ({ setPage, reload }) => {
       <div className="grid grid-cols-1 lg:grid-cols-4 mt-6 lg:mt-10 gap-10 xl:gap-12">
 
         <article ref={ref} className="col-span-1 lg:col-span-3">
-          <img className="aspect-video w-full object-cover rounded-xl lg:rounded-3xl drop-shadow-sm" src={postData.photo} alt={postData.alt} />
+          <img className="aspect-video w-full object-cover rounded-xl lg:rounded-3xl drop-shadow-sm" src={photoLink ?? postData.photo} alt={postData.alt} />
           {postData.photoAuthor && (
             <p className="text-[#444444]/75 font-light text-xs w-full text-right py-1 pr-px sm:font-normal sm:text-sm">
               Zdjęcie: {postData.photoAuthor}
