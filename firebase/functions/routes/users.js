@@ -35,8 +35,7 @@ router
               if (!data) {
                 // user entry does not exist
                 const data = { ...DEFAULT_DATA, ...req.body, ...userInfo };
-                createSingleDocument(data, res, "users", userInfo.uid);
-                return void res.status(200).json(data);
+                return void createSingleDocument(data, res, "users", userInfo.uid);
               }
               // user entry exists
               res.status(400).json({
