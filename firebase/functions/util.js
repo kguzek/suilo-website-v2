@@ -125,10 +125,13 @@ function randomArraySelection(array) {
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
-function createSingleDocument(data, res, collectionName) {
+function createSingleDocument(data, res, collectionName, docID) {
+  const collectionRef = db.collection(collectionName);
   // attempts to add the data to the given collection
-  db.collection(collectionName)
-    .add(data)
+  const promise = docID
+    ? collectionRef.doc(docID.toString()).set(data, { merge: true })
+    : collectionRef.add(data);
+  promise
     .then((doc) => {
       updateCollection(collectionName, 1);
       // success; return the data along with the document id
@@ -280,18 +283,22 @@ function updateSingleDocument(req, res, collectionName, attributeSanitisers) {
       errorDescription: HTTP400 + "There were no updated fields provided.",
     });
   }
+  actuallyUpdateSingleDocument(req, res, collectionName, newData);
+}
+
+/** Updates the document in the database and sends its new contents. */
+function actuallyUpdateSingleDocument(req, res, collectionName, data) {
   // get the document reference
   getDocRef(req, res, collectionName).then((docRef) => {
     // send the query to database
     docRef
-      .update(newData)
+      .update(data)
       .then(() => {
         updateCollection(collectionName);
         // send query to db
-        sendSingleResponse(docRef, res);
+        sendSingleResponse(docRef, res, undefined, false);
       })
       .catch((error) => {
-        // return an error when the document was not found/could not be updated
         return res.status(400).json({
           errorDescription:
             HTTP400 +
@@ -348,6 +355,7 @@ module.exports = {
   getIntArray,
   randomArraySelection,
   updateCollection,
+  actuallyUpdateSingleDocument,
   createSingleDocument,
   sendSingleResponse,
   sendListResponse,

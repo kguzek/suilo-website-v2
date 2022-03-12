@@ -6,14 +6,7 @@ const cors = require("cors");
 const functions = require("firebase-functions");
 
 // Local imports
-const {
-  db,
-  HTTP,
-  getDocRef,
-  sendSingleResponse,
-  sendListResponse,
-  deleteSingleDocument,
-} = require("./util");
+const { db, HTTP, sendListResponse, deleteSingleDocument } = require("./util");
 
 // initialise express
 const app = express();
@@ -25,33 +18,27 @@ const SERVER_REGION = "europe-west1";
 const ROUTES = [
   "news",
   "links",
-  "storage",
+  "users",
   "events",
+  "storage",
   "calendar",
   "luckyNumbers",
   "collectionInfo",
-  // "calendar/:year",
 ];
 
-// default CORS options:
-/* {
-  "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": false,
-  "optionsSuccessStatus": 204
-} */
 app.use(cors());
-// app.use("/api/", require("./authMiddlewareV2"));
+app.use("/api/", require("./authMiddlewareV2"));
 
 // define sort options for sending list responses
 const sortOptions = {
   events: ["date", "asc"],
   links: ["destination", "asc"],
   news: ["date", "desc"],
+  users: ["displayName", "asc"],
 };
 
 // define routes that have similar structures to avoid repeating the code in the separate route files
-for (const endpoint of ["calendar", "events", "links", "news"]) {
+for (const endpoint of ["calendar", "events", "links", "news", "users"]) {
   // READ all events/links/news
   if (endpoint !== "calendar") {
     app.get(`/api/${endpoint}/`, (req, res) => {
