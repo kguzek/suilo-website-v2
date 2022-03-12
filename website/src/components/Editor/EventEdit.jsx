@@ -27,8 +27,6 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
   const [location, setLocation] = useState("");
   const [imageURL, setImageURL] = useState("");
   const [eventURL, setEventURL] = useState("");
-  const [imagePath, setImagePath] = useState();
-  const [imgRef, setImgRef] = useState();
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
@@ -256,7 +254,7 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
       <InputFile
         placeholder={"Miniatura"}
         onChange={(e) =>
-          handlePhotoUpdate(e.target.files[0], setImagePath, setImageURL)
+          handlePhotoUpdate(e.target.files[0], setImageURL)
         }
         acceptedExtensions=".jpeg, .jpg, .png"
       />

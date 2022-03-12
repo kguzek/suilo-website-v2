@@ -16,10 +16,8 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageURL, setImageURL] = useState("");
-  const [imagePath, setImagePath] = useState("");
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
-  const [imgRef, setImgRef] = useState();
   const [ytID, setYtID] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
@@ -97,7 +95,7 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       title,
       text: shortDescription,
       content: description,
-      photo: imagePath,
+      photo: imageURL,
       //those two should be stored with the photo imo
       photoAuthor: imageAuthor,
       alt: imageAltText,
@@ -201,7 +199,7 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       <InputFile
         placeholder={"Miniatura"}
         onChange={(e) =>
-          handlePhotoUpdate(e.target.files[0], setImagePath, setImageURL)
+          handlePhotoUpdate(e.target.files[0], setImageURL)
         }
         acceptedExtensions=".jpeg, .jpg, .png"
       />

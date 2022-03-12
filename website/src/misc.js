@@ -179,6 +179,10 @@ export function fetchCachedData(
  *  - 200x2000
  *  - 100x100 */
 export function getURLfromFileName(name, size, callback) {
+  // Use default image if the image name is not provided
+  if (!name) {
+    return void callback(DEFAULT_IMAGE);
+  }
   // Check if the photo is already an external URL
   if (name.startsWith("http://") || name.startsWith("https://")) {
     // Don't look for the photo since the URL is known
@@ -207,11 +211,12 @@ export function setErrorMessage(res, setErrorFunc) {
   });
 }
 
-export function handlePhotoUpdate(file, setImagePath, setImageURL) {
+export function handlePhotoUpdate(file, setImageURL) {
   if (!file) return;
+  // Regular expression to trim the filename extension
+  const photoName = file.name.replace(/\.[^\/.]+$/, "")
   const storageRef = ref(storage, `/photos/${file.name}`);
   const uploadTask = uploadBytesResumable(storageRef, file);
-  setImagePath(file.name.split(".")[0]);
   uploadTask.on(
     "state_changed",
     (snapshot) => {
@@ -229,6 +234,7 @@ export function handlePhotoUpdate(file, setImagePath, setImageURL) {
         // const fullHDfileName = basefileName.split(".")[0] + "_1920x1080.jpeg";
         // console.log(fullHDfileName);
         // setImagePath(fullHDfileName);
+        setImageURL(photoName);
       });
     }
   );
