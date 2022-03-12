@@ -25,7 +25,7 @@ const SERVER_REGION = "europe-west1";
 const ROUTES = [
   "news",
   "links",
-  "photos",
+  "storage",
   "events",
   "calendar",
   "lastUpdate",
