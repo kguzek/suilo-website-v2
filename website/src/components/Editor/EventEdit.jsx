@@ -3,13 +3,10 @@ import { Plus, Trash, Edit3 } from "react-feather";
 import InputBox from "./InputComponents/InputBox";
 import InputArea from "./InputComponents/InputArea";
 import InputDropdown from "./InputComponents/InputDropdown";
-import InputFile from "./InputComponents/InputFile";
 import DialogBox from "../DialogBox";
 import {
-  DEFAULT_IMAGE,
   formatDate,
   formatTime,
-  getURLfromFileName,
   handlePhotoUpdate,
   setErrorMessage,
 } from "../../misc";
@@ -17,6 +14,7 @@ import { serialiseDateArray } from "../../common";
 import { fetchWithToken } from "../../firebase";
 import { LoadingScreen, LoadingButton } from "../../pages/Edit";
 import { eventSubtypes } from "../Events/Calendar";
+import InputPhoto from "./InputComponents/InputPhoto";
 
 export const EventEdit = ({ data, loaded, refetchData, photos }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -33,10 +31,6 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
   const [imageAltText, setImageAltText] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
-
-  //temp
-  const [existingPhoto, setExistingPhoto] = useState("");
-  const [preview, setPreview] = useState(DEFAULT_IMAGE);
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
@@ -157,17 +151,6 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
       setClickedDelete(false);
     });
   }
-
-  function _handlePreviewChange(name) {
-    setExistingPhoto(name);
-    if (photos.includes(name)) {
-      setImageURL(name);
-      getURLfromFileName(name, "400x300", setPreview);
-    } else {
-      setPreview(DEFAULT_IMAGE);
-    }
-  }
-
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <DialogBox
@@ -267,35 +250,12 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
         onChange={setLocation}
       />
       {/* PLACE FOR TEXT EDITOR */}
-      <InputFile
-        label={"Miniatura"}
-        placeholder={"Prześlij zdjęcie..."}
-        onChange={(e) => handlePhotoUpdate(e.target.files[0], setImageURL)}
-        acceptedExtensions=".jpeg, .jpg, .png"
+      <InputPhoto
+        imageURL={imageURL}
+        setImageURL={setImageURL}
+        photos={photos}
+        handlePhotoUpdate={handlePhotoUpdate}
       />
-      <InputBox
-        name="image-url"
-        placeholder="URL zdjęcia"
-        maxLength={256}
-        value={imageURL}
-        onChange={setImageURL}
-      />
-      <InputBox
-        name="existing-photo"
-        placeholder="przesłane zdjęcie"
-        maxLength={256}
-        value={existingPhoto}
-        onChange={_handlePreviewChange}
-        required={false}
-        choices={photos}
-      />
-      {preview !== DEFAULT_IMAGE && (
-        <img
-          src={preview}
-          className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300"
-        />
-      )}
-
       <InputBox
         name="event-url"
         placeholder="Zewnętrzny link do wydarzenia"

@@ -74,6 +74,7 @@ const InputBox = ({
             top: type === "date" ? ".75em" : type === "time" ? ".95em" : ".8em",
           }}
         >
+          {!value && <span style={{color: "red"}}>*</span>}
           {placeholder}
         </p>
         <p

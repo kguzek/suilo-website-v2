@@ -27,7 +27,7 @@ const InputFile = ({ placeholder, label, onChange, acceptedExtensions }) => {
           }}
         />
         {/* TODO: pls fix value element styling, this is a temporary solution */}
-        <p style={{ marginTop: "-0.6rem" }}>{value}</p>
+        <p style={{ marginTop: "-10px" }}>{value}</p>
       </div>
       <p
         className="placeholder"

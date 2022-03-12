@@ -4,11 +4,11 @@ import InputBox from "./InputComponents/InputBox";
 // import InputArea from "./InputComponents/InputArea";
 import InputDropdown from "./InputComponents/InputDropdown";
 import TextEditor from "./InputComponents/TextEditor";
-import InputFile from "./InputComponents/InputFile";
 import DialogBox from "../DialogBox";
 import { auth, fetchWithToken } from "../../firebase";
 import { LoadingScreen, LoadingButton } from "../../pages/Edit";
-import { DEFAULT_IMAGE, getURLfromFileName, handlePhotoUpdate, setErrorMessage } from "../../misc";
+import { handlePhotoUpdate, setErrorMessage } from "../../misc";
+import InputPhoto from "./InputComponents/InputPhoto";
 
 export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -21,10 +21,6 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const [ytID, setYtID] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
-
-  //temp
-  const [existingPhoto,setExistingPhoto] = useState("");
-  const [preview,setPreview] = useState(DEFAULT_IMAGE);
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
@@ -142,15 +138,6 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       setClickedDelete(false);
     });
   }
-  function _handlePreviewChange(name){
-    setExistingPhoto(name);
-    if(photos.includes(name)){
-      setImageURL(name);
-      getURLfromFileName(name,"400x300",setPreview);
-    }else{
-      setPreview(DEFAULT_IMAGE);
-    }
-  }
 
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
@@ -209,37 +196,12 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         value={author}
         disabled={true}
       />
-      <InputFile
-        label={"Miniatura"}
-        placeholder={"Prześlij zdjęcie..."}
-        onChange={(e) =>
-          handlePhotoUpdate(e.target.files[0], setImageURL)
-        }
-        acceptedExtensions=".jpeg, .jpg, .png"
+      <InputPhoto
+        imageURL={imageURL}
+        setImageURL={setImageURL}
+        photos={photos}
+        handlePhotoUpdate={handlePhotoUpdate}
       />
-      <InputBox
-        name="image-url"
-        placeholder="URL zdjęcia"
-        maxLength={256}
-        value={imageURL}
-        onChange={setImageURL}
-        required={false}
-      />
-      <InputBox
-        name="existing-photo"
-        placeholder="przesłane zdjęcie"
-        maxLength={256}
-        value={existingPhoto}
-        onChange={_handlePreviewChange}
-        required={false}
-        choices={photos}
-      />
-      {preview !== DEFAULT_IMAGE &&
-      <img
-        src={preview}
-        className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300"
-      />}
-      
       <InputBox
         name="image-author"
         placeholder="Autor zdjęcia"
@@ -258,7 +220,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       />
       <InputBox
         name="yt-url"
-        placeholder="ID filmu na Youtubie"
+        placeholder="ID filmu na serwisie YouTube"
         maxLength={11}
         value={ytID}
         required={false}
