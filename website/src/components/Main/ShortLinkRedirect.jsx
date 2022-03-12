@@ -4,44 +4,34 @@ import { useNavigate } from "react-router-dom";
 import NotFound from "../../pages/NotFound";
 import { fetchWithToken } from "../../firebase";
 import LoadingScreen from "../LoadingScreen";
+import { fetchCachedData } from "../../misc";
 
 export default function ShortLinkRedirect({ setPage }) {
-  const [redirected, setRedirected] = useState(null);
+  const [loaded, setLoaded] = useState(false);
   const navigate = useNavigate();
 
+  /** Callback function for when the data is fetched. */
+  function setData(data) {
+    data.destination && navigate(data.destination);
+  }
+
   function fetchShortLinkData() {
-    fetchWithToken("/links" + window.location.pathname).then(
-      (res) => {
-        res.json().then((data) => {
-          if (!res.ok) {
-            console.log("No such short URL (no entry in database).", data);
-            return setRedirected(false);
-          }
-          if (!data?.destination) {
-            console.log(
-              "No such short URL (data doesn't contain a destination URL).",
-              data
-            );
-            return setRedirected(false);
-          }
-          console.log(`Redirecting to '${data.destination}'...`);
-          setRedirected(true);
-          navigate(data.destination);
-        });
-      },
-      (error) => {
-        console.log("Error retrieving short link data!", error);
-        setRedirected(false);
-      }
-    );
+    // Trim the leading slash from the cache name
+    const path = window.location.pathname;
+    const cacheName = "links_" + path.substring(1, path.length);
+    const fetchURL = "/links" + path;
+    const fetchArgs = {
+      setData,
+      setLoaded,
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
+    };
+    fetchCachedData(cacheName, fetchURL, fetchArgs);
   }
   useEffect(() => {
     setPage("redirect");
     fetchShortLinkData();
   }, []);
-  if (redirected === null) return <LoadingScreen />;
-  const msg =
-    redirected &&
-    "Przekierowanie linku działa, natomiast adres docelowy nie istnieje.";
-  return <NotFound setPage={setPage} msg={msg} />;
+  if (!loaded) return <LoadingScreen />;
+  return <NotFound setPage={setPage} />;
 }
