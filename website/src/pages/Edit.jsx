@@ -19,6 +19,8 @@ const PAGES = {
   users: "Użytkownicy",
 };
 
+const PAGE_NAMES = Object.values(PAGES);
+
 export default function Edit({
   setPage,
   user,
@@ -195,7 +197,7 @@ export default function Edit({
 
   const userCanEdit = userPerms.canEdit ?? [];
   const editPickerOptions = userPerms.isAdmin
-    ? Object.values(PAGES) // Give permission to edit all pages
+    ? PAGE_NAMES // Give permission to edit all pages
     : userCanEdit.map((perm) => PAGES[perm]); // Give permission for individual pages
 
   // Failsafe to prevent the user seeing the edit UI in case of a bug
@@ -206,6 +208,9 @@ export default function Edit({
       </p>
     );
   }
+
+  const selectedPage = editPickerOptions[editPicker];
+
   return (
     <div className="w-11/12 xl:w-10/12 min-h-[83vh] mt-16 flex flex-col justify-start align-middle ">
       <MetaTags>
@@ -230,21 +235,21 @@ export default function Edit({
           />
         </div>
         <div className="w-full m-auto">
-          {editPicker === 0 ? (
+          {selectedPage === PAGE_NAMES[0] ? (
             <PostEdit
               data={newsData}
               loaded={loadedNews && loadedStorageContents}
               refetchData={() => fetchNews(true) & fetchStorageContents(true)}
               photos={storageContents.photos}
             />
-          ) : editPicker === 1 ? (
+          ) : selectedPage === PAGE_NAMES[1] ? (
             <EventEdit
               data={eventsData}
               loaded={loadedEvents && loadedStorageContents}
               refetchData={() => fetchEvents(true) & fetchStorageContents(true)}
               photos={storageContents.photos}
             />
-          ) : editPicker === 2 ? (
+          ) : selectedPage === PAGE_NAMES[2] ? (
             <CalendarEdit
               data={calendarData}
               loaded={loadedCalendar}
@@ -254,14 +259,14 @@ export default function Edit({
               setMonth={setMonth}
               refetchData={() => fetchCalendar(true)}
             />
-          ) : editPicker === 3 ? (
+          ) : selectedPage === PAGE_NAMES[3] ? (
             <LinkEdit
               data={linksData}
               loaded={loadedLinks}
               refetchData={() => fetchLinks(true)}
             />
           ) : (
-            editPicker === 4 && (
+            selectedPage === PAGE_NAMES[4] && (
               <PermissionEdit
                 data={usersData}
                 loaded={loadedUsers}
