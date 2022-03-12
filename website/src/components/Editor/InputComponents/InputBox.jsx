@@ -13,6 +13,9 @@ const InputBox = ({
   maxLength = 0,
   pattern = ".{2,}",
   disabled = false,
+//adam tried to do a thing
+  choises = []
+
 }) => {
   const [focused, setFocus] = useState(false);
   const [charCount, setCharCount] = useState(0);
@@ -42,7 +45,15 @@ const InputBox = ({
             }
           }}
           disabled={disabled}
+          //adam tried to da a thing
+        list = {choises.length===0?"":"list"+name}
         />
+        {choises.length!==0&&
+        <datalist id={"list"+name}>
+          {choises.map((val)=>{return <option value={val} key = {val}/>})}
+        </datalist>}
+      
+        
         <p
           className="placeholder"
           style={{
@@ -102,7 +113,15 @@ const InputBox = ({
           }
         }}
         disabled={disabled}
-      />
+        //adam tried to da a thing
+        list = {choises.length===0?"":"list"+name}
+        />
+        {choises.length!==0&&
+        <datalist id={"list"+name}>
+          {choises.map((val)=>{return <option value={val} key = {val}/>})}
+        </datalist>}
+      
+       
       <p
         className="placeholder"
         style={{
