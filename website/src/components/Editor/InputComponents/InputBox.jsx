@@ -13,16 +13,15 @@ const InputBox = ({
   maxLength = 0,
   pattern = ".{2,}",
   disabled = false,
-//adam tried to do a thing
-  choises = []
-
+  //adam tried to do a thing
+  choices = [],
 }) => {
   const [focused, setFocus] = useState(false);
   const [charCount, setCharCount] = useState(0);
 
   useEffect(() => {
     setCharCount(value.length);
-  }, [value])
+  }, [value]);
 
   if (required) {
     return (
@@ -46,14 +45,16 @@ const InputBox = ({
           }}
           disabled={disabled}
           //adam tried to da a thing
-        list = {choises.length===0?"":"list"+name}
+          list={choices.length === 0 ? "" : "list" + name}
         />
-        {choises.length!==0&&
-        <datalist id={"list"+name}>
-          {choises.map((val)=>{return <option value={val} key = {val}/>})}
-        </datalist>}
-      
-        
+        {choices.length !== 0 && (
+          <datalist id={"list" + name}>
+            {choices.map((val) => {
+              return <option value={val} key={val} />;
+            })}
+          </datalist>
+        )}
+
         <p
           className="placeholder"
           style={{
@@ -68,8 +69,8 @@ const InputBox = ({
               type === "date"
                 ? ".3em 4em .25em .2em"
                 : type === "time"
-                  ? ".1em .4em .25em .2em"
-                  : ".1em .2em",
+                ? ".1em .4em .25em .2em"
+                : ".1em .2em",
             top: type === "date" ? ".75em" : type === "time" ? ".95em" : ".8em",
           }}
         >
@@ -114,14 +115,16 @@ const InputBox = ({
         }}
         disabled={disabled}
         //adam tried to da a thing
-        list = {choises.length===0?"":"list"+name}
-        />
-        {choises.length!==0&&
-        <datalist id={"list"+name}>
-          {choises.map((val)=>{return <option value={val} key = {val}/>})}
-        </datalist>}
-      
-       
+        list={choices.length === 0 ? "" : "list" + name}
+      />
+      {choices.length !== 0 && (
+        <datalist id={"list" + name}>
+          {choices.map((val) => {
+            return <option value={val} key={val} />;
+          })}
+        </datalist>
+      )}
+
       <p
         className="placeholder"
         style={{
@@ -136,8 +139,8 @@ const InputBox = ({
             type === "date"
               ? ".3em 4em .25em .2em"
               : type === "time"
-                ? ".1em .4em .25em .2em"
-                : ".1em .2em",
+              ? ".1em .4em .25em .2em"
+              : ".1em .2em",
           top: type === "date" ? ".75em" : type === "time" ? ".95em" : ".8em",
         }}
       >

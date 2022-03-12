@@ -18,7 +18,7 @@ import { fetchWithToken } from "../../firebase";
 import { LoadingScreen, LoadingButton } from "../../pages/Edit";
 import { eventSubtypes } from "../Events/Calendar";
 
-export const EventEdit = ({ data, loaded, refetchData,photos }) => {
+export const EventEdit = ({ data, loaded, refetchData, photos }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
   const [type, setType] = useState(0);
@@ -34,10 +34,9 @@ export const EventEdit = ({ data, loaded, refetchData,photos }) => {
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
-
   //temp
-  const [existingPhoto,setExistingPhoto] = useState("");
-  const [preview,setPreview] = useState(DEFAULT_IMAGE);
+  const [existingPhoto, setExistingPhoto] = useState("");
+  const [preview, setPreview] = useState(DEFAULT_IMAGE);
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
@@ -159,12 +158,12 @@ export const EventEdit = ({ data, loaded, refetchData,photos }) => {
     });
   }
 
-  function _handlePreviewChange(name){
+  function _handlePreviewChange(name) {
     setExistingPhoto(name);
-    if(photos.includes(name)){
+    if (photos.includes(name)) {
       setImageURL(name);
-      getURLfromFileName(name,"400x300",setPreview);
-    }else{
+      getURLfromFileName(name, "400x300", setPreview);
+    } else {
       setPreview(DEFAULT_IMAGE);
     }
   }
@@ -271,9 +270,7 @@ export const EventEdit = ({ data, loaded, refetchData,photos }) => {
       <InputFile
         label={"Miniatura"}
         placeholder={"Prześlij zdjęcie..."}
-        onChange={(e) =>
-          handlePhotoUpdate(e.target.files[0], setImageURL)
-        }
+        onChange={(e) => handlePhotoUpdate(e.target.files[0], setImageURL)}
         acceptedExtensions=".jpeg, .jpg, .png"
       />
       <InputBox
@@ -290,14 +287,15 @@ export const EventEdit = ({ data, loaded, refetchData,photos }) => {
         value={existingPhoto}
         onChange={_handlePreviewChange}
         required={false}
-        choises={photos}
+        choices={photos}
       />
-      {preview !== DEFAULT_IMAGE &&
-      <img
-        src={preview}
-        className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300"
-      />}
-      
+      {preview !== DEFAULT_IMAGE && (
+        <img
+          src={preview}
+          className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300"
+        />
+      )}
+
       <InputBox
         name="event-url"
         placeholder="Zewnętrzny link do wydarzenia"

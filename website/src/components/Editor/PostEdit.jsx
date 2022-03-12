@@ -232,7 +232,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         value={existingPhoto}
         onChange={_handlePreviewChange}
         required={false}
-        choises={photos}
+        choices={photos}
       />
       {preview !== DEFAULT_IMAGE &&
       <img
