@@ -203,6 +203,7 @@ function App() {
                 user={loggedInUser}
                 userPerms={userInfo}
                 loginAction={loginAction}
+                reload={shouldRefresh}
               />
             }
           />

@@ -5,10 +5,27 @@ import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
 import LoadingScreen, { LoadingButton } from "../LoadingScreen";
 import { NO_SELECT_STYLE } from "./InputComponents/InputPhoto";
+import { fetchWithToken } from "../../firebase";
+import { setErrorMessage } from "../../misc";
 
-export const PermissionEdit = ({ data, loaded, refetchData }) => {
+const PERMISSION_NAMES = [
+  "Edycja aktualności",
+  "Edycja wydarzeń",
+  "Edycja kalendarza",
+  "Skracanie linków",
+  "Edycja uprawnień użytkowników",
+];
+
+export const PermissionEdit = ({
+  data,
+  loaded,
+  refetchData,
+  userPerms,
+  allPerms,
+}) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
-  const [user, setUser] = useState("");
+  const [email, setEmail] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [canEdit, setCanEdit] = useState(new Set());
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
@@ -22,15 +39,17 @@ export const PermissionEdit = ({ data, loaded, refetchData }) => {
     if (!loaded) {
       return;
     }
-    // Get the currently selected post
-    const post = (data ?? [])
-      .filter((post) => post.id === currentlyActive)
+    // Get the currently selected user
+    const user = (data.contents ?? [])
+      .filter((user) => user.id === currentlyActive)
       .shift();
-    if (!post) {
-      // No currently selected post
+    if (!user) {
+      // No currently selected user
       return void _resetAllInputs();
     }
-    setCanEdit(new Set());
+    setEmail(user.email);
+    setIsAdmin(user.isAdmin);
+    setCanEdit(new Set(user.canEdit));
   }, [currentlyActive]);
 
   // Display loading screen if news data hasn't been retrieved yet
@@ -38,22 +57,53 @@ export const PermissionEdit = ({ data, loaded, refetchData }) => {
     return <LoadingScreen />;
   }
 
+  const users = {};
+  for (const user of data.contents ?? []) {
+    users[user.id] = user.displayName;
+  }
+
   // Bitwise AND to ensure both functions are called
   const refresh = () => refetchData() & _resetAllInputs();
 
   function _resetAllInputs() {
+    setEmail("");
+    setIsAdmin(false);
+    setCanEdit(new Set());
     setCurrentlyActive("_default");
   }
+
   const _handleSubmit = (e) => {
     e.preventDefault();
     setClickedSubmit(true);
-    setPopupSuccess(true);
+    let url = "/users/";
+    let method = "POST";
+    // Check if an existing event is selected
+    if (currentlyActive !== "_default") {
+      method = "PUT";
+      url += currentlyActive;
+    }
+    fetchWithToken(url, method, {}, { email, canEdit: [...canEdit] }).then((res) => {
+      // Update the data once request is processed
+      if (res.ok) {
+        refresh();
+        setPopupSuccess(true);
+      } else {
+        setErrorCode(res.status);
+        setErrorMessage(res, setPopupError);
+      }
+      setClickedSubmit(false);
+    });
   };
 
-  const _handleDelete = () => {
-    setPopupDelete(true);
-  };
-  
+  function _handleDelete() {
+    setClickedDelete(true);
+    fetchWithToken(`/users/${currentlyActive}`, "DELETE").then((_res) => {
+      // Update the data once request is processed
+      refresh();
+      setClickedDelete(false);
+    });
+  }
+
   function onChange(e) {
     const permission = e.target.name;
     if (e.target.checked) {
@@ -63,6 +113,29 @@ export const PermissionEdit = ({ data, loaded, refetchData }) => {
       _temp.delete(permission);
       setCanEdit(_temp);
     }
+  }
+
+  function PermissionCheckbox({ perm, children }) {
+    const admin = perm === "isAdmin";
+    // Disable editing permissions the user does not possess themself
+    const disabled = !userPerms.canEdit.includes(perm) && !userPerms.isAdmin;
+    // Grey out text when checkbox is disabled
+    const labelStyle = admin || disabled ? { color: "dimgrey" } : {};
+    return (
+      <div>
+        <label style={NO_SELECT_STYLE}>
+          <input
+            type="checkbox"
+            name={perm}
+            className="mr-2"
+            checked={admin ? isAdmin : canEdit.has(perm)}
+            onChange={admin ? setIsAdmin : onChange}
+            disabled={admin || disabled}
+          />
+          <span style={labelStyle}>{children}</span>
+        </label>
+      </div>
+    );
   }
 
   return (
@@ -80,7 +153,7 @@ export const PermissionEdit = ({ data, loaded, refetchData }) => {
         type="DIALOG"
         buttonOneLabel="Kontynuuj edycje"
         buttonTwoLabel="Usuń"
-        buttonTwoCallback={() => setClickedDelete(true)}
+        buttonTwoCallback={_handleDelete}
         isVisible={popupDelete}
         setVisible={setPopupDelete}
       />
@@ -98,79 +171,21 @@ export const PermissionEdit = ({ data, loaded, refetchData }) => {
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
         defaultLabel="Nowy użytkownik"
-        valueDisplayObject={{}}
+        valueDisplayObject={users}
       />
       <InputBox
         name="email"
         placeholder="Adres mailowy użytkownika"
-        value={user}
-        onChange={setUser}
+        value={email}
+        onChange={setEmail}
         maxLength={128}
       />
-      <div>
-        <label style={NO_SELECT_STYLE}>
-          <input
-            type="checkbox"
-            name="news"
-            className="mr-2"
-            value={canEdit.has("news")}
-            onChange={onChange}
-          />
-          Edycja aktualności
-        </label>
-      </div>
-      <div>
-        <label style={NO_SELECT_STYLE}>
-          <input
-            type="checkbox"
-            id="E1"
-            name="events"
-            className="mr-2"
-            value={canEdit.has("events")}
-            onChange={onChange}
-          />
-          Edycja wydarzeń
-        </label>
-      </div>
-      <div>
-        <label style={NO_SELECT_STYLE}>
-          <input
-            type="checkbox"
-            id="C1"
-            name="calendar"
-            className="mr-2"
-            value={canEdit.has("calendar")}
-            onChange={onChange}
-          />
-          Edycja kalendarza
-        </label>
-      </div>
-      <div>
-        <label style={NO_SELECT_STYLE}>
-          <input
-            type="checkbox"
-            id="L1"
-            name="links"
-            className="mr-2"
-            value={canEdit.has("links")}
-            onChange={onChange}
-          />
-          Skracanie linków
-        </label>
-      </div>
-      <div>
-        <label style={NO_SELECT_STYLE}>
-          <input
-            type="checkbox"
-            id="P1"
-            name="permissions"
-            className="mr-2"
-            value={canEdit.has("permissions")}
-            onChange={onChange}
-          />
-          Strona uprawnień
-        </label>
-      </div>
+      <PermissionCheckbox perm="isAdmin">Administrator</PermissionCheckbox>
+      {allPerms.map((perm, idx) => (
+        <PermissionCheckbox key={idx} perm={perm}>
+          {PERMISSION_NAMES[idx]}
+        </PermissionCheckbox>
+      ))}
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
@@ -179,10 +194,10 @@ export const PermissionEdit = ({ data, loaded, refetchData }) => {
             <button
               type="button"
               className="delete-btn"
-              onClick={_handleDelete}
+              onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
-              <p>usuń link</p>
+              <p>usuń użytkownika</p>
             </button>
           ))}
         {clickedSubmit ? (

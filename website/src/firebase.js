@@ -8,7 +8,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import {getStorage} from "firebase/storage";
+import { getStorage } from "firebase/storage";
 import React, { useEffect } from "react";
 
 /** Enables some `console.log` statements and determines the API URL. */
@@ -55,7 +55,7 @@ function _executeFetchStack(token) {
 }
 
 /** Performs a 'fetch' with the auth header set to the user's API token. */
-export function fetchWithToken(relativeURL, method = "GET", params) {
+export function fetchWithToken(relativeURL, method = "GET", params, body) {
   // Ensure the relative URL starts with a leading forward slash
   if (!relativeURL.startsWith("/")) {
     relativeURL = "/" + relativeURL;
@@ -70,13 +70,15 @@ export function fetchWithToken(relativeURL, method = "GET", params) {
       if (searchParams) {
         url += "?" + searchParams;
       }
-      fetch(url, {
+      const args = {
         method,
         headers: new Headers({
           "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
         }),
-      }).then(resolve, reject);
+      };
+      body && (args.body = JSON.stringify(body)) && console.log("Request body:", body);
+      fetch(url, args).then(resolve, reject);
     }
     if (userLoaded) {
       DEBUG_MODE &&

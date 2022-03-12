@@ -15,11 +15,17 @@ const PAGES = {
   news: "Aktualności",
   events: "Wydarzenia",
   calendar: "Kalendarz",
-  linkShortener: "Linki",
-  permissions: "Uprawnienia",
+  links: "Skracanie linków",
+  users: "Użytkownicy",
 };
 
-export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
+export default function Edit({
+  setPage,
+  user,
+  userPerms = {},
+  loginAction,
+  reload,
+}) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   // `editPicker` is an index of `editPickerOptions`
@@ -27,15 +33,16 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
 
   // API data storage
   const [newsData, setNewsData] = useState([]);
+  const [linksData, setLinksData] = useState({});
+  const [usersData, setUsersData] = useState({});
   const [eventsData, setEventsData] = useState({});
   const [calendarData, setCalendarData] = useState({});
-  const [linksData, setLinksData] = useState({});
+  const [storageContents, setStorageContents] = useState({});
   const [loadedNews, setLoadedNews] = useState(false);
+  const [loadedLinks, setLoadedLinks] = useState(false);
+  const [loadedUsers, setLoadedUsers] = useState(false);
   const [loadedEvents, setLoadedEvents] = useState(false);
   const [loadedCalendar, setLoadedCalendar] = useState(false);
-  const [loadedLinks, setLoadedLinks] = useState(false);
-
-  const [storageContents, setStorageContents] = useState([]);
   const [loadedStorageContents, setLoadedPhotos] = useState(false);
 
   // Calendar fetch options
@@ -53,17 +60,29 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
     });
   }
 
-  /** Fetch the storage contents data from the cache or API. */
-  function fetchStorageContents(forceUpdate = false) {
-    setLoadedPhotos(false);
+  /** Fetch the short links data from the cache or API. */
+  function fetchLinks(forceUpdate = false) {
     const fetchArgs = {
-      setData: setStorageContents,
-      setLoaded: setLoadedPhotos,
+      setData: setLinksData,
+      setLoaded: setLoadedLinks,
       updateCache: forceUpdate,
       onSuccessCallback: (data) =>
         data && !data.errorDescription ? data : null,
     };
-    fetchCachedData("storage", "/storage", fetchArgs);
+    fetchCachedData("shortLinks", "links", fetchArgs);
+  }
+
+  /** Fetch the users data from the cache or API. */
+  function fetchUsers(forceUpdate = false) {
+    setLoadedUsers(false);
+    const fetchArgs = {
+      setData: setUsersData,
+      setLoaded: setLoadedUsers,
+      updateCache: forceUpdate,
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
+    };
+    fetchCachedData("users", "/users", fetchArgs);
   }
 
   /** Fetch the events data from the cache or API. */
@@ -103,19 +122,21 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
     fetchCachedData(cacheName, fetchURL, fetchArgs);
   }
 
-  function fetchLinks(forceUpdate = false) {
+  /** Fetch the storage contents data from the cache or API. */
+  function fetchStorageContents(forceUpdate = false) {
+    setLoadedPhotos(false);
     const fetchArgs = {
-      setData: setLinksData,
-      setLoaded: setLoadedLinks,
+      setData: setStorageContents,
+      setLoaded: setLoadedPhotos,
       updateCache: forceUpdate,
       onSuccessCallback: (data) =>
         data && !data.errorDescription ? data : null,
     };
-    fetchCachedData("shortLinks", "links", fetchArgs);
+    fetchCachedData("storage", "/storage", fetchArgs);
   }
 
-  // Populate the API data
-  useEffect(() => {
+  /** Populate the data from the cache or API. */
+  function fetchData() {
     const updateCache = !!removeSearchParam(
       searchParams,
       setSearchParams,
@@ -124,15 +145,25 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
 
     for (const fetchFunc of [
       fetchNews,
-      fetchEvents,
-      // Calendar fetched in the hook below
-      // fetchCalendar,
       fetchLinks,
+      fetchUsers,
+      fetchEvents,
       fetchStorageContents,
     ]) {
       fetchFunc(updateCache);
     }
-  }, []);
+  }
+
+  // Initial page load
+  useEffect(fetchData, []);
+
+  useEffect(() => {
+    if (!reload) {
+      return;
+    }
+    // The page content has updated on the server side; reload it
+    fetchData();
+  }, [reload]);
 
   useEffect(() => {
     // Update calendar when month changed
@@ -229,10 +260,16 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
               loaded={loadedLinks}
               refetchData={() => fetchLinks(true)}
             />
-          ) : editPicker === 4 ? (
-            <PermissionEdit />
           ) : (
-            "Invalid edit picker option!"
+            editPicker === 4 && (
+              <PermissionEdit
+                data={usersData}
+                loaded={loadedUsers}
+                refetchData={() => fetchUsers(true)}
+                userPerms={userPerms}
+                allPerms={Object.keys(PAGES)}
+              />
+            )
           )}
         </div>
       </div>
