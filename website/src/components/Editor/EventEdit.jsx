@@ -252,7 +252,8 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
       />
       {/* PLACE FOR TEXT EDITOR */}
       <InputFile
-        placeholder={"Miniatura"}
+        label={"Miniatura"}
+        placeholder={"Prześlij zdjęcie..."}
         onChange={(e) =>
           handlePhotoUpdate(e.target.files[0], setImageURL)
         }

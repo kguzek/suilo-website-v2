@@ -197,7 +197,8 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
         disabled={true}
       />
       <InputFile
-        placeholder={"Miniatura"}
+        label={"Miniatura"}
+        placeholder={"Prześlij zdjęcie..."}
         onChange={(e) =>
           handlePhotoUpdate(e.target.files[0], setImageURL)
         }

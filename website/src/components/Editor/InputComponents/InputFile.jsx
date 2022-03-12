@@ -1,17 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-const InputFile = ({ placeholder, onChange, acceptedExtensions }) => {
+const InputFile = ({ placeholder, label, onChange, acceptedExtensions }) => {
   const [focused, setFocus] = useState(false);
   const [value, setValue] = useState("");
-
-  const divStyle = {
-    maxWidth: "100%",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-  };
-
-  // Set the div height if the input is empty
-  value || (divStyle.height = "1.4em");
 
   return (
     <label className="main pt-[.33rem]">
@@ -20,7 +11,12 @@ const InputFile = ({ placeholder, onChange, acceptedExtensions }) => {
         required
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
-        style={divStyle}
+        style={{
+          height: "1.4em",
+          maxWidth: "100%",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+        }}
       >
         <input
           type="file"
@@ -30,7 +26,8 @@ const InputFile = ({ placeholder, onChange, acceptedExtensions }) => {
             onChange(e);
           }}
         />
-        {value}
+        {/* TODO: pls fix value element styling, this is a temporary solution */}
+        <p style={{ marginTop: "-0.6rem" }}>{value}</p>
       </div>
       <p
         className="placeholder"
@@ -44,7 +41,7 @@ const InputFile = ({ placeholder, onChange, acceptedExtensions }) => {
           top: ".5em",
         }}
       >
-        {placeholder}
+        {value ? label : `[${placeholder}]`}
       </p>
       <p
         className="char-count"
