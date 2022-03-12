@@ -100,43 +100,43 @@ export function fetchCachedData(
   }
 ) {
   // check if there is a valid data cache
+  let cache;
   try {
-    var cache = JSON.parse(localStorage.getItem(cacheName));
-  } catch (parseError) {}
-  if (cache) {
-    if (!updateCache) {
-      // check if the cache contains no error
-      if (cache.data && !cache.data.errorDescription) {
-        console.log(`Found existing cache for '${cacheName}'.`, cache);
-        // check if the cache is younger than 2 hours old
-        const cacheDate = Date.parse(cache.date);
-        const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
-        const dateDifferenceHours = dateDifferenceSeconds / 3600;
-        if (dateDifferenceHours < MAX_CACHE_AGE) {
-          // compare arguments for cache, such as maxItems for news fetches.
-          // this ensures that if the current request is for e.g. 8 news articles and we find
-          // a cache containing only 4, that we do not use the old cache and instead make a new request.
-          if (
-            (cache.arg === undefined && cacheArgument === undefined) ||
-            cache.arg >= cacheArgument
-          ) {
-            setData(cache.data);
-            return setLoaded(true);
-          }
-          console.log(
-            `The found cache had a different argument (${cache.arg} vs ${cacheArgument}).`
-          );
-        } else {
-          console.log(
-            `The found cache is too old (${dateDifferenceHours} hours).`
-          );
-        }
+    cache = JSON.parse(localStorage.getItem(cacheName));
+  } catch (parseError) {
+    // Data is not serialised JSON
+  }
+  verifyCache: {
+    if (!cache || updateCache) break verifyCache;
+    // check if the cache contains no error
+    if (!cache.data || cache.data.errorDescription) {
+      break verifyCache;
+    }
+    console.log(`Found existing cache for '${cacheName}'.`, cache);
+    // check if the cache is younger than 2 hours old
+    const cacheDate = Date.parse(cache.date);
+    const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
+    const dateDifferenceHours = dateDifferenceSeconds / 3600;
+    if (dateDifferenceHours < MAX_CACHE_AGE) {
+      // compare arguments for cache, such as maxItems for news fetches.
+      // this ensures that if the current request is for e.g. 8 news articles and we find
+      // a cache containing only 4, that we do not use the old cache and instead make a new request.
+      if (
+        (cache.arg === undefined && cacheArgument === undefined) ||
+        cache.arg >= cacheArgument
+      ) {
+        setData(cache.data);
+        return setLoaded(true);
       }
+      console.log(
+        `The found cache had a different argument (${cache.arg} vs ${cacheArgument}).`
+      );
+    } else {
+      console.log(`The found cache is too old (${dateDifferenceHours} hours).`);
     }
     // remove the existing cache
     localStorage.removeItem(cacheName);
   }
-
   // fetch new data
   fetchWithToken(fetchURL).then(
     (res) => {
@@ -214,7 +214,7 @@ export function setErrorMessage(res, setErrorFunc) {
 export function handlePhotoUpdate(file, setImageURL) {
   if (!file) return;
   // Regular expression to trim the filename extension
-  const photoName = file.name.replace(/\.[^\/.]+$/, "")
+  const photoName = file.name.replace(/\.[^\/.]+$/, "");
   const storageRef = ref(storage, `/photos/${file.name}`);
   const uploadTask = uploadBytesResumable(storageRef, file);
   uploadTask.on(

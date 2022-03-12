@@ -60,12 +60,15 @@ function App() {
           const endpoint = cacheName.split("_").shift();
           const endpointUpdated = new Date(endpointsUpdated[endpoint]);
           try {
-            var cache = JSON.parse(localStorage.getItem(cacheName));
-          } catch (parseError) {}
-          if (new Date(cache?.date) > endpointUpdated) {
-            // Cache is newer than the date it was updated
-            continue;
+            const cache = JSON.parse(localStorage.getItem(cacheName));
+            if (new Date(cache?.date) > endpointUpdated) {
+              // Cache is newer than the date it was updated
+              continue;
+            }
+          } catch (parseError) {
+            // Data is not serialised JSON
           }
+
           // Check if the cache name is a valid endpoint
           if (endpointUpdated.toString() !== "Invalid Date") {
             // The cache is too old
