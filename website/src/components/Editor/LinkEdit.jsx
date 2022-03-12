@@ -34,7 +34,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
       return void _resetAllInputs();
     }
     setLongLink(_currentLink.destination);
-    setShortLink(_currentLink.id);
+    setShortLink(_currentLink.shortLink);
   }, [currentlyActive]);
 
   // Display loading screen if events data hasn't been retrieved yet
@@ -58,14 +58,12 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     let url = "/links/";
     let method = "POST";
     // Check if an existing event is selected
-    if (currentlyActive === "_default") {
-      url += shortLink;
-    } else {
+    if (currentlyActive !== "_default") {
       method = "PUT";
       url += _getCurrentlyActive().id;
     }
-    // ?destination=null
-    const params = { destination: longLink };
+    // ?destination=null&shortLink=null
+    const params = { destination: longLink, shortLink };
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
       if (res.ok) {
@@ -91,7 +89,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
 
   // Get array of short link URLs
   const links = (data.contents ?? []).map(
-    (link) => `${link.id} > ${link.destination}`
+    (link) => `${link.shortLink} > ${link.destination}`
   );
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
@@ -123,7 +121,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
       />
       <InputDropdown
         label="Link do edycji"
-        currentValue={currentlyActive.id ?? currentlyActive}
+        currentValue={currentlyActive.shortLink ?? currentlyActive}
         onChangeCallback={setCurrentlyActive}
         defaultLabel="Nowy link"
         valueDisplayObject={links}
@@ -138,7 +136,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
       <InputBox
         maxLength={32}
         name="short-link"
-        placeholder="Skrócony kod linku"
+        placeholder="Skrócony kod linku (domyślnie: losowo wygenerowany URL)"
         value={shortLink}
         onChange={setShortLink}
         required={false}

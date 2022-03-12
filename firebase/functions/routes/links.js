@@ -110,7 +110,7 @@ function createShortLink(res, destination, customURL) {
 router
   // CREATE random shortened URL
   .post("/", (req, res) => {
-    // /api/links/?destination=null&shortLink=null -> random short URL with given destination
+    // ?destination=null&shortLink=null
     const data = {};
     for (const attrib in linkAttributeSanitisers) {
       const sanitiser = linkAttributeSanitisers[attrib];
