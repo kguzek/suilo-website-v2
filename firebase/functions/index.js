@@ -41,7 +41,7 @@ const ROUTES = [
   "optionsSuccessStatus": 204
 } */
 app.use(cors());
-app.use("/api/", require("./authMiddlewareV2"));
+// app.use("/api/", require("./authMiddlewareV2"));
 
 // define sort options for sending list responses
 const sortOptions = {
@@ -61,15 +61,6 @@ for (const endpoint of ["calendar", "events", "links", "news"]) {
         .orderBy(...sortOptions[endpoint]);
       sendListResponse(docListQuery, req.query, res);
     });
-  }
-
-  // READ single link/news
-  if (["links", "news"].includes(endpoint)) {
-    app.get(`/api/${endpoint}/:id`, (req, res) =>
-      getDocRef(req, res, endpoint).then((docRef) =>
-        sendSingleResponse(docRef, res)
-      )
-    );
   }
 
   // DELETE single calendar event/event/link/news

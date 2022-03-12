@@ -245,9 +245,9 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
 
 /** Updates the document fields and sends a response containing the new data.
  *
- * @param {FirebaseFirestore.DocumentReference} docRef
- * @param {response} res the HTTP response
- * @param {object} requestParams an object containing key-value pairs of the fields to update
+ * @param {Request} req the HTTP request
+ * @param {Response} res the HTTP response
+ * @param {string} collectionName the name of the collection that the document is in
  * @param {object} attributeSanitisers an object containing key-value pairs of attribute names and sanitation functions that validate the input
  */
 function updateSingleDocument(req, res, collectionName, attributeSanitisers) {
@@ -306,8 +306,9 @@ function updateSingleDocument(req, res, collectionName, attributeSanitisers) {
  * Note: the action will be treated as success even if the document didn't exist before.
  * This is due to how the Firebase Firestore API works.
  *
- * @param {FirebaseFirestore.DocumentReference} docRef a reference to the document to delete
- * @param {response} res the HTTP response
+ * @param {Request} req the HTTP request
+ * @param {Response} res the HTTP response
+ * @param {string} collectionName the name of the collection that the document is in
  */
 function deleteSingleDocument(req, res, collectionName) {
   getDocRef(req, res, collectionName).then((docRef) => {

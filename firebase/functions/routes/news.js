@@ -20,7 +20,7 @@ const postAttributeSanitisers = {
   photo: (photo) => photo || null,
   photoAuthor: (photoAuthor) => photoAuthor || null,
   alt: (altPhotoText) => altPhotoText || null,
-  ytID: (link) => link?.length === 11 ? link : null,
+  ytID: (link) => (link?.length === 11 ? link : null),
 };
 
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
@@ -43,6 +43,13 @@ router
 
     createSingleDocument(data, res, "news");
   })
+
+  // READ single news
+  .get("/:id", (req, res) =>
+    getDocRef(req, res, "news").then((docRef) =>
+      sendSingleResponse(docRef, res)
+    )
+  )
 
   // UPDATE news
   .put("/:id", (req, res) =>
