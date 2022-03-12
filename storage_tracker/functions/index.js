@@ -44,7 +44,10 @@ exports.trackStorage = functions
       photos: FieldValue.arrayUnion(filename),
     });
     // Update the "last updated" database entry
-    await collectionRef.doc("lastUpdate").update({
-      storage: admin.firestore.Timestamp.now(),
-    });
+    await collectionRef.doc("collectionInfo").set(
+      {
+        lastUpdated: { storage: admin.firestore.Timestamp.now() },
+      },
+      { merge: true }
+    );
   });

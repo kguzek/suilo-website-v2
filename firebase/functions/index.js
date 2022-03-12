@@ -28,8 +28,8 @@ const ROUTES = [
   "storage",
   "events",
   "calendar",
-  "lastUpdate",
   "luckyNumbers",
+  "collectionInfo",
   // "calendar/:year",
 ];
 
@@ -94,7 +94,7 @@ app.all("/api/", (req, res) => {
 for (const route of ROUTES) {
   // set individual API routes
   let routeMiddleware = require("./routes/" + route);
-  if (route === "lastUpdate") {
+  if (route === "collectionInfo") {
     // Get the middlware by passing the list of routes
     routeMiddleware = routeMiddleware(ROUTES);
   }

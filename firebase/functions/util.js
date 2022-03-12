@@ -7,7 +7,8 @@ const serviceAccount = require("./permissions.json");
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 
 // Assign database reference
-const db = admin.firestore();
+const fs = admin.firestore;
+const db = fs();
 db.settings({ ignoreUndefinedProperties: true });
 
 // Initialise HTTP error constants
@@ -19,7 +20,7 @@ const HTTP500 = "500 Internal Server Error: ";
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
 
 /** Converts each Firebase timestamp in the object into a JavaScript Date object. */
-function formatTimestamps(dataObject) {
+function formatTimestamps(dataObject = {}) {
   Object.keys(dataObject).forEach((key) => {
     try {
       // Check if the object contains Firebase timestamp fields
@@ -40,7 +41,7 @@ function formatTimestamps(dataObject) {
 
 /** Converts a JavaScript Date object into a Firestore timestamp. */
 function dateToTimestamp(date) {
-  return admin.firestore.Timestamp.fromDate(date);
+  return fs.Timestamp.fromDate(date);
 }
 
 /** Checks if the request params or query contains a document ID.
@@ -93,12 +94,18 @@ function getIntArray(string, separator, defaultInput) {
 }
 
 /** This function is called whenever an update is made to any collection (POST/PUT/DELETE). It updates
- * the information stored in the lastUpdated document to accurately show when the last update was made.
+ * the information stored in the collectionInfo document to accurately show when the last update was made.
+ * Updates the collectionSize attribute incrementing it by the provided value (default 0).
  */
-function updateCollection(collectionName) {
+function updateCollection(collectionName, collectionSizeChange) {
   // Set the last updated time for the collection to the current date
-  const newData = { [collectionName]: admin.firestore.Timestamp.now() };
-  db.collection("_general").doc("lastUpdate").set(newData, { merge: true });
+  const newData = { lastUpdate: { [collectionName]: fs.Timestamp.now() } };
+  if (collectionSizeChange) {
+    newData.collectionSizes = {
+      [collectionName]: fs.FieldValue.increment(collectionSizeChange),
+    };
+  }
+  db.collection("_general").doc("collectionInfo").set(newData, { merge: true });
 }
 
 /** Generates a random integer between the given interval, inclusively. */
@@ -123,7 +130,7 @@ function createSingleDocument(data, res, collectionName) {
   db.collection(collectionName)
     .add(data)
     .then((doc) => {
-      updateCollection(collectionName);
+      updateCollection(collectionName, 1);
       // success; return the data along with the document id
       formatTimestamps(data);
       return res.status(200).json({ id: doc.id, ...data });
@@ -247,7 +254,7 @@ function updateSingleDocument(req, res, collectionName, attributeSanitisers) {
   // initialise new data
   const newData = {
     // add parameter indicating when the news was last edited
-    modified: admin.firestore.Timestamp.now(),
+    modified: fs.Timestamp.now(),
   };
   // initialise boolean to indicate if any parameters were updated
   let dataUpdated = false;
@@ -309,7 +316,7 @@ function deleteSingleDocument(req, res, collectionName) {
       .then(() => {
         // success deleting document
         // this may occur even if the document did not exist to begin with
-        updateCollection(collectionName);
+        updateCollection(collectionName, -1);
         return res.status(200).json({
           msg: `Success! Document with ID '${docRef.id}' has been deleted.`,
         });
