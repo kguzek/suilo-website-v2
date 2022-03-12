@@ -1,9 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bars } from "react-loader-spinner";
 import NotFound from "../../pages/NotFound";
 import { fetchWithToken } from "../../firebase";
+import LoadingScreen from "../LoadingScreen";
 
 export default function ShortLinkRedirect({ setPage }) {
   const [redirected, setRedirected] = useState(null);
@@ -39,18 +39,7 @@ export default function ShortLinkRedirect({ setPage }) {
     setPage("redirect");
     fetchShortLinkData();
   }, []);
-  if (redirected === null) {
-    return (
-      <div className="page-main" style={{ minHeight: "100vh" }}>
-        <div
-          className="loading-whole-screen"
-          style={{ backgroundColor: "transparent" }}
-        >
-          <Bars color="#FFA900" height={50} width={50} />
-        </div>
-      </div>
-    );
-  }
+  if (redirected === null) return <LoadingScreen />;
   const msg =
     redirected &&
     "Przekierowanie linku działa, natomiast adres docelowy nie istnieje.";

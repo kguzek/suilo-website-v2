@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
-import { Bars } from "react-loader-spinner";
 import InputDropdown from "../components/Editor/InputComponents/InputDropdown";
 import { fetchNewsData } from "../components/News/PostCardPreview";
 import { fetchCachedData, removeSearchParam } from "../misc";
-import { updateMetadata } from "firebase/storage";
 import { PostEdit } from "../components/Editor/PostEdit";
 import { EventEdit } from "../components/Editor/EventEdit";
 import { CalendarEdit } from "../components/Editor/CalendarEdit";
 import { LinkEdit } from "../components/Editor/LinkEdit";
 import { PermissionEdit } from "../components/Editor/PermissionEdit";
-import { fetchWithToken } from "../firebase";
+import LoadingScreen from "../components/LoadingScreen";
 
 const PAGES = {
   news: "Aktualności",
@@ -238,41 +236,6 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-/** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
-export function LoadingButton({
-  isOpaque = false,
-  height = 25,
-  width = 90,
-  className,
-}) {
-  let _className = className ?? "delete-btn";
-  let colour = "#FFA900";
-  if (isOpaque) {
-    className ?? (_className = "add-btn");
-    colour = "#FFFFFF";
-  }
-  return (
-    <button
-      type="button"
-      className={_className}
-      style={{ cursor: "not-allowed" }}
-    >
-      <div style={{ backgroundColor: "transparent" }}>
-        <Bars color={colour} height={height} width={width} />
-      </div>
-    </button>
-  );
-}
-
-/** Renders a loading screen when the data hasn't loaded yet. */
-export function LoadingScreen() {
-  return (
-    <div style={{ backgroundColor: "transparent", marginBottom: "100%" }}>
-      <Bars color="#FFA900" height={50} width={50} />
     </div>
   );
 }

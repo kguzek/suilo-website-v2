@@ -17,7 +17,7 @@ import {
   getURLfromFileName,
   setErrorMessage,
 } from "../../misc";
-import { LoadingButton } from "../../pages/Edit";
+import { LoadingButton } from "../LoadingScreen";
 import DialogBox from "../DialogBox";
 
 const PARTICIPATE_BTN_CLASS =

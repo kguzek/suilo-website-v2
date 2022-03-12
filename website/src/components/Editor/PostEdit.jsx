@@ -6,7 +6,7 @@ import InputDropdown from "./InputComponents/InputDropdown";
 import TextEditor from "./InputComponents/TextEditor";
 import DialogBox from "../DialogBox";
 import { auth, fetchWithToken } from "../../firebase";
-import { LoadingScreen, LoadingButton } from "../../pages/Edit";
+import LoadingScreen, { LoadingButton } from "../LoadingScreen";
 import { handlePhotoUpdate, setErrorMessage } from "../../misc";
 import InputPhoto from "./InputComponents/InputPhoto";
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
-import { Bars } from "react-loader-spinner";
 import NotFound from "./NotFound";
 import {
   PostCardPreview,
@@ -16,6 +15,7 @@ import {
   getURLfromFileName,
 } from "../misc";
 import YouTube from "react-youtube";
+import LoadingScreen from "../components/LoadingScreen";
 
 const Post = ({ setPage, reload }) => {
   const [loaded, setLoaded] = useState(false);
@@ -93,18 +93,7 @@ const Post = ({ setPage, reload }) => {
     updatePostData();
   }, [reload]);
 
-  if (!loaded) {
-    return (
-      <div className="page-main" style={{ minHeight: "100vh" }}>
-        <div
-          className="loading-whole-screen"
-          style={{ backgroundColor: "transparent" }}
-        >
-          <Bars color="#FFA900" height={50} width={50} />
-        </div>
-      </div>
-    );
-  }
+  if (!loaded) return <LoadingScreen />;
   if (postData.errorMessage) {
     return <NotFound setPage={setPage} msg={postData.errorMessage} />;
   }

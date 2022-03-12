@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-// import { Bars } from "react-loader-spinner";
 import { fetchCachedData } from "../../misc";
+import LoadingScreen from "../LoadingScreen";
 import CustomCalendar from "./CustomCalendar";
 
 const testData = [
@@ -105,13 +105,10 @@ const CalendarPreview = ({
   const setData = (data) => {
     setEvents(data.events);
   };
-  // if (!loaded) {
-  //   return (
-  //     <div style={{ backgroundColor: "transparent" }}>
-  //       <Bars color="#FFA900" height={50} width={50} />
-  //     </div>
-  //   );
-  // }
+
+  if (year && month && !loaded) {
+    return <LoadingScreen />
+  }
 
   const _generateLegend = () => {
     return eventSubtypes.map((el, i) => (

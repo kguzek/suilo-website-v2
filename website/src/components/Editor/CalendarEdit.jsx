@@ -3,7 +3,7 @@ import { Plus, Trash, Edit3 } from "react-feather";
 import InputBox from "./InputComponents/InputBox";
 import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
-import { LoadingScreen, LoadingButton } from "../../pages/Edit";
+import LoadingScreen, { LoadingButton } from "../LoadingScreen";
 import { eventSubtypes } from "../Events/Calendar";
 import { fetchWithToken } from "../../firebase";
 import { setErrorMessage } from "../../misc";

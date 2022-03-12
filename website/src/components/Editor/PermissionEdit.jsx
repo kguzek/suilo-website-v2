@@ -3,7 +3,7 @@ import { Plus, Trash, Edit3 } from "react-feather";
 import InputBox from "./InputComponents/InputBox";
 import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
-import { LoadingButton } from "../../pages/Edit";
+import { LoadingButton } from "../LoadingScreen";
 
 export const PermissionEdit = ({}) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");

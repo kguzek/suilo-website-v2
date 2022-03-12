@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
 import { useParams, useSearchParams } from "react-router-dom";
 import CalendarPreview from "../components/Events/Calendar";
 import EventPreview from "../components/Events/EventPreview";
 import { fetchCachedData, removeSearchParam } from "../misc";
 import { serialiseDateArray } from "../common";
+import LoadingScreen from "../components/LoadingScreen";
 
 function Events({ setPage, reload }) {
   const [loaded, setLoaded] = useState(false); // events loaded status
@@ -92,15 +92,7 @@ function Events({ setPage, reload }) {
   }, [allCalendarEvents, calendarMonth, calendarYear]);
 
   if (!loaded) {
-    // wait until events have loaded
-    return (
-      <div
-        className="loading-whole-screen"
-        style={{ backgroundColor: "transparent" }}
-      >
-        <Bars color="#FFA900" height={50} width={50} />
-      </div>
-    );
+    return <LoadingScreen />
   }
 
   function updateSelectedEvent({ day, month, year, eventIDs }) {

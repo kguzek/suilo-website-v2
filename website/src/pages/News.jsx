@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useParams, useSearchParams } from "react-router-dom";
 import { MetaTags } from "react-meta-tags";
-import { Bars } from "react-loader-spinner";
 import {
   PostCardPreview,
   fetchNewsData,
 } from "../components/News/PostCardPreview";
 import PageSelector from "../components/PageSelector";
 import { removeSearchParam } from "../misc";
+import LoadingScreen from "../components/LoadingScreen";
 
 const News = ({ setPage, reload, collectionInfo }) => {
   const [loaded, setLoaded] = useState(false);
@@ -54,18 +54,8 @@ const News = ({ setPage, reload, collectionInfo }) => {
   if (params.postID !== undefined) {
     return <Outlet />;
   }
-  if (!loaded) {
-    return (
-      <div className="page-main" style={{ minHeight: "100vh" }}>
-        <div
-          className="loading-whole-screen"
-          style={{ backgroundColor: "transparent" }}
-        >
-          <Bars color="#FFA900" height={50} width={50} />
-        </div>
-      </div>
-    );
-  }
+  if (!loaded) return <LoadingScreen />;
+  
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
@@ -106,7 +96,12 @@ const News = ({ setPage, reload, collectionInfo }) => {
           // OTHER PAGES SHOULD BE IN MAIN LAYOUT
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-11 mt-12 my-5 md:my-20">
-              <PostCardPreview type="main" data={newsData} linkPrefix="post/" numItems={15} />
+              <PostCardPreview
+                type="main"
+                data={newsData}
+                linkPrefix="post/"
+                numItems={15}
+              />
             </div>
           </>
         )

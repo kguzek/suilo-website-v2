@@ -12,7 +12,7 @@ import {
 } from "../../misc";
 import { serialiseDateArray } from "../../common";
 import { fetchWithToken } from "../../firebase";
-import { LoadingScreen, LoadingButton } from "../../pages/Edit";
+import LoadingScreen, { LoadingButton } from "../LoadingScreen";
 import { eventSubtypes } from "../Events/Calendar";
 import InputPhoto from "./InputComponents/InputPhoto";
 

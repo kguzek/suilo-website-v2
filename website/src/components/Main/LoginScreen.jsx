@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
-// import { CSSTransition } from 'react-transition-group';
-import { Bars } from "react-loader-spinner";
 import { signInWithGoogle, getResults } from "../../firebase";
+import LoadingScreen from "../LoadingScreen";
 
 function LoginScreen() {
   // startLogging opens login window :boolean
@@ -46,7 +45,7 @@ function LoginScreen() {
       setYPos(0);
       setSafety(true);
     }, 10);
-  }
+  };
 
   const fadeOutDom = () => {
     setOpacity(0);
@@ -56,7 +55,7 @@ function LoginScreen() {
       setYPos("10vh");
       setSafety(true);
     }, 310);
-  }
+  };
 
   function _handleLogin() {
     setErrorMessage();
@@ -87,7 +86,9 @@ function LoginScreen() {
           <div className="login-right">
             <div />
             <div className="login-center">
-              <p className="text-text1 font-extrabold text-[2rem]">Zaloguj się</p>
+              <p className="text-text1 font-extrabold text-[2rem]">
+                Zaloguj się
+              </p>
               <div className="login-disabled">
                 <p className="disabled-p">
                   Logowanie się z kont pozaszkolnych jest na chwilę obecną
@@ -98,9 +99,7 @@ function LoginScreen() {
                 lub
               </p>
               {cookies.loginStage === "redirectGoogle" ? (
-                <div style={{ backgroundColor: "transparent" }}>
-                  <Bars color="#FFA900" height={35} width={35} />
-                </div>
+                <LoadingScreen size={35} fullscreen={false} />
               ) : (
                 <div
                   className="login-google-btn"
@@ -183,9 +182,7 @@ function LoginScreen() {
               }}
             />
             <div className="login-center">
-              <p className="login-header">
-                Zaloguj się
-              </p>
+              <p className="login-header">Zaloguj się</p>
               <div className="login-disabled">
                 <p className="disabled-p">
                   Logowanie się z kont pozaszkolnych jest na chwilę obecną
