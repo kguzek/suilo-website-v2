@@ -24,6 +24,7 @@ function App() {
   const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
   const [checkForUpdates, setCheckForUpdates] = useState(false);
   const [shouldRefresh, setShouldRefresh] = useState(false);
+  const [collectionInfo, setCollectionInfo] = useState({});
 
   /** Sets the user accounts cookie to an empty object. */
   function resetUserAccounts() {
@@ -51,17 +52,19 @@ function App() {
     if (!checkForUpdates) {
       return;
     }
-    fetchWithToken("/lastUpdate/").then((res) => {
-      res.json().then((rawData) => {
-        // remove unnecessary fields
-        const { id, views, ...endpointsUpdated } = rawData;
-        let _shouldRefresh = false;
+    fetchWithToken("/collectionInfo/").then((res) => {
+      res.json().then((collections) => {
+        setCollectionInfo(collections);
+        let shouldRefresh = false;
         for (const cacheName in localStorage) {
           const endpoint = cacheName.split("_").shift();
-          const endpointUpdated = new Date(endpointsUpdated[endpoint]);
+          const collection = collections[endpoint];
+          // The cache does not start with a collection name
+          if (!collection) continue;
+          const collectionUpdated = new Date(collection.lastUpdated);
           try {
             const cache = JSON.parse(localStorage.getItem(cacheName));
-            if (new Date(cache?.date) > endpointUpdated) {
+            if (new Date(cache?.date) > collectionUpdated) {
               // Cache is newer than the date it was updated
               continue;
             }
@@ -70,15 +73,15 @@ function App() {
           }
 
           // Check if the cache name is a valid endpoint
-          if (endpointUpdated.toString() !== "Invalid Date") {
+          if (collectionUpdated.toString() !== "Invalid Date") {
             // The cache is too old
             console.log("Removing cache", cacheName);
             localStorage.removeItem(cacheName);
-            _shouldRefresh = true;
+            shouldRefresh = true;
           }
         }
         // Only update the state when all caches have been processed
-        _shouldRefresh && setShouldRefresh(true);
+        shouldRefresh && setShouldRefresh(true);
       });
     });
   }, [page]);
@@ -169,7 +172,13 @@ function App() {
           <Route index element={<Home setPage={setPage} />} />
           <Route
             path="aktualnosci"
-            element={<News setPage={setPage} reload={shouldRefresh} />}
+            element={
+              <News
+                setPage={setPage}
+                reload={shouldRefresh}
+                collectionInfo={collectionInfo.news ?? { numDocs: 0 }}
+              />
+            }
           >
             <Route
               path="post"

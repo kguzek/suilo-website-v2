@@ -10,7 +10,7 @@ import { serialiseDateArray } from "../common";
 function Events({ setPage, reload }) {
   const [loaded, setLoaded] = useState(false); // events loaded status
   const [eventsData, setEventsData] = useState({ contents: [] });
-  const [searchParams, setSearchParams] = useSearchParams({});
+  const [searchParams, setSearchParams] = useSearchParams();
   const [updateCache, setUpdateCache] = useState(false);
   const [nextEvent, setNextEvent] = useState(undefined);
   const [selectedEvent, setSelectedEvent] = useState(undefined);

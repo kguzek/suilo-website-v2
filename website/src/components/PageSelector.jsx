@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { setSearchParam, removeSearchParam } from "../misc";
 
 const PageBox = ({ page, activePage, changePage }) => {
   return (
@@ -24,23 +24,21 @@ const PageBox = ({ page, activePage, changePage }) => {
   );
 };
 
-const PagePicker = ({ noPages, onChange, initialPage = 1 }) => {
-  const [page, setPage] = useState(Number(initialPage));
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    onChange(page);
-  }, [page]);
-
-  const _changePage = (noPage) => {
-    setPage(noPage);
-    if (noPage > 1) {
-      navigate(`/aktualnosci?page=${noPage}`);
-    } else if (noPage === 1) {
-      navigate(`/aktualnosci`);
+const PageSelector = ({
+  page,
+  noPages,
+  onChange,
+  searchParams,
+  setSearchParams,
+}) => {
+  const _changePage = (pageNo) => {
+    onChange(pageNo);
+    if (pageNo > 1) {
+      setSearchParam(searchParams, setSearchParams, "page", pageNo);
+    } else if (pageNo === 1) {
+      removeSearchParam(searchParams, setSearchParams, "page");
     }
   };
-
   return (
     <div className={`inline-flex flex-row w-fit`}>
       {page > 2 && (
@@ -53,7 +51,7 @@ const PagePicker = ({ noPages, onChange, initialPage = 1 }) => {
       {page < noPages && (
         <PageBox changePage={_changePage} page={page + 1} activePage={page} />
       )}
-      {page === 1 && (
+      {page === 1 && page + 2 < noPages && (
         <PageBox changePage={_changePage} page={page + 2} activePage={page} />
       )}
       {page < noPages - 1 && (
@@ -63,4 +61,4 @@ const PagePicker = ({ noPages, onChange, initialPage = 1 }) => {
   );
 };
 
-export default PagePicker;
+export default PageSelector;

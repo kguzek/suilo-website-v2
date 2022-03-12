@@ -22,7 +22,7 @@ const Post = ({ setPage, reload }) => {
   const [postData, setPostData] = useState(null);
   const [photoLink, setPhotoLink] = useState(DEFAULT_IMAGE);
   const [newsData, setNewsData] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams({});
+  const [searchParams, setSearchParams] = useSearchParams();
   const [width, setWidth] = useState(320);
   const params = useParams();
   const ref = useRef(null);

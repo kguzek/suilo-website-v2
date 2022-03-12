@@ -2,21 +2,24 @@ import React, { useState, useEffect } from "react";
 import { Outlet, useParams, useSearchParams } from "react-router-dom";
 import { MetaTags } from "react-meta-tags";
 import { Bars } from "react-loader-spinner";
-import { PostCardPreview, fetchNewsData } from "../components/News/PostCardPreview";
-import PagePicker from "../components/PagePicker";
+import {
+  PostCardPreview,
+  fetchNewsData,
+} from "../components/News/PostCardPreview";
+import PageSelector from "../components/PageSelector";
 import { removeSearchParam } from "../misc";
 
-const News = ({ setPage, reload }) => {
+const News = ({ setPage, reload, collectionInfo }) => {
   const [loaded, setLoaded] = useState(false);
-  const [newsPage, setNewsPage] = useState(1);
   const [newsData, setNewsData] = useState([]);
   const params = useParams();
-  const [searchParams, setSearchParams] = useSearchParams({});
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [newsPage, setNewsPage] = useState(searchParams.get("page") || 1);
 
   /** Fetches the data from the cache or API. */
   function _populatePageContents(updateCache = false) {
     // This raw value is later encoded in the fetchNewsData() function
-    const pageNumber = searchParams.get("page") ?? 1;
+    const pageNumber = searchParams.get("page") || 1;
     fetchNewsData({
       setNewsData,
       setLoaded,
@@ -30,6 +33,7 @@ const News = ({ setPage, reload }) => {
       return;
     }
     setPage("news");
+    setLoaded(false);
     const updateCache = !!removeSearchParam(
       searchParams,
       setSearchParams,
@@ -102,16 +106,18 @@ const News = ({ setPage, reload }) => {
           // OTHER PAGES SHOULD BE IN MAIN LAYOUT
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-11 mt-12 my-5 md:my-20">
-              <PostCardPreview type="main" data={newsData} linkPrefix="post/" />
+              <PostCardPreview type="main" data={newsData} linkPrefix="post/" numItems={15} />
             </div>
           </>
         )
       }
       <div className="m-auto my-2">
-        <PagePicker
-          initialPage={searchParams.get("page") ?? 1}
-          noPages={15}
+        <PageSelector
+          page={newsPage}
+          noPages={Math.ceil(collectionInfo.numDocs / 15)}
           onChange={setNewsPage}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
         />
       </div>
     </div>

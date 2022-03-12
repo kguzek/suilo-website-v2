@@ -83,13 +83,13 @@ export function PostCardPreview({
     },
   };
   const elem = defaultItems[type].element;
-  startIndex === undefined && (startIndex = defaultItems[type].startIndex);
-  numItems === undefined && (numItems = defaultItems[type].numItems);
+  startIndex ?? (startIndex = defaultItems[type].startIndex);
+  numItems ?? (numItems = defaultItems[type].numItems);
 
-  const className = classOverride ?? `${type}-grid`;
+  // const className = classOverride ?? `${type}-grid`;
   const _data = [...data].splice(startIndex, numItems);
   if (_data.length === 0) {
-    if (classOverride && classOverride.startsWith("home")) {
+    if (classOverride?.startsWith("home")) {
       return (
         <div style={{ width: "100%" }}>
           <p>{NO_NEWS_MESSAGE}</p>

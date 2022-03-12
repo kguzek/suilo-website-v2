@@ -67,6 +67,22 @@ export function formatTime([hour, minute]) {
   return formattedDate.split(", ")[1];
 }
 
+/** Sets the provided search parameter in the URL query. */
+export function setSearchParam(
+  searchParams,
+  setSearchParams,
+  paramToModify,
+  newValue
+) {
+  const newSearchParams = new URLSearchParams(searchParams);
+  if (newSearchParams.get(paramToModify)) {
+    newSearchParams.set(paramToModify, newValue);
+  } else {
+    newSearchParams.append(paramToModify, newValue);
+  }
+  setSearchParams(newSearchParams);
+}
+
 /** Removes the given parameter from the search params object. Returns the key's value prior to deletion.
  *  If the search parameter did not exist in the search query, does nothing and returns `undefined`.
  */
