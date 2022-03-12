@@ -6,8 +6,7 @@ import NotFound from "./NotFound";
 import {
   PostCardPreview,
   fetchNewsData,
-  MAIN_ITEMS_DEFAULT,
-} from "../components/PostCardPreview";
+} from "../components/News/PostCardPreview";
 import {
   fetchCachedData,
   conjugatePolish,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getURLfromFileName } from "../misc";
+import { getURLfromFileName } from "../../misc";
 
 const PostCardSecondary = ({ data }) => {
   const [photo, setphoto] = useState(data.photo);

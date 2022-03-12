@@ -9,12 +9,12 @@ import Post from "./pages/Post";
 import Edit from "./pages/Edit";
 import Events from "./pages/Events";
 import Contact from "./pages/Contact";
-import ShortLinkRedirect from "./pages/ShortLinkRedirect";
-import NavBar from "./components/NavBar";
-import Footer from "./components/Footer";
-import LoginScreen from "./components/LoginScreen";
-import CookiesAlert from "./components/CookiesAlert";
-import ScrollToTop, { scrollToTop } from "./components/ScrollToTop";
+import ShortLinkRedirect from "./components/Main/ShortLinkRedirect";
+import NavBar from "./components/Main/NavBar";
+import Footer from "./components/Main/Footer";
+import LoginScreen from "./components/Main/LoginScreen";
+import CookiesAlert from "./components/Main/CookiesAlert";
+import ScrollToTop, { scrollToTop } from "./components/Main/ScrollToTop";
 import { logOut, AuthProvider, fetchWithToken, DEBUG_MODE } from "./firebase";
 
 function App() {

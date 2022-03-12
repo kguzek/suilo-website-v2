@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DialogBox from "./DialogBox";
+import DialogBox from "../DialogBox";
 
 const Footer = ({ isVisible }) => {
   const [easterEgg, setEasterEgg] = useState(false);

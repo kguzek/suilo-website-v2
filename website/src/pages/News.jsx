@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Outlet, useParams, useSearchParams } from "react-router-dom";
 import { MetaTags } from "react-meta-tags";
 import { Bars } from "react-loader-spinner";
-import { PostCardPreview, fetchNewsData } from "../components/PostCardPreview";
-import { removeSearchParam } from "../misc";
+import { PostCardPreview, fetchNewsData } from "../components/News/PostCardPreview";
 import PagePicker from "../components/PagePicker";
+import { removeSearchParam } from "../misc";
 
 const News = ({ setPage, reload }) => {
   const [loaded, setLoaded] = useState(false);

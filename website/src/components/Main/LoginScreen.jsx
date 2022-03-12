@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 // import { CSSTransition } from 'react-transition-group';
 import { Bars } from "react-loader-spinner";
-import { signInWithGoogle, getResults } from "../firebase";
+import { signInWithGoogle, getResults } from "../../firebase";
 
 function LoginScreen() {
   // startLogging opens login window :boolean

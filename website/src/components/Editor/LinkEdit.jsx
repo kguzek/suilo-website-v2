@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash, Edit3 } from "react-feather";
-import InputBox from "../components/InputBox";
-import InputDropdown from "../components/InputDropdown";
-import DialogBox from "../components/DialogBox";
-import { LoadingButton, LoadingScreen } from "../pages/Edit";
-import { fetchWithToken } from "../firebase";
-import { setErrorMessage } from "../misc";
+import InputBox from "./InputComponents/InputBox";
+import InputDropdown from "./InputComponents/InputDropdown";
+import DialogBox from "../DialogBox";
+import { LoadingButton, LoadingScreen } from "../../pages/Edit";
+import { fetchWithToken } from "../../firebase";
+import { setErrorMessage } from "../../misc";
 
 export const LinkEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");

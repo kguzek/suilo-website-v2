@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash, Edit3 } from "react-feather";
-import InputBox from "./InputBox";
-import InputArea from "./InputArea";
-import InputDropdown from "./InputDropdown";
-import InputFile from "./InputFile";
-import DialogBox from "./DialogBox";
-import { auth, fetchWithToken, storage } from "../firebase";
+import InputBox from "./InputComponents/InputBox";
+// import InputArea from "./InputComponents/InputArea";
+import InputDropdown from "./InputComponents/InputDropdown";
+import TextEditor from "./InputComponents/TextEditor";
+import InputFile from "./InputComponents/InputFile";
+import DialogBox from "../DialogBox";
+import { auth, fetchWithToken, storage } from "../../firebase";
 import { getDownloadURL, uploadBytesResumable, ref } from "firebase/storage";
-import { LoadingScreen, LoadingButton } from "../pages/Edit";
-import TextEditor from "./TextEditor";
-import { setErrorMessage } from "../misc";
+import { LoadingScreen, LoadingButton } from "../../pages/Edit";
+import { setErrorMessage } from "../../misc";
 
 export const PostEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");

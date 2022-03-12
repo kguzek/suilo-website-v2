@@ -2,8 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bars } from "react-loader-spinner";
-import NotFound from "./NotFound";
-import { fetchWithToken } from "../firebase";
+import NotFound from "../../pages/NotFound";
+import { fetchWithToken } from "../../firebase";
 
 export default function ShortLinkRedirect({ setPage }) {
   const [redirected, setRedirected] = useState(null);

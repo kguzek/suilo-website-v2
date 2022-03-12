@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Bars } from "react-loader-spinner";
-import { serialiseDateArray } from "../common";
-import { fetchCachedData } from "../misc";
+// import { Bars } from "react-loader-spinner";
+import { fetchCachedData } from "../../misc";
 import CustomCalendar from "./CustomCalendar";
 
 const testData = [

@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash, Edit3 } from "react-feather";
-import InputBox from "../components/InputBox";
-import InputArea from "../components/InputArea";
-import InputDropdown from "../components/InputDropdown";
-import InputFile from "../components/InputFile";
-import DialogBox from "../components/DialogBox";
-import { formatDate, formatTime, setErrorMessage } from "../misc";
-import { serialiseDateArray } from "../common";
-import { fetchWithToken, storage } from "../firebase";
+import InputBox from "./InputComponents/InputBox";
+import InputArea from "./InputComponents/InputArea";
+import InputDropdown from "./InputComponents/InputDropdown";
+import InputFile from "./InputComponents/InputFile";
+import DialogBox from "../DialogBox";
+import { formatDate, formatTime, setErrorMessage } from "../../misc";
+import { serialiseDateArray } from "../../common";
+import { fetchWithToken, storage } from "../../firebase";
 import { getDownloadURL, uploadBytesResumable, ref } from "firebase/storage";
-import { LoadingScreen, LoadingButton } from "../pages/Edit";
-import { eventSubtypes } from "./Calendar";
+import { LoadingScreen, LoadingButton } from "../../pages/Edit";
+import { eventSubtypes } from "../Events/Calendar";
 
 export const EventEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");

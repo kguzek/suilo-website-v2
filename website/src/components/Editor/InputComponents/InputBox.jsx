@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { conjugatePolish } from "../misc";
+import { conjugatePolish } from "../../../misc";
 
 const InputBox = ({
   value,

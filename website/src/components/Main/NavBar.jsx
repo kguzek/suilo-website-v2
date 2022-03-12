@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Hamburger from "hamburger-react";
-import LogoSU from "../media/LogoSU";
-// import Blob from "../media/blob";
+import LogoSU from "../../media/LogoSU";
+// import Blob from "../../media/blob";
 
 const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
   const { width } = useWindowDimensions();

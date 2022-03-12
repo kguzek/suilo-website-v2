@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import { Bars } from "react-loader-spinner";
-import InputDropdown from "../components/InputDropdown";
-import { fetchNewsData } from "../components/PostCardPreview";
+import InputDropdown from "../components/Editor/InputComponents/InputDropdown";
+import { fetchNewsData } from "../components/News/PostCardPreview";
 import {
   fetchCachedData,
   getFileNameFromFirebaseUrl,
   removeSearchParam,
 } from "../misc";
 import { updateMetadata } from "firebase/storage";
-import { PostEdit } from "../components/PostEdit";
-import { EventEdit } from "../components/EventEdit";
-import { CalendarEdit } from "../components/CalendarEdit";
-import { LinkEdit } from "../components/LinkEdit";
-import { PermissionEdit } from "../components/PermissionEdit";
+import { PostEdit } from "../components/Editor/PostEdit";
+import { EventEdit } from "../components/Editor/EventEdit";
+import { CalendarEdit } from "../components/Editor/CalendarEdit";
+import { LinkEdit } from "../components/Editor/LinkEdit";
+import { PermissionEdit } from "../components/Editor/PermissionEdit";
 
 const PAGES = {
   news: "Aktualności",

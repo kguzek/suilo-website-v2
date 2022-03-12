@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash, Edit3 } from "react-feather";
-import InputBox from "../components/InputBox";
-import InputDropdown from "../components/InputDropdown";
-import DialogBox from "../components/DialogBox";
-import { fetchWithToken } from "../firebase";
-import { LoadingScreen, LoadingButton } from "../pages/Edit";
-import { setErrorMessage } from "../misc";
-import { eventSubtypes } from "./Calendar";
+import InputBox from "./InputComponents/InputBox";
+import InputDropdown from "./InputComponents/InputDropdown";
+import DialogBox from "../DialogBox";
+import { LoadingScreen, LoadingButton } from "../../pages/Edit";
+import { eventSubtypes } from "../Events/Calendar";
+import { fetchWithToken } from "../../firebase";
+import { setErrorMessage } from "../../misc";
 
 const MONTHS = [
   "Styczeń",

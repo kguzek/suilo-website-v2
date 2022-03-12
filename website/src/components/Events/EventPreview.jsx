@@ -9,15 +9,15 @@ import {
   ExternalLink,
   User,
 } from "react-feather";
-import { fetchWithToken, auth } from "../firebase";
+import { fetchWithToken, auth } from "../../firebase";
 import {
   DEFAULT_IMAGE,
   formatDate,
   formatTime,
   setErrorMessage,
-} from "../misc";
-import { LoadingButton } from "../pages/Edit";
-import DialogBox from "./DialogBox";
+} from "../../misc";
+import { LoadingButton } from "../../pages/Edit";
+import DialogBox from "../DialogBox";
 
 const PARTICIPATE_BTN_CLASS =
   "transition-all inline-flex bg-primary py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]";

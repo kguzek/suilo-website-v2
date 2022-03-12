@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Bars } from "react-loader-spinner";
 import MetaTags from "react-meta-tags";
 import { useParams, useSearchParams } from "react-router-dom";
-import CalendarPreview, { eventSubtypes } from "../components/Calendar";
+import CalendarPreview from "../components/Events/Calendar";
+import EventPreview from "../components/Events/EventPreview";
 import { fetchCachedData, removeSearchParam } from "../misc";
 import { serialiseDateArray } from "../common";
-import EventPreview from "../components/EventPreview";
 
 function Events({ setPage, reload }) {
   const [loaded, setLoaded] = useState(false); // events loaded status

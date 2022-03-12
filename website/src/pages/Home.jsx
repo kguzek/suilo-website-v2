@@ -4,7 +4,7 @@ import MetaTags from "react-meta-tags";
 import { useCookies } from "react-cookie";
 import { Bars } from "react-loader-spinner";
 import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
-import PostCardPreview, { fetchNewsData } from "../components/PostCardPreview";
+import PostCardPreview, { fetchNewsData } from "../components/News/PostCardPreview";
 import SuPhoto from "../media/su-photo.jpg";
 import { formatDate } from "../misc";
 import { fetchWithToken } from "../firebase";

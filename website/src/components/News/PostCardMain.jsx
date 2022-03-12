@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "react-feather";
-import { formatDate, getURLfromFileName } from "../misc";
+import { formatDate, getURLfromFileName } from "../../misc";
 
 const PostCardMain = ({ data }) => {
   const [photo, setphoto] = useState(data.photo);

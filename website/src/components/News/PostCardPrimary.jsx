@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "react-feather";
-import { getURLfromFileName } from "../misc";
+import { getURLfromFileName } from "../../misc";
 
 const PostCardPrimary = ({ data }) => {
   const textShort = data.text;
