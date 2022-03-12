@@ -9,6 +9,7 @@ import { auth, fetchWithToken, storage } from "../firebase";
 import { getDownloadURL, uploadBytesResumable, ref } from "firebase/storage";
 import { LoadingScreen, LoadingButton } from "../pages/Edit";
 import TextEditor from "./TextEditor";
+import { setErrorMessage } from "../misc";
 
 export const PostEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -104,26 +105,31 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       ytID,
     };
     /*
-            if(imgRef){
-              const metadata = {
-                customMetadata:{
-                  photoAuthor: imageAuthor,
-                  alt: imageAltText,
-                }
-              }
-              updateMetadata(imgRef, metadata)
-              .then((meta) => {
-                console.log(meta);
-              }).catch((error) => {
-                console.log(error);
-              })
-            }
-           */
+    if(imgRef){
+      const metadata = {
+        customMetadata:{
+          photoAuthor: imageAuthor,
+          alt: imageAltText,
+        }
+      }
+      updateMetadata(imgRef, metadata)
+      .then((meta) => {
+        console.log(meta);
+      }).catch((error) => {
+        console.log(error);
+      })
+    }
+    */
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
-      res.ok && refresh();
+      if (res.ok) {
+        refresh();
+        setPopupSuccess(true);
+      } else {
+        setErrorCode(res.status);
+        setErrorMessage(res, setPopupError);
+      }
       setClickedSubmit(false);
-      setPopupSuccess(res.ok);
     });
   }
 
@@ -165,6 +171,7 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       }
     );
   }
+
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <DialogBox
@@ -209,11 +216,11 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       />
       {/* PLACE FOR TEXT EDITOR */}
       {/* <InputArea
-                name="post-description"
-                placeholder="Treść"
-                maxLength={256}
-                value={description}
-                onChange={setDescription} /> */}
+        name="post-description"
+        placeholder="Treść"
+        maxLength={256}
+        value={description}
+        onChange={setDescription} /> */}
       <TextEditor onChange={setDescription} value={description} />
       <InputBox
         name="post-author"

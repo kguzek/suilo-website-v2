@@ -118,7 +118,7 @@ export const CalendarEdit = ({
       colour,
     };
     fetchWithToken(url, method, params).then((res) => {
-      // Update the data once request is sent
+      // Update the data once request is processed
       if (res.ok) {
         refresh();
         setPopupSuccess(true);
@@ -133,7 +133,7 @@ export const CalendarEdit = ({
   function _handleDelete() {
     setClickedDelete(true);
     fetchWithToken(`/calendar/${currentlyActive}`, "DELETE").then((_res) => {
-      // Update the data once request is sent
+      // Update the data once request is processed
       refresh();
       setClickedDelete(false);
     });

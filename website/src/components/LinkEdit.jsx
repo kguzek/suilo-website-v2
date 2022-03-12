@@ -67,7 +67,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     // ?destination=null
     const params = { destination: longLink };
     fetchWithToken(url, method, params).then((res) => {
-      // Update the data once request is sent
+      // Update the data once request is processed
       if (res.ok) {
         refresh();
         setPopupSuccess(true);
@@ -81,14 +81,12 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
 
   const _handleDelete = () => {
     setClickedDelete(true);
-    // currentlyActive is the index of the short link in the array
-    fetchWithToken(`/links/${_getCurrentlyActive().id}`, "DELETE").then(
-      (_res) => {
-        // Update the data once request is sent
-        refresh();
-        setClickedDelete(false);
-      }
-    );
+    const deleteURL = "/links/" + _getCurrentlyActive().id;
+    fetchWithToken(deleteURL, "DELETE").then((_res) => {
+      // Update the data once request is processed
+      refresh();
+      setClickedDelete(false);
+    });
   };
 
   // Get array of short link URLs
