@@ -8,9 +8,9 @@ import InputFile from "./InputComponents/InputFile";
 import DialogBox from "../DialogBox";
 import { auth, fetchWithToken } from "../../firebase";
 import { LoadingScreen, LoadingButton } from "../../pages/Edit";
-import { handlePhotoUpdate, setErrorMessage } from "../../misc";
+import { DEFAULT_IMAGE, getURLfromFileName, handlePhotoUpdate, setErrorMessage } from "../../misc";
 
-export const PostEdit = ({ data, loaded, refetchData }) => {
+export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [author, setAuthor] = useState(auth.currentUser?.displayName);
   const [title, setTitle] = useState("");
@@ -21,6 +21,10 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
   const [ytID, setYtID] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
+
+  //temp
+  const [existingPhoto,setExistingPhoto] = useState("");
+  const [preview,setPreview] = useState(DEFAULT_IMAGE);
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
@@ -138,6 +142,15 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
       setClickedDelete(false);
     });
   }
+  function _handlePreviewChange(name){
+    setExistingPhoto(name);
+    if(photos.includes(name)){
+      setImageURL(name);
+      getURLfromFileName(name,"400x300",setPreview);
+    }else{
+      setPreview(DEFAULT_IMAGE);
+    }
+  }
 
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
@@ -212,6 +225,21 @@ export const PostEdit = ({ data, loaded, refetchData }) => {
         onChange={setImageURL}
         required={false}
       />
+      <InputBox
+        name="existing-photo"
+        placeholder="przesłane zdjęcie"
+        maxLength={256}
+        value={existingPhoto}
+        onChange={_handlePreviewChange}
+        required={false}
+        choises={photos}
+      />
+      {preview !== DEFAULT_IMAGE &&
+      <img
+        src={preview}
+        className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300"
+      />}
+      
       <InputBox
         name="image-author"
         placeholder="Autor zdjęcia"

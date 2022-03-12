@@ -6,8 +6,10 @@ import InputDropdown from "./InputComponents/InputDropdown";
 import InputFile from "./InputComponents/InputFile";
 import DialogBox from "../DialogBox";
 import {
+  DEFAULT_IMAGE,
   formatDate,
   formatTime,
+  getURLfromFileName,
   handlePhotoUpdate,
   setErrorMessage,
 } from "../../misc";
@@ -16,7 +18,7 @@ import { fetchWithToken } from "../../firebase";
 import { LoadingScreen, LoadingButton } from "../../pages/Edit";
 import { eventSubtypes } from "../Events/Calendar";
 
-export const EventEdit = ({ data, loaded, refetchData }) => {
+export const EventEdit = ({ data, loaded, refetchData,photos }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [name, setName] = useState("");
   const [type, setType] = useState(0);
@@ -31,6 +33,11 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
   const [imageAltText, setImageAltText] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
+
+
+  //temp
+  const [existingPhoto,setExistingPhoto] = useState("");
+  const [preview,setPreview] = useState(DEFAULT_IMAGE);
 
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
@@ -152,6 +159,16 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
     });
   }
 
+  function _handlePreviewChange(name){
+    setExistingPhoto(name);
+    if(photos.includes(name)){
+      setImageURL(name);
+      getURLfromFileName(name,"400x300",setPreview);
+    }else{
+      setPreview(DEFAULT_IMAGE);
+    }
+  }
+
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <DialogBox
@@ -266,6 +283,21 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
         value={imageURL}
         onChange={setImageURL}
       />
+      <InputBox
+        name="existing-photo"
+        placeholder="przesłane zdjęcie"
+        maxLength={256}
+        value={existingPhoto}
+        onChange={_handlePreviewChange}
+        required={false}
+        choises={photos}
+      />
+      {preview !== DEFAULT_IMAGE &&
+      <img
+        src={preview}
+        className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300"
+      />}
+      
       <InputBox
         name="event-url"
         placeholder="Zewnętrzny link do wydarzenia"
