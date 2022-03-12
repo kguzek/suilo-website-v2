@@ -5,10 +5,14 @@ import InputArea from "./InputComponents/InputArea";
 import InputDropdown from "./InputComponents/InputDropdown";
 import InputFile from "./InputComponents/InputFile";
 import DialogBox from "../DialogBox";
-import { formatDate, formatTime, setErrorMessage } from "../../misc";
+import {
+  formatDate,
+  formatTime,
+  handlePhotoUpdate,
+  setErrorMessage,
+} from "../../misc";
 import { serialiseDateArray } from "../../common";
-import { fetchWithToken, storage } from "../../firebase";
-import { getDownloadURL, uploadBytesResumable, ref } from "firebase/storage";
+import { fetchWithToken } from "../../firebase";
 import { LoadingScreen, LoadingButton } from "../../pages/Edit";
 import { eventSubtypes } from "../Events/Calendar";
 
@@ -150,35 +154,6 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
     });
   }
 
-  function _handlePhotoUpdate(file) {
-    if (!file) return;
-    const storageRef = ref(storage, `/photos/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    setImagePath(file.name.split(".")[0]);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const prog = Math.round(
-          (100 * snapshot.bytesTransferred) / snapshot.totalBytes
-        );
-        setImageURL(`Postęp: ${prog}%`);
-      },
-      (error) => console.log(error),
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(() => {
-          /*
-        console.log(url);
-        let basefileName = getFileNameFromFirebaseUrl(url);
-        console.log(basefileName);
-      
-        let fullHDfileName = basefileName.split(".")[0] + "_1920x1080.jpeg";
-        console.log(fullHDfileName);
-        setImagePath(fullHDfileName);
-        */
-        });
-      }
-    );
-  }
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <DialogBox
@@ -280,9 +255,9 @@ export const EventEdit = ({ data, loaded, refetchData }) => {
       {/* PLACE FOR TEXT EDITOR */}
       <InputFile
         placeholder={"Miniatura"}
-        onChange={(e) => {
-          _handlePhotoUpdate(e.target.files[0]);
-        }}
+        onChange={(e) =>
+          handlePhotoUpdate(e.target.files[0], setImagePath, setImageURL)
+        }
         acceptedExtensions=".jpeg, .jpg, .png"
       />
       <InputBox

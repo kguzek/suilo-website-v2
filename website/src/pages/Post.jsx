@@ -33,25 +33,19 @@ const Post = ({ setPage, reload }) => {
 
   const cacheName = `news_post_${params.postID}`;
 
-  function changeImageLink(link) {
-    setPhotoLink(link);
-  }
-
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
     /** Verifies that the API response is fvalid and returns the processed data. */
     function processJsonData(data) {
       if (data && !data.errorDescription) {
-        // data.photo ?? (data.photo = DEFAULT_IMAGE);
-        getURLfromFileName(data.photo, "1920x1080", changeImageLink);
+        data.photo || (data.photo = DEFAULT_IMAGE);
         return data;
       }
       setPostData({ errorMessage: "Post nie istnieje." });
     }
 
     function checkLinks(data) {
-      getURLfromFileName(data.photo, "1920x1080", changeImageLink);
-
+      getURLfromFileName(data.photo, "1920x1080", setPhotoLink);
       setPostData(data);
     }
 

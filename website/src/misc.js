@@ -1,4 +1,4 @@
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { fetchWithToken, storage } from "./firebase";
 
 export const MAX_CACHE_AGE = 24; // hours
@@ -69,7 +69,7 @@ export function formatTime([hour, minute]) {
 
 /** Removes the given parameter from the search params object. Returns the key's value prior to deletion.
  *  If the search parameter did not exist in the search query, does nothing and returns `undefined`.
-*/
+ */
 export function removeSearchParam(
   searchParams,
   setSearchParams,
@@ -100,7 +100,9 @@ export function fetchCachedData(
   }
 ) {
   // check if there is a valid data cache
-  const cache = JSON.parse(localStorage.getItem(cacheName));
+  try {
+    var cache = JSON.parse(localStorage.getItem(cacheName));
+  } catch (parseError) {}
   if (cache) {
     if (!updateCache) {
       // check if the cache contains no error
@@ -177,17 +179,57 @@ export function fetchCachedData(
  *  - 200x2000
  *  - 100x100 */
 export function getURLfromFileName(name, size, callback) {
+  // Check if the photo is already an external URL
   if (name.startsWith("http://") || name.startsWith("https://")) {
-    callback(name);
-  } else {
-    const imageRef = ref(storage, `/photos/${name}_${size}.jpeg`);
-    getDownloadURL(imageRef).then(callback);
+    // Don't look for the photo since the URL is known
+    return void callback(name);
   }
+  // Check if there is a cache for the photo name
+  const cacheName = "photo_" + name.replaceAll(" ", "_");
+  const cachedURL = localStorage.getItem(cacheName);
+  if (cachedURL) {
+    // Cache found; use it
+    return void callback(cachedURL);
+  }
+  // Query the database for the URL corresponding to the photo name
+  const imageRef = ref(storage, `/photos/${name}_${size}.jpeg`);
+  getDownloadURL(imageRef).then((url) => {
+    callback(url);
+    // Cache the photo URL for future use
+    localStorage.setItem(cacheName, url);
+  });
 }
 
 /** Gets the error description from the HTTP response and calls the callback function with it. */
 export function setErrorMessage(res, setErrorFunc) {
   res.json().then((data) => {
     setErrorFunc(data.errorDescription ?? "brak");
-  })
+  });
+}
+
+export function handlePhotoUpdate(file, setImagePath, setImageURL) {
+  if (!file) return;
+  const storageRef = ref(storage, `/photos/${file.name}`);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+  setImagePath(file.name.split(".")[0]);
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const prog = Math.round(
+        (100 * snapshot.bytesTransferred) / snapshot.totalBytes
+      );
+      setImageURL(`Postęp: ${prog}%`);
+    },
+    (error) => console.log(error),
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then(() => {
+        // console.log(url);
+        // const basefileName = getFileNameFromFirebaseUrl(url);
+        // console.log(basefileName);
+        // const fullHDfileName = basefileName.split(".")[0] + "_1920x1080.jpeg";
+        // console.log(fullHDfileName);
+        // setImagePath(fullHDfileName);
+      });
+    }
+  );
 }

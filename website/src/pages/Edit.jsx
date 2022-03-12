@@ -6,7 +6,6 @@ import InputDropdown from "../components/Editor/InputComponents/InputDropdown";
 import { fetchNewsData } from "../components/News/PostCardPreview";
 import {
   fetchCachedData,
-  getFileNameFromFirebaseUrl,
   removeSearchParam,
 } from "../misc";
 import { updateMetadata } from "firebase/storage";

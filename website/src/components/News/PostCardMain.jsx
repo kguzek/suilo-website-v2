@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "react-feather";
-import { formatDate, getURLfromFileName } from "../../misc";
+import { DEFAULT_IMAGE, formatDate, getURLfromFileName } from "../../misc";
 
 const PostCardMain = ({ data }) => {
-  const [photo, setphoto] = useState(data.photo);
+  const [photo, setPhoto] = useState(DEFAULT_IMAGE);
   const date = formatDate(data.date);
   // const modified = formatDate(data.modified, true);
   const textShort = data.text;
+
   useEffect(() => {
-    getURLfromFileName(data.photo, "400x300", setphoto)
+    getURLfromFileName(data.photo, "400x300", setPhoto)
   }, []);
+
   //group-hover:ring-[.2rem] ring-primaryDark/30 transition-all duration-300
   return (
     <div className="group w-full inline-flex flex-row align-top relative justify-start">

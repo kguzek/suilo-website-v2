@@ -101,10 +101,6 @@ const CalendarPreview = ({
     fetchCachedData(cacheName, fetchURL, fetchArgs);
   }, [updateCache, year, month]);
 
-  useEffect(() => {
-    console.log("Calendar events:", events);
-  }, [events]);
-
   /** Callback function to be called when the calendar data is fetched. */
   const setData = (data) => {
     setEvents(data.events);

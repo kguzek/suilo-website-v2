@@ -350,8 +350,6 @@ const CustomCalendar = ({
       String(daysInMonth[daysInMonth.length - 1]).substring(0, 3)
     );
 
-    console.log(daysBefore, daysAfter)
-
     let renderArray = [];
 
     for (let i = 0; i < daysBefore; i++) {

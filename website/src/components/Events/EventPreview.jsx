@@ -14,6 +14,7 @@ import {
   DEFAULT_IMAGE,
   formatDate,
   formatTime,
+  getURLfromFileName,
   setErrorMessage,
 } from "../../misc";
 import { LoadingButton } from "../../pages/Edit";
@@ -41,13 +42,17 @@ const EventPreview = ({ event, isNextEvent = false }) => {
   const [participance, setParticipance] = useState(false);
   const [canParChange, setCanParChange] = useState(true);
   const [canNotChange, setCanNotChange] = useState(true);
-  const [currentUserID, setCurrentUserID] = useState(undefined);
+  const [photo, setPhoto] = useState(DEFAULT_IMAGE);
 
   const [clickedParticipate, setClickedParticipate] = useState(false);
   const [popupParticipance, setPopupParticipance] = useState(false);
   const [popupNotification, setPopupNotification] = useState(false);
   const [popupError, setPopupError] = useState(false);
   const [errorCode, setErrorCode] = useState(null);
+
+  useEffect(() => {
+    getURLfromFileName(event.photo, "1920x1080", setPhoto);
+  }, []);
 
   useEffect(() => {
     if (!popupNotification) {
@@ -63,11 +68,10 @@ const EventPreview = ({ event, isNextEvent = false }) => {
 
   useEffect(() => {
     if (!auth.currentUser || !event) return;
-    const _uid = auth.currentUser.providerData?.[0]?.uid;
-    setCurrentUserID(_uid);
-    setParticipance(event.participants.includes(_uid));
+    const uid = auth.currentUser.providerData?.[0]?.uid;
+    setParticipance(event.participants.includes(uid));
   }, [auth.currentUser, event]);
-  
+
   // Display "<20" if there are fewer than 20 event participants
   const numParticipants =
     (event.participants.length < 20 ? "<20" : event.participants.length) +
@@ -149,7 +153,7 @@ const EventPreview = ({ event, isNextEvent = false }) => {
         <img
           className="bg-gray-200/75 max-h-96 aspect-[3/2] w-full object-cover rounded-xl sm:rounded-2xl drop-shadow-4xl"
           alt={event.photoAlt}
-          src={event.photo ?? DEFAULT_IMAGE}
+          src={photo}
         />
         <div className="absolute top-0 sm:px-6 sm:py-[.35rem] left-0 px-5 rounded-br-4xl sm:rounded-tl-[.95rem] rounded-tl-[.7rem] py-1 bg-gradient-to-br  from-primary to-secondary">
           <p className="font-medium text-sm text-white tracking-tigh pr-1 sm:text-base">
