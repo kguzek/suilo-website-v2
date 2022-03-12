@@ -189,7 +189,7 @@ export const CalendarEdit = ({
         isFirst={false}
       />
       <InputBox
-        maxLength={60}
+        maxLength={64}
         name="event-name"
         placeholder="Nazwa wydarzenia"
         value={name}

@@ -103,7 +103,7 @@ function LoginScreen() {
               ) : (
                 <div
                   className="login-google-btn"
-                  onClick={() => _handleLogin()}
+                  onClick={_handleLogin}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -192,7 +192,7 @@ function LoginScreen() {
               <p className="disabled-p" style={{ padding: "7px" }}>
                 lub
               </p>
-              <div className="login-google-btn" onClick={() => _handleLogin()}>
+              <div className="login-google-btn" onClick={_handleLogin}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="ionicon"

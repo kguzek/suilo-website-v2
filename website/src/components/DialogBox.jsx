@@ -85,7 +85,7 @@ const DialogBox = ({
           <div className="inline-flex w-full flex-row-reverse">
             {buttonOneLabel && (
               <div
-                onClick={() => _onClickOne()}
+                onClick={_onClickOne}
                 className="cursor-pointer text-white bg-primary hover:bg-primaryDark py-[.4rem] ml-2 mb-[.1rem] transition-all duration-150 px-4 font-normal mt-3 rounded-md text-sm"
               >
                 {buttonOneLabel}
@@ -93,7 +93,7 @@ const DialogBox = ({
             )}
             {buttonTwoLabel && (
               <div
-                onClick={() => _onCLickTwo()}
+                onClick={_onCLickTwo}
                 className="cursor-pointer py-[.4rem] px-4 rounded-md mb-[.1rem] text-red-600 transition-all duration-150 bg-gray-200/0 hover:bg-gray-200/50 font-normal  mt-3 text-sm"
               >
                 {buttonTwoLabel}

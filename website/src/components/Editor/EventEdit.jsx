@@ -166,7 +166,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
         type="DIALOG"
         buttonOneLabel="Kontynuuj edycje"
         buttonTwoLabel="Usuń"
-        buttonTwoCallback={() => _handleDelete()}
+        buttonTwoCallback={_handleDelete}
         isVisible={popupDelete}
         setVisible={setPopupDelete}
       />
@@ -189,7 +189,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="event-name"
         placeholder="Tytuł"
-        maxLength={60}
+        maxLength={64}
         value={name}
         onChange={setName}
       />
@@ -245,7 +245,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="location"
         placeholder="Miejsce wydarzenia"
-        maxLength={60}
+        maxLength={64}
         value={location}
         onChange={setLocation}
       />

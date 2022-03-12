@@ -154,7 +154,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         type="DIALOG"
         buttonOneLabel="Kontynuuj edycje"
         buttonTwoLabel="Usuń"
-        buttonTwoCallback={() => _handleDelete()}
+        buttonTwoCallback={_handleDelete}
         isVisible={popupDelete}
         setVisible={setPopupDelete}
       />
@@ -177,7 +177,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="post-title"
         placeholder="Tytuł"
-        maxLength={60}
+        maxLength={64}
         value={title}
         onChange={setTitle}
       />
@@ -192,7 +192,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="post-author"
         placeholder="Autor"
-        maxLength={60}
+        maxLength={64}
         value={author}
         disabled={true}
       />
@@ -205,7 +205,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="image-author"
         placeholder="Autor zdjęcia"
-        maxLength={60}
+        maxLength={64}
         value={imageAuthor}
         onChange={setImageAuthor}
         required={imageURL !== "" ? true : false}
@@ -213,7 +213,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="image-alt-text"
         placeholder="Tekst alternatywny do zdjęcia"
-        maxLength={60}
+        maxLength={64}
         value={imageAltText}
         onChange={setImageAltText}
         required={imageURL !== "" ? true : false}

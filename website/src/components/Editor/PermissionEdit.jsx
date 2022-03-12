@@ -1,21 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, Trash, Edit3 } from "react-feather";
 import InputBox from "./InputComponents/InputBox";
 import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
-import { LoadingButton } from "../LoadingScreen";
+import LoadingScreen, { LoadingButton } from "../LoadingScreen";
+import { NO_SELECT_STYLE } from "./InputComponents/InputPhoto";
 
-export const PermissionEdit = ({}) => {
+export const PermissionEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [user, setUser] = useState("");
-  const [userPermissions, setUserPermissions] = useState({
-    news: false,
-    events: false,
-    calendar: false,
-    linkShortener: false,
-    permissions: false,
-    isAdmin: false,
-  });
+  const [canEdit, setCanEdit] = useState(new Set());
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
@@ -24,6 +18,32 @@ export const PermissionEdit = ({}) => {
   const [popupError, setPopupError] = useState(false);
   const [errorCode, setErrorCode] = useState(null);
 
+  useEffect(() => {
+    if (!loaded) {
+      return;
+    }
+    // Get the currently selected post
+    const post = (data ?? [])
+      .filter((post) => post.id === currentlyActive)
+      .shift();
+    if (!post) {
+      // No currently selected post
+      return void _resetAllInputs();
+    }
+    setCanEdit(new Set());
+  }, [currentlyActive]);
+
+  // Display loading screen if news data hasn't been retrieved yet
+  if (!loaded && 0) {
+    return <LoadingScreen />;
+  }
+
+  // Bitwise AND to ensure both functions are called
+  const refresh = () => refetchData() & _resetAllInputs();
+
+  function _resetAllInputs() {
+    setCurrentlyActive("_default");
+  }
   const _handleSubmit = (e) => {
     e.preventDefault();
     setClickedSubmit(true);
@@ -33,6 +53,17 @@ export const PermissionEdit = ({}) => {
   const _handleDelete = () => {
     setPopupDelete(true);
   };
+  
+  function onChange(e) {
+    const permission = e.target.name;
+    if (e.target.checked) {
+      setCanEdit(new Set([...canEdit, permission]));
+    } else {
+      const _temp = new Set(canEdit);
+      _temp.delete(permission);
+      setCanEdit(_temp);
+    }
+  }
 
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
@@ -71,84 +102,75 @@ export const PermissionEdit = ({}) => {
       />
       <InputBox
         name="email"
-        placeholder="Mail użytkownika"
+        placeholder="Adres mailowy użytkownika"
         value={user}
         onChange={setUser}
+        maxLength={128}
       />
       <div>
-        <input
-          type="checkbox"
-          id="A1"
-          name="news"
-          value={userPermissions.news}
-          onChange={(e) =>
-            setUserPermissions({ ...userPermissions, news: e.target.value })
-          }
-        />
-        <label htmlFor="A1">Edycja aktualności</label>
+        <label style={NO_SELECT_STYLE}>
+          <input
+            type="checkbox"
+            name="news"
+            className="mr-2"
+            value={canEdit.has("news")}
+            onChange={onChange}
+          />
+          Edycja aktualności
+        </label>
       </div>
       <div>
-        <input
-          type="checkbox"
-          id="E1"
-          name="events"
-          value={userPermissions.events}
-          onChange={(e) =>
-            setUserPermissions({ ...userPermissions, events: e.target.value })
-          }
-        />
-        <label htmlFor="E1">Edycja wydarzeń</label>
+        <label style={NO_SELECT_STYLE}>
+          <input
+            type="checkbox"
+            id="E1"
+            name="events"
+            className="mr-2"
+            value={canEdit.has("events")}
+            onChange={onChange}
+          />
+          Edycja wydarzeń
+        </label>
       </div>
       <div>
-        <input
-          type="checkbox"
-          id="C1"
-          name="calendar"
-          value={userPermissions.calendar}
-          onChange={(e) =>
-            setUserPermissions({ ...userPermissions, calendar: e.target.value })
-          }
-        />
-        <label htmlFor="C1">Edycja kalendarza</label>
+        <label style={NO_SELECT_STYLE}>
+          <input
+            type="checkbox"
+            id="C1"
+            name="calendar"
+            className="mr-2"
+            value={canEdit.has("calendar")}
+            onChange={onChange}
+          />
+          Edycja kalendarza
+        </label>
       </div>
       <div>
-        <input
-          type="checkbox"
-          id="L1"
-          name="link-shortener"
-          value={userPermissions.linkShortener}
-          onChange={(e) =>
-            setUserPermissions({
-              ...userPermissions,
-              linkShortener: e.target.value,
-            })
-          }
-        />
-        <label htmlFor="L1">Skracanie linków</label>
+        <label style={NO_SELECT_STYLE}>
+          <input
+            type="checkbox"
+            id="L1"
+            name="links"
+            className="mr-2"
+            value={canEdit.has("links")}
+            onChange={onChange}
+          />
+          Skracanie linków
+        </label>
       </div>
       <div>
-        <input
-          type="checkbox"
-          id="P1"
-          name="permissions"
-          value={userPermissions.permissions}
-          onChange={(e) =>
-            setUserPermissions({
-              ...userPermissions,
-              permissions: e.target.value,
-            })
-          }
-        />
-        <label htmlFor="P1">Strona uprawnień</label>
+        <label style={NO_SELECT_STYLE}>
+          <input
+            type="checkbox"
+            id="P1"
+            name="permissions"
+            className="mr-2"
+            value={canEdit.has("permissions")}
+            onChange={onChange}
+          />
+          Strona uprawnień
+        </label>
       </div>
-      {/* <InputBox
-              maxLength={32}
-              name="short-link"
-              placeholder="Skrócony kod linku"
-              value={shortLink}
-              onChange={setShortLink}
-            /> */}
-
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
@@ -157,7 +179,7 @@ export const PermissionEdit = ({}) => {
             <button
               type="button"
               className="delete-btn"
-              onClick={() => _handleDelete()}
+              onClick={_handleDelete}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń link</p>
@@ -173,7 +195,9 @@ export const PermissionEdit = ({}) => {
               <Plus color="#FFFFFF" size={24} />
             )}
             <p>
-              {currentlyActive !== "_default" ? "edytuj link" : "dodaj link"}
+              {currentlyActive !== "_default"
+                ? "zaktualizuj użytkownika"
+                : "dodaj użytkownika"}
             </p>
           </button>
         )}

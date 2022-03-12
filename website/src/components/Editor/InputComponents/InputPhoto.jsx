@@ -11,7 +11,7 @@ const OPTIONS = [
   "Brak zdjęcia",
 ];
 
-const NO_SELECT_STYLE = {
+export const NO_SELECT_STYLE = {
   MozUserSelect: "none",
   WebkitUserSelect: "none",
   msUserSelect: "none",

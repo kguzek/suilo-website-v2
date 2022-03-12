@@ -157,7 +157,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
         <div className={`my-auto ${page === "contact" ? "-mr-[.3rem]" : ""} `}>
           <button
             className="text-sm font-medium text-primary  bg-white transition-all hover:drop-shadow-4xl drop-shadow-3xl hover:ring-primaryDark hover:ring-4 rounded-[.6rem] h-fit my-auto px-[1.4rem] py-[.675rem] -ml-7"
-            onClick={() => _handleLogin()}
+            onClick={_handleLogin}
           >
             {userInfo ? "Wyloguj się" : "Zaloguj się"}
           </button>

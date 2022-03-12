@@ -158,7 +158,7 @@ const Home = ({ setPage }) => {
         </div>
         <div
           className="more animate-bounce -rotate-90 duration-[5000]"
-          onClick={() => _scrollDown()}
+          onClick={_scrollDown}
         >
           <div className="-rotate-90 origin-bottom-left">
             <div className="more1" />
