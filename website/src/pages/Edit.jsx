@@ -14,6 +14,7 @@ import { EventEdit } from "../components/Editor/EventEdit";
 import { CalendarEdit } from "../components/Editor/CalendarEdit";
 import { LinkEdit } from "../components/Editor/LinkEdit";
 import { PermissionEdit } from "../components/Editor/PermissionEdit";
+import { fetchWithToken } from "../firebase";
 
 const PAGES = {
   news: "Aktualności",
@@ -39,6 +40,9 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
   const [loadedCalendar, setLoadedCalendar] = useState(false);
   const [loadedLinks, setLoadedLinks] = useState(false);
 
+  const [photos,setPhotos] = useState([]);
+  const [loadedPhotos,setLoadedPhotos] = useState(false);
+
   // Calendar fetch options
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
@@ -53,6 +57,17 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
       allItems: true,
     });
   }
+  function _fetchPhotos() {
+    setLoadedPhotos(false); //not sure if it is important to wait for it
+    fetchWithToken("/storage").then(response=>{
+      response.json().then(data=>{
+        setLoadedPhotos(true);
+        setPhotos(data.photos);
+      })
+
+    })
+  }
+
 
   /** Fetch the events data from the cache or API. */
   function _fetchEvents(forceUpdate = false) {
@@ -113,6 +128,7 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
       _fetchEvents,
       _fetchCalendar,
       _fetchLinks,
+      _fetchPhotos
     ]) {
       fetchFunc(updateCache);
     }
@@ -186,14 +202,16 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction }) {
           {editPicker === 0 ? (
             <PostEdit
               data={newsData}
-              loaded={loadedNews}
+              loaded={loadedNews&&loadedPhotos}
               refetchData={() => _fetchNews(true)}
+              photos = {photos}
             />
           ) : editPicker === 1 ? (
             <EventEdit
               data={eventsData}
-              loaded={loadedEvents}
+              loaded={loadedEvents&&loadedPhotos}
               refetchData={() => _fetchEvents(true)}
+              photos = {photos}
             />
           ) : editPicker === 2 ? (
             <CalendarEdit

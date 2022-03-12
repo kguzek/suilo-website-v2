@@ -176,7 +176,7 @@ export function fetchCachedData(
  *  - 800x600
  *  - 600x400
  *  - 400x300
- *  - 200x2000
+ *  - 200x200
  *  - 100x100 */
 export function getURLfromFileName(name, size, callback) {
   // Use default image if the image name is not provided
@@ -239,3 +239,4 @@ export function handlePhotoUpdate(file, setImageURL) {
     }
   );
 }
+
