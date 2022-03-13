@@ -97,8 +97,13 @@ function Events({ setPage, reload, setReload }) {
     const _primEvents = [];
     for (const event of rawPrimEvents) {
       // date comparison for 'event' objects to check the next event
-      if (new Date(event.date) >= now) {
-        setNextEvent(event);
+      const eventDate = new Date(event.date);
+      if (eventDate >= now) {
+        // This event is in the future
+        if (!nextEvent || new Date(nextEvent.date) > eventDate) {
+          // The next event hasn't been defined yet or is after this event
+          setNextEvent(event);
+        }
       }
       const [year, month, _day] = event.date;
       if (year !== calendarYear || month !== calendarMonth) {
@@ -149,7 +154,9 @@ function Events({ setPage, reload, setReload }) {
         <EventPreview event={nextEvent} isNextEvent={true} />
       ) : (
         // TODO: Render something better if there are no future events
-        <p>Nie ma w najbliższym czasie żadnych wydarzeń.</p>
+        <div className="grid lg:mb-14">
+          <p className="mx-auto">Nie ma w najbliższym czasie żadnych wydarzeń.</p>
+        </div>
       )}
       <CalendarPreview
         events={[...primEvents, ...secEvents]}
