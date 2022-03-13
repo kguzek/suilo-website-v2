@@ -6,6 +6,7 @@ import EventPreview from "../components/Events/EventPreview";
 import { fetchCachedData, removeSearchParam } from "../misc";
 import { serialiseDateArray } from "../common";
 import LoadingScreen from "../components/LoadingScreen";
+import { DEBUG_MODE } from "../firebase";
 
 function Events({ setPage, reload, setReload }) {
   const [loaded, setLoaded] = useState(false); // events loaded status
@@ -99,12 +100,14 @@ function Events({ setPage, reload, setReload }) {
   function updateSelectedEvent({ day, month, year, eventIDs }) {
     for (const event of eventsData?.contents ?? []) {
       if (eventIDs.includes(event.id)) {
-        console.log("Setting currently selected event to:", event.title);
-        setSelectedEvent(event);
-        return;
+        // console.log("Setting currently selected event to:", event.title);
+        return void setSelectedEvent(event);
       }
     }
-    console.log("No event on", serialiseDateArray([year, month, day]));
+    DEBUG_MODE &&
+      console.log("No event on", serialiseDateArray([year, month, day]));
+    // Uncomment below to hide event preview when user clicks an empty day in calendar
+    // setSelectedEvent(undefined);
   }
 
   return (

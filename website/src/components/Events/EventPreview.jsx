@@ -57,7 +57,7 @@ const EventPreview = ({ event, isNextEvent = false }) => {
 
   useEffect(() => {
     getURLfromFileName(event.photo, "1920x1080", setPhoto);
-  }, []);
+  }, [event]);
 
   useEffect(() => {
     if (!popupNotification) {

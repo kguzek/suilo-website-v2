@@ -2,8 +2,7 @@
 
 /** Custom method definition for replacing all instances of a substring within a string instance. */
 String.prototype.replaceAll = function replaceAll(search, replacement) {
-  var target = this;
-  return target.split(search).join(replacement);
+  return this.split(search).join(replacement);
 };
 
 /** Return an array consisting of the date's year, month (one-padded) and day of the month.
@@ -19,7 +18,7 @@ export function dateToArray(date) {
 /** Return the array's elements as a string separated by the '-' character. */
 export function serialiseDateArray(dateArray = [], nextMidnight = false) {
   // This formats the date as yyyy-m-d
-  const serialised = dateArray.toString().replaceAll(",", "-");
+  const serialised = dateArray.join("-");
   // Convert the date so it is always at exactly midnight
   const date = new Date(serialised);
   const userTimezone = -date.getTimezoneOffset();

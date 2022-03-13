@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "react-feather";
 
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
 const daysOfWeek = [
   {
     short: "Pon",
@@ -114,14 +116,22 @@ const CalendarCell = ({
   currentMonth,
   changeMonth,
 }) => {
-  const beginningOfTheWeek = String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Mon" || idx === 0 ? true : false;
-  const endOfTheWeek = String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun" || idx === length - 1 ? true : false;
+  const isSunday = daysInMonth[idx - daysBefore]?.getDay() === 0;
+  const isMonday = daysInMonth[idx - daysBefore]?.getDay() === 1;
+  const isSaturday = daysInMonth[idx - daysBefore]?.getDay() === 6;
+  // const beginningOfTheWeek = isMonday || idx === 0;
+  const endOfTheWeek = isSunday || idx === length - 1;
   const newPrimEvents = [];
   const newSecEvents = [];
   const eventIDs = [];
   const d = new Date();
-  const isToday = (idx - daysBefore + 1 === d.getDate() && currentMonth === d.getMonth()) ? true : false;
-  let title = "";
+  const isToday =
+    idx - daysBefore + 1 === d.getDate() && currentMonth === d.getMonth()
+      ? true
+      : false;
+
+  const primTitles = [];
+  const secTitles = [];
 
   events.forEach((el, _i) => {
     // Ensure the event isn't past the max for this month
@@ -130,8 +140,10 @@ const CalendarCell = ({
     if (day === idx + 1 - daysBefore) {
       if (el.renderType === "PRIMARY") {
         newPrimEvents.push(el);
+        primTitles.push(el.title);
       } else if (el.renderType === "SECONDARY") {
         newSecEvents.push(el);
+        secTitles.push(el.title);
       } else {
         console.log("Invalid event render type:", el);
       }
@@ -139,11 +151,6 @@ const CalendarCell = ({
       eventIDs.push(el.id);
     }
   });
-  // make one title string for date
-  newPrimEvents.forEach(
-    (el, i) => (title = (title.length !== 0 ? "\n" : "") + title + el.title)
-  );
-  newSecEvents.forEach((el, i) => (title = title + "\n" + el.title));
 
   return (
     <div
@@ -151,40 +158,38 @@ const CalendarCell = ({
         return type === "_BEFORE_"
           ? changeMonth("_PREV_")
           : type === "_AFTER_"
-            ? changeMonth("_NEXT_")
-            : onPress(idx - daysBefore + 1, eventIDs);
+          ? changeMonth("_NEXT_")
+          : onPress(idx - daysBefore + 1, eventIDs);
       }}
-      title={title}
-      className={`
-                w-full relative inline-flex justify-center font-medium align-middle aspect-square
-                ${isToday
+      title={[...primTitles, ...secTitles].join("\n")}
+      className={`w-full relative inline-flex justify-center font-medium align-middle aspect-square ${
+        isToday
           ? "bg-primary/20 hover:bg-primaryDark/30"
           : "hover:bg-gray-200/75"
-        }
-                 transition duration-[75ms] border-gray-200/70 
-                ${endOfTheWeek ? "border-r-[0px]" : "border-r-[1px]"} ${idx < 7 ? "border-t-white" : "border-t-gray-200/70"
-        } 
-                border-t-[1px] group select-none ${newPrimEvents[0] && "cursor-pointer"
-        }
-                text-[.95rem] sm:text-base lg:text-lg
-            `}
+      } transition duration-[75ms] border-gray-200/70 ${
+        endOfTheWeek ? "border-r-[0px]" : "border-r-[1px]"
+      } ${
+        idx < 7 ? "border-t-white" : "border-t-gray-200/70"
+      } border-t-[1px] group select-none ${
+        newPrimEvents[0] && "cursor-pointer"
+      } text-[.95rem] sm:text-base lg:text-lg`}
     >
       {newPrimEvents[0] && (
         <>
           <div
-            style={{ animationDelay: String(idx * 35) + "ms" }}
-            className={`m-auto animate-slow-ping origin-bottom -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full 
-                    bg-gradient-to-br ${!newPrimEvents[0].type
-                ? "from-primary to-secondary"
-                : "from-[#CC00FF] to-[#FF0000]"
-              }`}
+            style={{ animationDelay: `${idx * 35}ms` }}
+            className={`m-auto animate-slow-ping origin-bottom -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full bg-gradient-to-br ${
+              newPrimEvents[0].type
+                ? "from-[#CC00FF] to-[#FF0000]"
+                : "from-primary to-secondary"
+            }`}
           />
           <div
-            className={`m-auto shadow-md -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full 
-                    bg-gradient-to-br ${!newPrimEvents[0].type
-                ? "from-primary to-secondary"
-                : "from-[#CC00FF] to-[#FF0000]"
-              }`}
+            className={`m-auto shadow-md -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full bg-gradient-to-br ${
+              newPrimEvents[0].type
+                ? "from-[#CC00FF] to-[#FF0000]"
+                : "from-primary to-secondary"
+            }`}
           />
         </>
       )}
@@ -194,86 +199,42 @@ const CalendarCell = ({
         </p>
       ) : type === "_CURRENT_" ? (
         <p
-          className={`m-auto text-center z-10 ${newPrimEvents[0] !== undefined
-            ? "text-white"
-            : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sun"
+          className={`m-auto text-center z-10 ${
+            newPrimEvents.length
+              ? "text-white"
+              : isSunday
               ? "text-[#FF1818]"
-              : String(daysInMonth[idx - daysBefore]).substring(0, 3) === "Sat"
-                ? "text-text4"
-                : "text-text2"
-            }`}
+              : isSaturday
+              ? "text-text7"
+              : "text-text5"
+          }`}
         >
           {idx + 1 - daysBefore}
         </p>
-      ) : type === "_AFTER_" ? (
-        <p className="m-auto text-center text-slate-300">
-          {idx + 1 - (daysBefore + daysCurrent)}
-        </p>
-      ) : null}
-      {newSecEvents[0] && (
-        <div className="absolute top-px right-px flex flex-row justify-end py-px">
-          {newSecEvents[0] && (
-            <div className="mr-[2px] z-20 ">
-              <div
-                className={`w-2 h-2 rounded-full absolute animate-slow-ping `}
-                style={{
-                  backgroundColor: baseColors[newSecEvents[0].type],
-                  animationDelay: String(idx * 50) + "ms",
-                }}
-              />
-              <div
-                className={`w-2 h-2 rounded-full `}
-                style={{ backgroundColor: baseColors[newSecEvents[0].type] }}
-              />
-            </div>
-          )}
-          {newSecEvents[1] && (
-            <div className="mr-[2px] z-20">
-              <div
-                className={`w-2 h-2 rounded-full absolute animate-slow-ping `}
-                style={{
-                  backgroundColor: baseColors[newSecEvents[1].type],
-                  animationDelay: String(idx * 50 + 25) + "ms",
-                }}
-              />
-              <div
-                className={`w-2 h-2 rounded-full `}
-                style={{ backgroundColor: baseColors[newSecEvents[1].type] }}
-              />
-            </div>
-          )}
-          {newSecEvents[2] && (
-            <div className="mr-[2px] z-20">
-              <div
-                className={`w-2 h-2 rounded-full absolute animate-slow-ping `}
-                style={{
-                  backgroundColor: baseColors[newSecEvents[2].type],
-                  animationDelay: String(idx * 50 + 50) + "ms",
-                }}
-              />
-              <div
-                className={`w-2 h-2 rounded-full `}
-                style={{ backgroundColor: baseColors[newSecEvents[2].type] }}
-              />
-            </div>
-          )}
-          {newSecEvents[3] && (
-            <div className="mr-[2px] z-20">
-              <div
-                className={`w-2 h-2 rounded-full absolute animate-slow-ping `}
-                style={{
-                  backgroundColor: baseColors[newSecEvents[3].type],
-                  animationDelay: String(idx * 50 + 75) + "ms",
-                }}
-              />
-              <div
-                className={`w-2 h-2 rounded-full `}
-                style={{ backgroundColor: baseColors[newSecEvents[3].type] }}
-              />
-            </div>
-          )}
-        </div>
+      ) : (
+        type === "_AFTER_" && (
+          <p className="m-auto text-center text-slate-300">
+            {idx + 1 - (daysBefore + daysCurrent)}
+          </p>
+        )
       )}
+      <div className="absolute top-px right-px flex flex-row justify-end py-px">
+        {newSecEvents.map((secEvent, eventIdx) => (
+          <div key={eventIdx} className="mr-[2px] z-20 ">
+            <div
+              className="w-2 h-2 rounded-full absolute animate-slow-ping"
+              style={{
+                backgroundColor: baseColors[secEvent.type],
+                animationDelay: `${idx * 50 + eventIdx * 25}ms`,
+              }}
+            />
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: baseColors[secEvent.type] }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -329,7 +290,7 @@ const CustomCalendar = ({
   const _generateHeader = () => {
     return daysOfWeek.map((el, i) => (
       <div
-        key={String(el.long) + "_" + String(i)}
+        key={`${el.long}_${i}`}
         className="col-span-1 inline-flex justify-center align-bottom"
       >
         <p className="m-auto text-text3 font-base text-xs -mt-1 -mb-px">
@@ -340,25 +301,21 @@ const CustomCalendar = ({
   };
 
   const _generateDay = () => {
-    let daysBefore;
-    let daysAfter;
+    // Day of the week of the first day of the month
+    const daysBefore = (daysInMonth[0]?.getDay() + 6) % 7;
+    // 6 - day of the week of the last day of the month
+    const daysAfter = (7 - daysInMonth.at(-1)?.getDay()) % 7;
 
-    daysBefore = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(
-      String(daysInMonth[0]).substring(0, 3)
-    );
-    daysAfter = 6 - ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(
-      String(daysInMonth[daysInMonth.length - 1]).substring(0, 3)
-    );
+    const renderArray = [];
 
-    let renderArray = [];
-
-    for (let i = 0; i < daysBefore; i++) {
+    let i;
+    for (i = 0; i < daysBefore; i++) {
       renderArray.push("_BEFORE_");
     }
-    for (let i = 0; i < daysInMonth.length; i++) {
+    for (const _ of daysInMonth) {
       renderArray.push("_CURRENT_");
     }
-    for (let i = 0; i < daysAfter; i++) {
+    for (i = 0; i < daysAfter; i++) {
       renderArray.push("_AFTER_");
     }
 
