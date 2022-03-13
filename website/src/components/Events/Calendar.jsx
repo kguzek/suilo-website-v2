@@ -1,58 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchCachedData } from "../../misc";
-import LoadingScreen from "../LoadingScreen";
 import CustomCalendar from "./CustomCalendar";
-
-const testData = [
-  {
-    id: "P7NyRsWsN5Y4iD68NkYF",
-    startDate: [2022, 3, 17],
-    endDate: [2022, 3, 17],
-    renderType: "PRIMARY",
-    type: 1,
-    title: "Ess",
-  },
-  {
-    id: "P7NyRsWsN5Y4iD68NkYF",
-    startDate: [2022, 3, 17],
-    endDate: [2022, 3, 17],
-    renderType: "SECONDARY",
-    type: 4,
-    title: "Idkdfsfd",
-  },
-  {
-    id: "P7NyRsWsN5Y4iD68NkYF",
-    startDate: [2022, 3, 17],
-    endDate: [2022, 3, 17],
-    renderType: "SECONDARY",
-    type: 3,
-    title: "Ferie Zimowe 2022 (Śląsk)",
-  },
-  {
-    id: "P7NyRsWsN5Y4iD68NkYF",
-    startDate: [2022, 3, 18],
-    endDate: [2022, 3, 18],
-    renderType: "SECONDARY",
-    type: 2,
-    title: "Idk teścik",
-  },
-  {
-    id: "P7NyRsWsN5Y4iD68NkYF",
-    startDate: [2022, 3, 8],
-    endDate: [2022, 3, 8],
-    renderType: "PRIMARY",
-    type: 0,
-    title: "Wybory do młodzieżowej rady miasta",
-  },
-  {
-    id: "P7NyRsWsN5Y4iD68NkYF",
-    startDate: [2022, 3, 8],
-    endDate: [2022, 3, 8],
-    renderType: "SECONDARY",
-    type: 5,
-    title: "Dzień kobiet",
-  },
-];
 
 const legendColours = [
   { top: "#FFA600", bottom: "#FFC100" },
@@ -75,41 +23,11 @@ export const eventSubtypes = [
 ];
 
 const CalendarPreview = ({
-  data,
-  updateCache,
+  events,
   onCalendarClick,
   onMonthChange,
   onYearChange,
-  year,
-  month,
 }) => {
-  const [loaded, setLoaded] = useState(false);
-  const [events, setEvents] = useState([]);
-
-  useEffect(() => {
-    if (year === undefined || month === undefined) return;
-    const fetchArgs = {
-      setData,
-      setLoaded,
-      updateCache,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
-    };
-    const fetchURL = `/calendar/${year}/${month}/`;
-    const cacheName = `calendar_${year}_${month}`;
-
-    fetchCachedData(cacheName, fetchURL, fetchArgs);
-  }, [updateCache, year, month]);
-
-  /** Callback function to be called when the calendar data is fetched. */
-  const setData = (data) => {
-    setEvents(data.events);
-  };
-
-  if (year && month && !loaded) {
-    return <LoadingScreen />
-  }
-
   const _generateLegend = () => {
     return eventSubtypes.map((el, i) => (
       <li
@@ -141,7 +59,7 @@ const CalendarPreview = ({
     <div className="flex flex-col md:flex-row mx-auto justify-center lg:justify-evenly align-middle my-6 md:my-8 w-full sm:w-10/12 md:w-full lg:w-10/12 xl:-translate-x-10">
       <div className="w-full mx-auto max-w-[27rem] lg:w-[27rem] lg:mx-auto mb-4">
         <CustomCalendar
-          events={[...events, ...data]}
+          events={events}
           onClickDate={onCalendarClick}
           onMonthChange={onMonthChange}
           onYearChange={onYearChange}

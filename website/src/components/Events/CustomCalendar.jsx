@@ -251,19 +251,22 @@ const CustomCalendar = ({
   const [currentYear, setCurrYear] = useState(d.getFullYear());
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [daysInPrevMonth, setDaysInPrevMonth] = useState([]);
-  const [daysInNextMonth, setDaysInNextMonth] = useState([]);
+  // const [daysInNextMonth, setDaysInNextMonth] = useState([]);
 
   useEffect(() => {
+    // Previous month
     if (currentMonth === 0) {
       setDaysInPrevMonth(getDaysInMonth(11, currentYear - 1));
-      setDaysInNextMonth(getDaysInMonth(currentMonth + 1, currentYear));
-    } else if (currentMonth === 11) {
-      setDaysInPrevMonth(getDaysInMonth(currentMonth - 1, currentYear));
-      setDaysInNextMonth(getDaysInMonth(0, currentYear + 1));
     } else {
       setDaysInPrevMonth(getDaysInMonth(currentMonth - 1, currentYear));
-      setDaysInNextMonth(getDaysInMonth(currentMonth + 1, currentYear));
     }
+    // // Next month
+    // if (currentMonth === 11) {
+    //   setDaysInNextMonth(getDaysInMonth(0, currentYear + 1));
+    // } else {
+    //   setDaysInNextMonth(getDaysInMonth(currentMonth + 1, currentYear));
+    // }
+
     setDaysInMonth(getDaysInMonth(currentMonth, currentYear));
     onMonthChange(currentMonth + 1);
   }, [currentMonth]);

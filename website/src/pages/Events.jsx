@@ -9,37 +9,62 @@ import LoadingScreen from "../components/LoadingScreen";
 import { DEBUG_MODE } from "../firebase";
 
 function Events({ setPage, reload, setReload }) {
-  const [loaded, setLoaded] = useState(false); // events loaded status
-  const [eventsData, setEventsData] = useState({ contents: [] });
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [updateCache, setUpdateCache] = useState(false);
-  const [nextEvent, setNextEvent] = useState(undefined);
-  const [selectedEvent, setSelectedEvent] = useState(undefined);
-  const [calendarEvents, setCalendarEvents] = useState([]);
-  const [allCalendarEvents, setAllCalendarEvents] = useState(null);
+  const [rawPrimEvents, setRawPrimEvents] = useState([]);
+  const [primEvents, setPrimEvents] = useState([]);
+  const [secEvents, setSecEvents] = useState([]);
+
+  const [loadedPrim, setLoadedPrim] = useState(false);
+  const [loadedSec, setLoadedSec] = useState(false);
+
   const [calendarMonth, setCalendarMonth] = useState(undefined);
   const [calendarYear, setCalendarYear] = useState(undefined);
-  const params = useParams();
 
-  function _populatePageContents(forceUpdateCache = false) {
+  const [nextEvent, setNextEvent] = useState(undefined);
+  const [selectedEvent, setSelectedEvent] = useState(undefined);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  /** Fetches the primary events from cache or API. */
+  function fetchPrimaryEvents(forceUpdateCache = false) {
     // set the data fetch arguments
     const fetchArgs = {
-      setData: setEventsData,
-      setLoaded,
+      setData: (data) => setRawPrimEvents(data.contents),
+      setLoaded: setLoadedPrim,
       updateCache: forceUpdateCache,
       onSuccessCallback: (data) =>
         data && !data.errorDescription ? data : null,
     };
     fetchCachedData("events", "/events", fetchArgs);
+    fetchSecondaryEvents(forceUpdateCache);
   }
+
+  /** Fetches the secondary events from cache or API. */
+  function fetchSecondaryEvents(forceUpdateCache = false) {
+    if (calendarYear === undefined || calendarMonth === undefined) return;
+    const fetchArgs = {
+      setData: (data) => setSecEvents(data.events),
+      setLoaded: setLoadedSec,
+      updateCache: forceUpdateCache,
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
+    };
+    const fetchURL = `/calendar/${calendarYear}/${calendarMonth}/`;
+    const cacheName = `calendar_${calendarYear}_${calendarMonth}`;
+
+    fetchCachedData(cacheName, fetchURL, fetchArgs);
+  }
+
+  useEffect(() => {
+    fetchSecondaryEvents();
+    processPrimaryEvents();
+  }, [calendarYear, calendarMonth]);
 
   useEffect(() => {
     setPage("events");
     // determines if the cache should be updated by checking the 'refresh' URL query parameter
-    const _frce = !!removeSearchParam(searchParams, setSearchParams, "refresh");
-    setUpdateCache(_frce);
-    _populatePageContents(_frce);
-  }, [params.postID]);
+    const force = !!removeSearchParam(searchParams, setSearchParams, "refresh");
+    fetchPrimaryEvents(force);
+  }, [searchParams]);
 
   useEffect(() => {
     if (!reload) {
@@ -47,32 +72,13 @@ function Events({ setPage, reload, setReload }) {
     }
     // The page content has updated on the server side; reload it
     setReload(false);
-    setLoaded(false);
-    _populatePageContents();
+    setLoadedPrim(false);
+    fetchPrimaryEvents();
   }, [reload]);
 
   useEffect(() => {
-    if (!eventsData?.contents) {
-      return;
-    }
-    const now = new Date();
-    const _calendarEvents = [];
-    for (const event of eventsData.contents) {
-      // date comparison for 'event' objects to check the next event
-      if (new Date(event.date) >= now) {
-        setNextEvent(event);
-      }
-      _calendarEvents.push({
-        id: event.id,
-        startDate: event.date,
-        endDate: event.date,
-        renderType: "PRIMARY",
-        type: event.type,
-        title: event.title,
-      });
-    }
-    setAllCalendarEvents(_calendarEvents);
-  }, [eventsData]);
+    processPrimaryEvents();
+  }, [rawPrimEvents]);
 
   useEffect(() => {
     if (!selectedEvent) return;
@@ -81,24 +87,38 @@ function Events({ setPage, reload, setReload }) {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [selectedEvent]);
 
-  useEffect(() => {
-    if (!allCalendarEvents) return;
-    // Update the calendar events for this month
-    setCalendarEvents(
-      allCalendarEvents.filter((event) => {
-        if (event.renderType === "SECONDARY") return true;
-        const [year, month, _day] = event.startDate;
-        return year === calendarYear && month === calendarMonth;
-      })
-    );
-  }, [allCalendarEvents, calendarMonth, calendarYear]);
-
-  if (!loaded) {
+  if (!loadedPrim || (calendarYear && calendarMonth && !loadedSec)) {
     return <LoadingScreen />;
   }
 
+  /** Filters out the primary events that are not this month and converts them into calendar format. */
+  function processPrimaryEvents() {
+    const now = new Date();
+    const _primEvents = [];
+    for (const event of rawPrimEvents) {
+      // date comparison for 'event' objects to check the next event
+      if (new Date(event.date) >= now) {
+        setNextEvent(event);
+      }
+      const [year, month, _day] = event.date;
+      if (year !== calendarYear || month !== calendarMonth) {
+        continue;
+      }
+      _primEvents.push({
+        id: event.id,
+        startDate: event.date,
+        endDate: event.date,
+        renderType: "PRIMARY",
+        type: event.type,
+        title: event.title,
+      });
+    }
+    setPrimEvents(_primEvents);
+  }
+
+  /** Updates the reference to the currently selected event. */
   function updateSelectedEvent({ day, month, year, eventIDs }) {
-    for (const event of eventsData?.contents ?? []) {
+    for (const event of rawPrimEvents) {
       if (eventIDs.includes(event.id)) {
         // console.log("Setting currently selected event to:", event.title);
         return void setSelectedEvent(event);
@@ -132,13 +152,10 @@ function Events({ setPage, reload, setReload }) {
         <p>Nie ma w najbliższym czasie żadnych wydarzeń.</p>
       )}
       <CalendarPreview
-        data={calendarEvents}
-        updateCache={updateCache}
+        events={[...primEvents, ...secEvents]}
         onCalendarClick={updateSelectedEvent}
         onMonthChange={setCalendarMonth}
         onYearChange={setCalendarYear}
-        year={calendarYear}
-        month={calendarMonth}
       />
       {selectedEvent && <EventPreview event={selectedEvent} />}
     </div>
