@@ -180,7 +180,16 @@ function App() {
             />
           }
         >
-          <Route index element={<Home setPage={setPage} />} />
+          <Route
+            index
+            element={
+              <Home
+                setPage={setPage}
+                reload={shouldRefresh}
+                setReload={setShouldRefresh}
+              />
+            }
+          />
           <Route
             path="aktualnosci"
             element={

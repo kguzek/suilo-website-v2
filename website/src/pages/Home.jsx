@@ -1,75 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import MetaTags from "react-meta-tags";
-import { useCookies } from "react-cookie";
 import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
 import PostCardPreview, {
   fetchNewsData,
 } from "../components/News/PostCardPreview";
 import SuPhoto from "../media/su-photo.jpg";
-import { formatDate } from "../misc";
-import { fetchWithToken } from "../firebase";
+import { fetchCachedData, formatDate } from "../misc";
 import LoadingScreen from "../components/LoadingScreen";
 
-const Home = ({ setPage }) => {
+const Home = ({ setPage, reload, setReload }) => {
   const { width } = useWindowDimensions();
   const HOMEPAGE_NEWS_POSTS = 5;
-  const [luckyNumbers, setLuckyNumbers] = useState(["...", "..."]);
-  const [loadedNews, setLoadedNews] = useState(false);
-  const [forDate, setForDate] = useState(formatDate());
   const [newsData, setNewsData] = useState([]);
-  const [cookies, setCookies] = useCookies(["lucky_numbers_cache"]);
+  const [numbersData, setNumbersData] = useState({});
+  const [loadedNews, setLoadedNews] = useState(false);
+  const [loadedNumbers, setLoadedNumbers] = useState(false);
 
+  /** Fetch the news data from cache or API. */
+  function fetchNews() {
+    setLoadedNews(false);
+    fetchNewsData({
+      setNewsData,
+      setLoaded: setLoadedNews,
+      maxItems: HOMEPAGE_NEWS_POSTS,
+    });
+  }
+
+  /** Fetch the lucky numbers data from cache or API. */
   function fetchLuckyNumbers() {
-    const cache = cookies.lucky_numbers_cache;
-    // check if there is a cache
-    if (cache) {
-      console.log("Found existing lucky numbers cache for:", cache.date);
-
-      // set the lucky numbers to the cached data, even if it's not from today
-      setLuckyNumbers(cache.luckyNumbers);
-      setForDate(cache.date);
-      if (cache.date === formatDate()) {
-        // don't fetch new data if the cache is from today
-        return;
-      }
-    }
-    console.log("Checking if there are updated lucky numbers...");
-    fetchWithToken("/luckyNumbers/v2/").then(
-      (res) => {
-        res.json().then((data) => {
-          if (!(res.ok && data)) {
-            console.log("Error retrieving lucky numbers data.", data);
-            if (luckyNumbers === ["...", "..."]) {
-              // set lucky numbers data to "?" if there is no previous cache
-              setLuckyNumbers(["?", "?"]);
-            }
-            return;
-          }
-          const newCache = {
-            date: formatDate(data.date),
-            luckyNumbers: data.luckyNumbers,
-            excludedClasses: data.excludedClasses,
-          };
-          if (JSON.stringify(cache) === JSON.stringify(newCache)) {
-            console.log(
-              "There are no new lucky numbers for today. Using cached values."
-            );
-            return;
-          }
-          console.log(
-            "Created cache for lucky numbers data.",
-            data.luckyNumbers
-          );
-          setLuckyNumbers(data.luckyNumbers);
-          setForDate(newCache.date);
-          setCookies("lucky_numbers_cache", newCache, { sameSite: "lax" });
-        });
-      },
-      (error) => {
-        console.log("Error retrieving lucky numbers data!", error);
-      }
-    );
+    setLoadedNumbers(false);
+    const fetchArgs = {
+      setData: setNumbersData,
+      setLoaded: setLoadedNumbers,
+      onSuccessCallback: (data) =>
+        data && !data.errorDescription ? data : null,
+    };
+    fetchCachedData("luckyNumbers", "/luckyNumbers/v2", fetchArgs);
   }
 
   const _getNoItems = () => {
@@ -82,18 +49,30 @@ const Home = ({ setPage }) => {
   useEffect(() => {
     setPage("home");
     fetchLuckyNumbers();
-    fetchNewsData({
-      setNewsData,
-      setLoaded: setLoadedNews,
-      maxItems: HOMEPAGE_NEWS_POSTS,
-    });
+    fetchNews();
   }, []);
+
+  useEffect(() => {
+    if (!reload) {
+      return;
+    }
+    // The page content has updated on the server side; reload it
+    setReload(false);
+    fetchNews();
+    fetchLuckyNumbers();
+  }, [reload]);
 
   const _scrollDown = () => {
     document
       .getElementById("home-2")
       .scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const forDate = formatDate(numbersData.date);
+  const luckyNumbers = loadedNumbers
+    ? numbersData.luckyNumbers
+    : ["...", "..."];
+
   return (
     <div className="flex w-11/12 xl:w-10/12 flex-col justify-center align-top">
       <MetaTags>
