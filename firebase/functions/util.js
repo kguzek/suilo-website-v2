@@ -198,11 +198,10 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
   const items = Math.max(parseInt(queryOptions.items ?? 25), 1);
 
   // don't limit the response length if the 'all' parameter is set to "true"
-  if (queryOptions.all === "true") {
-    var startIndex = 0;
-  } else {
+  let startIndex = 0;
+  if (queryOptions.all !== "true") {
     // will only get the documents after startIndex
-    var startIndex = items * (page - 1);
+    startIndex = items * (page - 1);
     docListQuery = docListQuery.offset(startIndex).limit(items);
   }
 

@@ -25,7 +25,7 @@ import {
 
 function App() {
   const [page, setPage] = useState(null);
-  const [loggedInUser, setLoggedInUser] = useState(undefined); // to integrate with actual login state, can be swapped to parent/outside variable passed into this child
+  const [loggedInUser, setLoggedInUser] = useState(undefined);
   const [isFooterVisible, setFooterVisible] = useState(true);
   const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
   const [checkForUpdates, setCheckForUpdates] = useState(false);

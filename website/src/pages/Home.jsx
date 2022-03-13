@@ -11,19 +11,20 @@ import LoadingScreen from "../components/LoadingScreen";
 
 const Home = ({ setPage, reload, setReload }) => {
   const { width } = useWindowDimensions();
-  const HOMEPAGE_NEWS_POSTS = 5;
   const [newsData, setNewsData] = useState([]);
   const [numbersData, setNumbersData] = useState({});
   const [loadedNews, setLoadedNews] = useState(false);
   const [loadedNumbers, setLoadedNumbers] = useState(false);
 
+  const newsItems = width > 1024 ? 5 : width > 768 ? 4 : width > 640 ? 3 : 2
+  
   /** Fetch the news data from cache or API. */
   function fetchNews() {
     setLoadedNews(false);
     fetchNewsData({
       setNewsData,
       setLoaded: setLoadedNews,
-      maxItems: HOMEPAGE_NEWS_POSTS,
+      maxItems: 5,
     });
   }
 
@@ -39,12 +40,12 @@ const Home = ({ setPage, reload, setReload }) => {
     fetchCachedData("luckyNumbers", "/luckyNumbers/v2", fetchArgs);
   }
 
-  const _getNoItems = () => {
-    if (width > 1024) return 5;
-    if (width > 768) return 4;
-    if (width > 640) return 3;
-    return 2;
-  };
+  // const _getNoItems = () => {
+  //   if (width > 1024) return 5;
+  //   if (width > 768) return 4;
+  //   if (width > 640) return 3;
+  //   return 2;
+  // };
 
   useEffect(() => {
     setPage("home");
@@ -156,7 +157,7 @@ const Home = ({ setPage, reload, setReload }) => {
           </div>
           <article
             className="w-full lg:pl-3 lg:m-auto"
-            title="Kim jest Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach"
+            title="O Samorządzie Uczniowskim 1 Liceum Ogólnokształcącego w Gliwicach"
           >
             <h2 className="text-text1 font-bold text-3xl xl:text-4xl pt-5 lg:pt-0">
               Nasza drużyna
@@ -281,7 +282,7 @@ const Home = ({ setPage, reload, setReload }) => {
             linkPrefix="aktualnosci/post/"
             classOverride="home-3"
             startIndex={0}
-            numItems={_getNoItems()}
+            numItems={newsItems}
           />
         </div>
       ) : (

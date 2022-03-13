@@ -17,11 +17,11 @@ const NO_NEWS_MESSAGE = "Brak aktualności.";
 /** Fetch the data for the news article previews. */
 export function fetchNewsData({
   setNewsData,
-  setLoaded = () => { },
+  setLoaded = () => {},
   updateCache = false,
   pageNumber = 1,
   maxItems = ITEMS_PER_PAGE,
-  allItems = false,  // If true, the maxItems and pageNumber options are ignored.
+  allItems = false, // If true, the maxItems and pageNumber options are ignored.
 }) {
   /** Verifies that the API response is valid and returns the processed data. */
   function processJsonData(data) {
@@ -42,12 +42,11 @@ export function fetchNewsData({
     updateCache,
     onSuccessCallback: processJsonData,
   };
-  if (allItems) {
-    var url = "/news/?all=true";
-    var cacheName = "news_all";
-  } else {
-    var url = `/news/?page=${pageNumber}&items=${maxItems}`;
-    var cacheName = `news_page_${pageNumber}`;
+  let url = "/news/?all=true";
+  let cacheName = "news_all";
+  if (!allItems) {
+    url = `/news/?page=${pageNumber}&items=${maxItems}`;
+    cacheName = `news_page_${pageNumber}`;
     args.cacheArgument = maxItems;
   }
   fetchCachedData(cacheName, url, args);
