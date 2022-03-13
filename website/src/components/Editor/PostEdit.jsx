@@ -201,22 +201,10 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         setImageURL={setImageURL}
         photos={photos}
         handlePhotoUpdate={handlePhotoUpdate}
-      />
-      <InputBox
-        name="image-author"
-        placeholder="Autor zdjęcia"
-        maxLength={64}
-        value={imageAuthor}
-        onChange={setImageAuthor}
-        required={imageURL !== "" ? true : false}
-      />
-      <InputBox
-        name="image-alt-text"
-        placeholder="Tekst alternatywny do zdjęcia"
-        maxLength={64}
-        value={imageAltText}
-        onChange={setImageAltText}
-        required={imageURL !== "" ? true : false}
+        imageAuthor={imageAuthor}
+        setImageAuthor={setImageAuthor}
+        imageAltText={imageAltText}
+        setImageAltText={setImageAltText}
       />
       <InputBox
         name="yt-url"

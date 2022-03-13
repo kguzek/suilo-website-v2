@@ -61,8 +61,6 @@ export const CalendarEdit = ({
     }
     setName(event.title);
     setType(event.type);
-    // setStartDate(serialiseDateArray(event.startDate));
-    // setEndDate(serialiseDateArray(event.endDate));
     setStartDate(event.date.start);
     setEndDate(event.date.end);
     setColour(event.colour);
@@ -70,6 +68,7 @@ export const CalendarEdit = ({
 
   useEffect(() => {
     // Set the selected option to "new event" when the calendar period is changed
+    _resetAllInputs();
     setCurrentlyActive("_default");
   }, [year, month]);
 
@@ -208,6 +207,7 @@ export const CalendarEdit = ({
           name="event-time-start"
           type="date"
           pattern="dd/mm/yyyy"
+          max={endDate}
           placeholder="Rozpoczęcie"
           value={startDate}
           onChange={setStartDate}
@@ -217,6 +217,7 @@ export const CalendarEdit = ({
           width="47%"
           name="event-time-end"
           type="date"
+          min={startDate}
           pattern="dd/mm/yyyy"
           placeholder="Zakończenie"
           value={endDate}

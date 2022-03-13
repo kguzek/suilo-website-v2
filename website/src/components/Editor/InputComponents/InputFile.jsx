@@ -41,7 +41,7 @@ const InputFile = ({ placeholder, label, onChange, acceptedExtensions }) => {
           top: ".5em",
         }}
       >
-        {value ? label : `[${placeholder}]`}
+        <span>{value ? label : <><span style={{color: "red"}}>*</span>[{placeholder}]</>}</span>
       </p>
       <p
         className="char-count"

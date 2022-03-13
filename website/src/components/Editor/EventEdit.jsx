@@ -227,6 +227,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
           name="event-time-start"
           type="time"
           pattern="HH:mm"
+          max={endTime}
           placeholder="Godzina rozpoczęcia"
           value={startTime}
           onChange={setStartTime}
@@ -237,6 +238,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
           name="event-time-end"
           type="time"
           pattern="HH:mm"
+          min={startTime}
           placeholder="Godzina zakończenia"
           value={endTime}
           onChange={setEndTime}

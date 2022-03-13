@@ -7,6 +7,7 @@ export default function InputDropdown({
   valueDisplayObject,
   label,
   isFirst = true,
+  required = false,
 }) {
   const [focused, setFocus] = useState(false);
 

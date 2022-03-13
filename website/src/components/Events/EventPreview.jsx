@@ -23,6 +23,10 @@ import DialogBox from "../DialogBox";
 const PARTICIPATE_BTN_CLASS =
   "transition-all inline-flex bg-primary py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]";
 
+// Zmieniłem pt-[.7rem] na pt-[.65rem] żeby się alignowało @Mrózek
+const NOTIFY_BTN_CLASS =
+  "transition-all bg-white cursor-pointer hover:ring-2 hover:ring-primary/30  p-[.5rem] pt-[.65rem] ml-2 drop-shadow-3xl rounded-xl";
+
 // const testEvent = {
 //   photo:
 //     "https://images.unsplash.com/photo-1637603170052-245ccc8eede1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80",
@@ -45,6 +49,7 @@ const EventPreview = ({ event, isNextEvent = false }) => {
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
 
   const [clickedParticipate, setClickedParticipate] = useState(false);
+  const [clickedNotify, setClickedNotify] = useState(false);
   const [popupParticipance, setPopupParticipance] = useState(false);
   const [popupNotification, setPopupNotification] = useState(false);
   const [popupError, setPopupError] = useState(false);
@@ -78,11 +83,31 @@ const EventPreview = ({ event, isNextEvent = false }) => {
     " uczestników";
 
   function _toggleNotification(_clickEvent) {
-    if (canNotChange && canParChange) {
-      setNotification(!notification);
-      setPopupNotification(true);
-      setCanNotChange(false);
+    if (!canNotChange || !canParChange) {
+      return;
     }
+    setClickedNotify(true);
+    // TODO: change fetch URL and method
+    const fetchURL = `/events/${event.id}`;
+    fetchWithToken(fetchURL, "GET").then((res) => {
+      if (res.ok) {
+        setPopupNotification(true);
+        setCanNotChange(true);
+        res.json().then((data) => {
+          // Update the client-side data
+          // TODO: do something with the response
+          setNotification(!notification);
+          setClickedNotify(false);
+        });
+        // Force cache update on next reload
+        localStorage.removeItem("events");
+        localStorage.removeItem("events_" + event.id);
+      } else {
+        setErrorMessage(res, setPopupError);
+        setErrorCode(res.status);
+        setClickedNotify(false);
+      }
+    });
   }
 
   function _toggleParticipance(_clickEvent) {
@@ -91,7 +116,6 @@ const EventPreview = ({ event, isNextEvent = false }) => {
     }
     setClickedParticipate(true);
     fetchWithToken(`/events/${event.id}`, "PATCH").then((res) => {
-      setClickedParticipate(false);
       if (res.ok) {
         setPopupParticipance(true);
         setCanParChange(false);
@@ -99,12 +123,15 @@ const EventPreview = ({ event, isNextEvent = false }) => {
           // Update the client-side data
           setParticipance(data.participating);
           event.participants = data.participants;
+          setClickedParticipate(false);
         });
         // Force cache update on next reload
         localStorage.removeItem("events");
+        localStorage.removeItem("events_" + event.id);
       } else {
         setErrorMessage(res, setPopupError);
         setErrorCode(res.status);
+        setClickedParticipate(false);
       }
     });
   }
@@ -117,11 +144,9 @@ const EventPreview = ({ event, isNextEvent = false }) => {
       {popupNotification && (
         <DialogBox
           header={notification ? "Zrobione!" : "Zrobione!"}
-          content={
-            notification
-              ? "Włączono powiadomienie o wydarzeniu."
-              : "Wyłączono powiadomienie o wydarzeniu."
-          }
+          content={`${
+            notification ? "Włączono" : "Wyłączono"
+          } powiadomienie dla wydarzenia "${event.title}".`}
           duration={2000}
           isVisible={popupNotification}
           setVisible={setPopupNotification}
@@ -230,18 +255,22 @@ const EventPreview = ({ event, isNextEvent = false }) => {
               />
             </a>
           )}
-          <div
-            onClick={_toggleNotification}
-            className="transition-all bg-white aspect-square cursor-pointer hover:ring-2 hover:ring-primary/30  p-[.5rem] pt-[.6rem] ml-2 drop-shadow-3xl rounded-xl"
-            style={{ cursor: canNotChange ? "pointer" : "not-allowed" }}
-          >
-            <Bell
-              size={28}
-              className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
-                notification ? "fill-primary" : "fill-transparent"
-              }`}
-            />
-          </div>
+          {clickedNotify ? (
+            <LoadingButton className={NOTIFY_BTN_CLASS} width={30} />
+          ) : (
+            <div
+              onClick={_toggleNotification}
+              className={NOTIFY_BTN_CLASS + " aspect-square"}
+              style={{ cursor: canNotChange ? "pointer" : "not-allowed" }}
+            >
+              <Bell
+                size={28}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
+                  notification ? "fill-primary" : "fill-transparent"
+                }`}
+              />
+            </div>
+          )}
           {clickedParticipate ? (
             <LoadingButton className={PARTICIPATE_BTN_CLASS} isOpaque={true} />
           ) : (
