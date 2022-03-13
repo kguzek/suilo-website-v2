@@ -11,6 +11,8 @@ const router = express.Router();
 
 const DEFAULT_DATA = { isAdmin: false, canEdit: [] };
 
+/*      ======== USERS-SPECIFIC CRUD FUNCTIONS ========      */
+
 router
   // CREATE new user entry
   .post("/", (req, res) => {

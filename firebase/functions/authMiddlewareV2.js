@@ -51,7 +51,9 @@ async function validateToken(req, res, next, requiredPerm) {
       const canEdit = data?.canEdit ?? [];
       if (data) {
         if (requiredPerm && !(isAdmin || canEdit.includes(requiredPerm))) {
-          return send403();
+          return send403(undefined, {
+            msg: "Missing permission for this endpoint.",
+          });
         }
       } else {
         // user is not yet in the database; add default entry
@@ -61,7 +63,9 @@ async function validateToken(req, res, next, requiredPerm) {
           canEdit,
         });
         if (requiredPerm) {
-          return send403();
+          return send403(undefined, {
+            msg: "User not found in permissions database.",
+          });
         }
       }
       // accept the request

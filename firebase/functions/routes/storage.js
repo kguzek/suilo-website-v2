@@ -5,6 +5,8 @@ const router = express.Router();
 
 const DEFAULT_DATA = { photos: [] };
 
+/*      ======== STORAGE-SPECIFIC CRUD FUNCTIONS ========      */
+
 router.get("/", (_req, res) => {
   db.collection("_general")
     .doc("storage")

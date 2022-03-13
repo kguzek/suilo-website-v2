@@ -1,6 +1,12 @@
 const express = require("express");
 const { dateToArray, serialiseDateArray } = require("../common");
-const { db, HTTP, dateToTimestamp, randomArraySelection, updateCollection } = require("../util");
+const {
+  db,
+  HTTP,
+  dateToTimestamp,
+  randomArraySelection,
+  updateCollection,
+} = require("../util");
 
 const router = express.Router();
 
@@ -13,9 +19,97 @@ function arrayFromRange(start, end) {
   return Array.from({ length: end - start + 1 }, (_, i) => i + start);
 }
 
+/** Returns a boolean indicating whether or not the current lucky numbers data is up-to-date. */
+function dataIsCurrent(data) {
+  // return false if the update is forced or if there is no lucky numbers data
+  if (!data) {
+    return false;
+  }
+  // return true if the lucky numbers data is for today
+  const todayString = serialiseDateArray(dateToArray());
+  if (data.date === todayString) {
+    return true;
+  }
+  const freeDays = data.freeDays ?? [];
+  // return true if it's weekend or a free day
+  const weekday = new Date().getDay();
+  return [0, 6].includes(weekday) || freeDays.includes(todayString);
+}
+
+/** Sends the HTTP response containing the lucky numbers data. */
+function sendNumbersData(res, data) {
+  res.status(200).json({
+    date: data.date,
+    luckyNumbers: data.luckyNumbers,
+    excludedClasses: data.excludedClasses,
+  });
+}
+
+/** Generates 2 random lucky numbers from the available number pools. */
+function generateNumbersData(res, data = {}, docRef) {
+  const luckyNumbers = [];
+  // one number pool for each lucky number: 1:15 and 16:MAX
+  const splitPoints = data.splitPoints ?? [15, 16];
+  const numberLimits = [
+    [1, splitPoints[0]],
+    [splitPoints[1], data.maxNumber ?? MAX_LUCKY_NUMBER],
+  ];
+  const numberPools = [data.numberPoolA, data.numberPoolB];
+  for (let i = 0; i < 2; i++) {
+    let numberPool = numberPools[i];
+    // reset the number pool if it's empty
+    if (!numberPool?.length) {
+      numberPool = arrayFromRange(...numberLimits[i]);
+    }
+    const randomIndex = randomArraySelection(numberPool);
+    // remove selection from number pool
+    const selection = numberPool.splice(randomIndex, 1)[0];
+    // upate the number pool
+    numberPools[i] = numberPool;
+
+    luckyNumbers.push(selection);
+  }
+  console.log("Generated new lucky numbers data:", luckyNumbers);
+  updateCollection("luckyNumbers");
+  const todayString = serialiseDateArray(dateToArray());
+  const newData = {
+    date: todayString,
+    luckyNumbers,
+    excludedClasses: data.excludedClasses ?? [],
+    freeDays: data.freeDays ?? [],
+    maxNumber: numberLimits[1][1],
+    splitPoints,
+    numberPoolA: numberPools[0],
+    numberPoolB: numberPools[1],
+  };
+  docRef.set(newData);
+  sendNumbersData(res, newData);
+}
+
+/** Reads the existing lucky numbers data and either sends it or generates the next */
+function readNumbersData(res, forceUpdate = false) {
+  const docRef = db.collection("_general").doc("luckyNumbers");
+
+  try {
+    docRef.get().then((doc) => {
+      const data = doc.data();
+      !forceUpdate && dataIsCurrent(data)
+        ? sendNumbersData(res, data)
+        : generateNumbersData(res, data, docRef);
+    });
+  } catch (error) {
+    return res.status(500).json({
+      errorDescription:
+        "500 Internal Server Error: Could not get the lucky numbers data.",
+      errorDetails: error.toString(),
+    });
+  }
+}
+
 /*      ======== LUCKY NUMBERS-SPECIFIC CRUD FUNCTIONS ========      */
 
 router
+  /*
   // GET lucky numbers (v1)
   .get("/", (req, res) => {
     try {
@@ -118,88 +212,12 @@ router
       });
     }
   })
+  //*/
 
   // GET lucky numbers (v2)
-  .get("/v2", (req, res) => {
-    // ?force_update=false
-    const weekday = new Date().getDay();
-    const today = dateToArray();
-    const todayString = serialiseDateArray(today);
+  .get("/v2", (_req, res) => readNumbersData(res))
 
-    const forceUpdate = req.query.force_update === "true";
-
-    const docRef = db.collection("_general").doc("luckyNumbers");
-
-    function dataIsCurrent(data) {
-      // return false if the update is forced or if there is no lucky numbers data
-      if (forceUpdate || !data) {
-        return false;
-      }
-      // return true if the lucky numbers data is for today
-      if (data.date === todayString) {
-        return true;
-      }
-      const freeDays = data.freeDays ?? [];
-      // return true if it's weekend or a free day
-      return [0, 6].includes(weekday) || freeDays.includes(todayString);
-    }
-    function sendNumbersData(data) {
-      res.status(200).json({
-        date: data.date,
-        luckyNumbers: data.luckyNumbers,
-        excludedClasses: data.excludedClasses,
-      });
-    }
-    function generateNumbersData(data = {}) {
-      const luckyNumbers = [];
-      // one number pool for each lucky number: 1:15 and 16:MAX
-      const splitPoints = data.splitPoints ?? [15, 16];
-      const numberLimits = [
-        [1, splitPoints[0]],
-        [splitPoints[1], data.maxNumber ?? MAX_LUCKY_NUMBER],
-      ];
-      const numberPools = [data.numberPoolA, data.numberPoolB];
-      for (let i = 0; i < 2; i++) {
-        let numberPool = numberPools[i];
-        // reset the number pool if it's empty
-        if (!numberPool?.length) {
-          numberPool = arrayFromRange(...numberLimits[i]);
-        }
-        const randomIndex = randomArraySelection(numberPool);
-        // remove selection from number pool
-        const selection = numberPool.splice(randomIndex, 1)[0];
-        // upate the number pool
-        numberPools[i] = numberPool;
-
-        luckyNumbers.push(selection);
-      }
-      console.log("Generated new lucky numbers data:", luckyNumbers);
-      updateCollection("luckyNumbers");
-      const newData = {
-        date: todayString,
-        luckyNumbers,
-        excludedClasses: data.excludedClasses ?? [],
-        freeDays: data.freeDays ?? [],
-        maxNumber: numberLimits[1][1],
-        splitPoints,
-        numberPoolA: numberPools[0],
-        numberPoolB: numberPools[1],
-      };
-      docRef.set(newData);
-      sendNumbersData(newData);
-    }
-    try {
-      docRef.get().then((doc) => {
-        const data = doc.data();
-        dataIsCurrent(data) ? sendNumbersData(data) : generateNumbersData(data);
-      });
-    } catch (error) {
-      return res.status(500).json({
-        errorDescription:
-          "500 Internal Server Error: Could not get the lucky numbers data.",
-        errorDetails: error.toString(),
-      });
-    }
-  });
+  // CREATE new lucky numbers (v2)
+  .post("/v2", (_req, res) => readNumbersData(res, true));
 
 module.exports = router;
