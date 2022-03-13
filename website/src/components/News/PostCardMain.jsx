@@ -43,8 +43,8 @@ const PostCardMain = ({ data }) => {
               background: "linear-gradient(90deg,transparent 0%,#F8F8F8 15%)",
             }}
           >
-            <Link
-              to={data.link}
+            <span
+              // to=  {data.link}
               className="inline-flex flex-row justify-between align-middle transition-all duration-150 group"
             >
               <p className="group-hover:text-primaryDark pr-1 text-primary font-medium text-sm lg:text-[.925rem]">
@@ -54,7 +54,7 @@ const PostCardMain = ({ data }) => {
                 size={16}
                 className="group-hover:stroke-primaryDark stroke-primary stroke-[2.5] mt-[.1rem] lg:mt-[.13rem]"
               />
-            </Link>
+            </span>
           </div>
         </div>
       </div>

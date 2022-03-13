@@ -59,6 +59,7 @@ function App() {
     if (!checkForUpdates) {
       return;
     }
+    console.log("Checking for server updates...");
     fetchWithToken("/collectionInfo/").then((res) => {
       res.json().then((collections) => {
         setCollectionInfo(collections);
@@ -92,7 +93,9 @@ function App() {
           }
         }
         // Only update the state when all caches have been processed
-        shouldRefresh && setShouldRefresh(true);
+        shouldRefresh
+          ? setShouldRefresh(true)
+          : console.log("Everything is up-to-date");
       });
     });
   }, [page]);

@@ -42,7 +42,6 @@ const News = ({ setPage, reload, setReload, collectionInfo }) => {
       "refresh"
     );
     _populatePageContents(updateCache, pageNo);
-    console.log("asdf");
   }, [params.postID, searchParams]);
 
   useEffect(() => {
