@@ -17,7 +17,7 @@ import {
 import YouTube from "react-youtube";
 import LoadingScreen from "../components/LoadingScreen";
 
-const Post = ({ setPage, reload }) => {
+const Post = ({ setPage, reload, setReload }) => {
   const [loaded, setLoaded] = useState(false);
   const [postData, setPostData] = useState(null);
   const [photoLink, setPhotoLink] = useState(DEFAULT_IMAGE);
@@ -89,6 +89,7 @@ const Post = ({ setPage, reload }) => {
       return;
     }
     // The page content has updated on the server side; reload it
+    setReload(false);
     setLoaded(false);
     updatePostData();
   }, [reload]);

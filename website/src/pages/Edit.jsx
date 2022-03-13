@@ -27,6 +27,7 @@ export default function Edit({
   userPerms = {},
   loginAction,
   reload,
+  setReload,
 }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -164,7 +165,9 @@ export default function Edit({
       return;
     }
     // The page content has updated on the server side; reload it
+    setReload(false);
     fetchData();
+    fetchCalendar();
   }, [reload]);
 
   useEffect(() => {
@@ -195,10 +198,10 @@ export default function Edit({
     return <LoadingScreen />;
   }
 
-  const userCanEdit = userPerms.canEdit ?? [];
+  const userCanEdit = (userPerms.canEdit ?? []).map((page) => PAGES[page]);
   const editPickerOptions = userPerms.isAdmin
     ? PAGE_NAMES // Give permission to edit all pages
-    : userCanEdit.map((perm) => PAGES[perm]); // Give permission for individual pages
+    : PAGE_NAMES.filter((page) => userCanEdit.includes(page)); // Give permission for individual pages
 
   // Failsafe to prevent the user seeing the edit UI in case of a bug
   if (editPickerOptions.length === 0) {
@@ -207,10 +210,9 @@ export default function Edit({
         Nie masz uprawnień do wyświetlania tej strony.
       </p>
     );
-  }
+  } 
 
   const selectedPage = editPickerOptions[editPicker];
-
   return (
     <div className="w-11/12 xl:w-10/12 min-h-[83vh] mt-16 flex flex-col justify-start align-middle ">
       <MetaTags>

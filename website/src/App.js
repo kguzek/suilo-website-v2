@@ -15,7 +15,13 @@ import Footer from "./components/Main/Footer";
 import LoginScreen from "./components/Main/LoginScreen";
 import CookiesAlert from "./components/Main/CookiesAlert";
 import ScrollToTop, { scrollToTop } from "./components/Main/ScrollToTop";
-import { logOut, AuthProvider, fetchWithToken, DEBUG_MODE } from "./firebase";
+import {
+  logOut,
+  AuthProvider,
+  fetchWithToken,
+  DEBUG_MODE,
+  auth,
+} from "./firebase";
 
 function App() {
   const [page, setPage] = useState(null);
@@ -37,6 +43,7 @@ function App() {
   useEffect(() => {
     // Enable checking for updates from the API
     setCheckForUpdates(true);
+    setShouldRefresh(false);
   }, []);
 
   useEffect(() => {
@@ -77,6 +84,10 @@ function App() {
             // The cache is too old
             console.log("Removing cache", cacheName);
             localStorage.removeItem(cacheName);
+            if (cacheName === "users") {
+              setLoggedInUser(undefined);
+              setUserCallback(auth.currentUser, true);
+            }
             shouldRefresh = true;
           }
         }
@@ -90,16 +101,16 @@ function App() {
    * Returns true if the user is a valid option (i.e. actual user from @lo1.gliwice.pl or no user at all).
    * Returns false if the user is from outside of the LO1 organisation.
    */
-  function setUserCallback(user) {
+  function setUserCallback(user, force = false) {
     if (user) {
       if (user.email.endsWith("@lo1.gliwice.pl")) {
         // Refresh the user authentication level each time if debug mode is enabled
-        if (!cookies.userAccounts[user.email] || DEBUG_MODE) {
+        if (!cookies.userAccounts[user.email] || DEBUG_MODE || force) {
           /** Update the cookie with the proper user pemissions. */
-          function setUserEditPermissions(userInfo) {
+          function setUserEditPermissions(usrInfo) {
             const perms = {
-              isAdmin: userInfo?.isAdmin ?? false,
-              canEdit: userInfo?.canEdit ?? [],
+              isAdmin: usrInfo?.isAdmin ?? false,
+              canEdit: usrInfo?.canEdit ?? [],
             };
             // Update the userAccounts cookie
             const userAccounts = cookies.userAccounts;
@@ -176,23 +187,42 @@ function App() {
               <News
                 setPage={setPage}
                 reload={shouldRefresh}
+                setReload={setShouldRefresh}
                 collectionInfo={collectionInfo.news ?? { numDocs: 0 }}
               />
             }
           >
             <Route
               path="post"
-              element={<Post setPage={setPage} reload={shouldRefresh} />}
+              element={
+                <Post
+                  setPage={setPage}
+                  reload={shouldRefresh}
+                  setReload={setShouldRefresh}
+                />
+              }
             >
               <Route
                 path=":postID"
-                element={<Post setPage={setPage} reload={shouldRefresh} />}
+                element={
+                  <Post
+                    setPage={setPage}
+                    reload={shouldRefresh}
+                    setReload={setShouldRefresh}
+                  />
+                }
               />
             </Route>
           </Route>
           <Route
             path="wydarzenia"
-            element={<Events setPage={setPage} reload={shouldRefresh} />}
+            element={
+              <Events
+                setPage={setPage}
+                reload={shouldRefresh}
+                setReload={setShouldRefresh}
+              />
+            }
           />
           <Route path="kontakt" element={<Contact setPage={setPage} />} />
           <Route
@@ -204,6 +234,7 @@ function App() {
                 userPerms={userInfo}
                 loginAction={loginAction}
                 reload={shouldRefresh}
+                setReload={setShouldRefresh}
               />
             }
           />

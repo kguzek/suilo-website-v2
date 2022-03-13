@@ -7,7 +7,7 @@ import { fetchCachedData, removeSearchParam } from "../misc";
 import { serialiseDateArray } from "../common";
 import LoadingScreen from "../components/LoadingScreen";
 
-function Events({ setPage, reload }) {
+function Events({ setPage, reload, setReload }) {
   const [loaded, setLoaded] = useState(false); // events loaded status
   const [eventsData, setEventsData] = useState({ contents: [] });
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,6 +45,7 @@ function Events({ setPage, reload }) {
       return;
     }
     // The page content has updated on the server side; reload it
+    setReload(false);
     setLoaded(false);
     _populatePageContents();
   }, [reload]);
@@ -92,7 +93,7 @@ function Events({ setPage, reload }) {
   }, [allCalendarEvents, calendarMonth, calendarYear]);
 
   if (!loaded) {
-    return <LoadingScreen />
+    return <LoadingScreen />;
   }
 
   function updateSelectedEvent({ day, month, year, eventIDs }) {

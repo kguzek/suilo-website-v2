@@ -9,29 +9,31 @@ import PageSelector from "../components/PageSelector";
 import { removeSearchParam } from "../misc";
 import LoadingScreen from "../components/LoadingScreen";
 
-const News = ({ setPage, reload, collectionInfo }) => {
+const News = ({ setPage, reload, setReload, collectionInfo }) => {
   const [loaded, setLoaded] = useState(false);
   const [newsData, setNewsData] = useState([]);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [newsPage, setNewsPage] = useState(searchParams.get("page") || 1);
+  const [newsPage, setNewsPage] = useState(1);
 
   /** Fetches the data from the cache or API. */
-  function _populatePageContents(updateCache = false) {
+  function _populatePageContents(updateCache = false, pageNo) {
     // This raw value is later encoded in the fetchNewsData() function
-    const pageNumber = searchParams.get("page") || 1;
     fetchNewsData({
       setNewsData,
       setLoaded,
       updateCache,
-      pageNumber,
+      pageNumber: pageNo ?? newsPage,
     });
   }
 
   useEffect(() => {
     if (params.postID !== undefined) {
+      // Specific post is being rendered
       return;
     }
+    const pageNo = searchParams.get("page") || 1;
+    setNewsPage(pageNo);
     setPage("news");
     setLoaded(false);
     const updateCache = !!removeSearchParam(
@@ -39,7 +41,8 @@ const News = ({ setPage, reload, collectionInfo }) => {
       setSearchParams,
       "refresh"
     );
-    _populatePageContents(updateCache);
+    _populatePageContents(updateCache, pageNo);
+    console.log("asdf");
   }, [params.postID, searchParams]);
 
   useEffect(() => {
@@ -47,6 +50,7 @@ const News = ({ setPage, reload, collectionInfo }) => {
       return;
     }
     // The page content has updated on the server side; reload it
+    setReload(false);
     setLoaded(false);
     _populatePageContents();
   }, [reload]);
@@ -55,7 +59,7 @@ const News = ({ setPage, reload, collectionInfo }) => {
     return <Outlet />;
   }
   if (!loaded) return <LoadingScreen />;
-  
+
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
