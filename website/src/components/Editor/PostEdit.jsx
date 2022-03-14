@@ -177,7 +177,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="post-title"
         placeholder="Tytuł"
-        maxLength={64}
+        maxLength={81}
         value={title}
         onChange={setTitle}
       />

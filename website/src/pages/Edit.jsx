@@ -210,11 +210,11 @@ export default function Edit({
         Nie masz uprawnień do wyświetlania tej strony.
       </p>
     );
-  } 
+  }
 
   const selectedPage = editPickerOptions[editPicker];
   return (
-    <div className="w-11/12 xl:w-10/12 min-h-[83vh] mt-16 flex flex-col justify-start align-middle ">
+    <div className="w-11/12 xl:w-10/12 min-h-[83vh] mt-16 flex flex-col justify-start align-middle mb-6 ">
       <MetaTags>
         <title>
           Edycja treści | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w
