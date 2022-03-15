@@ -9,17 +9,17 @@
 
 const TextEditor = ({ onChange, value }) => {
   function _handleChange(e) {
-    let text = e.target.innerHTML.trim();
-    if (text.endsWith("<br>")) {
-      text = text.substring(0, text.length - "<br>".length);
+    let html = e.target.innerHTML.trim();
+    if (html.endsWith("<br>")) {
+      html = html.substring(0, html.length - "<br>".length);
     }
-    onChange(text);
+    onChange({ html: html, text: e.target.innerText });
   }
 
   return (
     <div className="relative w-full">
       <p className="absolute -top-[.55rem] leading-3 bg-bg scale-[.785] font-semibold text-text6 -left-[.25rem] ">
-        {!value && <span style={{ color: "red" }}>*</span>}
+        {!value.html && <span style={{ color: "red" }}>*</span>}
         Treść
       </p>
       <div
@@ -28,6 +28,7 @@ const TextEditor = ({ onChange, value }) => {
         className=" p-[.1rem] px-1 ring-2 outline-none ring-[#d4d4d4] rounded-sm hover:ring-primary/50 focus:ring-primary text-[#222222] text-justify md:text-left mt-2 leading-[1.85rem] lg:leading-9 lg:mt-2  lg:text-xl  font-normal text-lg"
         onBlur={_handleChange}
       >
+        {value.text}
         {/* TODO: find a way to show previously enteret value that do not destroy layout when re-edited */}
         {/* {value} */}
         {/* TODO: Implement placeholder text */}

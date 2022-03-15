@@ -15,6 +15,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const [author, setAuthor] = useState(auth.currentUser?.displayName);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
   const [imageURL, setImageURL] = useState("");
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
@@ -129,6 +130,11 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       setClickedSubmit(false);
     });
   }
+  const setPostContent = ({ html, text }) => {
+    setDescription(html)
+    setContent(text)
+    console.log(text, html)
+  }
 
   function _handleDelete() {
     setClickedDelete(true);
@@ -188,7 +194,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         maxLength={256}
         value={description}
         onChange={setDescription} /> */}
-      <TextEditor onChange={setDescription} value={description} />
+      <TextEditor onChange={setPostContent} value={{ html: description, text: content }} />
       <InputBox
         name="post-author"
         placeholder="Autor"
