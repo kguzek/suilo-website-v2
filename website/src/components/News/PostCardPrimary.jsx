@@ -17,7 +17,7 @@ const PostCardPrimary = ({ data }) => {
       <Link to={data.link} className="flex w-full relative flex-col group">
         <img
           src={photo}
-          className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300"
+          className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl"
         />
       </Link>
       <h2
