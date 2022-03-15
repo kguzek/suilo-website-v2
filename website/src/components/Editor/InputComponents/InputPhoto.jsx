@@ -11,14 +11,6 @@ const OPTIONS = [
   "Brak zdjęcia",
 ];
 
-export const NO_SELECT_STYLE = {
-  MozUserSelect: "none",
-  WebkitUserSelect: "none",
-  msUserSelect: "none",
-  userSelect: "none",
-  OUserSelect: "none",
-};
-
 export default function InputPhoto({
   imageURL,
   setImageURL,
@@ -65,7 +57,7 @@ export default function InputPhoto({
     <div>
       <div className="w-full inline-flex justify-between pl-20 pr-20">
         {OPTIONS.map((text, idx) => (
-          <label style={NO_SELECT_STYLE} key={idx}>
+          <label className="select-none" key={idx}>
             <input
               className="mr-2"
               type="radio"

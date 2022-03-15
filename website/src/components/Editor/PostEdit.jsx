@@ -187,13 +187,6 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         value={title}
         onChange={setTitle}
       />
-      {/* PLACE FOR TEXT EDITOR */}
-      {/* <InputArea
-        name="post-description"
-        placeholder="Treść"
-        maxLength={256}
-        value={description}
-        onChange={setDescription} /> */}
       <TextEditor onChange={setPostContent} value={{ html: description, text: content }} />
       <InputBox
         name="post-author"

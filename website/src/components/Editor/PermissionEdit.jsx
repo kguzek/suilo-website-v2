@@ -4,7 +4,6 @@ import InputBox from "./InputComponents/InputBox";
 import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
 import LoadingScreen, { LoadingButton } from "../LoadingScreen";
-import { NO_SELECT_STYLE } from "./InputComponents/InputPhoto";
 import { fetchWithToken } from "../../firebase";
 import { setErrorMessage } from "../../misc";
 
@@ -123,7 +122,7 @@ export const PermissionEdit = ({
     const labelStyle = admin || disabled ? { color: "dimgrey" } : {};
     return (
       <div>
-        <label style={NO_SELECT_STYLE}>
+        <label className="select-none">
           <input
             type="checkbox"
             name={perm}
