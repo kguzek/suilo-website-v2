@@ -22,7 +22,7 @@ const InputFile = ({ placeholder, label, onChange, acceptedExtensions }) => {
           type="file"
           accept={acceptedExtensions}
           onChange={(e) => {
-            setValue(e.target.value.replace(`C:\\fakepath\\`, ""));
+            setValue(e.target.value.replace("C:\\fakepath\\", ""));
             onChange(e);
           }}
         />
@@ -41,7 +41,13 @@ const InputFile = ({ placeholder, label, onChange, acceptedExtensions }) => {
           top: ".5em",
         }}
       >
-        <span>{value ? label : <><span style={{color: "red"}}>*</span>[{placeholder}]</>}</span>
+        {value ? (
+          <span>{label}</span>
+        ) : (
+          <>
+            <span style={{ color: "red" }}>*</span>[{placeholder}]
+          </>
+        )}
       </p>
       <p
         className="char-count"

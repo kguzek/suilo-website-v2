@@ -23,8 +23,6 @@ export default function ShortLinkRedirect({ setPage }) {
     const fetchArgs = {
       setData,
       setLoaded,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     fetchCachedData(cacheName, fetchURL, fetchArgs);
   }

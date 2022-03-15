@@ -69,8 +69,6 @@ export default function Edit({
       setData: setLinksData,
       setLoaded: setLoadedLinks,
       updateCache: forceUpdate,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     fetchCachedData("shortLinks", "links", fetchArgs);
   }
@@ -82,8 +80,6 @@ export default function Edit({
       setData: setUsersData,
       setLoaded: setLoadedUsers,
       updateCache: forceUpdate,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     fetchCachedData("users", "/users", fetchArgs);
   }
@@ -95,8 +91,6 @@ export default function Edit({
       setData: setEventsData,
       setLoaded: setLoadedEvents,
       updateCache: forceUpdate,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     fetchCachedData("events", "/events", fetchArgs);
   }
@@ -116,8 +110,6 @@ export default function Edit({
       setData: setCalendarData,
       setLoaded: setLoadedCalendar,
       updateCache: forceUpdate,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     const _month = parseInt(month) + 1;
     const fetchURL = `/calendar/${year}/${_month}/`;
@@ -132,8 +124,6 @@ export default function Edit({
       setData: setStorageContents,
       setLoaded: setLoadedPhotos,
       updateCache: forceUpdate,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     fetchCachedData("storage", "/storage", fetchArgs);
   }

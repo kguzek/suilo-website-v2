@@ -106,14 +106,7 @@ export function removeSearchParam(
 export function fetchCachedData(
   cacheName,
   fetchURL,
-  {
-    setData,
-    setLoaded,
-    updateCache,
-    cacheArgument,
-    onSuccessCallback,
-    onFailData,
-  }
+  { setData, setLoaded, updateCache, cacheArgument, onFailData }
 ) {
   // check if there is a valid data cache
   let cache;
@@ -160,14 +153,13 @@ export function fetchCachedData(
         const newCache = {
           date: new Date(),
           arg: cacheArgument,
-          data: onSuccessCallback(data),
+          data: data && !data.errorDescription ? data : null,
         };
         if (newCache.data) {
           localStorage.setItem(cacheName, JSON.stringify(newCache));
           console.log(`Created cache '${cacheName}'.`, newCache);
           setData(newCache.data);
         } else {
-          // onSuccessCallback didn't return data; this usually means the data could not be processed
           // (API returned a non-200 response code or the data was otherwise malformed)
           console.log(
             `Request to '${fetchURL}' returned an invalid response:`,
@@ -230,6 +222,8 @@ export function setErrorMessage(res, setErrorFunc) {
 export function handlePhotoUpdate(file, setImageURL) {
   if (!file) return;
   // Regular expression to trim the filename extension
+  // Matches all characters including and after the last found "." character in the string,
+  // and replaces them with "" (empty string)
   const photoName = file.name.replace(/\.[^\/.]+$/, "");
   const storageRef = ref(storage, `/photos/${file.name}`);
   const uploadTask = uploadBytesResumable(storageRef, file);
@@ -255,4 +249,3 @@ export function handlePhotoUpdate(file, setImageURL) {
     }
   );
 }
-

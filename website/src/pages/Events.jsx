@@ -31,8 +31,6 @@ function Events({ setPage, reload, setReload }) {
       setData: (data) => setRawPrimEvents(data.contents),
       setLoaded: setLoadedPrim,
       updateCache: forceUpdateCache,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     fetchCachedData("events", "/events", fetchArgs);
     fetchSecondaryEvents(forceUpdateCache);
@@ -45,8 +43,6 @@ function Events({ setPage, reload, setReload }) {
       setData: (data) => setSecEvents(data.events),
       setLoaded: setLoadedSec,
       updateCache: forceUpdateCache,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     const fetchURL = `/calendar/${calendarYear}/${calendarMonth}/`;
     const cacheName = `calendar_${calendarYear}_${calendarMonth}`;

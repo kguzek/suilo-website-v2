@@ -35,15 +35,6 @@ const Post = ({ setPage, reload, setReload }) => {
 
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
-    /** Verifies that the API response is fvalid and returns the processed data. */
-    function processJsonData(data) {
-      if (data && !data.errorDescription) {
-        data.photo || (data.photo = DEFAULT_IMAGE);
-        return data;
-      }
-      setPostData({ errorMessage: "Post nie istnieje." });
-    }
-
     function checkLinks(data) {
       getURLfromFileName(data.photo, "1920x1080", setPhotoLink);
       setPostData(data);
@@ -53,7 +44,6 @@ const Post = ({ setPage, reload, setReload }) => {
       setData: checkLinks,
       setLoaded,
       updateCache,
-      onSuccessCallback: processJsonData,
       onFailData: {
         errorMessage: "Nastąpił błąd sieciowy. Spróbuj ponownie w krótce.",
       },

@@ -34,8 +34,6 @@ const Home = ({ setPage, reload, setReload }) => {
     const fetchArgs = {
       setData: setNumbersData,
       setLoaded: setLoadedNumbers,
-      onSuccessCallback: (data) =>
-        data && !data.errorDescription ? data : null,
     };
     fetchCachedData("luckyNumbers", "/luckyNumbers/v2", fetchArgs);
   }

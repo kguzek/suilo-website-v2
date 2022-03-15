@@ -63,7 +63,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     setImageURL(post.photo ?? "");
     setImageAuthor(post.photoAuthor ?? "");
     setImageAltText(post.alt ?? "");
-
+    
     setYtID(post.ytID ?? "");
     setLink(post.link ?? "");
     setAddYtID(!!post.ytID);

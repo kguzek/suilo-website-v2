@@ -23,16 +23,6 @@ export function fetchNewsData({
   maxItems = ITEMS_PER_PAGE,
   allItems = false, // If true, the maxItems and pageNumber options are ignored.
 }) {
-  /** Verifies that the API response is valid and returns the processed data. */
-  function processJsonData(data) {
-    if (data && data.contents) {
-      // map each article so that if it doesn't contain a 'photo' attribute it uses the default image
-      return data.contents.map((article) => {
-        return { ...article, photo: article.photo || DEFAULT_IMAGE };
-      });
-    }
-  }
-
   // ensure the pageNumber argument is a valid integer; prevent parameter injection
   pageNumber = encodeURIComponent(parseInt(pageNumber));
 
@@ -40,7 +30,6 @@ export function fetchNewsData({
     setData: setNewsData,
     setLoaded,
     updateCache,
-    onSuccessCallback: processJsonData,
   };
   let url = "/news/?all=true";
   let cacheName = "news_all";
