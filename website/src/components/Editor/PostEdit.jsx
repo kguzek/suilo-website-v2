@@ -14,16 +14,16 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [author, setAuthor] = useState(auth.currentUser?.displayName);
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [content, setContent] = useState("");
+  const [formattedContent, setFormattedContent] = useState("");
+  const [rawContent, setRawContent] = useState("");
   const [imageURL, setImageURL] = useState("");
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
   const [ytID, setYtID] = useState("");
   const [link, setLink] = useState("");
 
-  const [addYT, setAddYT] = useState(false)
-  const [addLink, setAddLink] = useState(false)
+  const [addYtID, setAddYtID] = useState(false);
+  const [addLink, setAddLink] = useState(false);
 
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
@@ -34,16 +34,14 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const [errorCode, setErrorCode] = useState(null);
 
   useEffect(() => {
-    if (!addYT) {
-      setYtID("")
-    }
-  }, [addYT])
+    // Reset the YouTube video ID if the user unselects the "add YouTube ID" option
+    addYtID || setYtID("");
+  }, [addYtID]);
 
   useEffect(() => {
-    if (!addLink) {
-      setLink("")
-    }
-  }, [addLink])
+    // Reset the external URL if the user unselects the "add external URL" option
+    addLink || setLink("");
+  }, [addLink]);
 
   useEffect(() => {
     if (!loaded) {
@@ -59,12 +57,17 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     }
     setAuthor(post.author);
     setTitle(post.title);
-    setDescription(post.content);
-    setContent(post.text);
-    // photo properties are all nullable
+    setRawContent(post.rawContent);
+    setFormattedContent(post.formattedContent);
+    // these properties are all nullable
     setImageURL(post.photo ?? "");
     setImageAuthor(post.photoAuthor ?? "");
     setImageAltText(post.alt ?? "");
+
+    setYtID(post.ytID ?? "");
+    setLink(post.link ?? "");
+    setAddYtID(!!post.ytID);
+    setAddLink(!!post.link);
   }, [currentlyActive]);
 
   // Display loading screen if news data hasn't been retrieved yet
@@ -83,12 +86,13 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   function _resetAllInputs() {
     for (const setVar of [
       setTitle,
-      setDescription,
-      setContent,
+      setFormattedContent,
+      setRawContent,
       setImageURL,
       setImageAuthor,
       setImageAltText,
       setYtID,
+      setLink,
     ]) {
       setVar("");
     }
@@ -112,13 +116,14 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       date: new Date().toISOString(),
       author,
       title,
-      text: content,
-      content: description,
+      rawContent,
+      formattedContent,
       photo: imageURL,
-      //those two should be stored with the photo imo
+      ytID,
+      link,
+      // these two should be stored with the photo imo
       photoAuthor: imageAuthor,
       alt: imageAltText,
-      ytID,
     };
     /*
     if(imgRef){
@@ -149,8 +154,8 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     });
   }
   const setPostContent = ({ html, text }) => {
-    setDescription(html);
-    setContent(text);
+    setFormattedContent(html);
+    setRawContent(text);
     console.log(text);
     console.log(html);
   };
@@ -208,7 +213,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       />
       <TextEditor
         onChange={setPostContent}
-        value={{ html: description, text: content }}
+        value={{ html: formattedContent, text: rawContent }}
       />
       <InputBox
         name="post-author"
@@ -228,31 +233,35 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         setImageAltText={setImageAltText}
       />
       <div>
-        <label>
-          <input type="checkbox" onClick={() => addYT ? setAddYT(false) : setAddYT(true)} />
+        <label className="select-none">
+          <input
+            type="checkbox"
+            onClick={() => (addYtID ? setAddYtID(false) : setAddYtID(true))}
+          />
           &nbsp;Dodaj film z serwisu YouTube
         </label>
       </div>
 
-      {
-        addYT && <InputBox
+      {addYtID && (
+        <InputBox
           name="yt-url"
           placeholder="ID filmu na serwisie YouTube"
           maxLength={11}
           value={ytID}
           onChange={setYtID}
         />
-      }
+      )}
       <div>
-        <label>
-          <input type="checkbox" onClick={() => addLink ? setAddLink(false) : setAddLink(true)} />
+        <label className="select-none">
+          <input
+            type="checkbox"
+            onClick={() => (addLink ? setAddLink(false) : setAddLink(true))}
+          />
           &nbsp;Dodaj link do zewnętrznego serwisu
         </label>
       </div>
 
-
-      {
-        addLink &&
+      {addLink && (
         <InputBox
           name="third-party-url"
           placeholder="Zewnętrzne łącze URL"
@@ -260,7 +269,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
           value={link}
           onChange={setLink}
         />
-      }
+      )}
 
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&

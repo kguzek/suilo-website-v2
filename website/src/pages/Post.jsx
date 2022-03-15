@@ -105,7 +105,7 @@ const Post = ({ setPage, reload, setReload }) => {
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
         <title>{postData.title}</title>
-        <meta name="description" content={postData.text} />
+        <meta name="description" content={postData.rawContent} />
         <meta property="og:title" content={postData.title} />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
@@ -141,7 +141,7 @@ const Post = ({ setPage, reload, setReload }) => {
             {postData.title}
           </h1>
           <div
-            dangerouslySetInnerHTML={{ __html: postData.content }}
+            dangerouslySetInnerHTML={{ __html: postData.formattedContent }}
             className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 mb-2  lg:text-xl  font-normal text-lg"
           ></div>
           {postData.ytID && (

@@ -17,6 +17,7 @@ const InputBox = ({
   disabled = false,
   //adam tried to do a thing
   choices = [],
+  onBlur,
 }) => {
   const [focused, setFocus] = useState(false);
   const [charCount, setCharCount] = useState(0);
@@ -30,9 +31,9 @@ const InputBox = ({
 
   useEffect(() => {
     if (type !== "date") return;
-    setHidden(!focused && !value)
-  }, [focused, value])
-  
+    setHidden(!focused && !value);
+  }, [focused, value]);
+
   return (
     <div className="main my-1" style={{ width: width }}>
       <input
@@ -40,7 +41,10 @@ const InputBox = ({
         style={style}
         required={required}
         onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
+        onBlur={() => {
+          setFocus(false);
+          onBlur && onBlur();
+        }}
         value={value}
         type={type}
         name={name}

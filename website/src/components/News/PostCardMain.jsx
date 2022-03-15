@@ -35,7 +35,7 @@ const PostCardMain = ({ data }) => {
         </Link>
         <div className="relative -mt-1">
           <h3 className="hidden line-clamp-1 sm:line-clamp-2 md:line-clamp-1 lg:line-clap-3 main-post-description sm:block md:hidden lg:block">
-            {data.text}
+            {data.rawContent}
           </h3>
           <div
             className="absolute -bottom-[.1rem] lg:bottom-[.025rem] right-0 py-[.1rem] px-1 pl-8"

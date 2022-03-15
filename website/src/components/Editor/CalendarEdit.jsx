@@ -33,11 +33,14 @@ export const CalendarEdit = ({
   setMonth,
 }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [type, setType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [colour, setColour] = useState("");
+
+  const [displayYear, setDisplayYear] = useState(
+    year ?? new Date().getFullYear()
+  );
 
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
@@ -59,11 +62,10 @@ export const CalendarEdit = ({
       // No currently selected event
       return void _resetAllInputs();
     }
-    setName(event.title);
+    setTitle(event.title);
     setType(event.type);
     setStartDate(event.date.start);
     setEndDate(event.date.end);
-    setColour(event.colour);
   }, [currentlyActive]);
 
   useEffect(() => {
@@ -86,13 +88,7 @@ export const CalendarEdit = ({
   const refresh = () => refetchData() & _resetAllInputs();
 
   function _resetAllInputs() {
-    for (const setVar of [
-      setName,
-      setType,
-      setStartDate,
-      setEndDate,
-      setColour,
-    ]) {
+    for (const setVar of [setTitle, setType, setStartDate, setEndDate]) {
       setVar("");
     }
     setCurrentlyActive("_default");
@@ -110,11 +106,10 @@ export const CalendarEdit = ({
     }
     // ?title=Nazwa wydarzenia kalendarzowego.&type=2&startDate=1&endDate=1
     const params = {
-      title: name,
+      title: title,
       type,
       startDate,
       endDate,
-      colour,
     };
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
@@ -138,6 +133,15 @@ export const CalendarEdit = ({
     });
   }
 
+  function _handleYearUpdate() {
+    if (displayYear.length !== 4 || parseInt(displayYear) < 2022) {
+      // Invalid year inputted
+      setDisplayYear(year);
+    } else {
+      setYear(displayYear)
+    }
+  }
+  
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <DialogBox
@@ -166,8 +170,17 @@ export const CalendarEdit = ({
         isVisible={popupError}
         setVisible={setPopupError}
       />
+      <InputBox
+        maxLength={4}
+        name="event-year"
+        type="number"
+        placeholder="Rok w kalendarzu do edycji"
+        value={displayYear}
+        onChange={setDisplayYear}
+        onBlur={_handleYearUpdate}
+      />
       <InputDropdown
-        label="Miesiąc w kalendarzu"
+        label="Miesiąc w kalendarzu do edycji"
         currentValue={month}
         onChangeCallback={setMonth}
         valueDisplayObject={MONTHS}
@@ -191,8 +204,8 @@ export const CalendarEdit = ({
         maxLength={64}
         name="event-name"
         placeholder="Nazwa wydarzenia"
-        value={name}
-        onChange={setName}
+        value={title}
+        onChange={setTitle}
       />
       <div
         className="fr"

@@ -17,12 +17,13 @@ const postAttributeSanitisers = {
   },
   author: (author) => author || "autor",
   title: (title) => title || "Tytuł Postu",
-  text: (text) => text || "Krótka treść postu...",
-  content: (content) => content || "Wydłużona treść postu.",
+  rawContent: (content) => content || "Treść postu",
+  formattedContent: (content) => content || "<div><p>Treść postu</p></div><br>",
   photo: (photo) => photo || null,
   photoAuthor: (photoAuthor) => photoAuthor || null,
   alt: (altPhotoText) => altPhotoText || null,
-  ytID: (link) => (link?.length === 11 ? link : null),
+  ytID: (ID) => (ID?.length === 11 ? ID : null),
+  link: (link) => link || null,
 };
 
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */

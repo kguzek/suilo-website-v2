@@ -101,8 +101,8 @@ function createTestData(res) {
         date: dateToTimestamp(randomDate),
         author: "Konrad Guzek",
         title: testData.title,
-        text: testData.text,
-        content: testData.text,
+        rawContent: testData.text,
+        formattedContent: testData.text,
         photo: testData.photo,
       };
       const dummyRes = { status: () => ({ json: (data) => data }) };

@@ -18,7 +18,7 @@ import InputPhoto from "./InputComponents/InputPhoto";
 
 export const EventEdit = ({ data, loaded, refetchData, photos }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [type, setType] = useState(0);
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
@@ -49,7 +49,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
       // No currently selected event
       return void _resetAllInputs();
     }
-    setName(event.title);
+    setTitle(event.title);
     setType(event.type ?? 0);
     setDescription(event.content);
     setDate(serialiseDateArray(event.date));
@@ -77,7 +77,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
 
   function _resetAllInputs() {
     for (const setVar of [
-      setName,
+      setTitle,
       setDescription,
       setDate,
       setStartTime,
@@ -104,7 +104,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
     }
     // ?title=Tytuł wydarzenia&type=0&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
     const params = {
-      title: name,
+      title,
       type,
       date,
       startTime,
@@ -190,8 +190,8 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
         name="event-name"
         placeholder="Tytuł"
         maxLength={64}
-        value={name}
-        onChange={setName}
+        value={title}
+        onChange={setTitle}
       />
       <InputDropdown
         label="Typ wydarzenia"

@@ -169,33 +169,4 @@ function Events({ setPage, reload, setReload }) {
   );
 }
 
-// function EventPreview({ event }) {
-//   const numParticipants = event.participants.length;
-//   const suffix = numParticipants === 1 ? "" : "ów";
-//   return (
-//     <div>
-//       <small>
-//         <i>
-//           {formatDate(event.date)}&nbsp;&nbsp;·&nbsp;&nbsp;{numParticipants}{" "}
-//           uczestnik
-//           {suffix}
-//         </i>
-//       </small>
-//       <br />
-//       <b>
-//         <Link to={event.id}>{event.title}</Link>
-//       </b>
-//       <br />
-//       <i>
-//         Godz. {formatTime(event.startTime)}—{formatTime(event.endTime)}
-//         {event.location && (
-//           <span>&nbsp;&nbsp;·&nbsp;&nbsp;Miejsce: {event.location}</span>
-//         )}
-//       </i>
-//       <br />
-//       {event.content}
-//     </div>
-//   );
-// }
-
 export default Events;
