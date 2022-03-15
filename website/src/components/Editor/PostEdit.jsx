@@ -60,6 +60,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     setAuthor(post.author);
     setTitle(post.title);
     setDescription(post.content);
+    setContent(post.text);
     // photo properties are all nullable
     setImageURL(post.photo ?? "");
     setImageAuthor(post.photoAuthor ?? "");
@@ -83,6 +84,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     for (const setVar of [
       setTitle,
       setDescription,
+      setContent,
       setImageURL,
       setImageAuthor,
       setImageAltText,
@@ -105,13 +107,12 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       method = "PUT";
       url += currentlyActive;
     }
-    const shortDescription = description.substring(0, 180);
     // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null&ytID=null
     const params = {
       date: new Date().toISOString(),
       author,
       title,
-      text: shortDescription,
+      text: content,
       content: description,
       photo: imageURL,
       //those two should be stored with the photo imo
@@ -148,10 +149,11 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     });
   }
   const setPostContent = ({ html, text }) => {
-    setDescription(html)
-    setContent(text)
-    console.log(text, html)
-  }
+    setDescription(html);
+    setContent(text);
+    console.log(text);
+    console.log(html);
+  };
 
   function _handleDelete() {
     setClickedDelete(true);
@@ -204,7 +206,10 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         value={title}
         onChange={setTitle}
       />
-      <TextEditor onChange={setPostContent} value={{ html: description, text: content }} />
+      <TextEditor
+        onChange={setPostContent}
+        value={{ html: description, text: content }}
+      />
       <InputBox
         name="post-author"
         placeholder="Autor"
