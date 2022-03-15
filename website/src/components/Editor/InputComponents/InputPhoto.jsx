@@ -53,6 +53,8 @@ export default function InputPhoto({
     getURLfromFileName(photoName, "400x300", setPreview);
   }
 
+  const showImageMetadataInputs = [0, 1].includes(selectedOption);
+
   return (
     <div>
       <div className="w-full inline-flex justify-between pl-20 pr-20">
@@ -114,7 +116,7 @@ export default function InputPhoto({
           src={preview}
         />
       )}
-      {selectedOption !== 3 && setImageAuthor && (
+      {showImageMetadataInputs && setImageAuthor && (
         <InputBox
           name="image-author"
           placeholder="Autor zdjęcia"
@@ -124,7 +126,7 @@ export default function InputPhoto({
           required={imageURL !== "" ? true : false}
         />
       )}
-      {selectedOption !== 3 && setImageAltText && (
+      {showImageMetadataInputs && setImageAltText && (
         <InputBox
           name="image-alt-text"
           placeholder="Tekst alternatywny do zdjęcia"

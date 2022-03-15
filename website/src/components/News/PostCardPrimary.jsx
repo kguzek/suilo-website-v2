@@ -4,7 +4,6 @@ import { ArrowRight } from "react-feather";
 import { DEFAULT_IMAGE, getURLfromFileName } from "../../misc";
 
 const PostCardPrimary = ({ data }) => {
-  const textShort = data.text;
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
 
   useEffect(() => {
@@ -29,9 +28,9 @@ const PostCardPrimary = ({ data }) => {
       <div className="relative">
         <h3
           className="line-clamp-3 tracking-[0.012rem] max-w-full font-normal text-sm lg:text-[.95rem] text-text6 leading-5 lg:leading-[1.65rem]"
-          title={textShort}
+          title={data.text}
         >
-          {textShort}
+          {data.text}
         </h3>
         <div
           className="absolute -bottom-[.175rem] lg:bottom-[.05rem] right-0 py-[.1rem] px-1 pl-8"
