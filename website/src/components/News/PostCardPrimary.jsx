@@ -13,7 +13,7 @@ const PostCardPrimary = ({ data }) => {
   //group-hover:ring-[.2rem] ring-primaryDark/30 transition-all duration-300
   return (
     <article className="w-full group">
-      <Link to={data.link} className="flex w-full relative flex-col group">
+      <Link to={data.internalLink} className="flex w-full relative flex-col group">
         <img
           src={photo}
           className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl"
@@ -39,7 +39,7 @@ const PostCardPrimary = ({ data }) => {
           }}
         >
           <Link
-            to={data.link}
+            to={data.internalLink}
             className="inline-flex flex-row justify-between align-middle transition-all duration-150 group"
           >
             <p className="group-hover:text-primaryDark pr-1 text-primary font-medium text-[.95rem]">

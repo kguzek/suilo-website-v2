@@ -28,7 +28,7 @@ const PostCardMain = ({ data }) => {
         className="bg-gray-200/75 w-1/5 object-cover aspect-square rounded-lg lg:rounded-xl"
       />
       <div className="w-full pl-4 flex flex-col justify-start relative">
-        <Link to={data.link}>
+        <Link to={data.internalLink}>
           <h2 className="text-text1 tracking-wide max-w-full font-semibold text-lg lg:text-xl lg:leading-6 line-clamp-2 leading-5">
             {data.title}
           </h2>
@@ -44,7 +44,7 @@ const PostCardMain = ({ data }) => {
             }}
           >
             <Link
-              to={data.link}
+              to={data.internalLink}
               className="inline-flex group flex-row justify-between align-middle transition-all duration-150 group"
             >
               <p className="group-hover:text-primaryDark pr-1 text-primary font-medium text-sm lg:text-[.925rem]">

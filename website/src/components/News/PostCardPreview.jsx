@@ -103,7 +103,7 @@ export function PostCardPreview({
   return (
     <>
       {_data.map((el, idx) => {
-        el.link = linkPrefix + el.id;
+        el.internalLink = linkPrefix + el.id;
         return React.createElement(elem, { key: el.id + idx, data: el });
       })}
     </>
