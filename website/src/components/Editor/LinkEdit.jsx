@@ -10,6 +10,10 @@ import { setErrorMessage } from "../../misc";
 export const LinkEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [longLink, setLongLink] = useState("");
+
+  const [actualLink, setAtualLink] = useState("");
+  const [visits, setVisits] = useState(0);
+
   const [shortLink, setShortLink] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
@@ -141,6 +145,14 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
         onChange={setShortLink}
         required={false}
       />
+      <div className="w-full">
+        {
+          actualLink !== "" && <div className="my-1 font-medium text-lg text-text1"><span>Link: </span><a href={actualLink} target="_blank">{actualLink}</a></div>
+        }
+        {
+          visits !== 0 && <p className="text-text6">Kliknięcia w link: {visits}</p>
+        }
+      </div>
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (

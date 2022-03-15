@@ -112,7 +112,7 @@ const Post = ({ setPage, reload, setReload }) => {
       <div className="grid grid-cols-1 lg:grid-cols-4 mt-6 lg:mt-10 gap-10 xl:gap-12">
         <article ref={ref} className="col-span-1 lg:col-span-3">
           <img
-            className="aspect-video w-full object-cover rounded-xl lg:rounded-3xl drop-shadow-sm"
+            className="aspect-video w-full object-cover rounded-xl lg:rounded-3xl drop-shadow-5xl"
             src={photoLink ?? postData.photo}
             alt={postData.alt}
           />
@@ -126,7 +126,7 @@ const Post = ({ setPage, reload, setReload }) => {
               .
             </p>
           )}
-          <div className="text-[#707070] text-sm sm:text-base font-normal lg:pb-1">
+          <div className="text-[#707070] text-sm sm:text-base font-normal">
             <span className="font-medium">{createdDate}</span>
             &nbsp;&nbsp;·&nbsp;&nbsp;{views}
             {/* {postData.modified && (
@@ -137,12 +137,12 @@ const Post = ({ setPage, reload, setReload }) => {
             )} */}
           </div>
 
-          <h1 className="text-text1 w-full font-bold tracking-wide leading-8 text-[1.6rem] sm:text-3xl lg:max-w-prose md:text-4xl">
+          <h1 className="text-text1 w-full font-bold tracking-[.015rem] leading-8 text-[1.6rem] md:leading-[2.7rem] sm:text-3xl md:text-4xl">
             {postData.title}
           </h1>
           <div
             dangerouslySetInnerHTML={{ __html: postData.content }}
-            className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 lg:mt-5  lg:text-xl  font-normal text-lg"
+            className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 mb-2  lg:text-xl  font-normal text-lg"
           ></div>
           {postData.ytID && (
             <YouTube

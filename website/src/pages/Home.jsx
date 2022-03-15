@@ -17,7 +17,7 @@ const Home = ({ setPage, reload, setReload }) => {
   const [loadedNumbers, setLoadedNumbers] = useState(false);
 
   const newsItems = width > 1024 ? 5 : width > 768 ? 4 : width > 640 ? 3 : 2
-  
+
   /** Fetch the news data from cache or API. */
   function fetchNews() {
     setLoadedNews(false);
@@ -90,7 +90,7 @@ const Home = ({ setPage, reload, setReload }) => {
         />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
-      <div className="h-[87vh] w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
+      <div className="h-[89vh] w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
         <div className="flex flex-col pb-3 col-span-1 lg:col-span-3">
           <h1 className="font-bold text-text1 text-5xl pb-2 lg:text-10xl lg:pb-0 xl:text-[3.5rem]">
             Samorząd Uczniowski
