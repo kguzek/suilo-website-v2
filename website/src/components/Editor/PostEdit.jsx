@@ -20,6 +20,11 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
   const [ytID, setYtID] = useState("");
+  const [link, setLink] = useState("");
+
+  const [addYT, setAddYT] = useState(false)
+  const [addLink, setAddLink] = useState(false)
+
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
@@ -27,6 +32,18 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const [popupDelete, setPopupDelete] = useState(false);
   const [popupError, setPopupError] = useState(false);
   const [errorCode, setErrorCode] = useState(null);
+
+  useEffect(() => {
+    if (!addYT) {
+      setYtID("")
+    }
+  }, [addYT])
+
+  useEffect(() => {
+    if (!addLink) {
+      setLink("")
+    }
+  }, [addLink])
 
   useEffect(() => {
     if (!loaded) {
@@ -205,14 +222,41 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         imageAltText={imageAltText}
         setImageAltText={setImageAltText}
       />
-      <InputBox
-        name="yt-url"
-        placeholder="ID filmu na serwisie YouTube"
-        maxLength={11}
-        value={ytID}
-        required={false}
-        onChange={setYtID}
-      />
+      <div>
+        <label>
+          <input type="checkbox" onClick={() => addYT ? setAddYT(false) : setAddYT(true)} />
+          &nbsp;Dodaj film z serwisu YouTube
+        </label>
+      </div>
+
+      {
+        addYT && <InputBox
+          name="yt-url"
+          placeholder="ID filmu na serwisie YouTube"
+          maxLength={11}
+          value={ytID}
+          onChange={setYtID}
+        />
+      }
+      <div>
+        <label>
+          <input type="checkbox" onClick={() => addLink ? setAddLink(false) : setAddLink(true)} />
+          &nbsp;Dodaj link do zewnętrznego serwisu
+        </label>
+      </div>
+
+
+      {
+        addLink &&
+        <InputBox
+          name="third-party-url"
+          placeholder="Zewnętrzne łącze URL"
+          maxLength={126}
+          value={link}
+          onChange={setLink}
+        />
+      }
+
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
