@@ -172,10 +172,8 @@ $bg-color: #F8F8F8;
 
 .login-btn{
     margin-top: -1.6em;
-    
-    cursor: pointer;
-    pointer-events: all;
     border: none;
+    pointer-events: all;
     font-family: 'Poppins';
     font-size: .87em;
     font-weight: 500;
@@ -1253,7 +1251,7 @@ a{
 .input {
     // border: 2px solid;
     border: none;
-    border-bottom: solid .125em rgb(212, 212, 212);
+    border-bottom: solid .125em #d4d4d4;
     // border-radius: 5px;
     width: 100%;
     font-size: 1em;
