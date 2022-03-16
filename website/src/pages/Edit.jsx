@@ -70,7 +70,7 @@ export default function Edit({
       setLoaded: setLoadedLinks,
       updateCache: forceUpdate,
     };
-    fetchCachedData("shortLinks", "links", fetchArgs);
+    fetchCachedData("links_all", "links", fetchArgs);
   }
 
   /** Fetch the users data from the cache or API. */

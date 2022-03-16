@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { WEBSITE_DOMAIN } from "../../misc";
 import DialogBox from "../DialogBox";
 
 const Footer = ({ isVisible }) => {
@@ -35,7 +36,7 @@ const Footer = ({ isVisible }) => {
         className="my-2 mt-3 select-none"
         onClick={() => setClicks(clicks + 1)}
       >
-        suilo.org {new Date().getFullYear()} © Wszystkie prawa zastrzeżone.
+        {WEBSITE_DOMAIN} {new Date().getFullYear()} © Wszystkie prawa zastrzeżone.
       </p>
     </div>
   );

@@ -11,6 +11,8 @@ export const MAX_CACHE_AGE = 24; // hours
 // Temporary image URL if an article has none specified
 export const DEFAULT_IMAGE = "https://i.imgur.com/Rwygn8m.jpg";
 
+export const WEBSITE_DOMAIN = "suilo.pl";
+
 /**
  * (1, 'wyświetle', 'nie', 'nia', 'ń') -> '1 wyświetlenie'
  *
@@ -201,7 +203,7 @@ export function getDataFromFilename(
     return void urlCallback(DEFAULT_IMAGE);
   }
   // Check if the photo is already an external URL
-  if (name.startsWith("http://") || name.startsWith("https://")) {
+  if (isURL(name)) {
     // Don't look for the photo since the URL is known
     return void urlCallback(name);
   }
@@ -273,4 +275,9 @@ export function handlePhotoUpdate(file, setImageURL, author, altText) {
       setImageURL(photoName);
     }
   );
+}
+
+/** Returns true if the string starts with either the HTTP or HTTPS protocol identifier. */
+export function isURL(string) {
+  return string.startsWith("http://") || string.startsWith("https://");
 }

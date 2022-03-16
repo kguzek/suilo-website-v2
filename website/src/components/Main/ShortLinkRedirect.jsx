@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import NotFound from "../../pages/NotFound";
 import { fetchWithToken } from "../../firebase";
 import LoadingScreen from "../LoadingScreen";
-import { fetchCachedData } from "../../misc";
+import { fetchCachedData, isURL } from "../../misc";
 
 export default function ShortLinkRedirect({ setPage }) {
   const [loaded, setLoaded] = useState(false);
@@ -12,7 +12,15 @@ export default function ShortLinkRedirect({ setPage }) {
 
   /** Callback function for when the data is fetched. */
   function setData(data) {
-    data.destination && navigate(data.destination);
+    const destination = data?.destination;
+    if (!destination) return;
+    if (isURL(destination)) {
+      // External, absolute URL
+      window.location.href = destination;
+    } else {
+      // Internal, relative page link
+      navigate(destination);
+    }
   }
 
   function fetchShortLinkData() {

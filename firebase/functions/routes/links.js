@@ -5,8 +5,7 @@ const { db, HTTP, updateSingleDocument } = require("../util");
 const router = express.Router();
 
 const linkAttributeSanitisers = {
-  destination: (dest) =>
-    dest ? (dest.startsWith("/") ? dest : "/" + dest) : null,
+  destination: (dest) => dest,
   shortLink: (link) =>
     link && link.startsWith("/") ? link.substring(1, link.length) : link,
 };

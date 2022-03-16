@@ -5,13 +5,13 @@ import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
 import LoadingScreen, { LoadingButton } from "../LoadingScreen";
 import { fetchWithToken } from "../../firebase";
-import { setErrorMessage } from "../../misc";
+import { fetchCachedData, isURL, setErrorMessage, WEBSITE_DOMAIN } from "../../misc";
 
 export const LinkEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [longLink, setLongLink] = useState("");
 
-  const [actualLink, setAtualLink] = useState("");
+  const [actualLink, setActualLink] = useState("");
   const [visits, setVisits] = useState(0);
 
   const [shortLink, setShortLink] = useState("");
@@ -32,14 +32,24 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     if (!loaded) {
       return;
     }
-    const _currentLink = _getCurrentlyActive();
-    if (!_currentLink) {
+    const currentLink = _getCurrentlyActive();
+    if (!currentLink) {
       // No currently selected link
       return void _resetAllInputs();
     }
-    setLongLink(_currentLink.destination);
-    setShortLink(_currentLink.shortLink);
+    setLongLink(currentLink.destination);
+    setShortLink(currentLink.shortLink);
+    setVisits(currentLink.views ?? 0);
   }, [currentlyActive]);
+
+  useEffect(() => {
+    if (isURL(longLink)) {
+      setActualLink(longLink);
+    } else {
+      const path = longLink.startsWith("/") ? longLink : "/" + longLink;
+      setActualLink(`https://www.${WEBSITE_DOMAIN}${path}`);
+    }
+  }, [longLink]);
 
   // Display loading screen if events data hasn't been retrieved yet
   if (!loaded) {
@@ -53,6 +63,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     for (const setVar of [setLongLink, setShortLink]) {
       setVar("");
     }
+    setVisits(0);
     setCurrentlyActive("_default");
   }
 
@@ -146,19 +157,24 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
         required={false}
       />
       <div className="w-full">
-        {
-          actualLink !== "" && <div className="my-1 font-medium text-lg text-text1"><span>Link: </span><a href={actualLink} target="_blank">{actualLink}</a></div>
-        }
-        {
-          visits !== 0 && <p className="text-text6">Kliknięcia w link: {visits}</p>
-        }
+        {actualLink !== "" && (
+          <div className="my-1 font-medium text-lg text-text1">
+            <span>Link: </span>
+            <a href={actualLink} target="_blank">
+              {actualLink}
+            </a>
+          </div>
+        )}
+        {visits !== 0 && <p className="text-text6">Kliknięcia w link: {visits}</p>}
       </div>
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
             <button
               type="button"
-              className="delete-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}
+              className="delete-btn select-none cursor-wait"
+              disabled
+              style={{ pointerEvents: "none" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -167,35 +183,50 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
           ) : (
             <button
               type="button"
-              className="delete-btn select-none cursor-pointer" style={{ pointerEvents: "all" }}
+              className="delete-btn select-none cursor-pointer"
+              style={{ pointerEvents: "all" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń link</p>
             </button>
           ))}
-        {clickedSubmit ?
-          <button type="submit" className="add-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}>
+        {clickedSubmit ? (
+          <button
+            type="submit"
+            className="add-btn select-none cursor-wait"
+            disabled
+            style={{ pointerEvents: "none" }}
+          >
             {currentlyActive !== "_default" ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
             <p>
-              {currentlyActive !== "_default" ? "zaktualizuj użytkownika" : "dodaj użytkownika"}
-            </p>
-          </button> :
-          <button type="submit  " className="add-btn select-none cursor-pointer" style={{ pointerEvents: "all" }} >
-            {currentlyActive !== "_default" ? (
-              <Edit3 color="#FFFFFF" size={24} />
-            ) : (
-              <Plus color="#FFFFFF" size={24} />
-            )}
-            <p>
-              {currentlyActive !== "_default" ? "zaktualizuj użytkownika" : "dodaj użytkownika"}
+              {currentlyActive !== "_default"
+                ? "zaktualizuj skrócony link"
+                : "dodaj skrócony link"}
             </p>
           </button>
-        }
+        ) : (
+          <button
+            type="submit  "
+            className="add-btn select-none cursor-pointer"
+            style={{ pointerEvents: "all" }}
+          >
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "zaktualizuj skrócony link"
+                : "dodaj skrócony link"}
+            </p>
+          </button>
+        )}
       </div>
     </form>
   );
