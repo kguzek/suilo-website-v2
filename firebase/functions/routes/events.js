@@ -68,9 +68,9 @@ router
     const response = {};
 
     /** Toggles the user's notification for the given event. */
-    function toggleNotification() {
+    function toggleNotification(data) {
       let notificationsFor = data.notificationsFor ?? [];
-      const notified = notifications.includes(userID);
+      const notified = notificationsFor.includes(userID);
       if (notified) {
         notificationsFor = notificationsFor.filter((id) => id !== userID);
         response.msg = `Success! User with ID ${userID} will no longer be notified of this event.`;
@@ -78,13 +78,13 @@ router
         notificationsFor.push(userID);
         response.msg = `Success! User with ID ${userID} will now be notified of this event.`;
       }
-      docRef.update({ notificationsFor });
       response.notified = !notified;
       response.notificationsFor = notificationsFor;
+      return { notificationsFor };
     }
 
     /** Toggles the user's participation status for the given event. */
-    function toggleParticipance() {
+    function toggleParticipance(data) {
       let participants = data.participants ?? [];
       const participating = participants.includes(userID);
       if (participating) {
@@ -94,9 +94,9 @@ router
         participants.push(userID);
         response.msg = `Success! User with ID ${userID} is now a participant of the event.`;
       }
-      docRef.update({ participants });
       response.participating = !participating;
       response.participants = participants;
+      return { participants };
     }
 
     getDocRef(req, res, "events").then((docRef) => {
@@ -110,10 +110,10 @@ router
         }
         switch (req.query.toggle) {
           case "notification":
-            toggleNotification();
+            docRef.update(toggleNotification(data));
             break;
           case "participance":
-            toggleParticipance();
+            docRef.update(toggleParticipance(data));
             break;
           default:
             res.status(400).json({
