@@ -21,11 +21,11 @@ import { LoadingButton } from "../LoadingScreen";
 import DialogBox from "../DialogBox";
 
 const PARTICIPATE_BTN_CLASS =
-  "transition-all inline-flex bg-primary py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]";
+  "transition-all inline-flex py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]";
 
 // Zmieniłem pt-[.7rem] na pt-[.65rem] żeby się alignowało @Mrózek
 const NOTIFY_BTN_CLASS =
-  "transition-all bg-white cursor-pointer hover:ring-2 hover:ring-primary/30  p-[.5rem] pt-[.65rem] ml-2 drop-shadow-3xl rounded-xl";
+  "transition-all cursor-pointer hover:ring-2 hover:ring-primary/30  p-[.5rem] ml-2 drop-shadow-3xl rounded-xl";
 
 // const testEvent = {
 //   photo:
@@ -41,12 +41,14 @@ const NOTIFY_BTN_CLASS =
 //   link: "https://youtu.be/dQw4w9WgXcQ",
 // };
 
-const EventPreview = ({ event, isNextEvent = false }) => {
+const EventPreview = ({ event, isNextEvent = false, user }) => {
   const [notification, setNotification] = useState(false);
   const [participance, setParticipance] = useState(false);
   const [canParChange, setCanParChange] = useState(true);
   const [canNotChange, setCanNotChange] = useState(true);
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
+
+  const [logged, setLogged] = useState(false)
 
   const [clickedParticipate, setClickedParticipate] = useState(false);
   const [clickedNotify, setClickedNotify] = useState(false);
@@ -83,6 +85,10 @@ const EventPreview = ({ event, isNextEvent = false }) => {
     " uczestników";
 
   function _toggleNotification(_clickEvent) {
+    if (user === (null || undefined)) {
+      setLogged(true);
+      return;
+    };
     if (!canNotChange || !canParChange) {
       return;
     }
@@ -111,6 +117,10 @@ const EventPreview = ({ event, isNextEvent = false }) => {
   }
 
   function _toggleParticipance(_clickEvent) {
+    if (user === (null || undefined)) {
+      setLogged(true);
+      return;
+    };
     if (!canParChange || !canNotChange) {
       return;
     }
@@ -144,20 +154,28 @@ const EventPreview = ({ event, isNextEvent = false }) => {
       {popupNotification && (
         <DialogBox
           header={notification ? "Zrobione!" : "Zrobione!"}
-          content={`${
-            notification ? "Włączono" : "Wyłączono"
-          } powiadomienie dla wydarzenia "${event.title}".`}
+          content={`${notification ? "Włączono" : "Wyłączono"
+            } powiadomienie dla wydarzenia "${event.title}".`}
           duration={2000}
           isVisible={popupNotification}
           setVisible={setPopupNotification}
         />
       )}
+      {logged && (
+        <DialogBox
+          header="Błąd!"
+          content="Aby wykonać akcję musisz być zalogowana/y."
+          type="DIALOG"
+          buttonOneLabel="Ok"
+          isVisible={logged}
+          setVisible={setLogged}
+        />
+      )}
       {popupParticipance && (
         <DialogBox
           header={participance ? "Super!" : "Szkoda."}
-          content={`${
-            participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
-          } udział w wydarzeniu "${event.title}".`}
+          content={`${participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
+            } udział w wydarzeniu "${event.title}".`}
           duration={2000}
           isVisible={popupParticipance}
           setVisible={setPopupParticipance}
@@ -246,6 +264,7 @@ const EventPreview = ({ event, isNextEvent = false }) => {
             <a
               className="transition-all bg-white aspect-square p-[.5rem] hover:ring-2 hover:ring-primary/30 drop-shadow-3xl pt-[.55rem] pl-[.55rem] rounded-xl"
               href={event.link}
+              title={`Link do wydarzenia: ${event.title}`}
               target="_blank"
               rel="noreferrer"
             >
@@ -256,27 +275,57 @@ const EventPreview = ({ event, isNextEvent = false }) => {
             </a>
           )}
           {clickedNotify ? (
-            <LoadingButton className={NOTIFY_BTN_CLASS} width={30} />
-          ) : (
-            <div
+            <button
               onClick={_toggleNotification}
-              className={NOTIFY_BTN_CLASS + " aspect-square"}
+              disabled
+              className={NOTIFY_BTN_CLASS + " aspect-square bg-gray-50"}
+              style={{ cursor: "progress" }}
+            >
+              <Bell
+                size={28}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
+                  }`}
+              />
+            </button>
+          ) : (
+            <button
+              onClick={_toggleNotification}
+              className={NOTIFY_BTN_CLASS + " aspect-square bg-white"}
               style={{ cursor: canNotChange ? "pointer" : "not-allowed" }}
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
-                  notification ? "fill-primary" : "fill-transparent"
-                }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
+                  }`}
               />
-            </div>
+            </button>
           )}
           {clickedParticipate ? (
-            <LoadingButton className={PARTICIPATE_BTN_CLASS} isOpaque />
-          ) : (
-            <div
+            <button
               onClick={_toggleParticipance}
-              className={PARTICIPATE_BTN_CLASS}
+              className={PARTICIPATE_BTN_CLASS + " bg-primaryDark"}
+              style={{ cursor: "progress" }}
+              disabled
+            >
+              {participance ? (
+                <UserCheck
+                  size={28}
+                  className={`aspect-square  h-[1.5rem]  my-auto stroke-2 stroke-white `}
+                />
+              ) : (
+                <User
+                  size={28}
+                  className={`aspect-square  h-[1.5rem]  my-auto stroke-2 stroke-white `}
+                />
+              )}
+              <p className="text-white pl-1 my-auto font-medium text-base -tracking-[.015rem]">
+                {participance ? "Bierzesz udział" : "Wezmę udział"}
+              </p>
+            </button>
+          ) : (
+            <button
+              onClick={_toggleParticipance}
+              className={PARTICIPATE_BTN_CLASS + " bg-primary"}
               style={{ cursor: canParChange ? "pointer" : "not-allowed" }}
             >
               {participance ? (
@@ -293,7 +342,7 @@ const EventPreview = ({ event, isNextEvent = false }) => {
               <p className="text-white pl-1 my-auto font-medium text-base -tracking-[.015rem]">
                 {participance ? "Bierzesz udział" : "Wezmę udział"}
               </p>
-            </div>
+            </button>
           )}
         </div>
       </div>

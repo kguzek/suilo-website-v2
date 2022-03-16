@@ -188,33 +188,47 @@ export const PermissionEdit = ({
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
-            <LoadingButton />
+            <button
+              type="button"
+              className="delete-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}
+              onClick={() => setPopupDelete(true)}
+            >
+              <Trash color="rgb(252, 63, 30)" size={20} />
+              <p>usuń użytkownika</p>
+            </button>
           ) : (
             <button
               type="button"
-              className="delete-btn"
+              className="delete-btn select-none cursor-pointer" style={{ pointerEvents: "all" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń użytkownika</p>
             </button>
           ))}
-        {clickedSubmit ? (
-          <LoadingButton isOpaque />
-        ) : (
-          <button type="submit" className="add-btn">
-            {currentlyActive !== "_default" ? (
-              <Edit3 color="#FFFFFF" size={24} />
-            ) : (
-              <Plus color="#FFFFFF" size={24} />
-            )}
-            <p>
-              {currentlyActive !== "_default"
-                ? "zaktualizuj użytkownika"
-                : "dodaj użytkownika"}
-            </p>
-          </button>
-        )}
+        {
+          clickedSubmit ?
+            <button type="submit" className="add-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}>
+              {currentlyActive !== "_default" ? (
+                <Edit3 color="#FFFFFF" size={24} />
+              ) : (
+                <Plus color="#FFFFFF" size={24} />
+              )}
+              <p>
+                {currentlyActive !== "_default" ? "zaktualizuj użytkownika" : "dodaj użytkownika"}
+              </p>
+            </button> :
+            <button type="submit  " className="add-btn select-none cursor-pointer" style={{ pointerEvents: "all" }} >
+              {currentlyActive !== "_default" ? (
+                <Edit3 color="#FFFFFF" size={24} />
+              ) : (
+                <Plus color="#FFFFFF" size={24} />
+              )}
+              <p>
+                {currentlyActive !== "_default" ? "zaktualizuj użytkownika" : "dodaj użytkownika"}
+              </p>
+            </button>
+        }
       </div>
     </form>
   );

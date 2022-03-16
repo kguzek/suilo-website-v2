@@ -1078,8 +1078,6 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
   padding: .5em 1.2em;
   border-radius: .65em;
   height: 100%;
-  pointer-events: all;
-  cursor: pointer;
   background: linear-gradient(170deg, #FFA000, #FFC300);
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
@@ -1128,9 +1126,7 @@ input[type="time"]:hover::-webkit-calendar-picker-indicator {
   padding: 0;
   border-radius: .65em;
   height: 100%;
-  pointer-events: all;
   background: transparent;
-  cursor: pointer;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
   border: none;
