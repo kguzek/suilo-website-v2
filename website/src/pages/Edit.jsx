@@ -193,7 +193,7 @@ export default function Edit({
     ? PAGE_NAMES // Give permission to edit all pages
     : PAGE_NAMES.filter((page) => userCanEdit.includes(page)); // Give permission for individual pages
 
-  // Failsafe to prevent the user seeing the edit UI in case of a bug
+  // Failsafe to prevent the user seeing the edit UI in case of a bug - ez?
   if (editPickerOptions.length === 0) {
     return (
       <p style={{ paddingBottom: "100%" }}>
