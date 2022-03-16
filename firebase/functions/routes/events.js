@@ -30,7 +30,7 @@ router
     // ?title=Tytuł wydarzenia&type=0&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
 
     // initialise parameters
-    const data = { participants: [] };
+    const data = { participants: [], notificationsFor: [] };
     for (const attrib in eventAttributeSanitisers) {
       const sanitiser = eventAttributeSanitisers[attrib];
       data[attrib] = sanitiser(req.query[attrib]);
@@ -46,20 +46,59 @@ router
       sendSingleResponse(docRef, res, (dataToSend) => {
         // check if the user who sent the request is in the participants list
         const participants = dataToSend.participants ?? [];
-        const participating = !isNaN(userID) && participants.includes(userID);
-        return { ...dataToSend, participating };
+        const participating = participants.includes(userID);
+        // check if the usre who sent the request has notifications enabled
+        const notificationsFor = dataToSend.notificationsFor ?? [];
+        const notified = notificationsFor.includes(userID);
+        return { ...dataToSend, participating, notified };
       })
     );
   })
 
-  // UPDATE (toggle) event participation status
+  // UPDATE (toggle) event participation/notification status
   .patch("/:id", (req, res) => {
+    // ?toggle=notification|participance
     const userID = req.userInfo?.uid;
     if (!userID) {
       return res.status(403).json({
         errorDescription: "You must be signed in to perform this action.",
       });
     }
+
+    const response = {};
+
+    /** Toggles the user's notification for the given event. */
+    function toggleNotification() {
+      let notificationsFor = data.notificationsFor ?? [];
+      const notified = notifications.includes(userID);
+      if (notified) {
+        notificationsFor = notificationsFor.filter((id) => id !== userID);
+        response.msg = `Success! User with ID ${userID} will no longer be notified of this event.`;
+      } else {
+        notificationsFor.push(userID);
+        response.msg = `Success! User with ID ${userID} will now be notified of this event.`;
+      }
+      docRef.update({ notificationsFor });
+      response.notified = !notified;
+      response.notificationsFor = notificationsFor;
+    }
+
+    /** Toggles the user's participation status for the given event. */
+    function toggleParticipance() {
+      let participants = data.participants ?? [];
+      const participating = participants.includes(userID);
+      if (participating) {
+        participants = participants.filter((id) => id !== userID);
+        response.msg = `Success! User with ID ${userID} is no longer participating in the event.`;
+      } else {
+        participants.push(userID);
+        response.msg = `Success! User with ID ${userID} is now a participant of the event.`;
+      }
+      docRef.update({ participants });
+      response.participating = !participating;
+      response.participants = participants;
+    }
+
     getDocRef(req, res, "events").then((docRef) => {
       docRef.get().then((doc) => {
         const data = doc.data();
@@ -69,20 +108,20 @@ router
               HTTP.err404 + "There is no event with the given ID.",
           });
         }
-        let participants = data.participants ?? [];
-        let msg;
-        const participating = participants.includes(userID);
-        if (participating) {
-          participants = participants.filter((id) => id !== userID);
-          msg = `Success! User with ID ${userID} is no longer participating in the event.`;
-        } else {
-          participants.push(userID);
-          msg = `Success! User with ID ${userID} is now a participant of the event.`;
+        switch (req.query.toggle) {
+          case "notification":
+            toggleNotification();
+            break;
+          case "participance":
+            toggleParticipance();
+            break;
+          default:
+            res.status(400).json({
+              errorDescription: `${HTTP.err400}Invalid 'toggle' parameter provided. Must be one of 'notification' or 'participance'.`,
+            });
+            return;
         }
-        docRef.update({ participants });
-        return res
-          .status(200)
-          .json({ msg, participating: !participating, participants });
+        res.status(200).json(response);
       });
     });
   })
