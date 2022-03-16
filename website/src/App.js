@@ -234,6 +234,7 @@ function App() {
                 setPage={setPage}
                 reload={shouldRefresh}
                 setReload={setShouldRefresh}
+                loginAction={loginAction}
               />
             }
           />

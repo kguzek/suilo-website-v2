@@ -41,14 +41,14 @@ const NOTIFY_BTN_CLASS =
 //   link: "https://youtu.be/dQw4w9WgXcQ",
 // };
 
-const EventPreview = ({ event, isNextEvent = false, user }) => {
+const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
   const [notification, setNotification] = useState(false);
   const [participance, setParticipance] = useState(false);
   const [canParChange, setCanParChange] = useState(true);
   const [canNotChange, setCanNotChange] = useState(true);
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
 
-  const [logged, setLogged] = useState(false)
+  // const [needsLogin, setNeedsLogin] = useState(false);
 
   const [clickedParticipate, setClickedParticipate] = useState(false);
   const [clickedNotify, setClickedNotify] = useState(false);
@@ -74,9 +74,15 @@ const EventPreview = ({ event, isNextEvent = false, user }) => {
   }, [popupParticipance]);
 
   useEffect(() => {
-    if (!auth.currentUser || !event) return;
+    if (!auth.currentUser || !event) {
+      // Restore defaults
+      setParticipance(false);
+      setNotification(false);
+      return;
+    }
     const uid = auth.currentUser.providerData?.[0]?.uid;
-    setParticipance(event.participants.includes(uid));
+    setParticipance(event.participants?.includes(uid));
+    setNotification(event.notificationsFor?.includes(uid))
   }, [auth.currentUser, event]);
 
   // Display "<20" if there are fewer than 20 event participants
@@ -84,25 +90,33 @@ const EventPreview = ({ event, isNextEvent = false, user }) => {
     (event.participants.length < 20 ? "<20" : event.participants.length) +
     " uczestników";
 
-  function _toggleNotification(_clickEvent) {
-    if (user === (null || undefined)) {
-      setLogged(true);
-      return;
-    };
-    if (!canNotChange || !canParChange) {
-      return;
+  /** This function is called when the au clicks the event participation or notification button.
+   *  Returns true if the action should be performed. Returns false if the user is signed out or if
+   *  the app is not ready for another request yet.
+   */
+  function _handleUserClick() {
+    if (!auth.currentUser) {
+      loginAction();
+      return false;
     }
+    if (!canParChange || !canNotChange) {
+      return false;
+    }
+    return true;
+  }
+
+  function _toggleNotification(_clickEvent) {
+    if (!_handleUserClick()) return;
     setClickedNotify(true);
-    // TODO: change fetch URL and method
-    const fetchURL = `/events/${event.id}`;
-    fetchWithToken(fetchURL, "GET").then((res) => {
+    fetchWithToken(`/events/${event.id}`, "PATCH", {
+      toggle: "notification",
+    }).then((res) => {
       if (res.ok) {
         setPopupNotification(true);
         setCanNotChange(true);
         res.json().then((data) => {
           // Update the client-side data
-          // TODO: do something with the response
-          setNotification(!notification);
+          setNotification(data.notified);
           setClickedNotify(false);
         });
         // Force cache update on next reload
@@ -117,15 +131,11 @@ const EventPreview = ({ event, isNextEvent = false, user }) => {
   }
 
   function _toggleParticipance(_clickEvent) {
-    if (user === (null || undefined)) {
-      setLogged(true);
-      return;
-    };
-    if (!canParChange || !canNotChange) {
-      return;
-    }
+    if (!_handleUserClick()) return;
     setClickedParticipate(true);
-    fetchWithToken(`/events/${event.id}`, "PATCH").then((res) => {
+    fetchWithToken(`/events/${event.id}`, "PATCH", {
+      toggle: "participance",
+    }).then((res) => {
       if (res.ok) {
         setPopupParticipance(true);
         setCanParChange(false);
@@ -151,47 +161,41 @@ const EventPreview = ({ event, isNextEvent = false, user }) => {
       className="w-full grid mb-6 grid-cols-1 gap-3 lg:gap-8 lg:w-11/12 md:w-10/12 mx-auto lg:grid-cols-2 lg:my-12 mt-8"
       id={isNextEvent ? "nextEvent" : "selectedEvent"}
     >
-      {popupNotification && (
-        <DialogBox
-          header={notification ? "Zrobione!" : "Zrobione!"}
-          content={`${notification ? "Włączono" : "Wyłączono"
-            } powiadomienie dla wydarzenia "${event.title}".`}
-          duration={2000}
-          isVisible={popupNotification}
-          setVisible={setPopupNotification}
-        />
-      )}
-      {logged && (
-        <DialogBox
-          header="Błąd!"
-          content="Aby wykonać akcję musisz być zalogowana/y."
-          type="DIALOG"
-          buttonOneLabel="Ok"
-          isVisible={logged}
-          setVisible={setLogged}
-        />
-      )}
-      {popupParticipance && (
-        <DialogBox
-          header={participance ? "Super!" : "Szkoda."}
-          content={`${participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
-            } udział w wydarzeniu "${event.title}".`}
-          duration={2000}
-          isVisible={popupParticipance}
-          setVisible={setPopupParticipance}
-        />
-      )}
-      {popupError && (
-        <DialogBox
-          header={`Bład! (HTTP ${errorCode})`}
-          content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
-          extra={popupError}
-          type="DIALOG"
-          buttonOneLabel="Ok"
-          isVisible={popupError}
-          setVisible={setPopupError}
-        />
-      )}
+      <DialogBox
+        header={notification ? "Zrobione!" : "Zrobione!"}
+        content={`${
+          notification ? "Włączono" : "Wyłączono"
+        } powiadomienie dla wydarzenia "${event.title}".`}
+        duration={2000}
+        isVisible={popupNotification}
+        setVisible={setPopupNotification}
+      />
+      {/* <DialogBox
+        header="Błąd!"
+        content="Aby wykonać akcję musisz być zalogowana/y."
+        type="DIALOG"
+        buttonOneLabel="Ok"
+        isVisible={needsLogin}
+        setVisible={setNeedsLogin}
+      /> */}
+      <DialogBox
+        header={participance ? "Super!" : "Szkoda."}
+        content={`${
+          participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
+        } udział w wydarzeniu "${event.title}".`}
+        duration={2000}
+        isVisible={popupParticipance}
+        setVisible={setPopupParticipance}
+      />
+      <DialogBox
+        header={`Bład! (HTTP ${errorCode})`}
+        content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
+        extra={popupError}
+        type="DIALOG"
+        buttonOneLabel="Ok"
+        isVisible={popupError}
+        setVisible={setPopupError}
+      />
       <div className="relative lg:pr-10 h-fit">
         <img
           className="bg-gray-200/75 max-h-96 aspect-[3/2] w-full object-cover rounded-xl sm:rounded-2xl drop-shadow-4xl"
@@ -283,8 +287,9 @@ const EventPreview = ({ event, isNextEvent = false, user }) => {
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
-                  }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
+                  notification ? "fill-primary" : "fill-transparent"
+                }`}
               />
             </button>
           ) : (
@@ -295,8 +300,9 @@ const EventPreview = ({ event, isNextEvent = false, user }) => {
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
-                  }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
+                  notification ? "fill-primary" : "fill-transparent"
+                }`}
               />
             </button>
           )}

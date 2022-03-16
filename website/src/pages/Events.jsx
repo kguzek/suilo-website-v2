@@ -8,7 +8,7 @@ import { serialiseDateArray } from "../common";
 import LoadingScreen from "../components/LoadingScreen";
 import { DEBUG_MODE } from "../firebase";
 
-function Events({ setPage, reload, setReload, user }) {
+function Events({ setPage, reload, setReload, loginAction }) {
   const [rawPrimEvents, setRawPrimEvents] = useState([]);
   const [primEvents, setPrimEvents] = useState([]);
   const [secEvents, setSecEvents] = useState([]);
@@ -147,11 +147,13 @@ function Events({ setPage, reload, setReload, user }) {
         <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
       </MetaTags>
       {nextEvent ? (
-        <EventPreview event={nextEvent} isNextEvent user={user} />
+        <EventPreview event={nextEvent} isNextEvent loginAction={loginAction} />
       ) : (
         // TODO: Render something better if there are no future events
         <div className="grid lg:mb-14">
-          <p className="mx-auto">Nie ma w najbliższym czasie żadnych wydarzeń.</p>
+          <p className="mx-auto">
+            Nie ma w najbliższym czasie żadnych wydarzeń.
+          </p>
         </div>
       )}
       <CalendarPreview
@@ -160,7 +162,9 @@ function Events({ setPage, reload, setReload, user }) {
         onMonthChange={setCalendarMonth}
         onYearChange={setCalendarYear}
       />
-      {selectedEvent && <EventPreview event={selectedEvent} user={user} />}
+      {selectedEvent && (
+        <EventPreview event={selectedEvent} loginAction={loginAction} />
+      )}
     </div>
   );
 }
