@@ -7,7 +7,7 @@ const functions = require("firebase-functions");
 
 // Local imports
 const { db, HTTP, sendListResponse, deleteSingleDocument } = require("./util");
-const storageTracker = require("./storageTracker")
+const storageTracker = require("./storageTracker");
 
 // initialise express
 const app = express();
