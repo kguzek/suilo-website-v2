@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const CookiesAlert = () => {
-  const [isOpen, setIsOpen] = useState(null);
+  const cookiesNotAccepted = localStorage.getItem("cookiesEnabled") !== "true";
+  const [isOpen, setIsOpen] = useState(cookiesNotAccepted);
+
   // user agreed to cookies policy
   const _cookieAgree = () => {
     // action
@@ -11,20 +13,15 @@ const CookiesAlert = () => {
 
   // user disagreed with cookies policy
   const _cookieDisagree = () => {
-    //action
     localStorage.setItem("cookiesEnabled", "false");
     setIsOpen(false);
   };
 
-  if (isOpen === null) {
-    setIsOpen(!localStorage.getItem("cookiesEnabled"));
-    return null;
-  }
-
   return (
     <div
-      className={`flex flex-col fixed bottom-0 align-middle justify-between p-5 pt-6 md:pt-5 bg-white w-screen rounded-t-3xl drop-shadow-2xl z-50 sm:w-11/12 md:flex-row md:w-fit md:p-6 lg:p-7 animate-all duration-300 ${isOpen ? "translate-y-0" : "translate-y-full"
-        }`}
+      className={`flex flex-col fixed bottom-0 align-middle justify-between p-5 pt-6 md:pt-5 bg-white w-screen rounded-t-3xl drop-shadow-2xl z-50 sm:w-11/12 md:flex-row md:w-fit md:p-6 lg:p-7 animate-all duration-300 ${
+        isOpen ? "translate-y-0" : "translate-y-full"
+      }`}
     >
       <div className="flex flex-col justify-center md:mr-6 align-top">
         <p className="text-text2 font-medium pb-1 text-md text-center md:text-left">
