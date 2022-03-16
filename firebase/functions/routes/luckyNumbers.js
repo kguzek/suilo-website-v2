@@ -6,6 +6,7 @@ const {
   dateToTimestamp,
   randomArraySelection,
   updateCollection,
+  sendListResponse,
 } = require("../util");
 
 const router = express.Router();
@@ -46,15 +47,15 @@ function sendNumbersData(res, data) {
 }
 
 /** Generates 2 random lucky numbers from the available number pools. */
-function generateNumbersData(res, data = {}, docRef) {
+function generateNumbersData(res, data, docRef) {
   const luckyNumbers = [];
   // one number pool for each lucky number: 1:15 and 16:MAX
-  const splitPoints = data.splitPoints ?? [15, 16];
+  const splitPoints = data?.splitPoints ?? [15, 16];
   const numberLimits = [
     [1, splitPoints[0]],
-    [splitPoints[1], data.maxNumber ?? MAX_LUCKY_NUMBER],
+    [splitPoints[1], data?.maxNumber ?? MAX_LUCKY_NUMBER],
   ];
-  const numberPools = [data.numberPoolA, data.numberPoolB];
+  const numberPools = [data?.numberPoolA, data?.numberPoolB];
   for (let i = 0; i < 2; i++) {
     let numberPool = numberPools[i];
     // reset the number pool if it's empty
@@ -75,8 +76,8 @@ function generateNumbersData(res, data = {}, docRef) {
   const newData = {
     date: todayString,
     luckyNumbers,
-    excludedClasses: data.excludedClasses ?? [],
-    freeDays: data.freeDays ?? [],
+    excludedClasses: data?.excludedClasses ?? [],
+    freeDays: data?.freeDays ?? [],
     maxNumber: numberLimits[1][1],
     splitPoints,
     numberPoolA: numberPools[0],
@@ -84,6 +85,16 @@ function generateNumbersData(res, data = {}, docRef) {
   };
   docRef.set(newData);
   sendNumbersData(res, newData);
+  if (data) {
+    // Add the previous data to the lucky numbers archive
+    const date = new Date(data.date);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    // e.g. 2022-03-16 -> month < 8 (September) -> "2021/2022"
+    // e.g. 2024-09-30 -> month >= 8 (September) -> "2024/2025"
+    data.schoolYear = month < 8 ? `${year - 1}/${year}` : `${year}/${year + 1}`;
+    db.collection("archivedNumbers").doc().set(data);
+  }
 }
 
 /** Reads the existing lucky numbers data and either sends it or generates the next */
@@ -218,6 +229,19 @@ router
   .get("/v2", (_req, res) => readNumbersData(res))
 
   // CREATE new lucky numbers (v2)
-  .post("/v2", (_req, res) => readNumbersData(res, true));
+  .post("/v2", (_req, res) => readNumbersData(res, true))
+
+  // GET lucky numbers archive
+  .get("/archive", (req, res) => {
+    // ?sort=ascending
+
+    const sortDescending = req.query.sort?.toLowerCase() === "descending";
+
+    const collectionRef = db
+      .collection("archivedNumbers")
+      .orderBy("date", sortDescending ? "desc" : "asc");
+
+    sendListResponse(collectionRef, req.query, res);
+  });
 
 module.exports = router;
