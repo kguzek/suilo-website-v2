@@ -41,12 +41,14 @@ const NOTIFY_BTN_CLASS =
 //   link: "https://youtu.be/dQw4w9WgXcQ",
 // };
 
-const EventPreview = ({ event, isNextEvent = false }) => {
+const EventPreview = ({ event, isNextEvent = false, user }) => {
   const [notification, setNotification] = useState(false);
   const [participance, setParticipance] = useState(false);
   const [canParChange, setCanParChange] = useState(true);
   const [canNotChange, setCanNotChange] = useState(true);
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
+
+  const [logged, setLogged] = useState(false)
 
   const [clickedParticipate, setClickedParticipate] = useState(false);
   const [clickedNotify, setClickedNotify] = useState(false);
@@ -83,6 +85,10 @@ const EventPreview = ({ event, isNextEvent = false }) => {
     " uczestników";
 
   function _toggleNotification(_clickEvent) {
+    if (user === (null || undefined)) {
+      setLogged(true);
+      return;
+    };
     if (!canNotChange || !canParChange) {
       return;
     }
@@ -111,6 +117,10 @@ const EventPreview = ({ event, isNextEvent = false }) => {
   }
 
   function _toggleParticipance(_clickEvent) {
+    if (user === (null || undefined)) {
+      setLogged(true);
+      return;
+    };
     if (!canParChange || !canNotChange) {
       return;
     }
@@ -149,6 +159,16 @@ const EventPreview = ({ event, isNextEvent = false }) => {
           duration={2000}
           isVisible={popupNotification}
           setVisible={setPopupNotification}
+        />
+      )}
+      {logged && (
+        <DialogBox
+          header="Błąd!"
+          content="Aby wykonać akcję musisz być zalogowana/y."
+          type="DIALOG"
+          buttonOneLabel="Ok"
+          isVisible={logged}
+          setVisible={setLogged}
         />
       )}
       {popupParticipance && (
