@@ -24,7 +24,7 @@ const InputBox = ({
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    setCharCount(value.length);
+    setCharCount(value?.length ?? 0);
   }, [value]);
 
   const style = hidden ? { color: "transparent" } : {};

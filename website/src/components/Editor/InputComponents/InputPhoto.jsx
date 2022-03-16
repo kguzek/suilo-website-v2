@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { DEFAULT_IMAGE, getURLfromFileName } from "../../../misc";
+import {
+  DEFAULT_IMAGE,
+  getDataFromFilename,
+  handlePhotoUpdate,
+} from "../../../misc";
 import InputBox from "./InputBox";
 import InputDropdown from "./InputDropdown";
 import InputFile from "./InputFile";
@@ -15,7 +19,6 @@ export default function InputPhoto({
   imageURL,
   setImageURL,
   photos,
-  handlePhotoUpdate,
   imageAuthor,
   setImageAuthor,
   imageAltText,
@@ -24,36 +27,76 @@ export default function InputPhoto({
   const [selectedOption, setSelectedOption] = useState(0);
   const [existingPhoto, setExistingPhoto] = useState("");
   const [preview, setPreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     // Set the default option whenever the post is changed
     if (photos.includes(imageURL)) {
       setSelectedOption(2);
-      setExistingPhoto(imageURL);
+      if (existingPhoto !== imageURL) {
+        _handlePreviewChange(imageURL);
+      }
     } else {
       selectedOption !== 3 && setSelectedOption(imageURL ? 1 : 0);
     }
   }, [imageURL]);
 
   useEffect(() => {
-    // Set blank image URL when "no image" is selected
-    if ([0, 3].includes(selectedOption)) {
-      setImageURL("");
+    // Reset the inputs whenever the selected option is changed
+    if (selectedOption === 2) {
+      if (photos.includes(imageURL) && !preview) {
+        _handlePreviewChange(imageURL);
+      }
+    } else {
+      if (selectedOption !== 1) {
+        setImageURL("");
+      }
       setExistingPhoto("");
       setPreview(null);
     }
+    setImageFile(null);
   }, [selectedOption]);
 
-  function _handlePreviewChange(idx) {
-    const photoName = photos[idx];
+  /** Reads the relevant fields from the image's metadata and updates the client-side data. */
+  function setMetadata(rawMetadata) {
+    let metadata = {};
+    try {
+      metadata = JSON.parse(rawMetadata)?.customMetadata ?? {};
+    } catch (parseError) {
+      console.log(parseError);
+    }
+    setImageAuthor && setImageAuthor(metadata.author ?? "");
+    setImageAltText && setImageAltText(metadata.altText ?? "");
+  }
+
+  function _handlePreviewChange(photoName) {
     setExistingPhoto(photoName);
 
     setImageURL(photoName);
     setPreview(DEFAULT_IMAGE);
-    getURLfromFileName(photoName, "400x300", setPreview);
+    getDataFromFilename(photoName, "400x300", setPreview, setMetadata);
   }
 
+  function _handleSelectPhoto(e) {
+    setImageFile(e.target.files[0]);
+  }
+
+  const canUploadFile =
+    (!setImageAuthor || imageAuthor) && (!setImageAltText || imageAltText);
+
   const showImageMetadataInputs = [0, 1].includes(selectedOption);
+
+  const uploadBtnStyle = { marginTop: -10, marginBottom: 8 };
+  canUploadFile || (uploadBtnStyle.cursor = "not-allowed");
+
+  /** Uploads the selected file to the server. */
+  function _handleSubmitPhoto(e) {
+    if (canUploadFile) {
+      handlePhotoUpdate(imageFile, setImageURL, imageAuthor, imageAltText);
+    } else {
+      e.preventDefault();
+    }
+  }
 
   return (
     <div>
@@ -75,9 +118,9 @@ export default function InputPhoto({
         <InputFile
           label={"Miniatura"}
           placeholder={"Wybierz zdjęcie..."}
-          onChange={(e) => handlePhotoUpdate(e.target.files[0], setImageURL)}
+          onChange={_handleSelectPhoto}
           acceptedExtensions=".jpeg, .jpg, .png"
-          required={true}
+          required
         />
       ) : selectedOption === 1 ? (
         <InputBox
@@ -86,27 +129,20 @@ export default function InputPhoto({
           maxLength={256}
           value={imageURL}
           onChange={setImageURL}
-          required={true}
+          required
+          choices={photos}
         />
       ) : (
         selectedOption === 2 && (
-          // <InputBox
-          //   name="existing-photo"
-          //   placeholder="Nazwa zdjęcia"
-          //   maxLength={256}
-          //   value={existingPhoto}
-          //   onChange={_handlePreviewChange}
-          //   choices={photos}
-          // />
           <InputDropdown
             name="existing-image"
             label="Nazwa zdjęcia"
             currentValue={photos.indexOf(existingPhoto)}
             defaultLabel={imageURL ? "" : "<Wybierz>"}
-            onChangeCallback={_handlePreviewChange}
+            onChangeCallback={(idx) => _handlePreviewChange(photos[idx])}
             valueDisplayObject={photos}
             isFirst={false}
-            required={true}
+            required
           />
         )
       )}
@@ -123,7 +159,7 @@ export default function InputPhoto({
           maxLength={64}
           value={imageAuthor}
           onChange={setImageAuthor}
-          required={imageURL !== "" ? true : false}
+          required
         />
       )}
       {showImageMetadataInputs && setImageAltText && (
@@ -133,8 +169,20 @@ export default function InputPhoto({
           maxLength={64}
           value={imageAltText}
           onChange={setImageAltText}
-          required={imageURL !== "" ? true : false}
+          required
         />
+      )}
+      {imageFile && selectedOption === 0 && (
+        <div>
+          <button
+            type="button"
+            className="add-btn"
+            style={uploadBtnStyle}
+            onClick={_handleSubmitPhoto}
+          >
+            <p>Prześlij zdjęcie</p>
+          </button>
+        </div>
       )}
     </div>
   );

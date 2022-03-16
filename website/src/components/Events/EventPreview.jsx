@@ -14,7 +14,7 @@ import {
   DEFAULT_IMAGE,
   formatDate,
   formatTime,
-  getURLfromFileName,
+  getDataFromFilename,
   setErrorMessage,
 } from "../../misc";
 import { LoadingButton } from "../LoadingScreen";
@@ -56,7 +56,7 @@ const EventPreview = ({ event, isNextEvent = false }) => {
   const [errorCode, setErrorCode] = useState(null);
 
   useEffect(() => {
-    getURLfromFileName(event.photo, "1920x1080", setPhoto);
+    getDataFromFilename(event.photo, "1920x1080", setPhoto);
   }, [event]);
 
   useEffect(() => {
@@ -272,7 +272,7 @@ const EventPreview = ({ event, isNextEvent = false }) => {
             </div>
           )}
           {clickedParticipate ? (
-            <LoadingButton className={PARTICIPATE_BTN_CLASS} isOpaque={true} />
+            <LoadingButton className={PARTICIPATE_BTN_CLASS} isOpaque />
           ) : (
             <div
               onClick={_toggleParticipance}

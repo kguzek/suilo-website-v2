@@ -24,7 +24,7 @@ exports.trackStorage = functions
   .storage.object()
   .onFinalize(async (object) => {
     const match = REGEX_PATTERN.exec(object.name);
-    const [fullPath, filename, size, extension] = match;
+    const [fullPath, filename, _size, _extension] = match;
     if (!fullPath.startsWith("photos/")) {
       return;
     }
@@ -33,21 +33,24 @@ exports.trackStorage = functions
     //     .split("/")
     //     [filePath.split("/").length - 1].split(".")[0];
     //   const size = fileName.split("_")[fileName.split("_").length - 1];
-    if (size && extension) {
-      // The file name contains the image size and file extension
-      // This means it has already been processed
-      return;
-    }
+    // if (size && extension) {
+    //   // The file name contains the image size and file extension
+    //   // This means it has already been processed
+    //   return;
+    // }
+    // Check if the file metadata indicates that this image was resized
+    if (object.metadata?.resizedImage === "true") return;
+    console.log("Uploaded file with metadata:", object.metadata);
     // Add the filename to the storage collection
     const collectionRef = db.collection("_general");
     await collectionRef.doc("storage").update({
       photos: FieldValue.arrayUnion(filename),
     });
     // Update the "last updated" database entry
-    await collectionRef.doc("collectionInfo").set(
-      {
-        lastUpdated: { storage: admin.firestore.Timestamp.now() },
-      },
-      { merge: true }
-    );
+    await collectionRef
+      .doc("collectionInfo")
+      .set(
+        { lastUpdated: { storage: admin.firestore.Timestamp.now() } },
+        { merge: true }
+      );
   });

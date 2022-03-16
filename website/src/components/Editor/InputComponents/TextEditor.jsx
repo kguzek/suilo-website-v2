@@ -23,8 +23,8 @@ const TextEditor = ({ onChange, value }) => {
         Treść
       </p>
       <div
-        contentEditable={true}
-        suppressContentEditableWarning={true}
+        contentEditable
+        suppressContentEditableWarning
         className=" p-[.1rem] px-1 ring-2 outline-none ring-[#d4d4d4] rounded-sm hover:ring-primary/50 focus:ring-primary text-[#222222] text-justify md:text-left mt-2 leading-[1.85rem] lg:leading-9 lg:mt-2  lg:text-xl  font-normal text-lg"
         onBlur={_handleChange}
       >

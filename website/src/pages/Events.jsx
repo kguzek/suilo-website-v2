@@ -147,7 +147,7 @@ function Events({ setPage, reload, setReload }) {
         <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
       </MetaTags>
       {nextEvent ? (
-        <EventPreview event={nextEvent} isNextEvent={true} />
+        <EventPreview event={nextEvent} isNextEvent />
       ) : (
         // TODO: Render something better if there are no future events
         <div className="grid lg:mb-14">

@@ -253,7 +253,7 @@ export const CalendarEdit = ({
             </button>
           ))}
         {clickedSubmit ? (
-          <LoadingButton isOpaque={true} />
+          <LoadingButton isOpaque />
         ) : (
           <button type="submit" className="add-btn">
             {currentlyActive !== "_default" ? (

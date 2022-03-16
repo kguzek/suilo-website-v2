@@ -7,7 +7,7 @@ import TextEditor from "./InputComponents/TextEditor";
 import DialogBox from "../DialogBox";
 import { auth, fetchWithToken } from "../../firebase";
 import LoadingScreen, { LoadingButton } from "../LoadingScreen";
-import { handlePhotoUpdate, setErrorMessage } from "../../misc";
+import { setErrorMessage } from "../../misc";
 import InputPhoto from "./InputComponents/InputPhoto";
 
 export const PostEdit = ({ data, loaded, refetchData, photos }) => {
@@ -48,7 +48,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       return;
     }
     // Get the currently selected post
-    const post = (data ?? [])
+    const post = (data?.contents ?? [])
       .filter((post) => post.id === currentlyActive)
       .shift();
     if (!post) {
@@ -63,7 +63,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     setImageURL(post.photo ?? "");
     setImageAuthor(post.photoAuthor ?? "");
     setImageAltText(post.alt ?? "");
-    
+
     setYtID(post.ytID ?? "");
     setLink(post.link ?? "");
     setAddYtID(!!post.ytID);
@@ -76,7 +76,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   }
 
   const posts = {};
-  for (const post of data ?? []) {
+  for (const post of data?.contents ?? []) {
     posts[post.id] = post.title;
   }
 
@@ -220,13 +220,12 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         placeholder="Autor"
         maxLength={64}
         value={author}
-        disabled={true}
+        disabled
       />
       <InputPhoto
         imageURL={imageURL}
         setImageURL={setImageURL}
         photos={photos}
-        handlePhotoUpdate={handlePhotoUpdate}
         imageAuthor={imageAuthor}
         setImageAuthor={setImageAuthor}
         imageAltText={imageAltText}
@@ -286,7 +285,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
             </button>
           ))}
         {clickedSubmit ? (
-          <LoadingButton isOpaque={true} />
+          <LoadingButton isOpaque />
         ) : (
           <button type="submit" className="add-btn">
             {currentlyActive !== "_default" ? (

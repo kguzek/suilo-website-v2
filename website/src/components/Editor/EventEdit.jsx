@@ -7,7 +7,6 @@ import DialogBox from "../DialogBox";
 import {
   formatDate,
   formatTime,
-  handlePhotoUpdate,
   setErrorMessage,
 } from "../../misc";
 import { serialiseDateArray } from "../../common";
@@ -256,7 +255,6 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
         imageURL={imageURL}
         setImageURL={setImageURL}
         photos={photos}
-        handlePhotoUpdate={handlePhotoUpdate}
       />
       <InputBox
         name="event-url"
@@ -281,7 +279,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
             </button>
           ))}
         {clickedSubmit ? (
-          <LoadingButton isOpaque={true} />
+          <LoadingButton isOpaque />
         ) : (
           <button type="submit" className="add-btn">
             {currentlyActive !== "_default" ? (

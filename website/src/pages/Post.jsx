@@ -12,7 +12,7 @@ import {
   DEFAULT_IMAGE,
   formatDate,
   removeSearchParam,
-  getURLfromFileName,
+  getDataFromFilename,
 } from "../misc";
 import YouTube from "react-youtube";
 import LoadingScreen from "../components/LoadingScreen";
@@ -36,7 +36,7 @@ const Post = ({ setPage, reload, setReload }) => {
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
     function checkLinks(data) {
-      getURLfromFileName(data.photo, "1920x1080", setPhotoLink);
+      getDataFromFilename(data.photo, "1920x1080", setPhotoLink);
       setPostData(data);
     }
 
@@ -44,9 +44,6 @@ const Post = ({ setPage, reload, setReload }) => {
       setData: checkLinks,
       setLoaded,
       updateCache,
-      onFailData: {
-        errorMessage: "Nastąpił błąd sieciowy. Spróbuj ponownie w krótce.",
-      },
     };
     fetchCachedData(
       cacheName,
@@ -85,8 +82,8 @@ const Post = ({ setPage, reload, setReload }) => {
   }, [reload]);
 
   if (!loaded) return <LoadingScreen />;
-  if (postData.errorMessage) {
-    return <NotFound setPage={setPage} msg={postData.errorMessage} />;
+  if (!postData || postData.errorMessage) {
+    return <NotFound setPage={setPage} />;
   }
   const createdDate = formatDate(postData.date);
   // const modifiedDate = formatDate(postData.modified, true);

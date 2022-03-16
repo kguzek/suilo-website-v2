@@ -1,4 +1,9 @@
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  getDownloadURL,
+  getMetadata,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { fetchWithToken, storage } from "./firebase";
 
 export const MAX_CACHE_AGE = 24; // hours
@@ -106,7 +111,7 @@ export function removeSearchParam(
 export function fetchCachedData(
   cacheName,
   fetchURL,
-  { setData, setLoaded, updateCache, cacheArgument, onFailData }
+  { setData, setLoaded, updateCache, cacheArgument }
 ) {
   // check if there is a valid data cache
   let cache;
@@ -173,7 +178,6 @@ export function fetchCachedData(
     },
     (error) => {
       console.log(`Error retrieving: '/api${fetchURL}'`, error);
-      onFailData && setData(onFailData);
       setLoaded(true);
     }
   );
@@ -186,30 +190,50 @@ export function fetchCachedData(
  *  - 400x300
  *  - 200x200
  *  - 100x100 */
-export function getURLfromFileName(name, size, callback) {
+export function getDataFromFilename(
+  name,
+  size = "1920x1080",
+  urlCallback = () => {},
+  metadataCallback = () => {}
+) {
   // Use default image if the image name is not provided
   if (!name) {
-    return void callback(DEFAULT_IMAGE);
+    return void urlCallback(DEFAULT_IMAGE);
   }
   // Check if the photo is already an external URL
   if (name.startsWith("http://") || name.startsWith("https://")) {
     // Don't look for the photo since the URL is known
-    return void callback(name);
+    return void urlCallback(name);
   }
   // Check if there is a cache for the photo name
-  const cacheName = "photo_" + name.replaceAll(" ", "_");
-  const cachedURL = localStorage.getItem(cacheName);
-  if (cachedURL) {
-    // Cache found; use it
-    return void callback(cachedURL);
-  }
-  // Query the database for the URL corresponding to the photo name
+  const URLCacheName = "photo_url_" + name;
+  const metadataCacheName = "photo_metadata_" + name;
+  const cachedURL = localStorage.getItem(URLCacheName);
+  const cachedMetadata = localStorage.getItem(metadataCacheName);
+
+  // Create a reference to the stored object
   const imageRef = ref(storage, `/photos/${name}_${size}.jpeg`);
-  getDownloadURL(imageRef).then((url) => {
-    callback(url);
-    // Cache the photo URL for future use
-    localStorage.setItem(cacheName, url);
-  });
+
+  if (cachedURL) {
+    // Cached URL found; use it
+    urlCallback(cachedURL);
+  } else {
+    getDownloadURL(imageRef).then((url) => {
+      urlCallback(url);
+      // Cache the photo URL for future use
+      localStorage.setItem(URLCacheName, url);
+    });
+  }
+  if (cachedMetadata) {
+    // Cached metadata found; use it
+    metadataCallback(cachedMetadata);
+  } else {
+    getMetadata(imageRef).then((metadata) => {
+      metadataCallback(metadata);
+      // Cache the photo metadata for future use
+      localStorage.setItem(metadataCacheName, JSON.stringify(metadata));
+    });
+  }
 }
 
 /** Gets the error description from the HTTP response and calls the callback function with it. */
@@ -219,33 +243,34 @@ export function setErrorMessage(res, setErrorFunc) {
   });
 }
 
-export function handlePhotoUpdate(file, setImageURL) {
+export function handlePhotoUpdate(file, setImageURL, author, altText) {
   if (!file) return;
   // Regular expression to trim the filename extension
   // Matches all characters including and after the last found "." character in the string,
   // and replaces them with "" (empty string)
   const photoName = file.name.replace(/\.[^\/.]+$/, "");
+
+  const metadata = { customMetadata: { author, altText } };
+
   const storageRef = ref(storage, `/photos/${file.name}`);
-  const uploadTask = uploadBytesResumable(storageRef, file);
+  const uploadTask = uploadBytesResumable(storageRef, file, metadata);
   uploadTask.on(
     "state_changed",
     (snapshot) => {
-      const prog = Math.round(
-        (100 * snapshot.bytesTransferred) / snapshot.totalBytes
-      );
-      setImageURL(`Postęp: ${prog}%`);
+      const prog = snapshot.bytesTransferred / snapshot.totalBytes;
+      setImageURL(`Postęp: ${Math.round(prog * 100)}%`);
     },
     (error) => console.log(error),
     () => {
-      getDownloadURL(uploadTask.snapshot.ref).then(() => {
-        // console.log(url);
-        // const basefileName = getFileNameFromFirebaseUrl(url);
-        // console.log(basefileName);
-        // const fullHDfileName = basefileName.split(".")[0] + "_1920x1080.jpeg";
-        // console.log(fullHDfileName);
-        // setImagePath(fullHDfileName);
-        setImageURL(photoName);
-      });
+      // getDownloadURL(uploadTask.snapshot.ref).then(() => {
+      //   console.log(url);
+      //   const basefileName = getFileNameFromFirebaseUrl(url);
+      //   console.log(basefileName);
+      //   const fullHDfileName = basefileName.split(".")[0] + "_1920x1080.jpeg";
+      //   console.log(fullHDfileName);
+      //   setImagePath(fullHDfileName);
+      // });
+      setImageURL(photoName);
     }
   );
 }
