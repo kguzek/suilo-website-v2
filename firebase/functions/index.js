@@ -7,12 +7,13 @@ const functions = require("firebase-functions");
 
 // Local imports
 const { db, HTTP, sendListResponse, deleteSingleDocument } = require("./util");
+const storageTracker = require("./storageTracker")
 
 // initialise express
 const app = express();
 
 // define server region name for Firebase app
-const SERVER_REGION = "europe-west1";
+const REGION = functions.region("europe-west1");
 
 // define the routes that the API is able to serve
 const ROUTES = [
@@ -96,4 +97,7 @@ app.all("*", (req, res) => {
   });
 });
 
-exports.app = functions.region(SERVER_REGION).https.onRequest(app);
+// Initialise API cloud function
+exports.app = REGION.https.onRequest(app);
+// Initialise storage tracker function
+exports.storageTracker = REGION.storage.object().onFinalize(storageTracker);
