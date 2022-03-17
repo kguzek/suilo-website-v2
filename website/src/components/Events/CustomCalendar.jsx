@@ -117,7 +117,7 @@ const CalendarCell = ({
   changeMonth,
 }) => {
   const isSunday = daysInMonth[idx - daysBefore]?.getDay() === 0;
-  const isMonday = daysInMonth[idx - daysBefore]?.getDay() === 1;
+  // const isMonday = daysInMonth[idx - daysBefore]?.getDay() === 1;
   const isSaturday = daysInMonth[idx - daysBefore]?.getDay() === 6;
   // const beginningOfTheWeek = isMonday || idx === 0;
   const endOfTheWeek = isSunday || idx === length - 1;
@@ -133,10 +133,9 @@ const CalendarCell = ({
   const primTitles = [];
   const secTitles = [];
 
-  events.forEach((el, _i) => {
-    // Ensure the event isn't past the max for this month
-    const day = el.startDate[2];
-    if (day > daysInMonth.length) return;
+  events.forEach((el) => {
+    const [_year, month, day] = el.startDate;
+    if (month !== currentMonth + 1) return;
     if (day === idx + 1 - daysBefore) {
       if (el.renderType === "PRIMARY") {
         newPrimEvents.push(el);
