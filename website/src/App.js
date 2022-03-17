@@ -9,6 +9,7 @@ import Post from "./pages/Post";
 import Edit from "./pages/Edit";
 import Events from "./pages/Events";
 import Contact from "./pages/Contact";
+import ArchiveLN from "./pages/ArchiveLN"
 import ShortLinkRedirect from "./components/Main/ShortLinkRedirect";
 import NavBar from "./components/Main/NavBar";
 import Footer from "./components/Main/Footer";
@@ -252,6 +253,7 @@ function App() {
               />
             }
           />
+          <Route path="archiwum-numerkow" element={<ArchiveLN setPage={setPage} />} />
           <Route path="*" element={<ShortLinkRedirect setPage={setPage} />} />
         </Route>
       </Routes>

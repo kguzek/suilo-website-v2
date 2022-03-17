@@ -78,7 +78,6 @@ const Home = ({ setPage, reload, setReload }) => {
       .getElementById("home-2")
       .scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
   const forDate = formatDate(numbersData.date);
   const luckyNumbers = loadedNumbers
     ? numbersData.luckyNumbers
@@ -142,9 +141,15 @@ const Home = ({ setPage, reload, setReload }) => {
               </p>
             </div>
           </div>
-          <h5 className="opacity-90 font-normal pt-2 text-lg lg:text-xl text-text2 lg:text-white text-right">
-            {forDate}
-          </h5>
+          <div className="inline-flex justify-end" >
+            <Link to="/archiwum-numerkow" className="w-fit">
+              <h5 className="opacity-90 font-normal pt-2 text-lg lg:text-xl text-text2 lg:text-white text-right">
+                {forDate}
+              </h5>
+            </Link>
+          </div>
+
+
         </div>
         <div
           className="more animate-bounce -rotate-90 duration-[5000]"
