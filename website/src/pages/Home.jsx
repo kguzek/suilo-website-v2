@@ -157,8 +157,8 @@ const Home = ({ setPage, reload, setReload }) => {
         </div>
       </div>
       <div id="home-2" className="w-full my-24 py-9 pb-0 mb-14 lg:mb-16">
-        <div className="grid w-full grid-cols-1 lg:grid-cols-2 m-auto relative">
-          <div className="w-full rounded-xl relative lg:pr-10">
+        <div className="grid w-full grid-cols-1 align-center lg:grid-cols-2 m-auto relative">
+          <div className="w-full m-auto rounded-xl relative lg:pr-10">
             <img
               className="drop-shadow-2lg rounded-xl md:rounded-3xl"
               src={SuPhoto}
@@ -172,14 +172,14 @@ const Home = ({ setPage, reload, setReload }) => {
             <h2 className="text-text1 font-bold text-3xl xl:text-4xl pt-5 lg:pt-0">
               Nasza drużyna
             </h2>
-            <p className="text-text2 select-all font-normal leading-8 text-lg xl:text-xl xl:leading-9 text-justify pt-3">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem kasd gubergren, no
-              sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem kasd
-              gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+            <p className="text-text2 select-all font-normal leading-8 text-lg xl:text-[1.2rem] xl:leading-[2.2rem] text-justify md:text-left pt-3">
+              Do Samorządu Uczniowskiego 1. Liceum Ogólnokształcącego im. Edwarda Dembowskiego
+              w Gliwicach należą wszyscy jego uczniowie, a w jego radzie zasiadują przewodniczący
+              klas, oraz osoby wybrane na stanowiska Marszałka, Sekretarza i Skarbnika.
+              Wspólnie dbamy o to, aby urozmaicić szkolną normę, oraz nieść pomoc uczniom
+              poprzez wydarzenia okolicznościowe, prowadzenie szczęśliwych numerków,
+              nagłaśnianie spraw uczniowskich, organizacje zbiórek i wiele innych.
+              Jesteśmy tu dla was - <i className="font-medium text-text2">od uczniów dla uczniów.</i>
             </p>
           </article>
         </div>
