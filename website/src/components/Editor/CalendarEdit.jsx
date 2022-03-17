@@ -63,7 +63,7 @@ export const CalendarEdit = ({
       return void _resetAllInputs();
     }
     setTitle(event.title);
-    setType(event.type);
+    setType(event.type - 2);
     setStartDate(event.date.start);
     setEndDate(event.date.end);
   }, [currentlyActive]);
@@ -107,7 +107,7 @@ export const CalendarEdit = ({
     // ?title=Nazwa wydarzenia kalendarzowego.&type=2&startDate=1&endDate=1
     const params = {
       title: title,
-      type,
+      type: parseInt(type) + 2,
       startDate,
       endDate,
     };
