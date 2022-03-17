@@ -29,7 +29,7 @@ const PostCardMain = ({ data }) => {
       />
       <div className="w-full pl-4 flex flex-col justify-start relative">
         <Link to={data.internalLink}>
-          <h2 className="text-text1 tracking-wide max-w-full font-semibold text-lg lg:text-xl lg:leading-6 line-clamp-2 leading-5">
+          <h2 className="text-text1 tracking-[.015rem] max-w-full font-semibold text-lg lg:text-xl lg:leading-6 line-clamp-2 leading-5">
             {data.title}
           </h2>
         </Link>

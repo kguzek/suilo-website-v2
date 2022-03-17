@@ -20,7 +20,7 @@ const PostCardPrimary = ({ data }) => {
         />
       </Link>
       <h2
-        className="text-text1 my-2 mt-3 md:mt-2 max-w-full line-clamp-2 tracking-wide font-semibold text-xl sm:text-2xl md:text-xl lg:text-[1.6rem] leading-6 md:leading-6 lg:leading-8"
+        className="text-text1 my-2 mt-3 md:mt-2 max-w-full line-clamp-2 tracking-[.015rem] font-semibold text-xl sm:text-2xl md:text-xl lg:text-[1.6rem] leading-6 md:leading-6 lg:leading-8"
         title={data.title}
       >
         {data.title}
