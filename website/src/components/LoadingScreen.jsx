@@ -29,8 +29,11 @@ export function LoadingButton({
 /** Renders a loading screen when the data hasn't loaded yet. */
 export default function LoadingScreen({ size = 50, fullscreen = true }) {
   return (
-    <div className={fullscreen ? "loading-whole-screen" : ""}>
-      <Bars color="#FFA900" height={size} width={size} />
+    <div className="h-screen">
+      <div className={fullscreen ? "loading-whole-screen" : ""}>
+        <Bars color="#FFA900" height={size} width={size} />
+      </div>
     </div>
+
   );
 }
