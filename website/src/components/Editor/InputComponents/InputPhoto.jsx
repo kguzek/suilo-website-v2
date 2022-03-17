@@ -130,19 +130,17 @@ export default function InputPhoto({
           value={imageURL}
           onChange={setImageURL}
           required
-          choices={photos}
         />
       ) : (
         selectedOption === 2 && (
-          <InputDropdown
+          <InputBox
             name="existing-image"
-            label="Nazwa zdjęcia"
-            currentValue={photos.indexOf(existingPhoto)}
-            defaultLabel={imageURL ? "" : "<Wybierz>"}
-            onChangeCallback={(idx) => _handlePreviewChange(photos[idx])}
-            valueDisplayObject={photos}
-            isFirst={false}
+            placeholder="Nazwa zdjęcia"
+            maxLength={256}
+            value={imageURL}
+            onChange={setImageURL}
             required
+            choices={photos}
           />
         )
       )}
