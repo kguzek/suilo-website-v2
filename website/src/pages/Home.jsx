@@ -99,7 +99,7 @@ const Home = ({ setPage, reload, setReload }) => {
         />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
-      <div className="h-[89vh] w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
+      <div className="h-[85vh] sm:h-[89vh] w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
         <div className="flex flex-col pb-3 pt-4 col-span-1 lg:col-span-3">
           <h1 className="font-bold text-text1 text-5xl pb-2 lg:text-10xl lg:pb-0 xl:text-[3.5rem]">
             Samorząd Uczniowski
