@@ -41,14 +41,12 @@ export function conjugatePolish(
   return `${value} ${base}${suffixPluralB}`;
 }
 
-
 /* Copy content to clipboard */
 export const copyToClipboard = (text, sendFeedBack = () => null) => {
-  text = text.trim()
-  navigator.clipboard.writeText(text)
+  text = text.trim();
+  navigator.clipboard.writeText(text);
   sendFeedBack(true);
-}
-
+};
 
 /** Format a timestamp string with format: `01 sty 2022`. */
 export function formatDate(
@@ -122,7 +120,7 @@ export function removeSearchParam(
 export function fetchCachedData(
   cacheName,
   fetchURL,
-  { setData, setLoaded, updateCache, cacheArgument }
+  { setData, setLoaded, updateCache, cacheArgument, params, body }
 ) {
   // check if there is a valid data cache
   let cache;
@@ -163,7 +161,7 @@ export function fetchCachedData(
     localStorage.removeItem(cacheName);
   }
   // fetch new data
-  fetchWithToken(fetchURL).then(
+  fetchWithToken(fetchURL, "GET", params, body).then(
     (res) => {
       res.json().then((data) => {
         const newCache = {
@@ -204,8 +202,8 @@ export function fetchCachedData(
 export function getDataFromFilename(
   name,
   size = "1920x1080",
-  urlCallback = () => { },
-  metadataCallback = () => { }
+  urlCallback = () => {},
+  metadataCallback = () => {}
 ) {
   // Use default image if the image name is not provided
   if (!name) {

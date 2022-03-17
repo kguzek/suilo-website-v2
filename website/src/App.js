@@ -9,7 +9,7 @@ import Post from "./pages/Post";
 import Edit from "./pages/Edit";
 import Events from "./pages/Events";
 import Contact from "./pages/Contact";
-import ArchiveLN from "./pages/ArchiveLN"
+import NumbersArchive from "./pages/NumbersArchive";
 import ShortLinkRedirect from "./components/Main/ShortLinkRedirect";
 import NavBar from "./components/Main/NavBar";
 import Footer from "./components/Main/Footer";
@@ -253,7 +253,10 @@ function App() {
               />
             }
           />
-          <Route path="archiwum-numerkow" element={<ArchiveLN setPage={setPage} />} />
+          <Route
+            path="archiwum-numerkow"
+            element={<NumbersArchive setPage={setPage} />}
+          />
           <Route path="*" element={<ShortLinkRedirect setPage={setPage} />} />
         </Route>
       </Routes>
@@ -284,21 +287,25 @@ function Layout({
         className={`
           -z-50 right-0 
           ${page === "contact" ? "md:max-h-[100vh] " : "md:max-h-[100vh]"} 
-          ${page === "home"
-            ? "-top-[16.5rem] scale-[.275]"
-            : "-top-[16.5rem] scale-[.275]"
+          ${
+            page === "home"
+              ? "-top-[16.5rem] scale-[.275]"
+              : "-top-[16.5rem] scale-[.275]"
           } 
-          ${page === "home"
-            ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]"
-            : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
+          ${
+            page === "home"
+              ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]"
+              : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
           } 
-          ${page === "home"
-            ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
-            : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"
+          ${
+            page === "home"
+              ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
+              : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"
           } 
-          ${page === "home"
-            ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
-            : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"
+          ${
+            page === "home"
+              ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
+              : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"
           }  
           origin-top-right absolute
         `}

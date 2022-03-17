@@ -12,9 +12,9 @@ import LoadingScreen from "../components/LoadingScreen";
 const News = ({ setPage, reload, setReload, collectionInfo }) => {
   const [loaded, setLoaded] = useState(false);
   const [newsData, setNewsData] = useState([]);
+  const [newsPage, setNewsPage] = useState(1);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [newsPage, setNewsPage] = useState(1);
 
   /** Fetches the data from the cache or API. */
   function _populatePageContents(updateCache = false, pageNo) {

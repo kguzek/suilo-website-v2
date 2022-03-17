@@ -6,7 +6,7 @@ import {
   PostCardPreview,
   fetchNewsData,
 } from "../components/News/PostCardPreview";
-import DialogBox from '../components/DialogBox'
+import DialogBox from "../components/DialogBox";
 import {
   fetchCachedData,
   conjugatePolish,
@@ -15,7 +15,7 @@ import {
   removeSearchParam,
   getDataFromFilename,
   copyToClipboard,
-  WEBSITE_DOMAIN
+  WEBSITE_DOMAIN,
 } from "../misc";
 import YouTube from "react-youtube";
 import LoadingScreen from "../components/LoadingScreen";
@@ -27,15 +27,18 @@ const Post = ({ setPage, reload, setReload }) => {
   const [photoLink, setPhotoLink] = useState(DEFAULT_IMAGE);
   const [newsData, setNewsData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sharePopup, setSharePopup] = useState(false)
+  const [sharePopup, setSharePopup] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 320, height: 180 });
   const params = useParams();
   const ref = useRef(null);
 
-  const path = useLocation().pathname
+  const path = useLocation().pathname;
 
   useLayoutEffect(() => {
-    setDimensions({ width: ref.current ? ref.current.offsetWidth : 0, height: ref.current ? ref.current.offsetHeight : 0 });
+    setDimensions({
+      width: ref.current ? ref.current.offsetWidth : 0,
+      height: ref.current ? ref.current.offsetHeight : 0,
+    });
   }, [ref.current]);
 
   const cacheName = `news_post_${params.postID}`;
@@ -128,7 +131,9 @@ const Post = ({ setPage, reload, setReload }) => {
             </p>
           )}
           <div className="text-[#707070] text-sm sm:text-base font-normal">
-            <time className="font-medium" datetime={postData.date}>{createdDate}</time>
+            <time className="font-medium" dateTime={postData.date}>
+              {createdDate}
+            </time>
             &nbsp;&nbsp;·&nbsp;&nbsp;{views}
             {/* {postData.modified && (
               <span>
@@ -152,7 +157,6 @@ const Post = ({ setPage, reload, setReload }) => {
                 opts={{ height: dimensions.height, width: dimensions.width }}
               />
             </div>
-
           )}
           {postData.author && (
             <p className=" font-normal text-base w-full text-right mt-6 text-[#444444]/50">
@@ -163,24 +167,32 @@ const Post = ({ setPage, reload, setReload }) => {
             </p>
           )}
           <div className="w-full inline-flex justify-end mt-3 mb-16">
-            {
-              postData.link &&
+            {postData.link && (
               <a
                 target="_blank"
                 title={`Link z posta: ${postData.link}`}
                 href={postData.link}
-                className={"transition-all cursor-pointer hover:ring-2 hover:ring-primary/30 pb-[.45rem] pr-[.45rem] pt-[.55rem] pl-[.55rem] ml-2 drop-shadow-3xl rounded-xl aspect-square bg-gray-50"}
+                className={
+                  "transition-all cursor-pointer hover:ring-2 hover:ring-primary/30 pb-[.45rem] pr-[.45rem] pt-[.55rem] pl-[.55rem] ml-2 drop-shadow-3xl rounded-xl aspect-square bg-gray-50"
+                }
               >
                 <ExternalLink
                   size={28}
                   className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150`}
                 />
               </a>
-            }
+            )}
             <button
-              onClick={() => copyToClipboard(("https://" + WEBSITE_DOMAIN + path), setSharePopup)}
+              onClick={() =>
+                copyToClipboard(
+                  "https://" + WEBSITE_DOMAIN + path,
+                  setSharePopup
+                )
+              }
               title="Udostępnij"
-              className={"transition-all inline-flex py-[.6rem] bg-primary hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]"}
+              className={
+                "transition-all inline-flex py-[.6rem] bg-primary hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]"
+              }
             >
               <Share2
                 size={28}

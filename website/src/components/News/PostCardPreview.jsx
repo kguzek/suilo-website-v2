@@ -30,15 +30,15 @@ export function fetchNewsData({
     setData: setNewsData,
     setLoaded,
     updateCache,
+    params: { all: true },
   };
-  let url = "/news/?all=true";
   let cacheName = "news_all";
   if (!allItems) {
-    url = `/news/?page=${pageNumber}&items=${maxItems}`;
     cacheName = `news_page_${pageNumber}`;
+    args.params = { page: pageNumber, items: maxItems };
     args.cacheArgument = maxItems;
   }
-  fetchCachedData(cacheName, url, args);
+  fetchCachedData(cacheName, "/news/", args);
 }
 
 export function PostCardPreview({
@@ -75,7 +75,7 @@ export function PostCardPreview({
   numItems ?? (numItems = defaultItems[type].numItems);
 
   // const className = classOverride ?? `${type}-grid`;
-  const _data = [...data?.contents ?? []].splice(startIndex, numItems);
+  const _data = [...(data?.contents ?? [])].splice(startIndex, numItems);
   if (_data.length === 0) {
     if (classOverride?.startsWith("home")) {
       return (
