@@ -12,7 +12,8 @@ router.get("/", (_req, res) => {
     .doc("storage")
     .get()
     .then((doc) => {
-      res.status(200).json(doc.data() ?? DEFAULT_DATA);
+      let sortedarr = doc.data().photos.sort();
+      res.status(200).json({photos:sortedarr} ?? DEFAULT_DATA);
     });
 });
 
