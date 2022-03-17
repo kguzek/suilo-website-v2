@@ -263,7 +263,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         <InputBox
           name="third-party-url"
           placeholder="Zewnętrzne łącze URL"
-          maxLength={126}
+          maxLength={255}
           value={link}
           onChange={setLink}
         />
