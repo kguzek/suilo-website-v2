@@ -76,7 +76,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
         if (page.startsWith(key)) {
           return widths[key];
         }
-        if (page.includes("post")) {
+        if (page?.includes("post")) {
           return widths.news
         }
         if (key === "edit" && !userIsEditor) {
@@ -129,7 +129,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
             </Link>
             <Link
               to="aktualnosci"
-              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${((page === "news") || (page.includes("post"))) ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${((page === "news") || (page?.includes("post"))) ? "text-text1" : "text-text4"}`}
             >
               Aktualności
             </Link>
@@ -236,7 +236,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${((page === "news") || (page.includes("post"))) ? "text-text1 underline decoration-primary" : "text-text4"}
+                  ${((page === "news") || (page?.includes("post"))) ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
                   text-xl
                   px-6
