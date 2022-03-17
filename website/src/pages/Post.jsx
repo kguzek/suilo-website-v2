@@ -143,7 +143,7 @@ const Post = ({ setPage, reload, setReload }) => {
           </h1>
           <div
             dangerouslySetInnerHTML={{ __html: postData.formattedContent }}
-            className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 mb-2  lg:text-xl  font-normal text-lg"
+            className="text-[#222222] text-left md:text-left mt-4 leading-[1.85rem] lg:leading-9 mb-2  lg:text-xl  font-normal text-lg"
           ></div>
           {postData.ytID && (
             <div className="w-full mt-5 aspect-video" ref={ref}>
