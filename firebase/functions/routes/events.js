@@ -59,7 +59,8 @@ router
   .patch("/:id", (req, res) => {
     // ?toggle=notification|participance
     const userID = req.userInfo?.uid;
-    if (!userID) {
+    const userEmail = req.userInfo?.email;
+    if (!userID || !userEmail) {
       return res.status(403).json({
         errorDescription: "You must be signed in to perform this action.",
       });
@@ -70,13 +71,13 @@ router
     /** Toggles the user's notification for the given event. */
     function toggleNotification(data) {
       let notificationsFor = data.notificationsFor ?? [];
-      const notified = notificationsFor.includes(userID);
+      const notified = notificationsFor.includes(userEmail);
       if (notified) {
-        notificationsFor = notificationsFor.filter((id) => id !== userID);
-        response.msg = `Success! User with ID ${userID} will no longer be notified of this event.`;
+        notificationsFor = notificationsFor.filter((email) => email !== userEmail);
+        response.msg = `Success! ${userEmail} will no longer be notified of this event.`;
       } else {
-        notificationsFor.push(userID);
-        response.msg = `Success! User with ID ${userID} will now be notified of this event.`;
+        notificationsFor.push(userEmail);
+        response.msg = `Success! ${userEmail} will now be notified of this event.`;
       }
       response.notified = !notified;
       response.notificationsFor = notificationsFor;
