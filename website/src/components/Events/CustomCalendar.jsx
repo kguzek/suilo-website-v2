@@ -300,7 +300,9 @@ const CustomCalendar = ({
     // Day of the week of the first day of the month
     const daysBefore = (daysInMonth[0]?.getDay() + 6) % 7;
     // 6 - day of the week of the last day of the month
-    const daysAfter = (7 - daysInMonth?.at(-1)?.getDay()) % 7;
+    const daysAfter = 6 - ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(
+      String(daysInMonth[daysInMonth.length - 1]).substring(0, 3)
+    );
 
     const renderArray = [];
 
