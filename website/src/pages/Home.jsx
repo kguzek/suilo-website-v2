@@ -177,7 +177,7 @@ const Home = ({ setPage, reload, setReload }) => {
             <h2 className="text-text1 font-bold text-3xl xl:text-4xl pt-5 lg:pt-0">
               Nasza drużyna
             </h2>
-            <p className="text-text2 select-all font-normal leading-8 text-lg xl:text-[1.2rem] xl:leading-[2.2rem] text-justify md:text-left pt-3">
+            <p className="text-text2 select-all font-normal leading-8 text-lg xl:text-[1.2rem] xl:leading-[2.2rem] text-left md:text-left pt-3">
               Do Samorządu Uczniowskiego 1. Liceum Ogólnokształcącego im. Edwarda Dembowskiego
               w Gliwicach należą wszyscy jego uczniowie, a w jego radzie zasiadują przewodniczący
               klas, oraz osoby wybrane na stanowiska Marszałka, Sekretarza i Skarbnika.
