@@ -3,8 +3,6 @@ const { db } = require("../util");
 
 const router = express.Router();
 
-const DEFAULT_DATA = { photos: [] };
-
 /*      ======== STORAGE-SPECIFIC CRUD FUNCTIONS ========      */
 
 router.get("/", (_req, res) => {
@@ -12,8 +10,9 @@ router.get("/", (_req, res) => {
     .doc("storage")
     .get()
     .then((doc) => {
-      let sortedarr = doc.data().photos.sort();
-      res.status(200).json({photos:sortedarr} ?? DEFAULT_DATA);
+      // Sort the photos alphabetically by name
+      const sorted = doc.data()?.photos?.sort() ?? [];
+      res.status(200).json({ photos: sorted });
     });
 });
 
