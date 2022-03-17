@@ -54,11 +54,6 @@
     "tailwindcss": "^3.0.23"
   },
   "reactSnap": {
-    "source": "dist",
-    "inlineCss": true,
-    "minifyHtml": {
-      "collapseWhitespace": false,
-      "removeComments": false
-    }
+    "inlineCss": true
   }
 }
