@@ -105,7 +105,7 @@ const Post = ({ setPage, reload, setReload }) => {
       </MetaTags>
       <DialogBox
         header="Zrobione!"
-        content="Skopiowano link do artykułu. Teraz możesz się nim podzielić z znajomymi."
+        content="Skopiowano link do artykułu. Teraz możesz się nim podzielić ze znajomymi."
         duration={3500}
         isVisible={sharePopup}
         setVisible={setSharePopup}
@@ -128,7 +128,7 @@ const Post = ({ setPage, reload, setReload }) => {
             </p>
           )}
           <div className="text-[#707070] text-sm sm:text-base font-normal">
-            <span className="font-medium">{createdDate}</span>
+            <time className="font-medium" datetime={postData.date}>{createdDate}</time>
             &nbsp;&nbsp;·&nbsp;&nbsp;{views}
             {/* {postData.modified && (
               <span>
@@ -180,19 +180,19 @@ const Post = ({ setPage, reload, setReload }) => {
             <button
               onClick={() => copyToClipboard(("https://" + WEBSITE_DOMAIN + path), setSharePopup)}
               title="Udostępnij"
-              className={"transition-all inline-flex py-[.5rem] bg-primary hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]"}
+              className={"transition-all inline-flex py-[.6rem] bg-primary hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]"}
             >
               <Share2
                 size={28}
                 className={`aspect-square  h-[1.5rem]  my-auto stroke-2 stroke-white`}
               />
-              <p className="text-white pl-[.3rem] my-auto font-medium text-base pr-[.2rem] -tracking-[.015rem]">
+              <p className="text-white pl-[.35rem] my-auto font-medium text-base pr-[.2rem] -tracking-[.015rem]">
                 Udostępnij
               </p>
             </button>
           </div>
         </article>
-        <aside className="hidden lg:grid lg:grid-cols-1 lg:col-span-1 gap-3 mb-6">
+        <aside className="hidden lg:grid lg:grid-cols-1 h-fit lg:col-span-1 gap-5 mb-6">
           <PostCardPreview
             type="secondary"
             data={newsData}
