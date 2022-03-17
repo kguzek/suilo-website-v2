@@ -11,7 +11,7 @@ const Contact = ({ setPage }) => {
   });
 
   return (
-    <div className="flex w-11/12 xl:w-10/12 flex-col justify-start  align-top pb-10 m-auto">
+    <div className="flex w-11/12 xl:w-10/12 flex-col justify-start min-h-[77.5vh] mt-20 align-top pb-10 m-auto">
       <MetaTags>
         <title>
           Kontakt | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach

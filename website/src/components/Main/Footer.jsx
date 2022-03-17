@@ -5,7 +5,7 @@ import DialogBox from "../DialogBox";
 const Footer = ({ isVisible, page }) => {
   const [easterEgg, setEasterEgg] = useState(false);
   const [clicks, setClicks] = useState(0);
-
+  // console.log(page)
   useEffect(() => {
     if (clicks === 1) {
       setTimeout(() => {
@@ -20,7 +20,7 @@ const Footer = ({ isVisible, page }) => {
   return (
     <div
       className={`flex w-screen bg-footer text-white font-light text-[.8rem] ${isVisible ? "block" : "block"
-        } mt-7 justify-center align-middle ${page === "contact" ? "absolute bottom-0" : "relative"}`}
+        } mt-7 justify-center align-middle relative`}
     >
       <DialogBox
         header="Hey, you! You're finally awake."

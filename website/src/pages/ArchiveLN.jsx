@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { formatDate } from '../misc'
+import { formatDate, fetchCachedData } from '../misc'
 
 const TEST_DATA = [
     { date: "2022-03-12", numbers: ["32", "2"] },
@@ -10,13 +10,31 @@ const TEST_DATA = [
 ]
 
 const ArchiveLN = ({ setPage }) => {
+    const [archive, setArchive] = useState();
+    const [loadedArchive, setLoadedArchive] = useState()
+
+    const fetchLuckyNumbers = (forceUpdate = false) => {
+        setLoadedArchive(false);
+        const fetchArgs = {
+            setData: setArchive,
+            setLoaded: setLoadedArchive,
+            updateCache: forceUpdate,
+        };
+        fetchCachedData("archivedNumbers", "/luckyNumbers/archive", fetchArgs);
+    }
 
     useEffect(() => {
+        if (!loadedArchive) return;
+        fetchLuckyNumbers(true);
+    }, [loadedArchive]);
+
+    useEffect(() => {
+        fetchLuckyNumbers()
         setPage("archive")
     }, [])
 
     const _generateArchiveRow = (data) => {
-        return data.map((el, i) =>
+        return data?.map((el, i) =>
             <tr className="even:bg-primary/5 odd:bg-primaryDark/[.15]" key={el.date}>
                 <td className="py-1 pl-4">{formatDate(el.date)}</td>
                 <td className="py-1">{el.numbers[0]},&nbsp;{el.numbers[1]}</td>
