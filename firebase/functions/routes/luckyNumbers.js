@@ -2,8 +2,6 @@ const express = require("express");
 const { dateToArray, serialiseDateArray } = require("../common");
 const {
   db,
-  HTTP,
-  dateToTimestamp,
   randomArraySelection,
   updateCollection,
   sendListResponse,
@@ -12,7 +10,6 @@ const {
 const router = express.Router();
 
 const MAX_LUCKY_NUMBER = 35;
-
 /*      ======== LUCKY NUMBERS FUNCTIONS ========      */
 
 /** Returns an array made from the given range. E.g. (2, 5) => [2, 3, 4, 5]. */
@@ -99,6 +96,7 @@ function generateNumbersData(res, data, docRef) {
 
 /** Reads the existing lucky numbers data and either sends it or generates the next */
 function readNumbersData(res, forceUpdate = false) {
+  console.log(serialiseDateArray())
   const docRef = db.collection("_general").doc("luckyNumbers");
 
   try {

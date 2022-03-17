@@ -16,12 +16,12 @@ function dateToArray(date) {
 }
 
 /** Return the array's elements as a string separated by the '-' character. */
-function serialiseDateArray(dateArray = [], nextMidnight = false) {
+function serialiseDateArray(dateArray = [], nextMidnight = false, forceTimezone) {
   // This formats the date as yyyy-m-d
   const serialised = dateArray.join("-");
   // Convert the date so it is always at exactly midnight
-  const date = new Date(serialised);
-  const userTimezone = -date.getTimezoneOffset();
+  const date = dateArray.length < 3 ? new Date() : new Date(serialised);
+  const userTimezone = forceTimezone ?? -date.getTimezoneOffset();
   date.setUTCMinutes(userTimezone);
   if (nextMidnight) {
     date.setUTCHours(24, 0, 0, -1);

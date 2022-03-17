@@ -7,6 +7,7 @@ import PostCardPreview, {
 } from "../components/News/PostCardPreview";
 import SuPhoto from "../media/su-photo.jpg";
 import { fetchCachedData, formatDate } from "../misc";
+import { dateToArray, serialiseDateArray } from "../common";
 import LoadingScreen from "../components/LoadingScreen";
 
 const Home = ({ setPage, reload, setReload }) => {
@@ -15,8 +16,9 @@ const Home = ({ setPage, reload, setReload }) => {
   const [numbersData, setNumbersData] = useState({});
   const [loadedNews, setLoadedNews] = useState(false);
   const [loadedNumbers, setLoadedNumbers] = useState(false);
+  const [refetchedNumbers, setRefetchedNumbers] = useState(false);
 
-  const newsItems = width > 1024 ? 5 : width > 768 ? 4 : width > 640 ? 3 : 2
+  const newsItems = width > 1024 ? 5 : width > 768 ? 4 : width > 640 ? 3 : 2;
 
   /** Fetch the news data from cache or API. */
   function fetchNews() {
@@ -29,11 +31,12 @@ const Home = ({ setPage, reload, setReload }) => {
   }
 
   /** Fetch the lucky numbers data from cache or API. */
-  function fetchLuckyNumbers() {
+  function fetchLuckyNumbers(forceUpdate = false) {
     setLoadedNumbers(false);
     const fetchArgs = {
       setData: setNumbersData,
       setLoaded: setLoadedNumbers,
+      updateCache: forceUpdate,
     };
     fetchCachedData("luckyNumbers", "/luckyNumbers/v2", fetchArgs);
   }
@@ -60,6 +63,15 @@ const Home = ({ setPage, reload, setReload }) => {
     fetchNews();
     fetchLuckyNumbers();
   }, [reload]);
+
+  useEffect(() => {
+    if (!loadedNumbers || refetchedNumbers) return;
+    // Check if the lucky numbers data is for today
+    if (numbersData.date === serialiseDateArray(dateToArray())) return;
+    // The dates are different
+    fetchLuckyNumbers(true);
+    setRefetchedNumbers(true);
+  }, [loadedNumbers]);
 
   const _scrollDown = () => {
     document
