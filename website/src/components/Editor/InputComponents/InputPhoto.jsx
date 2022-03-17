@@ -99,10 +99,10 @@ export default function InputPhoto({
   }
 
   return (
-    <div>
-      <div className="w-full inline-flex justify-between pl-20 pr-20">
+    <div className="w-full mb-4 pt-1">
+      <div className="w-full inline-flex justify-between">
         {OPTIONS.map((text, idx) => (
-          <label className="select-none" key={idx}>
+          <label className="select-none mx-auto" key={idx}>
             <input
               className="mr-2"
               type="radio"

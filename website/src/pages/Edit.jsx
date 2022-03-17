@@ -217,7 +217,7 @@ export default function Edit({
         <meta property="og:title" content="Edycja | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
       </MetaTags>
-      <div className="mx-auto w-2/3">
+      <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-3/4 xl:w-2/3">
         <div className=" m-auto w-1/2">
           <InputDropdown
             label="Element strony do edycji"
