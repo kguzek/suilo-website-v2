@@ -17,7 +17,7 @@ const ArchiveLN = ({ setPage }) => {
 
     const _generateArchiveRow = (data) => {
         return data.map((el, i) =>
-            <tr className="even:bg-primary/5 odd:bg-primaryDark/[.15]">
+            <tr className="even:bg-primary/5 odd:bg-primaryDark/[.15]" key={el.date}>
                 <td className="py-1 pl-4">{formatDate(el.date)}</td>
                 <td className="py-1">{el.numbers[0]},&nbsp;{el.numbers[1]}</td>
             </tr>
