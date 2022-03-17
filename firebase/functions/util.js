@@ -2,6 +2,7 @@ const admin = require("firebase-admin");
 
 // Private service account key
 const serviceAccount = require("./permissions.json");
+const { dateToArray, serialiseDateArray } = require("./common");
 
 // Authorise Firebase
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
@@ -16,6 +17,8 @@ const HTTP400 = "400 Bad Request: ";
 const HTTP404 = "404 Not Found: ";
 const HTTP405 = "405 Method Not Allowed: ";
 const HTTP500 = "500 Internal Server Error: ";
+
+const MAX_LUCKY_NUMBER = 35;
 
 /*      ======== GENERAL UTIL FUNCTIONS ========      */
 
@@ -91,6 +94,87 @@ function getIntArray(string, separator, defaultInput) {
     return defaultInput ? getIntArray(defaultInput, separator) : null;
   }
   return tmp;
+}
+
+/** Returns a boolean indicating whether or not the current lucky numbers data is up-to-date. */
+function numbersAreCurrent(data) {
+  // return false if the update is forced or if there is no lucky numbers data
+  if (!data) {
+    return false;
+  }
+  // return true if the lucky numbers data is for today
+  const todayString = serialiseDateArray(dateToArray());
+  if (data.date === todayString) {
+    return true;
+  }
+  const freeDays = data.freeDays ?? [];
+  // return true if it's weekend or a free day
+  const weekday = new Date().getDay();
+  return [0, 6].includes(weekday) || freeDays.includes(todayString);
+}
+
+/** Formats the school year as a string. E.g. `2022` -> `"2022/2023"` */
+const getSchoolYearString = (schoolYear) => `${schoolYear}/${schoolYear + 1}`;
+
+/** Generates 2 random lucky numbers from the available number pools. Returns the data. */
+function generateLuckyNumbers(previousData) {
+  const luckyNumbers = [];
+  // one number pool for each lucky number: 1:15 and 16:MAX
+  const splitPoints = previousData?.splitPoints ?? [15, 16];
+  const numberLimits = [
+    [1, splitPoints[0]],
+    [splitPoints[1], previousData?.maxNumber ?? MAX_LUCKY_NUMBER],
+  ];
+  const numberPools = [previousData?.numberPoolA, previousData?.numberPoolB];
+  for (let i = 0; i < 2; i++) {
+    let numberPool = numberPools[i];
+    // reset the number pool if it's empty
+    if (!numberPool?.length) {
+      numberPool = arrayFromRange(...numberLimits[i]);
+    }
+    const randomIndex = randomArraySelection(numberPool);
+    // remove selection from number pool
+    const selection = numberPool.splice(randomIndex, 1)[0];
+    // upate the number pool
+    numberPools[i] = numberPool;
+
+    luckyNumbers.push(selection);
+  }
+  console.log("Generated new lucky numbers data:", luckyNumbers);
+  const todayString = serialiseDateArray(dateToArray());
+  const newData = {
+    date: todayString,
+    luckyNumbers,
+    excludedClasses: previousData?.excludedClasses ?? [],
+    freeDays: previousData?.freeDays ?? [],
+    maxNumber: numberLimits[1][1],
+    splitPoints,
+    numberPoolA: numberPools[0],
+    numberPoolB: numberPools[1],
+  };
+  if (previousData) {
+    updateCollection("luckyNumbers", 1);
+    const dataToBeArchived = {
+      date: previousData.date,
+      luckyNumbers: previousData.luckyNumbers,
+    };
+    // Add the previous data to the lucky numbers archive
+    const date = new Date(previousData.date);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    // e.g. 2022-03-16 -> month < 8 (September) -> "2021/2022"
+    // e.g. 2024-09-30 -> month >= 8 (September) -> "2024/2025"
+    dataToBeArchived.schoolYear = getSchoolYearString(year - (month < 8));
+    db.collection("archivedNumbers").doc().set(dataToBeArchived);
+  } else {
+    updateCollection("luckyNumbers");
+  }
+  return newData;
+}
+
+/** Returns an array made from the given range. E.g. (2, 5) => [2, 3, 4, 5]. */
+function arrayFromRange(start, end) {
+  return Array.from({ length: end - start + 1 }, (_, i) => i + start);
 }
 
 /** This function is called whenever an update is made to any collection (POST/PUT/DELETE). It updates
@@ -353,6 +437,8 @@ module.exports = {
   getDocRef,
   getIntArray,
   randomArraySelection,
+  numbersAreCurrent,
+  generateLuckyNumbers,
   updateCollection,
   actuallyUpdateSingleDocument,
   createSingleDocument,
