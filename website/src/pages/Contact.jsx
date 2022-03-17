@@ -31,7 +31,7 @@ const Contact = ({ setPage }) => {
           <h3 className="text-text1 font-bold text-2xl md:text-3xl lg:text-[2rem]">Skontaktuj się z nami poprzez:</h3>
           <div className="flex flex-wrap max-w-full py-3 ">
             <a
-              className="bg-white rounded-lg inline-flex mr-4 md:mr-6  flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem]  px-6 md:px-7 drop-shadow-5xl hover:drop-shadow-4xl hover:bg-[rgb(252, 252, 252)] my-2 md:my-3"
+              className="bg-white rounded-lg inline-flex mr-4 md:mr-6  flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem]  px-6 md:px-7 drop-shadow-6xl hover:ring-[2.5px] hover:ring-[#de5246]/70 my-2 md:my-3"
               href="mailto:su.lo1.gliwice@gmail.com"
             >
               <img
@@ -44,7 +44,7 @@ const Contact = ({ setPage }) => {
               </p>
             </a>
             <a
-              className="bg-white rounded-lg mr-4 md:mr-6 inline-flex flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem] px-6 md:px-7 drop-shadow-5xl hover:drop-shadow-4xl hover:bg-[rgb(252, 252, 252)] my-2 md:my-3"
+              className="bg-white rounded-lg mr-4 md:mr-6 inline-flex flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem] px-6 md:px-7 drop-shadow-6xl hover:ring-[2.5px] hover:ring-[#196dff]/70 my-2 md:my-3"
               href="https://www.facebook.com/SUILOGliwice"
               target="_blank"
               rel="noreferrer"
@@ -59,7 +59,7 @@ const Contact = ({ setPage }) => {
               </p>
             </a>
             <a
-              className="bg-white rounded-lg inline-flex mr-4 md:mr-6 flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem] px-6 md:px-7 drop-shadow-5xl hover:drop-shadow-4xl hover:bg-[rgb(252, 252, 252)] my-2 md:my-3"
+              className="bg-white rounded-lg inline-flex mr-4 md:mr-6 flex-row justify-start align-middle h-[3.2rem] md:h-16 transition-all py-1 md:py-3 pt-[.85rem] md:pt-[1rem] px-6 md:px-7 drop-shadow-6xl hover:ring-[2.5px] hover:ring-[#5865F2]/70 my-2 md:my-3"
               href="https://discord.gg/upPdWMc8GJ"
               target="_blank"
               rel="noreferrer"
