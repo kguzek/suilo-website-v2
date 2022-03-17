@@ -19,9 +19,8 @@ const CookiesAlert = () => {
 
   return (
     <div
-      className={`flex flex-col fixed bottom-0 align-middle justify-between p-5 pt-6 md:pt-5 bg-white w-screen rounded-t-3xl drop-shadow-2xl z-50 sm:w-11/12 md:flex-row md:w-fit md:p-6 lg:p-7 animate-all duration-300 ${
-        isOpen ? "translate-y-0" : "translate-y-full"
-      }`}
+      className={`flex flex-col fixed bottom-0 align-middle justify-between p-5 pt-6 md:pt-5 bg-white w-screen rounded-t-3xl drop-shadow-2xl z-50 sm:w-11/12 md:flex-row md:w-fit md:p-6 lg:p-7 animate-all duration-300 ${isOpen ? "translate-y-0" : "translate-y-full"
+        }`}
     >
       <div className="flex flex-col justify-center md:mr-6 align-top">
         <p className="text-text2 font-medium pb-1 text-md text-center md:text-left">
@@ -34,7 +33,7 @@ const CookiesAlert = () => {
       </div>
       <div className="flex flex-row-reverse md:flex-col justify-center align-middle">
         <button
-          className="px-5 py-2 bg-gradient-to-br from-primary to-secondary text-white rounded-2lg drop-shadow-sm hover:drop-shadow-md transition-all duration-200 active:shadow-sm"
+          className="px-5 py-2 bg-gradient-to-br from-primary to-secondary text-white rounded-2lg drop-shadow-6xl hover:ring-[2px] hover:ring-primary/30 transition-all duration-150 "
           onClick={_cookieAgree}
         >
           <p className="my-px whitespace-nowrap font-regular">Wyrażam zgodę</p>

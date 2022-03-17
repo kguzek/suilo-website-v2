@@ -206,7 +206,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="post-title"
         placeholder="Tytuł"
-        maxLength={81}
+        maxLength={80}
         value={title}
         onChange={setTitle}
       />
@@ -217,7 +217,6 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       <InputBox
         name="post-author"
         placeholder="Autor"
-        maxLength={64}
         value={author}
         disabled
       />
@@ -263,7 +262,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         <InputBox
           name="third-party-url"
           placeholder="Zewnętrzne łącze URL"
-          maxLength={255}
+          maxLength={256}
           value={link}
           onChange={setLink}
         />

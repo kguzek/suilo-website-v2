@@ -30,6 +30,7 @@ export default function InputDropdown({
         className="select-label"
         style={{
           transform: "scale(.75)",
+          marginBottom: "-.35rem",
           color: focused ? "#111111" : "rgb(100, 100, 100)",
         }}
       >
