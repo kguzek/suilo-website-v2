@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useParams, useSearchParams, useLocation } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import NotFound from "./NotFound";
 import {
   PostCardPreview,
   fetchNewsData,
 } from "../components/News/PostCardPreview";
+import DialogBox from '../components/DialogBox'
 import {
   fetchCachedData,
   conjugatePolish,
@@ -13,9 +14,12 @@ import {
   formatDate,
   removeSearchParam,
   getDataFromFilename,
+  copyToClipboard,
+  WEBSITE_DOMAIN
 } from "../misc";
 import YouTube from "react-youtube";
 import LoadingScreen from "../components/LoadingScreen";
+import { ExternalLink, Share, Share2 } from "react-feather";
 
 const Post = ({ setPage, reload, setReload }) => {
   const [loaded, setLoaded] = useState(false);
@@ -23,12 +27,15 @@ const Post = ({ setPage, reload, setReload }) => {
   const [photoLink, setPhotoLink] = useState(DEFAULT_IMAGE);
   const [newsData, setNewsData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [width, setWidth] = useState(320);
+  const [sharePopup, setSharePopup] = useState(false)
+  const [dimensions, setDimensions] = useState({ width: 320, height: 180 });
   const params = useParams();
   const ref = useRef(null);
 
-  useEffect(() => {
-    setWidth(ref.current ? ref.current.offsetWidth : 0);
+  const path = useLocation().pathname
+
+  useLayoutEffect(() => {
+    setDimensions({ width: ref.current ? ref.current.offsetWidth : 0, height: ref.current ? ref.current.offsetHeight : 0 });
   }, [ref.current]);
 
   const cacheName = `news_post_${params.postID}`;
@@ -96,20 +103,27 @@ const Post = ({ setPage, reload, setReload }) => {
         <meta property="og:title" content={postData.title} />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
+      <DialogBox
+        header="Zrobione!"
+        content="Skopiowano link do artykułu. Teraz możesz się nim podzielić z znajomymi."
+        duration={3500}
+        isVisible={sharePopup}
+        setVisible={setSharePopup}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-4 mt-6 lg:mt-10 gap-10 xl:gap-12">
-        <article ref={ref} className="col-span-1 lg:col-span-3">
+        <article className="col-span-1 lg:col-span-3">
           <img
             className="aspect-video w-full object-cover rounded-xl lg:rounded-3xl drop-shadow-5xl"
             src={photoLink ?? postData.photo}
             alt={postData.alt}
           />
           {postData.photoAuthor && (
-            <p className="text-[#444444]/75 font-light text-xs w-full text-right py-1 pr-px sm:font-normal sm:text-sm">
+            <p className="text-[#444444]/75 font-light text-xs w-full text-right pt-1 pr-px sm:font-normal sm:text-sm">
               Zdjęcie: {postData.photoAuthor}
             </p>
           )}
           {!postData.photoAuthor && (
-            <p className="text-bg font-light text-xs w-full text-right py-1 pr-px sm:font-normal sm:text-sm">
+            <p className="text-bg font-light text-xs w-full text-right pt-1 pr-px sm:font-normal sm:text-sm">
               .
             </p>
           )}
@@ -132,19 +146,51 @@ const Post = ({ setPage, reload, setReload }) => {
             className="text-[#222222] text-justify md:text-left mt-4 leading-[1.85rem] lg:leading-9 mb-2  lg:text-xl  font-normal text-lg"
           ></div>
           {postData.ytID && (
-            <YouTube
-              videoId={postData.ytID}
-              opts={{ height: width * (9 / 16), width: width }}
-            />
+            <div className="w-full mt-5 aspect-video" ref={ref}>
+              <YouTube
+                videoId={postData.ytID}
+                opts={{ height: dimensions.height, width: dimensions.width }}
+              />
+            </div>
+
           )}
           {postData.author && (
-            <p className="mb-16 font-normal text-base w-full text-right mt-5 text-[#444444]/50">
+            <p className=" font-normal text-base w-full text-right mt-6 text-[#444444]/50">
               Artykuł dodany przez:{" "}
               <span className="font-medium text-[#444444]/100">
                 {postData.author}
               </span>
             </p>
           )}
+          <div className="w-full inline-flex justify-end mt-3 mb-16">
+            {
+              postData.link &&
+              <a
+                target="_blank"
+                title={`Link z posta: ${postData.link}`}
+                href={postData.link}
+                className={"transition-all cursor-pointer hover:ring-2 hover:ring-primary/30 pb-[.45rem] pr-[.45rem] pt-[.55rem] pl-[.55rem] ml-2 drop-shadow-3xl rounded-xl aspect-square bg-gray-50"}
+              >
+                <ExternalLink
+                  size={28}
+                  className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150`}
+                />
+              </a>
+            }
+            <button
+              onClick={() => copyToClipboard(("https://" + WEBSITE_DOMAIN + path), setSharePopup)}
+              title="Udostępnij"
+              className={"transition-all inline-flex py-[.5rem] bg-primary hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]"}
+            >
+              <Share2
+                size={28}
+                className={`aspect-square  h-[1.5rem]  my-auto stroke-2 stroke-white`}
+              />
+              <p className="text-white pl-[.3rem] my-auto font-medium text-base pr-[.2rem] -tracking-[.015rem]">
+                Udostępnij
+              </p>
+            </button>
+          </div>
         </article>
         <aside className="hidden lg:grid lg:grid-cols-1 lg:col-span-1 gap-3 mb-6">
           <PostCardPreview
