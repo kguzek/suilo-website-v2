@@ -19,9 +19,8 @@ const Footer = ({ isVisible }) => {
 
   return (
     <div
-      className={`flex w-screen bg-footer text-white font-light text-[.8rem] ${
-        isVisible ? "block" : "hidden"
-      } mt-7 justify-center align-middle`}
+      className={`flex w-screen bg-footer text-white font-light text-[.8rem] ${isVisible ? "block" : "block"
+        } mt-7 justify-center align-middle`}
     >
       <DialogBox
         header="Hey, you! You're finally awake."
