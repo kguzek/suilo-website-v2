@@ -13,7 +13,6 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
   const [yHeight, setYHeight] = useState("40px");
 
   const [isSafeToChange, setSafety] = useState(true);
-
   // Determine if the current user is permitted to edit any pages
   const userIsEditor =
     userInfo?.isAdmin || (userInfo?.canEdit ?? []).length > 0;
@@ -74,13 +73,15 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
     };
     if (page) {
       for (const key in widths) {
-        if (!page.startsWith(key)) {
-          continue;
+        if (page.startsWith(key)) {
+          return widths[key];
+        }
+        if (page.includes("post")) {
+          return widths.news
         }
         if (key === "edit" && !userIsEditor) {
           break;
         }
-        return widths[key];
       }
     }
     return widths.default;
@@ -111,7 +112,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
 
   if (width > 800) {
     return (
-      <div className={`w-11/12 xl:w-10/12 flex flex-row justify-between align-middle m-auto relative mt-0 ${page === "contact" ? "px-[.31rem] pr-[0px] " : ""}`}>
+      <div className={`w-11/12 xl:w-10/12 flex flex-row justify-between align-middle m-auto relative mt-0`}>
         <Link to="/" className="mt-3">
           <LogoSU width="3.5em" height="3.5em" />
         </Link>
@@ -128,7 +129,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
             </Link>
             <Link
               to="aktualnosci"
-              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "news" ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${((page === "news") || (page.includes("post"))) ? "text-text1" : "text-text4"}`}
             >
               Aktualności
             </Link>
@@ -154,7 +155,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
             ) : null}
           </nav>
         </div>
-        <div className={`my-auto ${page === "contact" ? "-mr-[.3rem]" : ""} `}>
+        <div className={`my-auto`}>
           <button
             className="text-sm font-medium text-primary  bg-white transition-all hover:drop-shadow-4xl drop-shadow-3xl hover:ring-primaryDark hover:ring-4 rounded-[.6rem] h-fit my-auto px-[1.4rem] py-[.675rem] -ml-7"
             onClick={_handleLogin}
@@ -168,7 +169,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
     );
   } else {
     return (
-      <div className={`flex flex-row justify-between align-middle w-11/12 m-auto relative pt-4 ${page === "contact" ? "translate-x-[5px]" : ""}`}>
+      <div className={`flex flex-row justify-between align-middle w-11/12 m-auto relative pt-4`}>
         <Link to="/">
           <LogoSU width={40} height={40} />
         </Link>
@@ -235,7 +236,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "news" ? "text-text1 underline decoration-primary" : "text-text4"}
+                  ${((page === "news") || (page.includes("post"))) ? "text-text1 underline decoration-primary" : "text-text4"}
                   w-fit
                   text-xl
                   px-6

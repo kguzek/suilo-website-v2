@@ -163,9 +163,8 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
     >
       <DialogBox
         header={notification ? "Zrobione!" : "Zrobione!"}
-        content={`${
-          notification ? "Włączono" : "Wyłączono"
-        } powiadomienie dla wydarzenia "${event.title}".`}
+        content={`${notification ? "Włączono" : "Wyłączono"
+          } powiadomienie dla wydarzenia "${event.title}".`}
         duration={2000}
         isVisible={popupNotification}
         setVisible={setPopupNotification}
@@ -180,9 +179,8 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
       /> */}
       <DialogBox
         header={participance ? "Super!" : "Szkoda."}
-        content={`${
-          participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
-        } udział w wydarzeniu "${event.title}".`}
+        content={`${participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
+          } udział w wydarzeniu "${event.title}".`}
         duration={2000}
         isVisible={popupParticipance}
         setVisible={setPopupParticipance}
@@ -287,9 +285,8 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
-                  notification ? "fill-primary" : "fill-transparent"
-                }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
+                  }`}
               />
             </button>
           ) : (
@@ -300,9 +297,8 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
-                  notification ? "fill-primary" : "fill-transparent"
-                }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
+                  }`}
               />
             </button>
           )}
