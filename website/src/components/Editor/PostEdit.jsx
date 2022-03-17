@@ -113,7 +113,6 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     }
     // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null&ytID=null
     const params = {
-      date: new Date().toISOString(),
       author,
       title,
       rawContent,

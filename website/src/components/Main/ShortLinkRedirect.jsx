@@ -2,12 +2,12 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NotFound from "../../pages/NotFound";
-import { fetchWithToken } from "../../firebase";
 import LoadingScreen from "../LoadingScreen";
 import { fetchCachedData, isURL } from "../../misc";
 
 export default function ShortLinkRedirect({ setPage }) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(null);
+  const [redirectingExternal, setRedirectingExternal] = useState(false);;
   const navigate = useNavigate();
 
   /** Callback function for when the data is fetched. */
@@ -16,6 +16,7 @@ export default function ShortLinkRedirect({ setPage }) {
     if (!destination) return;
     if (isURL(destination)) {
       // External, absolute URL
+      setRedirectingExternal(true);
       window.location.href = destination;
     } else {
       // Internal, relative page link
@@ -38,6 +39,7 @@ export default function ShortLinkRedirect({ setPage }) {
     setPage("redirect");
     fetchShortLinkData();
   }, []);
-  if (!loaded) return <LoadingScreen />;
+
+  if (!loaded || redirectingExternal) return <LoadingScreen />;
   return <NotFound setPage={setPage} />;
 }
