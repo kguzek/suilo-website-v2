@@ -41,6 +41,15 @@ export function conjugatePolish(
   return `${value} ${base}${suffixPluralB}`;
 }
 
+
+/* Copy content to clipboard */
+export const copyToClipboard = (text, sendFeedBack = () => null) => {
+  text = text.trim()
+  navigator.clipboard.writeText(text)
+  sendFeedBack(true);
+}
+
+
 /** Format a timestamp string with format: `01 sty 2022`. */
 export function formatDate(
   date,
@@ -195,8 +204,8 @@ export function fetchCachedData(
 export function getDataFromFilename(
   name,
   size = "1920x1080",
-  urlCallback = () => {},
-  metadataCallback = () => {}
+  urlCallback = () => { },
+  metadataCallback = () => { }
 ) {
   // Use default image if the image name is not provided
   if (!name) {

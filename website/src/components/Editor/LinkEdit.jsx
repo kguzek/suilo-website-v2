@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash, Edit3 } from "react-feather";
+import { Plus, Trash, Edit3, Copy } from "react-feather";
 import InputBox from "./InputComponents/InputBox";
 import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
 import LoadingScreen, { LoadingButton } from "../LoadingScreen";
 import { fetchWithToken } from "../../firebase";
-import { fetchCachedData, isURL, setErrorMessage, WEBSITE_DOMAIN } from "../../misc";
+import { fetchCachedData, isURL, setErrorMessage, WEBSITE_DOMAIN, copyToClipboard } from "../../misc";
 
 export const LinkEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -19,6 +19,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
   const [clickedDelete, setClickedDelete] = useState(false);
 
   const [popupSuccess, setPopupSuccess] = useState(false);
+  const [popupCopy, setPopupCopy] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
   const [popupError, setPopupError] = useState(false);
   const [errorCode, setErrorCode] = useState(null);
@@ -110,10 +111,17 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <DialogBox
         header="Sukces!"
-        content="Pomyślnie dokonano wszelkich zmian"
+        content="Stworzono skrócone łącze URl."
         duration={2000}
         isVisible={popupSuccess}
         setVisible={setPopupSuccess}
+      />
+      <DialogBox
+        header="Sukces!"
+        content={`Łącze: ${actualLink} zostało pomyślnie skopiowane do twojego schowka`}
+        duration={2500}
+        isVisible={popupCopy}
+        setVisible={setPopupCopy}
       />
       <DialogBox
         header="Uwaga!"
@@ -158,11 +166,16 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
       />
       <div className="w-full">
         {actualLink !== "" && (
-          <div className="my-1 font-medium text-lg text-text1">
-            <span>Link: </span>
-            <a href={actualLink} target="_blank">
+          <div className="my-1 font-medium text-lg text-text1 inline-flex">
+            <span>Link:&nbsp;</span>
+            <a href={actualLink} target="_blank" className="text-text1 font-normal tracking-tight hover:text-primary transition-all duration-150">
               {actualLink}
             </a>
+            <Copy
+              size={24}
+              className="stroke-gray-400 mt-[.15rem] ml-2 cursor-pointer transition-all duration-150 hover:stroke-primary"
+              onClick={() => copyToClipboard(actualLink, setPopupCopy)}
+            />
           </div>
         )}
         {visits !== 0 && <p className="text-text6">Kliknięcia w link: {visits}</p>}
