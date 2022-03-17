@@ -18,7 +18,6 @@ const News = ({ setPage, reload, setReload, collectionInfo }) => {
 
   /** Fetches the data from the cache or API. */
   function _populatePageContents(updateCache = false, pageNo) {
-    // This raw value is later encoded in the fetchNewsData() function
     fetchNewsData({
       setNewsData,
       setLoaded,

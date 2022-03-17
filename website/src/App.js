@@ -255,7 +255,14 @@ function App() {
           />
           <Route
             path="archiwum-numerkow"
-            element={<NumbersArchive setPage={setPage} />}
+            element={
+              <NumbersArchive
+                setPage={setPage}
+                reload={shouldRefresh}
+                setReload={setShouldRefresh}
+                collectionInfo={collectionInfo.luckyNumbers ?? { numDocs: 0 }}
+              />
+            }
           />
           <Route path="*" element={<ShortLinkRedirect setPage={setPage} />} />
         </Route>

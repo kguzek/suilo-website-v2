@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import LoadingScreen from "../components/LoadingScreen";
+import PageSelector from "../components/PageSelector";
 import { formatDate, fetchCachedData, removeSearchParam } from "../misc";
 
-const NumbersArchive = ({ setPage, reload, setReload }) => {
+const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
   const [archive, setArchive] = useState();
   const [loadedArchive, setLoadedArchive] = useState(null);
   const [archivePage, setArchivePage] = useState(1);
@@ -16,7 +17,7 @@ const NumbersArchive = ({ setPage, reload, setReload }) => {
       setData: setArchive,
       setLoaded: setLoadedArchive,
       updateCache: forceUpdate,
-      params: { page: pageNo ?? archivePage },
+      params: { page: pageNo ?? archivePage, sort: "descending" },
     };
     fetchCachedData("archivedNumbers", "/luckyNumbers/archive", fetchArgs);
   }
@@ -55,16 +56,27 @@ const NumbersArchive = ({ setPage, reload, setReload }) => {
   if (!loadedArchive) return <LoadingScreen />;
 
   return (
-    <div className="w-11/12 min-h-[82vh] mt-6 justify-center">
-      <table className="border-collapse table-auto w-64 md:w-[32rem] mx-auto ">
-        <thead>
-          <tr>
-            <th className="text-left pl-4">Data</th>
-            <th className="text-left">Numerki</th>
-          </tr>
-        </thead>
-        <tbody className="">{_generateArchiveRow()}</tbody>
-      </table>
+    <div className="flex flex-col justify-center align-top">
+      <div className="w-11/12 min-h-[82vh] mt-6 justify-center">
+        <table className="border-collapse table-auto w-64 md:w-[32rem] mx-auto ">
+          <thead>
+            <tr>
+              <th className="text-left pl-4">Data</th>
+              <th className="text-left">Numerki</th>
+            </tr>
+          </thead>
+          <tbody>{_generateArchiveRow()}</tbody>
+        </table>
+      </div>
+      <div className="m-auto my-2">
+        <PageSelector
+          page={archivePage}
+          noPages={Math.ceil(collectionInfo.numDocs / 25)}
+          onChange={setArchivePage}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+        />
+      </div>
     </div>
   );
 };

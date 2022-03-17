@@ -43,6 +43,9 @@ function sendNumbersData(res, data) {
   });
 }
 
+/** Formats the school year as a string. E.g. `2022` -> `"2022/2023"` */
+const getSchoolYearString = (schoolYear) => `${schoolYear}/${schoolYear + 1}`;
+
 /** Generates 2 random lucky numbers from the available number pools. */
 function generateNumbersData(res, data, docRef) {
   const luckyNumbers = [];
@@ -68,7 +71,6 @@ function generateNumbersData(res, data, docRef) {
     luckyNumbers.push(selection);
   }
   console.log("Generated new lucky numbers data:", luckyNumbers);
-  updateCollection("luckyNumbers");
   const todayString = serialiseDateArray(dateToArray());
   const newData = {
     date: todayString,
@@ -83,20 +85,24 @@ function generateNumbersData(res, data, docRef) {
   docRef.set(newData);
   sendNumbersData(res, newData);
   if (data) {
+    updateCollection("luckyNumbers", 1);
+    const dataToArchive = { luckyNumbers: data.luckyNumbers, date: data.date };
     // Add the previous data to the lucky numbers archive
     const date = new Date(data.date);
     const year = date.getFullYear();
     const month = date.getMonth();
     // e.g. 2022-03-16 -> month < 8 (September) -> "2021/2022"
     // e.g. 2024-09-30 -> month >= 8 (September) -> "2024/2025"
-    data.schoolYear = month < 8 ? `${year - 1}/${year}` : `${year}/${year + 1}`;
-    db.collection("archivedNumbers").doc().set(data);
+    dataToArchive.schoolYear = getSchoolYearString(month < 8 ? year - 1 : year);
+    db.collection("archivedNumbers").doc().set(dataToArchive);
+  } else {
+    updateCollection("luckyNumbers");
   }
 }
 
 /** Reads the existing lucky numbers data and either sends it or generates the next */
 function readNumbersData(res, forceUpdate = false) {
-  console.log(serialiseDateArray())
+  console.log(serialiseDateArray());
   const docRef = db.collection("_general").doc("luckyNumbers");
 
   try {
