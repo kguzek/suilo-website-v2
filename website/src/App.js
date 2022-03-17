@@ -315,10 +315,11 @@ function Layout({
         loginAction={loginAction}
         logoutAction={logoutAction}
       />
+      <div className="h-4 md:h-[4.5rem]" />
       <Outlet />
       <ScrollToTop />
       <LoginScreen />
-      <Footer isVisible={isFooterVisible} />
+      <Footer isVisible={isFooterVisible} page={page} />
     </main>
   );
 }

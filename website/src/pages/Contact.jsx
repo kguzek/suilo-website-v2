@@ -11,7 +11,7 @@ const Contact = ({ setPage }) => {
   });
 
   return (
-    <div className="flex w-11/12 xl:w-10/12 flex-col justify-start  align-top pt-5 min-h-[95vh]">
+    <div className="flex w-11/12 xl:w-10/12 flex-col justify-start  align-top pb-10 m-auto">
       <MetaTags>
         <title>
           Kontakt | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach
@@ -23,7 +23,7 @@ const Contact = ({ setPage }) => {
         <meta property="og:title" content="Kontakt | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
-      <div className="grid grid-cols-1 gap-7 md:gap-9 w-full lg:m-auto items-stretch mt-14 lg:grid-cols-2  ">
+      <div className="grid grid-cols-1 gap-7 md:gap-9 w-full lg:m-auto items-stretch lg:grid-cols-2  ">
         <div className="w-10/12 m-auto max-w-sm lg:max-w-md">
           <MailBox />
         </div>
