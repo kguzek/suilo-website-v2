@@ -123,34 +123,43 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
           <nav className="mt-5 w-fit m-auto">
             <Link
               to="/"
-              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "home" ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 relative group  transition duration-200 font-medium text-sm ${page === "home" ? "text-text1" : "text-text4"}`}
             >
               Główna
+              <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.4rem] right-0 w-0 h-[2px] group-hover:w-10/12 transition-all duration-250 " />
             </Link>
             <Link
               to="aktualnosci"
-              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${((page === "news") || (page?.includes("post"))) ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${((page === "news") || (page?.includes("post"))) ? "text-text1" : "text-text4"}`}
             >
               Aktualności
+              <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.32rem] right-0 w-0 h-[2px] group-hover:w-[90%] transition-all duration-250 " />
+
             </Link>
             <Link
               to="wydarzenia"
-              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "events" ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${page === "events" ? "text-text1" : "text-text4"}`}
             >
               Wydarzenia
+              <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.32rem] right-0 w-0 h-[2px] group-hover:w-[90%] transition-all duration-250 " />
+
             </Link>
             <Link
               to="kontakt"
-              className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "contact" ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${page === "contact" ? "text-text1" : "text-text4"}`}
             >
               Kontakt
+              <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.4rem] right-0 w-0 h-[2px] group-hover:w-10/12 transition-all duration-250 " />
+
             </Link>
             {userIsEditor ? (
               <Link
                 to="edycja"
-                className={`mx-4 p-2 transition duration-200 font-medium text-sm ${page === "edit" ? "text-text1" : "text-text4"}`}
+                className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${page === "edit" ? "text-text1" : "text-text4"}`}
               >
                 Edycja
+                <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.4rem] right-0 w-0 h-[2px] group-hover:w-[81.5%] transition-all duration-250 " />
+
               </Link>
             ) : null}
           </nav>
