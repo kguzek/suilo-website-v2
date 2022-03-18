@@ -44,13 +44,13 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
   }, [currentlyActive]);
 
   useEffect(() => {
-    if (isURL(longLink)) {
-      setActualLink(longLink);
+    if (isURL(shortLink)) {
+      setActualLink(shortLink);
     } else {
-      const path = longLink.startsWith("/") ? longLink : "/" + longLink;
+      const path = shortLink.startsWith("/") ? shortLink : "/" + shortLink;
       setActualLink(`https://www.${WEBSITE_DOMAIN}${path}`);
     }
-  }, [longLink]);
+  }, [shortLink]);
 
   // Display loading screen if events data hasn't been retrieved yet
   if (!loaded) {
