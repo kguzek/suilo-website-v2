@@ -73,7 +73,7 @@ function LoginScreen() {
     return (
       <div
         className="login-container"
-        style={{ display: display, opacity: opacity }}
+        style={{ display: display, opacity: opacity, zIndex: 9999999 }}
       >
         <div className="login-bg" onClick={() => removeCookies("loginStage")} />
         <div className="login-box" style={{ transform: `translateY(${yPos})` }}>
