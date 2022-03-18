@@ -586,7 +586,7 @@ body {
 
 .more {
   position: absolute;
-  bottom: -1rem;
+  bottom: .5rem;
   left: 2rem;
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;

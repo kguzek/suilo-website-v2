@@ -112,7 +112,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
 
   if (width > 800) {
     return (
-      <div className={`w-11/12 xl:w-10/12 flex flex-row justify-between align-middle absolute m-auto top-0 mt-0`}>
+      <div className={`w-11/12 xl:w-10/12 z-50 flex flex-row justify-between align-middle absolute m-auto top-0 mt-0`}>
         <Link to="/" className="mt-3">
           <LogoSU width="3.5em" height="3.5em" />
         </Link>
@@ -169,7 +169,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
     );
   } else {
     return (
-      <div className={`flex flex-row justify-between align-middle w-11/12 rabsolute m-auto top-0 mt-4`}>
+      <div className={`flex flex-row z-50 justify-between align-middle w-11/12 absolute m-auto top-0 mt-4`}>
         <Link to="/">
           <LogoSU width={40} height={40} />
         </Link>
@@ -182,6 +182,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
               absolute right-0 -top-2
               transition-all
               w-full
+              -mr-3
               rounded-2xl
               z-50
               duration-200

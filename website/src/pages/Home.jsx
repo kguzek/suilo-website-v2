@@ -99,7 +99,7 @@ const Home = ({ setPage, reload, setReload }) => {
         />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
       </MetaTags>
-      <div className="h-[85vh] sm:h-[89vh] w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
+      <div className=" -mt-14 md:-mt-[4.5rem]  h-screen w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
         <div className="flex flex-col pb-3 pt-4 col-span-1 lg:col-span-3">
           <h1 className="font-bold text-text1 text-5xl pb-2 lg:text-10xl lg:pb-0 xl:text-[3.5rem]">
             Samorząd Uczniowski
@@ -178,19 +178,18 @@ const Home = ({ setPage, reload, setReload }) => {
               Nasza drużyna
             </h2>
             <p className="text-text2 select-all font-normal leading-8 text-lg xl:text-[1.2rem] xl:leading-[2.2rem] text-left md:text-left pt-3">
-              Do Samorządu Uczniowskiego 1. Liceum Ogólnokształcącego im. Edwarda Dembowskiego
-              w Gliwicach należą wszyscy jego uczniowie, a w jego radzie zasiadują przewodniczący
-              klas, oraz osoby wybrane na stanowiska Marszałka, Sekretarza i Skarbnika.
-              Wspólnie dbamy o to, aby urozmaicić szkolną normę, oraz nieść pomoc uczniom
-              poprzez wydarzenia okolicznościowe, prowadzenie szczęśliwych numerków,
-              nagłaśnianie spraw uczniowskich, organizacje zbiórek i wiele innych.
-              Jesteśmy tu dla was - <i className="font-medium text-text2">od uczniów dla uczniów.</i>
+              Do Samorządu Uczniowskiego I Liceum Ogólnokształcącego im. Edwarda Dembowskiego w Gliwicach należą
+              wszyscy uczniowie, a w jego radzie zasiadają przewodniczący klas oraz osoby wybrane na stanowiska Marszałka,
+              Sekretarza i Skarbnika. Wspólnie dbamy o to, aby szkolna norma była bardziej atrakcyjna, a codzienność - bardziej urozmaicona.
+              Organizujemy i współorganizujemy wydarzenia okolicznościowe, prowadzimy tzw. szczęśliwe numerki, niesiemy pomoc poprzez
+              nagłaśnianie spraw uczniowskich, organizację zbiórek i wiele innych. Jesteśmy tu dla was -&nbsp;
+              <i className="font-medium text-text2">od uczniów dla uczniów.</i>
             </p>
           </article>
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-2 sm:gap-4 mb-20 place-content-stretch place-items-center lg:gap-8 xl:gap-16 lg:w-11/12 m-auto">
-        <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
+        <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
           <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">
             2C
           </p>
@@ -211,7 +210,7 @@ const Home = ({ setPage, reload, setReload }) => {
             </p>
           </div>
         </div>
-        <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
+        <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
           <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">
             3Ap
           </p>
@@ -232,7 +231,7 @@ const Home = ({ setPage, reload, setReload }) => {
             </p>
           </div>
         </div>
-        <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
+        <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
           <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">
             3Bg
           </p>
@@ -249,11 +248,11 @@ const Home = ({ setPage, reload, setReload }) => {
               Mikołaj Mrózek
             </p>
             <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">
-              Skarbink; Konsultant
+              Skarbink
             </p>
           </div>
         </div>
-        <div className="relative inline-flex flex-col justify-center w-full lg:w-11/12">
+        <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
           <img
             src={require("../media/bialowas.png")}
             className="z-10  drop-shadow-3xl aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
@@ -263,7 +262,7 @@ const Home = ({ setPage, reload, setReload }) => {
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
             title="Opiekun Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
           >
-            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base select-all lg:text-xl lg:mt-7">
+            <p className="text-text1 -tracking-[0.015rem] font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base select-all lg:text-xl lg:mt-7">
               Barbara Białowąs
             </p>
             <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">
