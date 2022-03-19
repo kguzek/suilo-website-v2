@@ -29,8 +29,13 @@ router
   .post("/", (req, res) => {
     // ?title=Tytuł wydarzenia&type=0&date=1970-01-01&startTime=00:00&endTime=23:59location=null&photo=null&link=null&content=Treść wydarzenia...
 
-    // initialise parameters
-    const data = { participants: [], notificationsFor: [] };
+    const notificationsFor = {};
+    // Check if the request payload contains the user information
+    if (req.userInfo?.email && req.userInfo?.displayName) {
+      // Add the event author to the list of users to be notified by default
+      notificationsFor[req.userInfo.email] = req.userInfo.displayName;
+    }
+    const data = { participants: [], notificationsFor };
     for (const attrib in eventAttributeSanitisers) {
       const sanitiser = eventAttributeSanitisers[attrib];
       data[attrib] = sanitiser(req.query[attrib]);
@@ -38,29 +43,39 @@ router
     createSingleDocument(data, res, "events");
   })
 
-  // READ single event/link/news
-  .get(`/:id`, (req, res) => {
-    const userID = parseInt(req?.userInfo?.uid);
+  // This method adds "participating" and "notified" attributes to the response
+  // Currently this verification is made on the client side in order to enable optimistic updates
+  // READ single event
+  // .get(`/:id`, (req, res) => {
+  //   const userID = req.userInfo?.uid;
+  //   const userEmail = req.userInfo?.email;
 
+  //   getDocRef(req, res, "events").then((docRef) =>
+  //     sendSingleResponse(docRef, res, (dataToSend) => {
+  //       // check if the user who sent the request is in the participants list
+  //       const participants = dataToSend.participants ?? [];
+  //       const participating = participants.includes(userID);
+  //       // check if the usre who sent the request has notifications enabled
+  //       const notified = userEmail in dataToSend.notificationsFor ?? {};
+  //       return { ...dataToSend, participating, notified };
+  //     })
+  //   );
+  // })
+
+  // READ single event
+  .get("/:id", (req, res) =>
     getDocRef(req, res, "events").then((docRef) =>
-      sendSingleResponse(docRef, res, (dataToSend) => {
-        // check if the user who sent the request is in the participants list
-        const participants = dataToSend.participants ?? [];
-        const participating = participants.includes(userID);
-        // check if the usre who sent the request has notifications enabled
-        const notificationsFor = dataToSend.notificationsFor ?? [];
-        const notified = notificationsFor.includes(userID);
-        return { ...dataToSend, participating, notified };
-      })
-    );
-  })
+      sendSingleResponse(docRef, res)
+    )
+  )
 
   // UPDATE (toggle) event participation/notification status
   .patch("/:id", (req, res) => {
     // ?toggle=notification|participance
     const userID = req.userInfo?.uid;
     const userEmail = req.userInfo?.email;
-    if (!userID || !userEmail) {
+    const userDisplayName = req.userInfo?.displayName;
+    if (!userID || !userEmail || !userDisplayName) {
       return res.status(403).json({
         errorDescription: "You must be signed in to perform this action.",
       });
@@ -70,17 +85,18 @@ router
 
     /** Toggles the user's notification for the given event. */
     function toggleNotification(data) {
-      let notificationsFor = data.notificationsFor ?? [];
-      const notified = notificationsFor.includes(userEmail);
+      const notificationsFor = data.notificationsFor ?? {};
+      const notified = userEmail in notificationsFor;
       if (notified) {
-        notificationsFor = notificationsFor.filter((email) => email !== userEmail);
+        delete notificationsFor[userEmail];
         response.msg = `Success! ${userEmail} will no longer be notified of this event.`;
       } else {
-        notificationsFor.push(userEmail);
+        notificationsFor[userEmail] = userDisplayName;
         response.msg = `Success! ${userEmail} will now be notified of this event.`;
       }
       response.notified = !notified;
-      response.notificationsFor = notificationsFor;
+      // Add the list of email addresses to the HTTP response array
+      response.notificationsFor = Object.keys(notificationsFor);
       return { notificationsFor };
     }
 

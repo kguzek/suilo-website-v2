@@ -29,7 +29,7 @@ const postAttributeSanitisers = {
 /*      ======== NEWS-SPECIFIC CRUD FUNCTIONS ========      */
 
 router
-  // CREATE news
+  // CREATE news post
   .post("/", (req, res) => {
     // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null&ytID=null
 
@@ -47,14 +47,14 @@ router
     createSingleDocument(data, res, "news");
   })
 
-  // READ single news
+  // READ single news post
   .get("/:id", (req, res) =>
     getDocRef(req, res, "news").then((docRef) =>
       sendSingleResponse(docRef, res)
     )
   )
 
-  // UPDATE news
+  // UPDATE news post
   .put("/:id", (req, res) =>
     updateSingleDocument(req, res, "news", postAttributeSanitisers)
   );
