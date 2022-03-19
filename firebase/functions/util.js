@@ -107,8 +107,8 @@ function numbersAreCurrent(data) {
   if (data.date === todayString) {
     return true;
   }
-  const freeDays = data.freeDays ?? [];
   // return true if it's weekend or a free day
+  const freeDays = data.freeDays ?? [];
   const weekday = new Date().getDay();
   return [0, 6].includes(weekday) || freeDays.includes(todayString);
 }

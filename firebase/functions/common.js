@@ -16,7 +16,11 @@ function dateToArray(date) {
 }
 
 /** Return the array's elements as a string separated by the '-' character. */
-function serialiseDateArray(dateArray = [], nextMidnight = false, forceTimezone) {
+function serialiseDateArray(
+  dateArray = [],
+  nextMidnight = false,
+  forceTimezone
+) {
   // This formats the date as yyyy-m-d
   const serialised = dateArray.join("-");
   // Convert the date so it is always at exactly midnight
@@ -33,4 +37,13 @@ function serialiseDateArray(dateArray = [], nextMidnight = false, forceTimezone)
   return date.toISOString().split("T").shift();
 }
 
-module.exports = { dateToArray, serialiseDateArray };
+function formatTime(hoursAndMinutes) {
+  const date = new Date();
+  date.setHours(...hoursAndMinutes);
+  return date.toLocaleTimeString("pl-PL", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+module.exports = { dateToArray, serialiseDateArray, formatTime };

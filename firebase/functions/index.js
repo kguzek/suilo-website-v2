@@ -103,4 +103,7 @@ exports.app = REGION.https.onRequest(app);
 // Initialise storage tracker function
 exports.storageTracker = REGION.storage.object().onFinalize(storageTracker);
 // Initialise daily trigger function -- CRON function for minute 0 hour 0 of every day
-exports.dailyTrigger = REGION.pubsub.schedule("0 0 * * *").timeZone("Europe/Warsaw").onRun(dailyTrigger);
+exports.dailyTrigger = REGION.pubsub
+  .schedule("0 0 * * *")
+  .timeZone("Europe/Warsaw")
+  .onRun(dailyTrigger);
