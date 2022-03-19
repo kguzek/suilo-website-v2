@@ -5,7 +5,6 @@ import {
   handlePhotoUpdate,
 } from "../../../misc";
 import InputBox from "./InputBox";
-import InputDropdown from "./InputDropdown";
 import InputFile from "./InputFile";
 
 const OPTIONS = [

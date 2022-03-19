@@ -151,62 +151,71 @@ const CalendarCell = ({
     }
   });
 
+  if (isNaN(daysCurrent) || isNaN(daysInPrevMonth)) return null;
+
   return (
     <div
       onClick={() => {
         return type === "_BEFORE_"
           ? changeMonth("_PREV_")
           : type === "_AFTER_"
-            ? changeMonth("_NEXT_")
-            : onPress(idx - daysBefore + 1, eventIDs);
+          ? changeMonth("_NEXT_")
+          : onPress(idx - daysBefore + 1, eventIDs);
       }}
       title={[...primTitles, ...secTitles].join("\n")}
-      className={`w-full relative inline-flex justify-center font-medium align-middle aspect-square ${isToday
-        ? "bg-primary/20 hover:bg-primaryDark/30"
-        : "hover:bg-gray-200/75"
-        } transition duration-[75ms] border-gray-200/70 ${endOfTheWeek ? "border-r-[0px]" : "border-r-[1px]"
-        } ${idx < 7 ? "border-t-white" : "border-t-gray-200/70"
-        } border-t-[1px] group select-none ${newPrimEvents[0] && "cursor-pointer"
-        } text-[.95rem] sm:text-base lg:text-lg`}
+      className={`w-full relative inline-flex justify-center font-medium align-middle aspect-square ${
+        isToday
+          ? "bg-primary/20 hover:bg-primaryDark/30"
+          : "hover:bg-gray-200/75"
+      } transition duration-[75ms] border-gray-200/70 ${
+        endOfTheWeek ? "border-r-[0px]" : "border-r-[1px]"
+      } ${
+        idx < 7 ? "border-t-white" : "border-t-gray-200/70"
+      } border-t-[1px] group select-none ${
+        newPrimEvents[0] && "cursor-pointer"
+      } text-[.95rem] sm:text-base lg:text-lg`}
     >
       {newPrimEvents[0] && (
         <>
           <div
             style={{ animationDelay: `${idx * 35}ms` }}
-            className={`m-auto animate-slow-ping origin-bottom -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full bg-gradient-to-br ${newPrimEvents[0].type
-              ? "from-[#CC00FF] to-[#FF0000]"
-              : "from-primary to-secondary"
-              }`}
+            className={`m-auto animate-slow-ping origin-bottom -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full bg-gradient-to-br ${
+              newPrimEvents[0].type
+                ? "from-[#CC00FF] to-[#FF0000]"
+                : "from-primary to-secondary"
+            }`}
           />
           <div
-            className={`m-auto shadow-md -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full bg-gradient-to-br ${newPrimEvents[0].type
-              ? "from-[#CC00FF] to-[#FF0000]"
-              : "from-primary to-secondary"
-              }`}
+            className={`m-auto shadow-md -translate-y-1/2 scale-105 top-1/2 w-2/3 aspect-square absolute rounded-full bg-gradient-to-br ${
+              newPrimEvents[0].type
+                ? "from-[#CC00FF] to-[#FF0000]"
+                : "from-primary to-secondary"
+            }`}
           />
         </>
       )}
       {type === "_BEFORE_" ? (
         <p className="m-auto text-slate-300 text-center">
-          {daysInPrevMonth - daysBefore + idx + 1}
+          {idx + 1 - daysBefore + daysInPrevMonth}
         </p>
       ) : type === "_CURRENT_" ? (
         <p
-          className={`m-auto text-center z-10 ${newPrimEvents.length
-            ? "text-white"
-            : isSunday
+          className={`m-auto text-center z-10 ${
+            newPrimEvents.length
+              ? "text-white"
+              : isSunday
               ? "text-[#FF1818]"
               : isSaturday
-                ? "text-text7"
-                : "text-text5"
-            }`}
+              ? "text-text7"
+              : "text-text5"
+          }`}
         >
           {idx + 1 - daysBefore}
         </p>
       ) : (
         type === "_AFTER_" && (
           <p className="m-auto text-center text-slate-300">
-            {idx + 1 - (daysBefore + daysCurrent)}
+            {idx + 1 - daysBefore - daysCurrent}
           </p>
         )
       )}
@@ -299,9 +308,11 @@ const CustomCalendar = ({
     // Day of the week of the first day of the month
     const daysBefore = (daysInMonth[0]?.getDay() + 6) % 7;
     // 6 - day of the week of the last day of the month
-    const daysAfter = 6 - ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(
-      String(daysInMonth[daysInMonth.length - 1]).substring(0, 3)
-    );
+    const daysAfter =
+      6 -
+      ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(
+        String(daysInMonth[daysInMonth.length - 1]).substring(0, 3)
+      );
 
     const renderArray = [];
 

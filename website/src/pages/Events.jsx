@@ -87,20 +87,26 @@ function Events({ setPage, reload, setReload, loginAction }) {
     return <LoadingScreen />;
   }
 
+  /** Checks if the event is the next event. */
+  function checkIfNextEvent(event, comparisonEvent) {
+    typeof comparisonEvent !== "object" && (comparisonEvent = undefined);
+    console.log("checking event", event);
+    const eventDate = new Date(event.date);
+    eventDate.setHours(...event.startTime);
+    // Check if the event is in the future
+    if (eventDate < new Date()) return;
+    if (!comparisonEvent || new Date(comparisonEvent.date) > eventDate) {
+      // The next event hasn't been defined yet or is after this event
+      setNextEvent(event);
+    }
+  }
+
   /** Filters out the primary events that are not this month and converts them into calendar format. */
   function processPrimaryEvents() {
-    const now = new Date();
     const _primEvents = [];
     for (const event of rawPrimEvents) {
       // date comparison for 'event' objects to check the next event
-      const eventDate = new Date(event.date);
-      if (eventDate >= now) {
-        // This event is in the future
-        if (!nextEvent || new Date(nextEvent.date) > eventDate) {
-          // The next event hasn't been defined yet or is after this event
-          setNextEvent(event);
-        }
-      }
+      checkIfNextEvent(event, nextEvent);
       const [year, month, _day] = event.date;
       if (year !== calendarYear || month !== calendarMonth) {
         continue;
@@ -147,7 +153,12 @@ function Events({ setPage, reload, setReload, loginAction }) {
         <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
       </MetaTags>
       {nextEvent ? (
-        <EventPreview event={nextEvent} isNextEvent loginAction={loginAction} />
+        <EventPreview
+          event={nextEvent}
+          isNextEvent
+          loginAction={loginAction}
+          updateNextEvent={() => rawPrimEvents.forEach(checkIfNextEvent)}
+        />
       ) : (
         // TODO: Render something better if there are no future events
         <div className="grid lg:mb-14">

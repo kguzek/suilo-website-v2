@@ -14,10 +14,10 @@ import {
   DEFAULT_IMAGE,
   formatDate,
   formatTime,
+  formatTimeDiff,
   getDataFromFilename,
   setErrorMessage,
 } from "../../misc";
-import { LoadingButton } from "../LoadingScreen";
 import DialogBox from "../DialogBox";
 
 const PARTICIPATE_BTN_CLASS =
@@ -41,13 +41,19 @@ const NOTIFY_BTN_CLASS =
 //   link: "https://youtu.be/dQw4w9WgXcQ",
 // };
 
-const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
+const EventPreview = ({
+  event,
+  isNextEvent = false,
+  loginAction,
+  updateNextEvent = () => {},
+}) => {
   const [notification, setNotification] = useState(false);
   const [participance, setParticipance] = useState(false);
   const [canParChange, setCanParChange] = useState(true);
   const [canNotChange, setCanNotChange] = useState(true);
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
 
+  const [eventCountdown, setEventCountdown] = useState(undefined);
   // const [needsLogin, setNeedsLogin] = useState(false);
 
   const [clickedParticipate, setClickedParticipate] = useState(false);
@@ -60,6 +66,13 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
   useEffect(() => {
     getDataFromFilename(event.photo, "1920x1080", setPhoto);
   }, [event]);
+
+  useEffect(() => {
+    // Either wait 1s or update immediately
+    isNextEvent && eventCountdown
+      ? setTimeout(updateEventCountdown, 1000)
+      : updateEventCountdown();
+  }, [eventCountdown]);
 
   useEffect(() => {
     if (!popupNotification) {
@@ -82,13 +95,27 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
     }
     const uid = auth.currentUser.providerData?.[0]?.uid;
     setParticipance(event.participants?.includes(uid));
-    setNotification(event.notificationsFor?.includes(uid))
+    setNotification(event.notificationsFor?.includes(uid));
   }, [auth.currentUser, event]);
 
   // Display "<20" if there are fewer than 20 event participants
   const numParticipants =
     (event.participants.length < 20 ? "<20" : event.participants.length) +
     " uczestników";
+
+  function updateEventCountdown() {
+    const now = new Date();
+    const eventDate = new Date(event.date);
+    eventDate.setHours(...event.startTime);
+    const diff = eventDate - now;
+    if (diff < 1000) { // Less than 1 second left
+      console.log("Next event start time reached!");
+      return void updateNextEvent();
+    };
+    const formatted = formatTimeDiff(diff);
+    formatted !== eventCountdown && setEventCountdown(formatted);
+    return diff;
+  }
 
   /** This function is called when the au clicks the event participation or notification button.
    *  Returns true if the action should be performed. Returns false if the user is signed out or if
@@ -156,6 +183,10 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
     });
   }
 
+  const eventHeader = isNextEvent
+    ? `Najbliższe wydarzenie (za ${eventCountdown})`
+    : "Wybrane wydarzenie";
+
   return (
     <article
       className="w-full grid mb-6 grid-cols-1 gap-3 lg:gap-8 lg:w-11/12 md:w-10/12 mx-auto lg:grid-cols-2 lg:my-12 mt-8"
@@ -163,8 +194,9 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
     >
       <DialogBox
         header={notification ? "Zrobione!" : "Zrobione!"}
-        content={`${notification ? "Włączono" : "Wyłączono"
-          } powiadomienie dla wydarzenia "${event.title}".`}
+        content={`${
+          notification ? "Włączono" : "Wyłączono"
+        } powiadomienie dla wydarzenia "${event.title}".`}
         duration={2000}
         isVisible={popupNotification}
         setVisible={setPopupNotification}
@@ -179,8 +211,9 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
       /> */}
       <DialogBox
         header={participance ? "Super!" : "Szkoda."}
-        content={`${participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
-          } udział w wydarzeniu "${event.title}".`}
+        content={`${
+          participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
+        } udział w wydarzeniu "${event.title}".`}
         duration={2000}
         isVisible={popupParticipance}
         setVisible={setPopupParticipance}
@@ -202,7 +235,7 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
         />
         <div className="absolute top-0 sm:px-6 sm:py-[.35rem] left-0 px-5 rounded-br-4xl sm:rounded-tl-[.95rem] rounded-tl-[.7rem] py-1 bg-gradient-to-br  from-primary to-secondary">
           <p className="font-medium text-sm text-white tracking-tigh pr-1 sm:text-base">
-            {isNextEvent ? "Najbliższe wydarzenie" : "Wybrane wydarzenie"}
+            {eventHeader}
           </p>
         </div>
         <div className="absolute -bottom-1 -right-1 sm:-right-3 lg:right-4 lg:-bottom-4 sm:-bottom-3 h-[4.5rem] lg:h-[6rem] lg:w-[5.2rem] sm:h-[5.4rem] sm:w-[4.7rem] w-16 rounded-lg bg-white flex drop-shadow-3xl flex-col justify-start align-middle">
@@ -285,8 +318,9 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
-                  }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
+                  notification ? "fill-primary" : "fill-transparent"
+                }`}
               />
             </button>
           ) : (
@@ -297,8 +331,9 @@ const EventPreview = ({ event, isNextEvent = false, loginAction }) => {
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
-                  }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
+                  notification ? "fill-primary" : "fill-transparent"
+                }`}
               />
             </button>
           )}

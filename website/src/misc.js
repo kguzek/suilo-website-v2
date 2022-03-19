@@ -288,3 +288,26 @@ export function handlePhotoUpdate(file, setImageURL, author, altText) {
 export function isURL(string) {
   return string.startsWith("http://") || string.startsWith("https://");
 }
+
+/** Formats the difference in milliseconds as a string. E.g. `12 dni 7 godz. 13 min. 49 sek.` */
+export function formatTimeDiff(differenceMillis) {
+  let seconds = Math.floor(differenceMillis / 1000);
+  let minutes = Math.floor(seconds / 60);
+  let hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  // The following three lines could be replaced with remainder operations (%) but I think this is more optimised
+  seconds -= minutes * 60; // Remove full minutes from seconds
+  minutes -= hours * 60; // Remove full hours from minutes
+  hours -= days * 24; // Remove full days from hours
+
+  let formatted = "";
+  // Show days if days > 0
+  days > 0 && (formatted = `${days} ${days === 1 ? "dzień" : "dni"} `);
+  // Show hours if days are shown or hours > 0
+  (formatted || hours > 0) && (formatted += `${hours} godz. `);
+  // Show minutes if any of the previous are shown or if minutes > 0
+  (formatted !== "" || minutes > 0) && (formatted += `${minutes} min. `);
+  // Show seconds if any of the previous are shown or if seconds > 0
+  (formatted !== "" || seconds > 0) && (formatted += `${seconds} sek.`);
+  return formatted;
+}
