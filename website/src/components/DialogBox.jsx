@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { X } from "react-feather";
 
 const DialogBox = ({
   header,
@@ -17,14 +18,15 @@ const DialogBox = ({
   const [display, setDisplay] = useState("none");
   const [opacity, setOpacity] = useState(1);
   const [yPos, setYPos] = useState("-10rem");
+  const [fadeTimeout, setFadeTimeout] = useState(null);
+  const [closeBtnVisible, setCloseBtnVisible] = useState(false);
+
   // type === "DIALOG" | "NOTIFICATION"
   // duration only needed for NOTIFICATION type
   // buttonLabels needed for DIALOG type
 
   useEffect(() => {
-    if (isVisible) {
-      fadeInDom();
-    }
+    isVisible && fadeInDom();
   }, [isVisible]);
 
   const fadeInDom = () => {
@@ -33,10 +35,12 @@ const DialogBox = ({
       setOpacity(1);
       setYPos("0");
       if (type === "NOTIFICATION") {
-        setTimeout(() => {
-          fadeOutDom();
-          afterCallback();
-        }, duration);
+        setFadeTimeout(
+          setTimeout(() => {
+            fadeOutDom();
+            afterCallback();
+          }, duration)
+        );
       }
     }, 10);
   };
@@ -55,20 +59,36 @@ const DialogBox = ({
     fadeOutDom();
   };
 
-  const _onCLickTwo = () => {
+  const _onClickTwo = () => {
     buttonTwoCallback();
     fadeOutDom();
   };
 
+  function _handleClose() {
+    clearTimeout(fadeTimeout);
+    fadeOutDom();
+    afterCallback();
+  }
+
   return (
     <div
       style={{ display: display, transform: `translateY(${yPos})` }}
-      className="right-0 left-0 mx-auto transition-all duration-[250ms] fixed top-3 z-50 "
+      className="right-0 left-0 mx-auto transition-all duration-[250ms] fixed top-3 z-50"
     >
-      <div className="mx-auto bg-white  py-3 px-5 rounded-xl shadow-2xl">
-        {header && (
+      <div
+        className="mx-auto bg-white  py-3 px-5 rounded-xl shadow-2xl"
+        onMouseEnter={() => setCloseBtnVisible(true)}
+        onMouseLeave={() => setCloseBtnVisible(false)}
+      >
+        <div className="flex">
           <h1 className="font-semibold text-base text-text1">{header}</h1>
-        )}
+          <div className="ml-auto w-2/3" onClick={_handleClose}>
+            <X
+              className="ml-auto transition-all duration-300 text-text4"
+              style={{ opacity: closeBtnVisible ? 1 : 0 }}
+            />
+          </div>
+        </div>
         {content && (
           <p className="font-normal text-sm text-text2 mt-1 max-w-[18rem] md:max-w-sm lg:max-w-md xl:max-w-lg whitespace-normal">
             {content}
@@ -93,7 +113,7 @@ const DialogBox = ({
             )}
             {buttonTwoLabel && (
               <div
-                onClick={_onCLickTwo}
+                onClick={_onClickTwo}
                 className="cursor-pointer py-[.4rem] px-4 rounded-md mb-[.1rem] text-red-600 transition-all duration-150 bg-gray-200/0 hover:bg-gray-200/50 font-normal  mt-3 text-sm"
               >
                 {buttonTwoLabel}
