@@ -51,34 +51,33 @@ export const copyToClipboard = (text, sendFeedBack = () => null) => {
 /** Format a timestamp string with format: `01 sty 2022`. */
 export function formatDate(
   date,
-  includeTime = false,
+  // includeTime = false,
   options = {
     year: "numeric",
     month: "short",
     day: "numeric",
   }
 ) {
-  if (includeTime) {
-    options = {
-      ...options,
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    };
-  }
+  // if (includeTime) {
+  //   options = {
+  //     ...options,
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //     second: "2-digit",
+  //   };
+  // }
   const dateObj = date ? new Date(date) : new Date();
   return dateObj.toLocaleDateString("pl-PL", options);
 }
 
 /** Format a time array as a human-readable string. */
-export function formatTime([hour, minute]) {
-  let date = new Date().setHours(hour);
-  date = new Date(date).setMinutes(minute);
-  const formattedDate = formatDate(date, false, {
+export function formatTime(hoursAndMinutes) {
+  const date = new Date();
+  date.setHours(...hoursAndMinutes);
+  return date.toLocaleTimeString("pl-PL", {
     hour: "2-digit",
     minute: "2-digit",
   });
-  return formattedDate.split(", ")[1];
 }
 
 /** Sets the provided search parameter in the URL query. */

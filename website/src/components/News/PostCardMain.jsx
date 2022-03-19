@@ -6,7 +6,7 @@ import { DEFAULT_IMAGE, formatDate, getDataFromFilename } from "../../misc";
 const PostCardMain = ({ data }) => {
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
   const date = formatDate(data.date);
-  // const modified = formatDate(data.modified, true);
+  // const modified = formatDate(data.modified);
 
   useEffect(() => {
     getDataFromFilename(data.photo, "400x300", setPhoto);

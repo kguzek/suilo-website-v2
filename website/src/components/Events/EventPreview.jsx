@@ -93,9 +93,11 @@ const EventPreview = ({
       setNotification(false);
       return;
     }
-    const uid = auth.currentUser.providerData?.[0]?.uid;
-    setParticipance(event.participants?.includes(uid));
-    setNotification(event.notificationsFor?.includes(uid));
+    const user = auth.currentUser.providerData?.[0];
+    const participants = event.participants ?? [];
+    const notificationsFor = event.notificationsFor ?? [];
+    setParticipance(participants.includes(user.uid));
+    setNotification(user.email in notificationsFor);
   }, [auth.currentUser, event]);
 
   // Display "<20" if there are fewer than 20 event participants
@@ -108,10 +110,11 @@ const EventPreview = ({
     const eventDate = new Date(event.date);
     eventDate.setHours(...event.startTime);
     const diff = eventDate - now;
-    if (diff < 1000) { // Less than 1 second left
+    if (diff < 1000) {
+      // Less than 1 second left
       console.log("Next event start time reached!");
       return void updateNextEvent();
-    };
+    }
     const formatted = formatTimeDiff(diff);
     formatted !== eventCountdown && setEventCountdown(formatted);
     return diff;
@@ -190,7 +193,7 @@ const EventPreview = ({
   return (
     <article
       className="w-full grid mb-6 grid-cols-1 gap-3 lg:gap-8 lg:w-11/12 md:w-10/12 mx-auto lg:grid-cols-2 lg:my-12 mt-8"
-      id={isNextEvent ? "nextEvent" : "selectedEvent"}
+      id={isNextEvent ? "nextEvent" : event.id}
     >
       <DialogBox
         header={notification ? "Zrobione!" : "Zrobione!"}
@@ -241,10 +244,10 @@ const EventPreview = ({
         <div className="absolute -bottom-1 -right-1 sm:-right-3 lg:right-4 lg:-bottom-4 sm:-bottom-3 h-[4.5rem] lg:h-[6rem] lg:w-[5.2rem] sm:h-[5.4rem] sm:w-[4.7rem] w-16 rounded-lg bg-white flex drop-shadow-3xl flex-col justify-start align-middle">
           <div className="bg-gradient-to-br from-primary to-secondary w-full h-4 lg:h-5 rounded-t-lg" />
           <p className="text-text-1 font-semibold text-2xl sm:text-3xl mx-auto -mb-2 mt-1 sm:mt-2 lg:text-[2rem]">
-            {formatDate(event.date, false, { day: "numeric" })}
+            {formatDate(event.date, { day: "numeric" })}
           </p>
           <p className="mx-auto text-text-1 font-semibold text-sm sm:text-base lg:text-lg">
-            {formatDate(event.date, false, { month: "short" })}
+            {formatDate(event.date, { month: "short" })}
           </p>
         </div>
       </div>

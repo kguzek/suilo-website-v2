@@ -96,7 +96,7 @@ const Post = ({ setPage, reload, setReload }) => {
     return <NotFound setPage={setPage} />;
   }
   const createdDate = formatDate(postData.date);
-  // const modifiedDate = formatDate(postData.modified, true);
+  // const modifiedDate = formatDate(postData.modified);
   const views = conjugatePolish(postData.views, "wyświetle", "nie", "nia", "ń");
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import MetaTags from "react-meta-tags";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import CalendarPreview from "../components/Events/Calendar";
 import EventPreview from "../components/Events/EventPreview";
-import { fetchCachedData, removeSearchParam } from "../misc";
+import { fetchCachedData, removeSearchParam, setSearchParam } from "../misc";
 import { serialiseDateArray } from "../common";
 import LoadingScreen from "../components/LoadingScreen";
 import { DEBUG_MODE } from "../firebase";
@@ -56,10 +56,12 @@ function Events({ setPage, reload, setReload, loginAction }) {
   }, [calendarYear, calendarMonth]);
 
   useEffect(() => {
-    setPage("events");
     // determines if the cache should be updated by checking the 'refresh' URL query parameter
     const force = !!removeSearchParam(searchParams, setSearchParams, "refresh");
-    fetchPrimaryEvents(force);
+    if (force || !loadedPrim) {
+      setPage("events");
+      fetchPrimaryEvents(force);
+    }
   }, [searchParams]);
 
   useEffect(() => {
@@ -73,13 +75,13 @@ function Events({ setPage, reload, setReload, loginAction }) {
   }, [reload]);
 
   useEffect(() => {
-    processPrimaryEvents();
+    processPrimaryEvents(true);
   }, [rawPrimEvents]);
 
   useEffect(() => {
     if (!selectedEvent) return;
     document
-      .getElementById("selectedEvent")
+      .getElementById(selectedEvent.id)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [selectedEvent]);
 
@@ -90,7 +92,6 @@ function Events({ setPage, reload, setReload, loginAction }) {
   /** Checks if the event is the next event. */
   function checkIfNextEvent(event, comparisonEvent) {
     typeof comparisonEvent !== "object" && (comparisonEvent = undefined);
-    console.log("checking event", event);
     const eventDate = new Date(event.date);
     eventDate.setHours(...event.startTime);
     // Check if the event is in the future
@@ -102,11 +103,13 @@ function Events({ setPage, reload, setReload, loginAction }) {
   }
 
   /** Filters out the primary events that are not this month and converts them into calendar format. */
-  function processPrimaryEvents() {
+  function processPrimaryEvents(determineNextEvent = false) {
+    const queryEventID = searchParams.get("event");
     const _primEvents = [];
     for (const event of rawPrimEvents) {
       // date comparison for 'event' objects to check the next event
-      checkIfNextEvent(event, nextEvent);
+      determineNextEvent && checkIfNextEvent(event, nextEvent);
+      event.id === queryEventID && setSelectedEvent(event);
       const [year, month, _day] = event.date;
       if (year !== calendarYear || month !== calendarMonth) {
         continue;
@@ -125,16 +128,19 @@ function Events({ setPage, reload, setReload, loginAction }) {
 
   /** Updates the reference to the currently selected event. */
   function updateSelectedEvent({ day, month, year, eventIDs }) {
-    for (const event of rawPrimEvents) {
-      if (eventIDs.includes(event.id)) {
-        // console.log("Setting currently selected event to:", event.title);
-        return void setSelectedEvent(event);
-      }
+    const event = rawPrimEvents
+      .filter((event) => eventIDs.includes(event.id))
+      .shift();
+    if (!event) {
+      DEBUG_MODE &&
+        console.log("No event on", serialiseDateArray([year, month, day]));
+      // Uncomment below to hide event preview when user clicks an empty day in calendar
+      // setSelectedEvent(undefined);
+      return;
     }
-    DEBUG_MODE &&
-      console.log("No event on", serialiseDateArray([year, month, day]));
-    // Uncomment below to hide event preview when user clicks an empty day in calendar
-    // setSelectedEvent(undefined);
+    // console.log("Setting currently selected event to:", event.title);
+    setSelectedEvent(event);
+    setSearchParam(searchParams, setSearchParams, "event", event.id);
   }
 
   return (
