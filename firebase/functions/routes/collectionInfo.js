@@ -25,7 +25,8 @@ function getRouter(availableEndpoints) {
         }
         return dataToSend;
       },
-      false
+      false,
+      defaultValues
     );
   };
 }

@@ -237,7 +237,8 @@ function sendSingleResponse(
   docRef,
   res,
   sendData = (data) => data,
-  incrementViewCount = true
+  incrementViewCount = true,
+  defaultData,
 ) {
   function _sendResponse(data) {
     res.status(200).json(sendData(data));
@@ -248,6 +249,11 @@ function sendSingleResponse(
     // check if the document was found
     const data = doc.data();
     if (!data) {
+      if (defaultData) {
+        // Use the provided default data when the document doesn't exist
+        docRef.set(defaultData);
+        return void _sendResponse(defaultData);
+      }
       // return an error if the document was not found
       return res.status(404).json({
         errorDescription: HTTP404 + "The requested document was not located.",
