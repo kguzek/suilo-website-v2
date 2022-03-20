@@ -24,7 +24,7 @@ import {
   DEBUG_MODE,
 } from "./firebase";
 
-function App() {
+export default function App() {
   const [page, setPage] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(undefined);
   const [footerVisible, setFooterVisible] = useState(true);
@@ -174,71 +174,21 @@ function App() {
   // If the user hasn't been determined yet, temporarily use the details of the last logged in user
   const userInfo = users[loggedInUser] ?? users[Object.keys(users).shift()];
 
-  const Layout = () => (
-    <main className="min-h-screen">
-      <div
-        className="-z-50 -left-12  -top-0 scale-[.4] md:scale-[.5] lg:scale-[.575] xl:scale-[.65] xl:-left-0 xl:-top-[1rem] origin-top-left absolute"
-        style={{
-          width: "30em",
-          height: "100vh",
-          background: "linear-gradient(-150deg,#FF9900,#FFC300)",
-          clipPath:
-            "path('M-254.73708-719.90154c101.2235-39.31238,245.38935,6.30359,353.14951,93.87061,108.439,88.27,181.105,217.8829,239.28706,362.83841,57.55027,145.56758,99.30695,306.38681,30.68232,379.45324C299.0773,188.62426,118.75881,173.843-27.84143,242.02288c-227.45885,105.78438-227.49889,198.49679-388.40643,233.736-207.39228,45.42249-521.8526-67.31778-592.75068-312.25552-57.279-197.88783,63.84638-414.93994,203.92341-509.51865,108.751-73.42822,164.462-29.50921,294.71133-120.23791,154.41672-107.5614,139.04581-208.376,255.62672-253.64832')",
-        }}
-      />
-      <div
-        className={`
-    -z-50 right-0 
-    ${page === "contact" ? "md:max-h-[100vh] " : "md:max-h-[100vh]"} 
-    ${
-      page === "home"
-        ? "-top-[16.5rem] scale-[.275]"
-        : "-top-[16.5rem] scale-[.275]"
-    } 
-    ${
-      page === "home"
-        ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]"
-        : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
-    } 
-    ${
-      page === "home"
-        ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
-        : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"
-    } 
-    ${
-      page === "home"
-        ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
-        : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"
-    }  
-    origin-top-right absolute
-  `}
-        style={{
-          width: "33em",
-          height: "175vh",
-          background: "linear-gradient(-140deg,#FF9900,#FFC300)",
-          clipPath:
-            "path('M3.06834,441.14016C-4.9308,332.85221,80.8371,208.33,196.07717,130.88529,312.18791,52.99694,457.37432,21.40331,612.99757,8.14541,769.0214-4.3294,935.01226,2.75728,984.8191,89.74084c48.93589,87.42814-17.91579,255.53594,4.42167,415.65489,34.65721,248.4337,123.30154,275.577,109.95678,439.74689-17.19719,211.598-216.93908,479.33975-471.88772,475.5269-205.9757-3.0806-378.11958-182.363-427.608-343.962-38.42159-125.46014,19.86327-165.89369-28.81671-316.96933C113.17431,580.63135,12.27678,565.856,3.06834,441.14016')",
-        }}
-      />
-      <CookiesAlert />
-      <NavBar
-        page={page}
-        userInfo={userInfo}
-        loginAction={loginAction}
-        logoutAction={logoutAction}
-      />
-      <div className="h-14 md:h-[4.5rem]" />
-      <Outlet />
-      <ScrollToTop />
-      <LoginScreen />
-      <Footer isVisible={footerVisible} />
-    </main>
-  );
-
   return (
     <AuthProvider setUserCallback={setUserCallback}>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route
+          path="/"
+          element={
+            <Layout
+              page={page}
+              loginAction={loginAction}
+              logoutAction={logoutAction}
+              userInfo={userInfo}
+              footerVisible={footerVisible}
+            />
+          }
+        >
           <Route
             index
             element={
@@ -326,4 +276,69 @@ function App() {
   );
 }
 
-export default App;
+const Layout = ({
+  page,
+  userInfo,
+  loginAction,
+  logoutAction,
+  footerVisible,
+}) => (
+  <main className="min-h-screen">
+    <div
+      className="-z-50 -left-12  -top-0 scale-[.4] md:scale-[.5] lg:scale-[.575] xl:scale-[.65] xl:-left-0 xl:-top-[1rem] origin-top-left absolute"
+      style={{
+        width: "30em",
+        height: "100vh",
+        background: "linear-gradient(-150deg,#FF9900,#FFC300)",
+        clipPath:
+          "path('M-254.73708-719.90154c101.2235-39.31238,245.38935,6.30359,353.14951,93.87061,108.439,88.27,181.105,217.8829,239.28706,362.83841,57.55027,145.56758,99.30695,306.38681,30.68232,379.45324C299.0773,188.62426,118.75881,173.843-27.84143,242.02288c-227.45885,105.78438-227.49889,198.49679-388.40643,233.736-207.39228,45.42249-521.8526-67.31778-592.75068-312.25552-57.279-197.88783,63.84638-414.93994,203.92341-509.51865,108.751-73.42822,164.462-29.50921,294.71133-120.23791,154.41672-107.5614,139.04581-208.376,255.62672-253.64832')",
+      }}
+    />
+    <div
+      className={`
+  -z-50 right-0 
+  ${page === "contact" ? "md:max-h-[100vh] " : "md:max-h-[100vh]"} 
+  ${
+    page === "home"
+      ? "-top-[16.5rem] scale-[.275]"
+      : "-top-[16.5rem] scale-[.275]"
+  } 
+  ${
+    page === "home"
+      ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]"
+      : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
+  } 
+  ${
+    page === "home"
+      ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
+      : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"
+  } 
+  ${
+    page === "home"
+      ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
+      : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"
+  }  
+  origin-top-right absolute
+`}
+      style={{
+        width: "33em",
+        height: "175vh",
+        background: "linear-gradient(-140deg,#FF9900,#FFC300)",
+        clipPath:
+          "path('M3.06834,441.14016C-4.9308,332.85221,80.8371,208.33,196.07717,130.88529,312.18791,52.99694,457.37432,21.40331,612.99757,8.14541,769.0214-4.3294,935.01226,2.75728,984.8191,89.74084c48.93589,87.42814-17.91579,255.53594,4.42167,415.65489,34.65721,248.4337,123.30154,275.577,109.95678,439.74689-17.19719,211.598-216.93908,479.33975-471.88772,475.5269-205.9757-3.0806-378.11958-182.363-427.608-343.962-38.42159-125.46014,19.86327-165.89369-28.81671-316.96933C113.17431,580.63135,12.27678,565.856,3.06834,441.14016')",
+      }}
+    />
+    <CookiesAlert />
+    <NavBar
+      page={page}
+      userInfo={userInfo}
+      loginAction={loginAction}
+      logoutAction={logoutAction}
+    />
+    <div className="h-14 md:h-[4.5rem]" />
+    <Outlet />
+    <ScrollToTop />
+    <LoginScreen />
+    <Footer isVisible={footerVisible} />
+  </main>
+);
