@@ -144,7 +144,7 @@ const CalendarCell = ({
         newSecEvents.push(el);
         secTitles.push(el.title);
       } else {
-        console.log("Invalid event render type:", el);
+        console.warn("Invalid event render type:", el);
       }
       // save all ids for current date
       eventIDs.push(el.id);

@@ -4,7 +4,7 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { fetchWithToken, storage } from "./firebase";
+import { DEBUG_MODE, fetchWithToken, storage } from "./firebase";
 
 export const MAX_CACHE_AGE = 24; // hours
 
@@ -134,7 +134,8 @@ export function fetchCachedData(
     if (!cache.data || cache.data.errorDescription) {
       break verifyCache;
     }
-    console.log(`Found existing cache for '${cacheName}'.`, cache);
+    DEBUG_MODE &&
+      console.debug(`Found existing cache for '${cacheName}'.`, cache);
     // check if the cache is younger than 2 hours old
     const cacheDate = Date.parse(cache.date);
     const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
@@ -150,11 +151,15 @@ export function fetchCachedData(
         setData(cache.data);
         return setLoaded(true);
       }
-      console.log(
-        `The found cache had a different argument (${cache.arg} vs ${cacheArgument}).`
-      );
+      DEBUG_MODE &&
+        console.debug(
+          `The found cache had a different argument (${cache.arg} vs ${cacheArgument}).`
+        );
     } else {
-      console.log(`The found cache is too old (${dateDifferenceHours} hours).`);
+      DEBUG_MODE &&
+        console.debug(
+          `The found cache is too old (${dateDifferenceHours} hours).`
+        );
     }
     // remove the existing cache
     localStorage.removeItem(cacheName);
@@ -170,11 +175,11 @@ export function fetchCachedData(
         };
         if (newCache.data) {
           localStorage.setItem(cacheName, JSON.stringify(newCache));
-          console.log(`Created cache '${cacheName}'.`, newCache);
+          console.info(`Created cache '${cacheName}'.`, newCache);
           setData(newCache.data);
         } else {
           // (API returned a non-200 response code or the data was otherwise malformed)
-          console.log(
+          console.error(
             `Request to '${fetchURL}' returned an invalid response:`,
             res.status,
             res.statusText,
@@ -185,7 +190,7 @@ export function fetchCachedData(
       });
     },
     (error) => {
-      console.log(`Error retrieving: '/api${fetchURL}'`, error);
+      console.error(`Error retrieving: '/api${fetchURL}'`, error);
       setLoaded(true);
     }
   );
@@ -268,18 +273,8 @@ export function handlePhotoUpdate(file, setImageURL, author, altText) {
       const prog = snapshot.bytesTransferred / snapshot.totalBytes;
       setImageURL(`Postęp: ${Math.round(prog * 100)}%`);
     },
-    (error) => console.log(error),
-    () => {
-      // getDownloadURL(uploadTask.snapshot.ref).then(() => {
-      //   console.log(url);
-      //   const basefileName = getFileNameFromFirebaseUrl(url);
-      //   console.log(basefileName);
-      //   const fullHDfileName = basefileName.split(".")[0] + "_1920x1080.jpeg";
-      //   console.log(fullHDfileName);
-      //   setImagePath(fullHDfileName);
-      // });
-      setImageURL(photoName);
-    }
+    (error) => console.error(error),
+    () => void setImageURL(photoName)
   );
 }
 

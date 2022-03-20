@@ -123,9 +123,9 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
       }
       updateMetadata(imgRef, metadata)
       .then((meta) => {
-        console.log(meta);
+        console.debug(meta);
       }).catch((error) => {
-        console.log(error);
+        console.error(error);
       })
     }
    */

@@ -49,7 +49,7 @@ function resolveShortLink(url, callback) {
     .where("shortLink", "==", url)
     .limit(1)
     .get()
-    .then((querySnapshot) => sendDoc(querySnapshot.docs?.shift()));
+    .then((querySnapshot) => void sendDoc(querySnapshot.docs?.shift()));
 }
 
 /** Attempts to create a short URL with the specified arguments and sends the appropriate HTTP response. */

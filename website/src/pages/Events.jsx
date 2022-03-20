@@ -133,12 +133,12 @@ function Events({ setPage, reload, setReload, loginAction }) {
       .shift();
     if (!event) {
       DEBUG_MODE &&
-        console.log("No event on", serialiseDateArray([year, month, day]));
+        console.debug("No event on", serialiseDateArray([year, month, day]));
       // Uncomment below to hide event preview when user clicks an empty day in calendar
       // setSelectedEvent(undefined);
       return;
     }
-    // console.log("Setting currently selected event to:", event.title);
+    DEBUG_MODE && console.debug("Setting currently selected event to:", event.title);
     setSelectedEvent(event);
     setSearchParam(searchParams, setSearchParams, "event", event.id);
   }

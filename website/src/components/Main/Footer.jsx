@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { DEBUG_MODE } from "../../firebase";
 import { WEBSITE_DOMAIN } from "../../misc";
 import DialogBox from "../DialogBox";
 
 const Footer = ({ isVisible, page }) => {
   const [easterEgg, setEasterEgg] = useState(false);
   const [clicks, setClicks] = useState(0);
-  // console.log(page)
+  DEBUG_MODE && console.debug(page)
   useEffect(() => {
     if (clicks === 1) {
       setTimeout(() => {
@@ -19,8 +20,9 @@ const Footer = ({ isVisible, page }) => {
 
   return (
     <div
-      className={`flex w-screen bg-footer text-white font-light text-[.8rem] ${isVisible ? "block" : "block"
-        } mt-7 justify-center align-middle relative`}
+      className={`flex w-screen bg-footer text-white font-light text-[.8rem] ${
+        isVisible ? "block" : "block"
+      } mt-7 justify-center align-middle relative`}
     >
       <DialogBox
         header="Hey, you! You're finally awake."
@@ -35,7 +37,8 @@ const Footer = ({ isVisible, page }) => {
         className="my-2 mt-3 select-none"
         onClick={() => setClicks(clicks + 1)}
       >
-        {WEBSITE_DOMAIN} {new Date().getFullYear()} © Wszystkie prawa zastrzeżone.
+        {WEBSITE_DOMAIN} | {new Date().getFullYear()} © Wszystkie prawa
+        zastrzeżone.
       </p>
     </div>
   );

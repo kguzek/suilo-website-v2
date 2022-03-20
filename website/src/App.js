@@ -20,8 +20,8 @@ import {
   logOut,
   AuthProvider,
   fetchWithToken,
-  DEBUG_MODE,
   auth,
+  DEBUG_MODE,
 } from "./firebase";
 
 function App() {
@@ -60,7 +60,7 @@ function App() {
     if (!checkForUpdates) {
       return;
     }
-    console.log("Checking for server updates...");
+    DEBUG_MODE && console.info("Checking for server updates...");
     fetchWithToken("/collectionInfo/").then((res) => {
       res.json().then((collections) => {
         setCollectionInfo(collections);
@@ -84,7 +84,7 @@ function App() {
           // Check if the cache name is a valid endpoint
           if (collectionUpdated.toString() !== "Invalid Date") {
             // The cache is too old
-            console.log("Removing cache", cacheName);
+            DEBUG_MODE && console.info("Removing cache", cacheName);
             localStorage.removeItem(cacheName);
             if (cacheName === "users") {
               setLoggedInUser(undefined);
@@ -96,7 +96,7 @@ function App() {
         // Only update the state when all caches have been processed
         shouldRefresh
           ? setShouldRefresh(true)
-          : console.log("Everything is up-to-date");
+          : DEBUG_MODE && console.info("Everything is up-to-date");
       });
     });
   }, [page]);
@@ -120,34 +120,35 @@ function App() {
             const userAccounts = cookies.userAccounts;
             userAccounts[user.email] = perms;
             // Determine if the user is permitted to edit any pages
-            const isEditor = perms.isAdmin || perms.canEdit.length > 0;
-            isEditor && console.log(`Enabled edit screen for ${user.email}.`);
+            DEBUG_MODE &&
+              (perms.isAdmin || perms.canEdit.length > 0) &&
+              console.info(`Enabled edit screen for ${user.email}.`);
             setCookies("userAccounts", userAccounts, { sameSite: "lax" });
           }
 
           // Check if the user has edit permissions by performing a dummy PUT request to the API
-          console.log("Checking user permissions...");
+          DEBUG_MODE && console.info("Checking user permissions...");
           fetchWithToken("/").then(
             (res) => {
               // Log user permissions
               res.json().then((data) => {
-                console.log(data);
+                DEBUG_MODE && console.debug(data);
                 setUserEditPermissions(data.userInfo); // userInfo can be undefined
               });
             },
             (error) => {
-              console.log("Error setting user permissions!", error);
+              console.error("Error setting user permissions!", error);
               setUserEditPermissions();
             }
           );
         }
         setLoggedInUser(user.email);
       } else {
-        console.log("Invalid email. Logging out.");
+        DEBUG_MODE && console.info("Invalid email. Logging out.");
         return false;
       }
     } else {
-      console.log("No user. Logging out.");
+      DEBUG_MODE && console.info("No user. Logging out.");
       setLoggedInUser(null);
       // Remove all entries from the user accounts object
       // This means that the next time someone logs in the API will have to verify if they are an editor
@@ -294,21 +295,25 @@ function Layout({
         className={`
           -z-50 right-0 
           ${page === "contact" ? "md:max-h-[100vh] " : "md:max-h-[100vh]"} 
-          ${page === "home"
-            ? "-top-[16.5rem] scale-[.275]"
-            : "-top-[16.5rem] scale-[.275]"
+          ${
+            page === "home"
+              ? "-top-[16.5rem] scale-[.275]"
+              : "-top-[16.5rem] scale-[.275]"
           } 
-          ${page === "home"
-            ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]"
-            : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
+          ${
+            page === "home"
+              ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]"
+              : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
           } 
-          ${page === "home"
-            ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
-            : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"
+          ${
+            page === "home"
+              ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
+              : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"
           } 
-          ${page === "home"
-            ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
-            : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"
+          ${
+            page === "home"
+              ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
+              : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"
           }  
           origin-top-right absolute
         `}

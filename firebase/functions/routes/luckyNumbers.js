@@ -23,8 +23,9 @@ function sendNumbersData(res, data) {
 function readNumbersData(res, forceUpdate = false) {
   const docRef = db.collection("_general").doc("luckyNumbers");
 
-  try {
-    docRef.get().then((doc) => {
+  docRef
+    .get()
+    .then((doc) => {
       let data = doc.data();
       if (forceUpdate || !numbersAreCurrent(data)) {
         // Regenerate the lucky numbers data
@@ -33,14 +34,14 @@ function readNumbersData(res, forceUpdate = false) {
         docRef.set(data);
       }
       sendNumbersData(res, data);
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        errorDescription:
+          "500 Internal Server Error: Could not get the lucky numbers data.",
+        errorDetails: error.toString(),
+      });
     });
-  } catch (error) {
-    return res.status(500).json({
-      errorDescription:
-        "500 Internal Server Error: Could not get the lucky numbers data.",
-      errorDetails: error.toString(),
-    });
-  }
 }
 
 /*      ======== LUCKY NUMBERS-SPECIFIC CRUD FUNCTIONS ========      */
@@ -152,16 +153,18 @@ router
   //*/
 
   // GET lucky numbers (v2)
-  .get("/v2", (_req, res) => readNumbersData(res))
+  .get("/v2", (_req, res) => void readNumbersData(res))
 
   // CREATE new lucky numbers (v2)
-  .post("/v2", (_req, res) => readNumbersData(res, true))
+  .post("/v2", (_req, res) => void readNumbersData(res, true))
 
   // GET lucky numbers archive
   .get("/archive", (req, res) => {
     // ?sort=ascending
 
-    const sortDescending = req.query.sort?.toLowerCase() === "descending";
+    // Check if the provided sort order is any of "d", "desc", "descending" etc.
+    const sortOrder = req.query.sort?.toLowerCase();
+    const sortDescending = sortOrder && "descending".startsWith(sortOrder);
 
     const collectionRef = db
       .collection("archivedNumbers")

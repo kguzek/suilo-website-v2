@@ -50,7 +50,7 @@ export function PostCardPreview({
   numItems,
 }) {
   if (data === undefined) {
-    console.log("News data is undefined. Not rendering preview.");
+    console.warn("News data is undefined. Not rendering preview.");
     return null;
   }
   const defaultItems = {
@@ -75,8 +75,11 @@ export function PostCardPreview({
   numItems ?? (numItems = defaultItems[type].numItems);
 
   // const className = classOverride ?? `${type}-grid`;
-  const _data = [...(data?.contents ?? [])].splice(startIndex, numItems);
-  if (_data.length === 0) {
+
+  // Create a carbon copy of the contents array so that the original is not mutated
+  const contents = [...(data?.contents ?? [])].splice(startIndex, numItems);
+
+  if (contents.length === 0) {
     if (classOverride?.startsWith("home")) {
       return (
         <div style={{ width: "100%" }}>
@@ -91,7 +94,7 @@ export function PostCardPreview({
   }
   return (
     <>
-      {_data.map((el, idx) => {
+      {contents.map((el, idx) => {
         el.internalLink = linkPrefix + el.id;
         return React.createElement(elem, { key: el.id + idx, data: el });
       })}

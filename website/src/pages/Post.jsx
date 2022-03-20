@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { useParams, useSearchParams, useLocation } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import NotFound from "./NotFound";
 import {
@@ -15,11 +15,10 @@ import {
   removeSearchParam,
   getDataFromFilename,
   copyToClipboard,
-  WEBSITE_DOMAIN,
 } from "../misc";
 import YouTube from "react-youtube";
 import LoadingScreen from "../components/LoadingScreen";
-import { ExternalLink, Share, Share2 } from "react-feather";
+import { ExternalLink, Share2 } from "react-feather";
 
 const Post = ({ setPage, reload, setReload }) => {
   const [loaded, setLoaded] = useState(false);
@@ -31,8 +30,6 @@ const Post = ({ setPage, reload, setReload }) => {
   const [dimensions, setDimensions] = useState({ width: 320, height: 180 });
   const params = useParams();
   const ref = useRef(null);
-
-  const path = useLocation().pathname;
 
   useLayoutEffect(() => {
     setDimensions({
@@ -184,10 +181,7 @@ const Post = ({ setPage, reload, setReload }) => {
             )}
             <button
               onClick={() =>
-                copyToClipboard(
-                  "https://" + WEBSITE_DOMAIN + path,
-                  setSharePopup
-                )
+                copyToClipboard(window.location.href, setSharePopup)
               }
               title="Udostępnij"
               className={

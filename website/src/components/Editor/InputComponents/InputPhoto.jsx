@@ -67,7 +67,7 @@ export default function InputPhoto({
     try {
       metadata = JSON.parse(rawMetadata)?.customMetadata ?? {};
     } catch (parseError) {
-      console.log(parseError);
+      console.error(parseError);
     }
     setImageAuthor && setImageAuthor(metadata.author ?? "");
     setImageAltText && setImageAltText(metadata.altText ?? "");

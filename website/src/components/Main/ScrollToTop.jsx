@@ -45,7 +45,6 @@ export function ScrollToTop() {
       setOpacity("opacity-100")
       setSafety(true);
     }, 100);
-    // console.log("FADE IN")
   };
 
   // animation on exit
@@ -56,7 +55,6 @@ export function ScrollToTop() {
       setDisplay("hidden");
       setSafety(true);
     }, 500);
-    // console.log("FADE OUT")
   };
 
   // Animate button on fade in and out //

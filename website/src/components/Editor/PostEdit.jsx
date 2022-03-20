@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash, Edit3 } from "react-feather";
 import InputBox from "./InputComponents/InputBox";
-// import InputArea from "./InputComponents/InputArea";
 import InputDropdown from "./InputComponents/InputDropdown";
 import TextEditor from "./InputComponents/TextEditor";
 import DialogBox from "../DialogBox";
-import { auth, fetchWithToken } from "../../firebase";
-import LoadingScreen, { LoadingButton } from "../LoadingScreen";
+import { auth, DEBUG_MODE, fetchWithToken } from "../../firebase";
+import LoadingScreen from "../LoadingScreen";
 import { setErrorMessage } from "../../misc";
 import InputPhoto from "./InputComponents/InputPhoto";
 
@@ -134,9 +133,9 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       }
       updateMetadata(imgRef, metadata)
       .then((meta) => {
-        console.log(meta);
+        console.debug(meta);
       }).catch((error) => {
-        console.log(error);
+        console.error(error);
       })
     }
     */
@@ -155,8 +154,10 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
   const setPostContent = ({ html, text }) => {
     setFormattedContent(html);
     setRawContent(text);
-    console.log(text);
-    console.log(html);
+    if (DEBUG_MODE) {
+      console.debug(text);
+      console.debug(html);
+    }
   };
 
   function _handleDelete() {
@@ -273,7 +274,9 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
           (clickedDelete ? (
             <button
               type="button"
-              className="delete-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}
+              className="delete-btn select-none cursor-wait"
+              disabled
+              style={{ pointerEvents: "none" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -282,37 +285,46 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
           ) : (
             <button
               type="button"
-              className="delete-btn select-none cursor-pointer" style={{ pointerEvents: "all" }}
+              className="delete-btn select-none cursor-pointer"
+              style={{ pointerEvents: "all" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń post</p>
             </button>
           ))}
-        {
-          clickedSubmit ?
-            <button type="submit" className="add-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}>
-              {currentlyActive !== "_default" ? (
-                <Edit3 color="#FFFFFF" size={24} />
-              ) : (
-                <Plus color="#FFFFFF" size={24} />
-              )}
-              <p>
-                {currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}
-              </p>
-            </button> :
-            <button type="submit  " className="add-btn select-none cursor-pointer" style={{ pointerEvents: "all" }} >
-              {currentlyActive !== "_default" ? (
-                <Edit3 color="#FFFFFF" size={24} />
-              ) : (
-                <Plus color="#FFFFFF" size={24} />
-              )}
-              <p>
-                {currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}
-              </p>
-            </button>
-        }
-
+        {clickedSubmit ? (
+          <button
+            type="submit"
+            className="add-btn select-none cursor-wait"
+            disabled
+            style={{ pointerEvents: "none" }}
+          >
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}
+            </p>
+          </button>
+        ) : (
+          <button
+            type="submit  "
+            className="add-btn select-none cursor-pointer"
+            style={{ pointerEvents: "all" }}
+          >
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}
+            </p>
+          </button>
+        )}
       </div>
     </form>
   );

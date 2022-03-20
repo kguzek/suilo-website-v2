@@ -25,8 +25,8 @@ export default function ShortLinkRedirect({ setPage }) {
   }
 
   function fetchShortLinkData() {
-    // Trim the leading slash from the cache name
     const path = window.location.pathname;
+    // Trim the leading slash from the cache name
     const cacheName = "links_" + path.substring(1, path.length);
     const fetchURL = "/links" + path;
     const fetchArgs = {

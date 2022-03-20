@@ -11,7 +11,7 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import React, { useEffect } from "react";
 
-/** Enables some `console.log` statements and determines the API URL. */
+/** Enables various logger statements and determines the API URL. */
 export const DEBUG_MODE = false;
 
 export const API_URL = DEBUG_MODE
@@ -63,7 +63,7 @@ export function fetchWithToken(relativeURL, method = "GET", params, body) {
   function then(resolve, reject) {
     /** Performs the fetch request with the provided success and failure handlers. */
     function _fetch(token) {
-      DISPLAY_TOKEN_ON_REQUEST && console.log(token);
+      DISPLAY_TOKEN_ON_REQUEST && console.info(token);
       let url = API_URL + relativeURL;
       const searchParams = new URLSearchParams(params).toString();
       // Append the URL search parameters
@@ -77,12 +77,14 @@ export function fetchWithToken(relativeURL, method = "GET", params, body) {
           authorization: `Bearer ${token}`,
         }),
       };
-      body && (args.body = JSON.stringify(body)) && console.log("Request body:", body);
+      if (body) {
+        args.body = JSON.stringify(body);
+        DEBUG_MODE && console.debug("Request body:", body);
+      }
+      console.info(`Sending ${method} request to '/api${relativeURL}'.`);
       fetch(url, args).then(resolve, reject);
     }
     if (userLoaded) {
-      DEBUG_MODE &&
-        console.log(`Sending ${method} request to '/api${relativeURL}'.`);
       if (auth.currentUser) {
         auth.currentUser.getIdToken().then(_fetch);
       } else {
@@ -91,7 +93,7 @@ export function fetchWithToken(relativeURL, method = "GET", params, body) {
     } else {
       // add the request to the stack to be called once the user token is determined
       DEBUG_MODE &&
-        console.log(
+        console.debug(
           `Adding request to '/api${relativeURL}' to the fetch stack...`
         );
       _fetchStack.push(_fetch);
@@ -117,12 +119,12 @@ export function AuthProvider({ children, setUserCallback }) {
         }
         if (user) {
           DEBUG_MODE &&
-            console.log(
+            console.debug(
               `Executing the fetch stack as ${user.displayName} <${user.email}>.`
             );
           user.getIdToken().then(_executeFetchStack);
         } else {
-          DEBUG_MODE && console.log("Executing the fetch stack anonymously.");
+          DEBUG_MODE && console.debug("Executing the fetch stack anonymously.");
           _executeFetchStack();
         }
       } else {
@@ -166,7 +168,7 @@ export function getResults(processLoginCallback) {
     })
     .catch((error) => {
       // an error can be thrown when the login session has expired; user has to log in again.
-      console.log("An error occured while retrieving login results.", error);
+      console.error("An error occured while retrieving login results.", error);
       return processLoginCallback("Nastąpił błąd przy logowaniu");
     });
 }
@@ -175,10 +177,10 @@ export async function logOut() {
   signOut(auth)
     .then(() => {
       DEBUG_MODE &&
-        console.log("Successfully signed out from Google provider.");
+        console.debug("Successfully signed out from Google provider.");
     })
     .catch((error) => {
       // no error handling as possible errors are currently unknown
-      console.log("An error occured while logging out.", error);
+      console.error("An error occured while logging out.", error);
     });
 }

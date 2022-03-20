@@ -10,6 +10,7 @@ import { CalendarEdit } from "../components/Editor/CalendarEdit";
 import { LinkEdit } from "../components/Editor/LinkEdit";
 import { PermissionEdit } from "../components/Editor/PermissionEdit";
 import LoadingScreen from "../components/LoadingScreen";
+import { DEBUG_MODE } from "../firebase";
 
 const PAGES = {
   news: "Aktualności",
@@ -182,7 +183,7 @@ export default function Edit({
 
   // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {
-    console.log(
+    DEBUG_MODE && console.debug(
       "Waiting for the user to be determined before displaying edit screen."
     );
     return <LoadingScreen />;

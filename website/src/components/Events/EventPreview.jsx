@@ -9,7 +9,7 @@ import {
   ExternalLink,
   User,
 } from "react-feather";
-import { fetchWithToken, auth } from "../../firebase";
+import { fetchWithToken, auth, DEBUG_MODE } from "../../firebase";
 import {
   DEFAULT_IMAGE,
   formatDate,
@@ -112,7 +112,7 @@ const EventPreview = ({
     const diff = eventDate - now;
     if (diff < 1000) {
       // Less than 1 second left
-      console.log("Next event start time reached!");
+      DEBUG_MODE && console.info("Next event start time reached!");
       return void updateNextEvent();
     }
     const formatted = formatTimeDiff(diff);

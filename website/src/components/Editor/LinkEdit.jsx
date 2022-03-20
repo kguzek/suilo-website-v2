@@ -3,9 +3,9 @@ import { Plus, Trash, Edit3, Copy } from "react-feather";
 import InputBox from "./InputComponents/InputBox";
 import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
-import LoadingScreen, { LoadingButton } from "../LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 import { fetchWithToken } from "../../firebase";
-import { fetchCachedData, isURL, setErrorMessage, WEBSITE_DOMAIN, copyToClipboard } from "../../misc";
+import { isURL, setErrorMessage, copyToClipboard } from "../../misc";
 
 export const LinkEdit = ({ data, loaded, refetchData }) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
@@ -47,8 +47,10 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     if (isURL(shortLink)) {
       setActualLink(shortLink);
     } else {
+      // Ensure the path starts with "/"
       const path = shortLink.startsWith("/") ? shortLink : "/" + shortLink;
-      setActualLink(`https://www.${WEBSITE_DOMAIN}${path}`);
+      // Use the current HTTP/HTTPS protocol
+      setActualLink(`${window.location.origin}${path}`);
     }
   }, [shortLink]);
 
@@ -168,7 +170,11 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
         {actualLink !== "" && (
           <div className="my-1 font-medium text-lg text-text1 inline-flex">
             <span>Link:&nbsp;</span>
-            <a href={actualLink} target="_blank" className="text-text1 font-normal tracking-tight hover:text-primary transition-all duration-150">
+            <a
+              href={actualLink}
+              target="_blank"
+              className="text-text1 font-normal tracking-tight hover:text-primary transition-all duration-150"
+            >
               {actualLink}
             </a>
             <Copy
@@ -178,7 +184,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
             />
           </div>
         )}
-        {visits !== 0 && <p className="text-text6">Kliknięcia w link: {visits}</p>}
+        {visits && <p className="text-text6">Kliknięcia w link: {visits}</p>}
       </div>
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
