@@ -36,7 +36,12 @@ export default function InputPhoto({
         _handlePreviewChange(imageURL);
       }
     } else {
-      selectedOption !== 3 && setSelectedOption(imageURL ? 1 : 0);
+      if (imageURL) {
+        selectedOption !== 3 && setSelectedOption(1);
+      } else {
+        setExistingPhoto("");
+        setPreview(null);
+      }
     }
   }, [imageURL]);
 
@@ -121,25 +126,16 @@ export default function InputPhoto({
           acceptedExtensions=".jpeg, .jpg, .png"
           required
         />
-      ) : selectedOption === 1 ? (
-        <InputBox
-          name="image-url"
-          placeholder="URL zdjęcia"
-          maxLength={256}
-          value={imageURL}
-          onChange={setImageURL}
-          required
-        />
       ) : (
-        selectedOption === 2 && (
+        [1, 2].includes(selectedOption) && (
           <InputBox
-            name="existing-image"
-            placeholder="Nazwa zdjęcia"
+            name="image-url"
+            placeholder={selectedOption === 1 ? "URL zdjęcia" : "Nazwa zdjęcia"}
             maxLength={256}
             value={imageURL}
             onChange={setImageURL}
-            required
             choices={photos}
+            required
           />
         )
       )}
