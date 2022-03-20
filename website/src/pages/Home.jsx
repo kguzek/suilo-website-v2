@@ -9,14 +9,14 @@ import SuPhoto from "../media/su-photo.jpg";
 import { fetchCachedData, formatDate } from "../misc";
 import LoadingScreen from "../components/LoadingScreen";
 
-const Home = ({ setPage, reload, setReload }) => {
-  const { width } = useWindowDimensions();
+const Home = ({ setPage, reload, setReload, screenWidth }) => {
   const [newsData, setNewsData] = useState([]);
   const [numbersData, setNumbersData] = useState({});
   const [loadedNews, setLoadedNews] = useState(false);
   const [loadedNumbers, setLoadedNumbers] = useState(false);
 
-  const newsItems = width > 1024 ? 5 : width > 768 ? 4 : width > 640 ? 3 : 2;
+  const newsItems =
+    screenWidth > 1024 ? 5 : screenWidth > 768 ? 4 : screenWidth > 640 ? 3 : 2;
 
   /** Fetch the news data from cache or API. */
   function fetchNews() {
@@ -38,13 +38,6 @@ const Home = ({ setPage, reload, setReload }) => {
     };
     fetchCachedData("luckyNumbers", "/luckyNumbers/v2", fetchArgs);
   }
-
-  // const _getNoItems = () => {
-  //   if (width > 1024) return 5;
-  //   if (width > 768) return 4;
-  //   if (width > 640) return 3;
-  //   return 2;
-  // };
 
   useEffect(() => {
     setPage("home");
@@ -130,15 +123,13 @@ const Home = ({ setPage, reload, setReload }) => {
               </p>
             </div>
           </div>
-          <div className="inline-flex justify-end" >
+          <div className="inline-flex justify-end">
             <Link to="/archiwum-numerkow" className="w-fit">
               <h5 className="opacity-90 font-normal pt-2 text-lg lg:text-xl text-text2 lg:text-white text-right">
                 {forDate}
               </h5>
             </Link>
           </div>
-
-
         </div>
         <div
           className="more animate-bounce -rotate-90 duration-[5000]"
@@ -167,11 +158,15 @@ const Home = ({ setPage, reload, setReload }) => {
               Nasza drużyna
             </h2>
             <p className="text-text2 select-all font-normal leading-8 text-lg xl:text-[1.2rem] xl:leading-[2.2rem] text-left md:text-left pt-3">
-              Do Samorządu Uczniowskiego I Liceum Ogólnokształcącego im. Edwarda Dembowskiego w Gliwicach należą
-              wszyscy uczniowie, a w jego radzie zasiadają przewodniczący klas oraz osoby wybrane na stanowiska Marszałka,
-              Sekretarza i Skarbnika. Wspólnie dbamy o to, aby szkolna norma była bardziej atrakcyjna, a codzienność - bardziej urozmaicona.
-              Organizujemy i współorganizujemy wydarzenia okolicznościowe, prowadzimy tzw. szczęśliwe numerki, niesiemy pomoc poprzez
-              nagłaśnianie spraw uczniowskich, organizację zbiórek i wiele innych. Jesteśmy tu dla was -&nbsp;
+              Do Samorządu Uczniowskiego I Liceum Ogólnokształcącego im. Edwarda
+              Dembowskiego w Gliwicach należą wszyscy uczniowie, a w jego radzie
+              zasiadają przewodniczący klas oraz osoby wybrane na stanowiska
+              Marszałka, Sekretarza i Skarbnika. Wspólnie dbamy o to, aby
+              szkolna norma była bardziej atrakcyjna, a codzienność - bardziej
+              urozmaicona. Organizujemy i współorganizujemy wydarzenia
+              okolicznościowe, prowadzimy tzw. szczęśliwe numerki, niesiemy
+              pomoc poprzez nagłaśnianie spraw uczniowskich, organizację zbiórek
+              i wiele innych. Jesteśmy tu dla was -&nbsp;
               <i className="font-medium text-text2">od uczniów dla uczniów.</i>
             </p>
           </article>
@@ -372,26 +367,5 @@ const Home = ({ setPage, reload, setReload }) => {
     </div>
   );
 };
-
-function getWindowDimensions() {
-  return { width: window.innerWidth, height: window.innerHeight };
-}
-
-function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions()
-  );
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return windowDimensions;
-}
 
 export default Home;

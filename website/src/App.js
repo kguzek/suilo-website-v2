@@ -28,14 +28,16 @@ export default function App() {
   const [page, setPage] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(undefined);
   const [footerVisible, setFooterVisible] = useState(true);
-  const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
   const [shouldRefresh, setShouldRefresh] = useState(false);
   const [collectionInfo, setCollectionInfo] = useState({});
+  const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  const handleResize = () => setScreenWidth(window.innerWidth);
 
   /** Sets the user accounts cookie to an empty object. */
-  function resetUserAccounts() {
+  const resetUserAccounts = () =>
     setCookies("userAccounts", {}, { sameSite: "lax" });
-  }
 
   // Default the user accounts to an empty object
   cookies.userAccounts ?? resetUserAccounts();
@@ -46,6 +48,10 @@ export default function App() {
     // switches page (which could be very often).
     // Currently it is only called when the page is first loaded (i.e. on each refresh).
     checkForUpdates();
+
+    // Window width event listener
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -186,6 +192,7 @@ export default function App() {
               logoutAction={logoutAction}
               userInfo={userInfo}
               footerVisible={footerVisible}
+              screenWidth={screenWidth}
             />
           }
         >
@@ -196,6 +203,7 @@ export default function App() {
                 setPage={setPage}
                 reload={shouldRefresh}
                 setReload={setShouldRefresh}
+                screenWidth={screenWidth}
               />
             }
           />
@@ -282,6 +290,7 @@ const Layout = ({
   loginAction,
   logoutAction,
   footerVisible,
+  screenWidth,
 }) => (
   <main className="min-h-screen">
     <div
@@ -334,11 +343,12 @@ const Layout = ({
       userInfo={userInfo}
       loginAction={loginAction}
       logoutAction={logoutAction}
+      screenWidth={screenWidth}
     />
     <div className="h-14 md:h-[4.5rem]" />
     <Outlet />
     <ScrollToTop />
-    <LoginScreen />
+    <LoginScreen screenWidth={screenWidth} />
     <Footer isVisible={footerVisible} />
   </main>
 );

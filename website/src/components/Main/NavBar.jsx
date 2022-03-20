@@ -4,8 +4,7 @@ import Hamburger from "hamburger-react";
 import LogoSU from "../../media/LogoSU";
 // import Blob from "../../media/blob";
 
-const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
-  const { width } = useWindowDimensions();
+const NavBar = ({ page, userInfo, loginAction, logoutAction, screenWidth }) => {
   const [isOpen, setOpen] = useState(false);
   const [display, setDisplay] = useState("none");
   const [opacity, setOpacity] = useState(0);
@@ -77,7 +76,7 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
           return widths[key];
         }
         if (page?.includes("post")) {
-          return widths.news
+          return widths.news;
         }
         if (key === "edit" && !userIsEditor) {
           break;
@@ -109,10 +108,12 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
     }
     return transforms.default;
   }
-
-  if (width > 800) {
+  
+  if (screenWidth > 800) {
     return (
-      <div className={`w-11/12 xl:w-10/12 z-50 flex flex-row justify-between align-middle absolute m-auto top-0 mt-0`}>
+      <div
+        className={`w-11/12 xl:w-10/12 z-50 flex flex-row justify-between align-middle absolute m-auto top-0 mt-0`}
+      >
         <Link to="/" className="mt-3">
           <LogoSU width="3.5em" height="3.5em" />
         </Link>
@@ -123,43 +124,51 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
           <nav className="mt-5 w-fit m-auto">
             <Link
               to="/"
-              className={`mx-4 p-2 relative group  transition duration-200 font-medium text-sm ${page === "home" ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 relative group  transition duration-200 font-medium text-sm ${
+                page === "home" ? "text-text1" : "text-text4"
+              }`}
             >
               Główna
               <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.4rem] right-0 w-0 h-[2px] group-hover:w-10/12 transition-all duration-250 " />
             </Link>
             <Link
               to="aktualnosci"
-              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${((page === "news") || (page?.includes("post"))) ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${
+                page === "news" || page?.includes("post")
+                  ? "text-text1"
+                  : "text-text4"
+              }`}
             >
               Aktualności
               <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.32rem] right-0 w-0 h-[2px] group-hover:w-[90%] transition-all duration-250 " />
-
             </Link>
             <Link
               to="wydarzenia"
-              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${page === "events" ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${
+                page === "events" ? "text-text1" : "text-text4"
+              }`}
             >
               Wydarzenia
               <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.32rem] right-0 w-0 h-[2px] group-hover:w-[90%] transition-all duration-250 " />
-
             </Link>
             <Link
               to="kontakt"
-              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${page === "contact" ? "text-text1" : "text-text4"}`}
+              className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${
+                page === "contact" ? "text-text1" : "text-text4"
+              }`}
             >
               Kontakt
               <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.4rem] right-0 w-0 h-[2px] group-hover:w-10/12 transition-all duration-250 " />
-
             </Link>
             {userIsEditor ? (
               <Link
                 to="edycja"
-                className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${page === "edit" ? "text-text1" : "text-text4"}`}
+                className={`mx-4 p-2 relative group transition duration-200 font-medium text-sm ${
+                  page === "edit" ? "text-text1" : "text-text4"
+                }`}
               >
                 Edycja
                 <div className="absolute bottom-[.35rem] bg-primary left-0 ml-[.4rem] right-0 w-0 h-[2px] group-hover:w-[81.5%] transition-all duration-250 " />
-
               </Link>
             ) : null}
           </nav>
@@ -172,13 +181,13 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
             {userInfo ? "Wyloguj się" : "Zaloguj się"}
           </button>
         </div>
-
-
       </div>
     );
   } else {
     return (
-      <div className={`flex flex-row z-50 justify-between align-middle w-11/12 absolute m-auto top-0 mt-4`}>
+      <div
+        className={`flex flex-row z-50 justify-between align-middle w-11/12 absolute m-auto top-0 mt-4`}
+      >
         <Link to="/">
           <LogoSU width={40} height={40} />
         </Link>
@@ -227,7 +236,11 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "home" ? "text-text1 underline decoration-primary" : "text-text4"}
+                  ${
+                    page === "home"
+                      ? "text-text1 underline decoration-primary"
+                      : "text-text4"
+                  }
                   w-fit
                   text-xl
                   px-6
@@ -246,7 +259,11 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${((page === "news") || (page?.includes("post"))) ? "text-text1 underline decoration-primary" : "text-text4"}
+                  ${
+                    page === "news" || page?.includes("post")
+                      ? "text-text1 underline decoration-primary"
+                      : "text-text4"
+                  }
                   w-fit
                   text-xl
                   px-6
@@ -265,7 +282,11 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "events" ? "text-text1 underline decoration-primary" : "text-text4"}
+                  ${
+                    page === "events"
+                      ? "text-text1 underline decoration-primary"
+                      : "text-text4"
+                  }
                   w-fit
                   text-xl
                   px-6
@@ -284,7 +305,11 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                 className={`
                   flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "contact" ? "text-text1 underline decoration-primary" : "text-text4"}
+                  ${
+                    page === "contact"
+                      ? "text-text1 underline decoration-primary"
+                      : "text-text4"
+                  }
                   w-fit
                   text-xl
                   px-6
@@ -304,7 +329,11 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
                   className={`
                   flex
                   ${isOpen ? "opacity-100" : "opacity-0"}
-                  ${page === "edit" ? "text-text1 underline decoration-primary" : "text-text4"}
+                  ${
+                    page === "edit"
+                      ? "text-text1 underline decoration-primary"
+                      : "text-text4"
+                  }
                   w-fit
                   text-xl
                   px-6
@@ -353,26 +382,5 @@ const NavBar = ({ page, userInfo, loginAction, logoutAction }) => {
     );
   }
 };
-
-function getWindowDimensions() {
-  return { width: window.innerWidth, height: window.innerHeight };
-}
-
-function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions()
-  );
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return windowDimensions;
-}
 
 export default NavBar;
