@@ -1,6 +1,6 @@
 import {
   getAuth,
-  // signInWithPopup,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   GoogleAuthProvider,
@@ -12,7 +12,7 @@ import { getStorage } from "firebase/storage";
 import React, { useEffect } from "react";
 
 /** Enables various logger statements and determines the API URL. */
-export const DEBUG_MODE = false;
+export const DEBUG_MODE = true;
 
 export const API_URL = DEBUG_MODE
   ? "http://localhost:5001/suilo-page/europe-west1/app/api" // Temporary emulator API URL assignment
@@ -133,6 +133,7 @@ export function AuthProvider({ children, setUserCallback }) {
       }
     });
   }, []);
+
   return (
     <AuthContext.Provider value={{ currentUser: auth.currentUser }}>
       {children}
@@ -140,18 +141,24 @@ export function AuthProvider({ children, setUserCallback }) {
   );
 }
 
-export function signInWithGoogle() {
+export function signInWithGoogle(usePopup, callback) {
   userLoaded = false;
-  signInWithRedirect(auth, provider);
-  // TODO: Possibly implement popup sign in for desktop users instead?
-  // signInWithPopup(auth, provider);
+  if (usePopup) {
+    getResults(signInWithPopup(auth, provider), callback);
+  } else {
+    signInWithRedirect(auth, provider);
+  }
+}
+
+export function getMobileSignInResult(callback) {
+  getResults(getRedirectResult(auth), callback);
 }
 
 /** Gets the most recent login redirect results and finally calls the callback function.
  * If the login was unsuccessful, calls the callback with an additional error message.
  */
-export function getResults(processLoginCallback) {
-  getRedirectResult(auth)
+function getResults(getResult, processLoginCallback) {
+  getResult
     .then((result) => {
       if (!result) {
         // no result from redirection -- user cancelled operation or other error

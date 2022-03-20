@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { signInWithGoogle, getResults } from "../../firebase";
+import { getMobileSignInResult, signInWithGoogle } from "../../firebase";
 
 function LoginScreen({ screenWidth }) {
   // startLogging opens login window :boolean
@@ -10,6 +10,15 @@ function LoginScreen({ screenWidth }) {
   const [yPos, setYPos] = useState("10vh");
   const [isSafeToChange, setSafety] = useState(true);
   const [cookies, setCookies, removeCookies] = useCookies(["loginStage"]);
+
+  function signInCallback(error) {
+    if (error) {
+      setErrorMessage(error);
+      setCookies("loginStage", "error", { sameSite: "lax" });
+    } else {
+      removeCookies("loginStage");
+    }
+  }
 
   useEffect(() => {
     if (isSafeToChange) {
@@ -23,17 +32,9 @@ function LoginScreen({ screenWidth }) {
   }, [isSafeToChange]);
 
   useEffect(() => {
-    if (!cookies.loginStage) {
-      return;
+    if (cookies.loginStage === "redirectGoogleMobile") {
+      getMobileSignInResult(signInCallback);
     }
-    getResults((error) => {
-      if (error) {
-        setErrorMessage(error);
-        setCookies("loginStage", "error", { sameSite: "lax" });
-      } else {
-        removeCookies("loginStage");
-      }
-    });
   }, []);
 
   const fadeInDom = () => {
@@ -55,10 +56,11 @@ function LoginScreen({ screenWidth }) {
     }, 310);
   };
 
-  function _handleLogin() {
+  function _handleLogin(usePopup) {
     setErrorMessage();
-    setCookies("loginStage", "redirectGoogle", { sameSite: "lax" });
-    signInWithGoogle();
+    const loginStage = `redirectGoogle${usePopup ? "Desktop" : "Mobile"}`;
+    setCookies("loginStage", loginStage, { sameSite: "lax" });
+    signInWithGoogle(usePopup, signInCallback);
   }
 
   function _handleRegister(e) {
@@ -99,12 +101,11 @@ function LoginScreen({ screenWidth }) {
               <div
                 className="login-google-btn "
                 style={{
-                  cursor:
-                    cookies.loginStage === "redirectGoogle"
-                      ? "progress"
-                      : "pointer",
+                  cursor: cookies.loginStage?.startsWith("redirectGoogle")
+                    ? "progress"
+                    : "pointer",
                 }}
-                onClick={_handleLogin}
+                onClick={() => _handleLogin(true)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +121,7 @@ function LoginScreen({ screenWidth }) {
                   />
                 </svg>
                 <p className="login-google-p">
-                  {cookies.loginStage === "redirectGoogle"
+                  {cookies.loginStage?.startsWith("redirectGoogle")
                     ? "Logowanie..."
                     : "Zaloguj sie przez Google"}
                 </p>
@@ -145,94 +146,96 @@ function LoginScreen({ screenWidth }) {
         </div>
       </div>
     );
-  } else {
-    return (
+  }
+  return (
+    <div
+      className="login-container"
+      style={{ display: display, opacity: opacity }}
+    >
+      <div className="login-bg" onClick={() => removeCookies("loginStage")} />
       <div
-        className="login-container"
-        style={{ display: display, opacity: opacity }}
+        className="login-box"
+        style={{
+          width: "87%",
+          maxWidth: "auto",
+          minWidth: "auto",
+          borderRadius: "20px",
+          position: "relative",
+          transform: `translateY(${yPos})`,
+        }}
       >
-        <div className="login-bg" onClick={() => removeCookies("loginStage")} />
         <div
-          className="login-box"
+          className="login-right"
           style={{
-            width: "87%",
-            maxWidth: "auto",
-            minWidth: "auto",
-            borderRadius: "20px",
+            width: "100%",
+            paddingBottom: "5px",
             position: "relative",
-            transform: `translateY(${yPos})`,
           }}
         >
+          <div />
           <div
-            className="login-right"
             style={{
-              width: "100%",
-              paddingBottom: "5px",
-              position: "relative",
+              position: "absolute",
+              top: "0px",
+              left: "0",
+              right: "0",
+              height: "20px",
+              backgroundColor: "#FFA900",
+              borderTopLeftRadius: "20px",
+              borderTopRightRadius: "20px",
             }}
-          >
-            <div />
-            <div
-              style={{
-                position: "absolute",
-                top: "0px",
-                left: "0",
-                right: "0",
-                height: "20px",
-                backgroundColor: "#FFA900",
-                borderTopLeftRadius: "20px",
-                borderTopRightRadius: "20px",
-              }}
-            />
-            <div className="login-center">
-              <p className="login-header">Zaloguj się</p>
-              <div className="login-disabled">
-                <p className="disabled-p">
-                  Logowanie się z kont pozaszkolnych jest na chwilę obecną
-                  niemożliwe. Przepraszamy.
-                </p>
-              </div>
-              <p className="disabled-p" style={{ padding: "7px" }}>
-                lub
-              </p>
-              <div className="login-google-btn" onClick={_handleLogin}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="ionicon"
-                  height="26px"
-                  width="26px"
-                  style={{ marginRight: "6px" }}
-                  viewBox="0 0 512 512"
-                >
-                  <title>Logo Google</title>
-                  <path
-                    fill="#fff"
-                    d="M473.16 221.48l-2.26-9.59H262.46v88.22H387c-12.93 61.4-72.93 93.72-121.94 93.72-35.66 0-73.25-15-98.13-39.11a140.08 140.08 0 01-41.8-98.88c0-37.16 16.7-74.33 41-98.78s61-38.13 97.49-38.13c41.79 0 71.74 22.19 82.94 32.31l62.69-62.36C390.86 72.72 340.34 32 261.6 32c-60.75 0-119 23.27-161.58 65.71C58 139.5 36.25 199.93 36.25 256s20.58 113.48 61.3 155.6c43.51 44.92 105.13 68.4 168.58 68.4 57.73 0 112.45-22.62 151.45-63.66 38.34-40.4 58.17-96.3 58.17-154.9 0-24.67-2.48-39.32-2.59-39.96z"
-                  />
-                </svg>
-                <p className="login-google-p">Zaloguj sie przez Google</p>
-              </div>
-              {errorMessage && <p className="login-error">{errorMessage}</p>}
-              <p className="login-info">
-                Logowanie się poprzez Google możliwe jest tylko z domeny
-                @lo1.gliwice.pl (maila szkolnego)
+          />
+          <div className="login-center">
+            <p className="login-header">Zaloguj się</p>
+            <div className="login-disabled">
+              <p className="disabled-p">
+                Logowanie się z kont pozaszkolnych jest na chwilę obecną
+                niemożliwe. Przepraszamy.
               </p>
             </div>
-            <p className="register-p">
-              Nie masz konta?{" "}
-              <a
-                href="rejestracja"
-                onClick={_handleRegister}
-                className="register-a"
+            <p className="disabled-p" style={{ padding: "7px" }}>
+              lub
+            </p>
+            <div
+              className="login-google-btn"
+              onClick={() => _handleLogin(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="ionicon"
+                height="26px"
+                width="26px"
+                style={{ marginRight: "6px" }}
+                viewBox="0 0 512 512"
               >
-                Zarejestruj się!
-              </a>
+                <title>Logo Google</title>
+                <path
+                  fill="#fff"
+                  d="M473.16 221.48l-2.26-9.59H262.46v88.22H387c-12.93 61.4-72.93 93.72-121.94 93.72-35.66 0-73.25-15-98.13-39.11a140.08 140.08 0 01-41.8-98.88c0-37.16 16.7-74.33 41-98.78s61-38.13 97.49-38.13c41.79 0 71.74 22.19 82.94 32.31l62.69-62.36C390.86 72.72 340.34 32 261.6 32c-60.75 0-119 23.27-161.58 65.71C58 139.5 36.25 199.93 36.25 256s20.58 113.48 61.3 155.6c43.51 44.92 105.13 68.4 168.58 68.4 57.73 0 112.45-22.62 151.45-63.66 38.34-40.4 58.17-96.3 58.17-154.9 0-24.67-2.48-39.32-2.59-39.96z"
+                />
+              </svg>
+              <p className="login-google-p">Zaloguj sie przez Google</p>
+            </div>
+            {errorMessage && <p className="login-error">{errorMessage}</p>}
+            <p className="login-info">
+              Logowanie się poprzez Google możliwe jest tylko z domeny
+              @lo1.gliwice.pl (maila szkolnego)
             </p>
           </div>
+          <p className="register-p">
+            Nie masz konta?{" "}
+            <a
+              href="rejestracja"
+              onClick={_handleRegister}
+              className="register-a"
+            >
+              Zarejestruj się!
+            </a>
+          </p>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default LoginScreen;
