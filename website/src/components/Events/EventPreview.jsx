@@ -45,7 +45,7 @@ const EventPreview = ({
   event,
   isNextEvent = false,
   loginAction,
-  updateNextEvent = () => {},
+  updateNextEvent = () => { },
 }) => {
   const [notification, setNotification] = useState(false);
   const [participance, setParticipance] = useState(false);
@@ -197,9 +197,8 @@ const EventPreview = ({
     >
       <DialogBox
         header={notification ? "Zrobione!" : "Zrobione!"}
-        content={`${
-          notification ? "Włączono" : "Wyłączono"
-        } powiadomienie dla wydarzenia "${event.title}".`}
+        content={`${notification ? "Włączono" : "Wyłączono"
+          } powiadomienie dla wydarzenia "${event.title}".`}
         duration={2000}
         isVisible={popupNotification}
         setVisible={setPopupNotification}
@@ -214,9 +213,8 @@ const EventPreview = ({
       /> */}
       <DialogBox
         header={participance ? "Super!" : "Szkoda."}
-        content={`${
-          participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
-        } udział w wydarzeniu "${event.title}".`}
+        content={`${participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
+          } udział w wydarzeniu "${event.title}".`}
         duration={2000}
         isVisible={popupParticipance}
         setVisible={setPopupParticipance}
@@ -232,6 +230,7 @@ const EventPreview = ({
       />
       <div className="relative lg:pr-10 h-fit">
         <img
+          loading="lazy"
           className="bg-gray-200/75 max-h-96 aspect-[3/2] w-full object-cover rounded-xl sm:rounded-2xl drop-shadow-4xl"
           alt={event.photoAlt}
           src={photo}
@@ -321,9 +320,8 @@ const EventPreview = ({
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
-                  notification ? "fill-primary" : "fill-transparent"
-                }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
+                  }`}
               />
             </button>
           ) : (
@@ -334,9 +332,8 @@ const EventPreview = ({
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
-                  notification ? "fill-primary" : "fill-transparent"
-                }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
+                  }`}
               />
             </button>
           )}

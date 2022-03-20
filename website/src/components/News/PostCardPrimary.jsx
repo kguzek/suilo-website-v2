@@ -17,6 +17,7 @@ const PostCardPrimary = ({ data }) => {
         <img
           src={photo}
           className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl"
+          loading="lazy"
         />
       </Link>
       <h2

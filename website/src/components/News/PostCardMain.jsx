@@ -25,6 +25,7 @@ const PostCardMain = ({ data }) => {
       </p>
       <img
         src={photo}
+        loading="lazy"
         className="bg-gray-200/75 w-1/5 object-cover aspect-square rounded-lg lg:rounded-xl"
       />
       <div className="w-full pl-4 flex flex-col justify-start relative">
