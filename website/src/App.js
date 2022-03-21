@@ -315,7 +315,7 @@ const Layout = ({
           : "-top-[16.5rem] scale-[.275]"
         } 
   ${page === "home"
-          ? "max-h-[175vh] md:max-h-[175vh] md:scale-[.475]"
+          ? "max-h-[100rem] md:max-h-[175vh] md:scale-[.475]"
           : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
         } 
   ${page === "home"
