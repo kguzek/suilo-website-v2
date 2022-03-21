@@ -152,23 +152,21 @@ function generateLuckyNumbers(previousData) {
     numberPoolA: numberPools[0],
     numberPoolB: numberPools[1],
   };
-  if (previousData) {
-    updateCollection("luckyNumbers", 1);
-    const dataToBeArchived = {
-      date: previousData.date,
-      luckyNumbers: previousData.luckyNumbers,
-    };
-    // Add the previous data to the lucky numbers archive
-    const date = new Date(previousData.date);
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    // e.g. 2022-03-16 -> month < 8 (September) -> "2021/2022"
-    // e.g. 2024-09-30 -> month >= 8 (September) -> "2024/2025"
-    dataToBeArchived.schoolYear = getSchoolYearString(year - (month < 8));
-    db.collection("archivedNumbers").doc().set(dataToBeArchived);
-  } else {
-    updateCollection("luckyNumbers");
-  }
+  // Increment the number of documents in the lucky numbers archive
+  updateCollection("luckyNumbers", 1);
+  const dataToBeArchived = {
+    date: todayString,
+    luckyNumbers,
+  };
+  // Add the new data to the lucky numbers archive
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  // e.g. 2022-03-16 -> month < 8 (September) -> "2021/2022"
+  // e.g. 2024-09-30 -> month >= 8 (September) -> "2024/2025"
+  dataToBeArchived.schoolYear = getSchoolYearString(year - (month < 8));
+  db.collection("archivedNumbers").doc().set(dataToBeArchived);
+
   return newData;
 }
 
@@ -238,7 +236,7 @@ function sendSingleResponse(
   res,
   sendData = (data) => data,
   incrementViewCount = true,
-  defaultData,
+  defaultData
 ) {
   function _sendResponse(data) {
     res.status(200).json(sendData(data));
