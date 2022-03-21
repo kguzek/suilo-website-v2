@@ -12,7 +12,7 @@ import { getStorage } from "firebase/storage";
 import React, { useEffect } from "react";
 
 /** Enables various logger statements and determines the API URL. */
-export const DEBUG_MODE = true;
+export const DEBUG_MODE = false;
 
 export const API_URL = DEBUG_MODE
   ? "http://localhost:5001/suilo-page/europe-west1/app/api" // Temporary emulator API URL assignment

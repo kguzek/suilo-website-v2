@@ -187,7 +187,7 @@ const EventPreview = ({
   }
 
   const eventHeader = isNextEvent
-    ? `Najbliższe wydarzenie (za ${eventCountdown})`
+    ? `Najbliższe wydarzenie` // (za ${eventCountdown}) - wait here till i find u comy spot in ui
     : "Wybrane wydarzenie";
 
   return (
