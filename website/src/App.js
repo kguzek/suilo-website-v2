@@ -94,11 +94,12 @@ export default function App() {
           // Check if the cache name is a valid endpoint
           if (collectionUpdated.toString() !== "Invalid Date") {
             // The cache is too old
-            DEBUG_MODE && console.info("Removing cache", cacheName);
+            console.debug("Removing cache", cacheName, "(server-side update)");
             localStorage.removeItem(cacheName);
             if (cacheName === "users") {
+              // Re-evaluate user permissions if the users were modified
               setLoggedInUser(undefined);
-              setUserCallback(auth.currentUser, true);
+              setUserPermissions(auth.currentUser, true);
             }
             shouldRefresh = true;
           }
@@ -115,7 +116,7 @@ export default function App() {
    * Returns true if the user is a valid option (i.e. actual user from @lo1.gliwice.pl or no user at all).
    * Returns false if the user is from outside of the LO1 organisation.
    */
-  function setUserCallback(user, force = false) {
+  function setUserPermissions(user, force = false) {
     if (user) {
       if (user.email.endsWith("@lo1.gliwice.pl")) {
         // Refresh the user authentication level each time if debug mode is enabled
@@ -181,7 +182,7 @@ export default function App() {
   const userInfo = users[loggedInUser] ?? users[Object.keys(users).shift()];
 
   return (
-    <AuthProvider setUserCallback={setUserCallback}>
+    <AuthProvider setUserCallback={setUserPermissions}>
       <Routes>
         <Route
           path="/"

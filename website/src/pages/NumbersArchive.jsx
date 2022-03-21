@@ -19,7 +19,7 @@ const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
       updateCache: forceUpdate,
       params: { page: pageNo ?? archivePage, sort: "descending" },
     };
-    fetchCachedData("archivedNumbers", "/luckyNumbers/archive", fetchArgs);
+    fetchCachedData("luckyNumbers_archive", "/luckyNumbers/archive", fetchArgs);
   }
 
   useEffect(() => {
