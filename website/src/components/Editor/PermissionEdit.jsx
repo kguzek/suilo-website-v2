@@ -58,7 +58,10 @@ export const PermissionEdit = ({
 
   const users = {};
   for (const user of data.contents ?? []) {
-    users[user.id] = user.displayName;
+    // Only show users that have edit permissions
+    if (user.isAdmin || user.canEdit?.length > 0) {
+      users[user.id] = user.displayName;
+    }
   }
 
   // Bitwise AND to ensure both functions are called
@@ -73,25 +76,27 @@ export const PermissionEdit = ({
 
   const _handleSubmit = (e) => {
     e.preventDefault();
-    setClickedSubmit(true);
-    let url = "/users/";
-    let method = "POST";
-    // Check if an existing event is selected
-    if (currentlyActive !== "_default") {
-      method = "PUT";
-      url += currentlyActive;
+    const user = data.contents?.filter((user) => user.email === email).shift();
+    if (!user) {
+      return void setPopupError(
+        "Nie można zarządzać użytkownikiem, który nie logował się nigdy na tej stronie."
+      );
     }
-    fetchWithToken(url, method, {}, { email, canEdit: [...canEdit] }).then((res) => {
-      // Update the data once request is processed
-      if (res.ok) {
-        refresh();
-        setPopupSuccess(true);
-      } else {
-        setErrorCode(res.status);
-        setErrorMessage(res, setPopupError);
+    setClickedSubmit(true);
+    const url = "/users/" + user.id;
+    fetchWithToken(url, "PUT", {}, { email, canEdit: [...canEdit] }).then(
+      (res) => {
+        // Update the data once request is processed
+        if (res.ok) {
+          refresh();
+          setPopupSuccess(true);
+        } else {
+          setErrorCode(res.status);
+          setErrorMessage(res, setPopupError);
+        }
+        setClickedSubmit(false);
       }
-      setClickedSubmit(false);
-    });
+    );
   };
 
   function _handleDelete() {
@@ -157,7 +162,7 @@ export const PermissionEdit = ({
         setVisible={setPopupDelete}
       />
       <DialogBox
-        header={`Bład! (HTTP ${errorCode})`}
+        header={errorCode ? `Bład! (HTTP ${errorCode})` : "Błąd!"}
         content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
         extra={popupError}
         type="DIALOG"
@@ -178,6 +183,8 @@ export const PermissionEdit = ({
         value={email}
         onChange={setEmail}
         maxLength={128}
+        choices={data.contents?.map((user) => user.email) ?? []}
+        disabled={currentlyActive !== "_default"}
       />
       <PermissionCheckbox perm="isAdmin">Administrator</PermissionCheckbox>
       {allPerms.map((perm, idx) => (
@@ -190,7 +197,9 @@ export const PermissionEdit = ({
           (clickedDelete ? (
             <button
               type="button"
-              className="delete-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}
+              className="delete-btn select-none cursor-wait"
+              disabled
+              style={{ pointerEvents: "none" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -199,36 +208,50 @@ export const PermissionEdit = ({
           ) : (
             <button
               type="button"
-              className="delete-btn select-none cursor-pointer" style={{ pointerEvents: "all" }}
+              className="delete-btn select-none cursor-pointer"
+              style={{ pointerEvents: "all" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń użytkownika</p>
             </button>
           ))}
-        {
-          clickedSubmit ?
-            <button type="submit" className="add-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}>
-              {currentlyActive !== "_default" ? (
-                <Edit3 color="#FFFFFF" size={24} />
-              ) : (
-                <Plus color="#FFFFFF" size={24} />
-              )}
-              <p>
-                {currentlyActive !== "_default" ? "zaktualizuj użytkownika" : "dodaj użytkownika"}
-              </p>
-            </button> :
-            <button type="submit  " className="add-btn select-none cursor-pointer" style={{ pointerEvents: "all" }} >
-              {currentlyActive !== "_default" ? (
-                <Edit3 color="#FFFFFF" size={24} />
-              ) : (
-                <Plus color="#FFFFFF" size={24} />
-              )}
-              <p>
-                {currentlyActive !== "_default" ? "zaktualizuj użytkownika" : "dodaj użytkownika"}
-              </p>
-            </button>
-        }
+        {clickedSubmit ? (
+          <button
+            type="submit"
+            className="add-btn select-none cursor-wait"
+            disabled
+            style={{ pointerEvents: "none" }}
+          >
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "zaktualizuj użytkownika"
+                : "dodaj użytkownika"}
+            </p>
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="add-btn select-none cursor-pointer"
+            style={{ pointerEvents: "all" }}
+          >
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "zaktualizuj użytkownika"
+                : "dodaj użytkownika"}
+            </p>
+          </button>
+        )}
       </div>
     </form>
   );
