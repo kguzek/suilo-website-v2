@@ -184,7 +184,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
             />
           </div>
         )}
-        {visits && <p className="text-text6">Kliknięcia w link: {visits}</p>}
+        {visits !== 0 && <p className="text-text6">Kliknięcia w link: {visits}</p>}
       </div>
       <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
