@@ -36,7 +36,8 @@ const PostCardPrimary = ({ data }) => {
         <div
           className="absolute -bottom-[.175rem] lg:bottom-[.05rem] right-0 py-[.1rem] px-1 pl-8"
           style={{
-            background: "linear-gradient(90deg,transparent 0%,#F8F8F8 15%)",
+            background: "linear-gradient(90deg, rgba(248,248,248,0) 0%, rgba(248,248,248,1) 15%)",
+            // backgroundColor: "#F8F8F8",
           }}
         >
           <Link
