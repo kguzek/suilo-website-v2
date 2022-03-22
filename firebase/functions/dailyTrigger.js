@@ -1,6 +1,23 @@
 const { dateToArray } = require("./common");
 const { sendEventNotification } = require("./sendgrid");
-const { db, numbersAreCurrent, generateLuckyNumbers } = require("./util");
+const { db, generateLuckyNumbers } = require("./util");
+
+/** Returns `false` if the lucky numbers need to be updated, otherwise returns `true`. */
+function numbersAreCurrent(data) {
+  // return false if the update is forced or if there is no lucky numbers data
+  if (!data) {
+    return false;
+  }
+  // return true if the lucky numbers data is for today
+  const todayString = serialiseDateArray(dateToArray());
+  if (data.date === todayString) {
+    return true;
+  }
+  // return true if it's weekend or a free day
+  const freeDays = data.freeDays ?? [];
+  const weekday = new Date().getDay();
+  return [0, 6].includes(weekday) || freeDays.includes(todayString);
+}
 
 /** Updates the lucky numbers in the database. */
 async function updateLuckyNumbers() {
@@ -30,7 +47,7 @@ async function notifyAboutEvents() {
     const data = doc.data();
     if (!data) return;
     console.log("Processing event", doc.id, data.title, "...");
-		// Don't send the email if there are no recipients
+    // Don't send the email if there are no recipients
     if (Object.keys(data.notificationsFor ?? {}).length === 0) return;
     sendEventNotification(data.notificationsFor, data, doc.id);
   });

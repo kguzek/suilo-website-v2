@@ -96,23 +96,6 @@ function getIntArray(string, separator, defaultInput) {
   return tmp;
 }
 
-/** Returns a boolean indicating whether or not the current lucky numbers data is up-to-date. */
-function numbersAreCurrent(data) {
-  // return false if the update is forced or if there is no lucky numbers data
-  if (!data) {
-    return false;
-  }
-  // return true if the lucky numbers data is for today
-  const todayString = serialiseDateArray(dateToArray());
-  if (data.date === todayString) {
-    return true;
-  }
-  // return true if it's weekend or a free day
-  const freeDays = data.freeDays ?? [];
-  const weekday = new Date().getDay();
-  return [0, 6].includes(weekday) || freeDays.includes(todayString);
-}
-
 /** Formats the school year as a string. E.g. `2022` -> `"2022/2023"` */
 const getSchoolYearString = (schoolYear) => `${schoolYear}/${schoolYear + 1}`;
 
@@ -441,7 +424,6 @@ module.exports = {
   getDocRef,
   getIntArray,
   randomArraySelection,
-  numbersAreCurrent,
   generateLuckyNumbers,
   updateCollection,
   actuallyUpdateSingleDocument,
