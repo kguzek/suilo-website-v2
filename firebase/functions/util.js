@@ -136,7 +136,6 @@ function generateLuckyNumbers(previousData) {
     numberPoolB: numberPools[1],
   };
   // Increment the number of documents in the lucky numbers archive
-  updateCollection("luckyNumbers", 1);
   const dataToBeArchived = {
     date: todayString,
     luckyNumbers,
@@ -149,6 +148,7 @@ function generateLuckyNumbers(previousData) {
   // e.g. 2024-09-30 -> month >= 8 (September) -> "2024/2025"
   dataToBeArchived.schoolYear = getSchoolYearString(year - (month < 8));
   db.collection("archivedNumbers").doc().set(dataToBeArchived);
+  updateCollection("luckyNumbers", 1);
 
   return newData;
 }

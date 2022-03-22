@@ -1,6 +1,6 @@
 // v2 auth middleware using the Firebase SDK
 
-const { admin, db } = require("./util");
+const { admin, db, updateCollection } = require("./util");
 
 /** Checks if the request contains an authorisation header, and if so, validates the token using Google's API.
  * On success, checks the resulting user's credentials in the permissions database document to ensure the user
@@ -67,6 +67,7 @@ async function validateToken(req, res, next, requiredPerm) {
           isAdmin,
           canEdit,
         });
+        updateCollection("users", 1);
         if (requiredPerm) {
           return send403(
             undefined,

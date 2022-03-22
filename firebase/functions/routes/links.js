@@ -1,6 +1,6 @@
 const express = require("express");
 const randomstring = require("randomstring");
-const { db, HTTP, updateSingleDocument } = require("../util");
+const { db, HTTP, updateSingleDocument, updateCollection } = require("../util");
 
 const router = express.Router();
 
@@ -62,6 +62,7 @@ function createShortLink(res, destination, customURL) {
       destination,
       views: 0,
     });
+    updateCollection("links", 1);
     return res.status(200).json({
       msg: `Success! Created shortened URL with destination '${destination}'.`,
       url,
