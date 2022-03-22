@@ -320,11 +320,11 @@ const Layout = ({
         } 
   ${page === "home"
           ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
-          : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16"
-        } 
+          : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16 lg:max-h-[100rem] "
+        }
   ${page === "home"
           ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
-          : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32"
+          : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32 lg:max-h-[100rem] "
         }  
   origin-top-right absolute
 `}
