@@ -245,13 +245,12 @@ function sendSingleResponse(
     if (!incrementViewCount) {
       return void _sendResponse({ id: doc.id, ...data });
     }
-    // increment the views count or start at 1 if it doesn't exist
+    // increment the views coun or start at 1 if it doesn't exist
     const views = (data.views ?? 0) + 1;
-    // update views count in database
-    docRef.update({ views }).then(() => {
-      // send document id with rest of the data
-      _sendResponse({ id: doc.id, ...data, views });
-    });
+    // update view count in database
+    docRef.update({ views });
+    // send document id with rest of the data
+    _sendResponse({ id: doc.id, ...data, views });
   });
 }
 
@@ -359,24 +358,22 @@ function updateSingleDocument(req, res, collectionName, attributeSanitisers) {
 /** Updates the document in the database and sends its new contents. */
 function actuallyUpdateSingleDocument(req, res, collectionName, data) {
   // get the document reference
-  getDocRef(req, res, collectionName).then((docRef) => {
-    // send the query to database
-    docRef
-      .update(data)
-      .then(() => {
-        updateCollection(collectionName);
-        // send query to db
-        sendSingleResponse(docRef, res, undefined, false);
-      })
-      .catch((error) => {
-        return res.status(400).json({
-          errorDescription:
-            HTTP400 +
-            "Could not update the specified document. It most likely does not exist.",
-          errorDetails: error.toString(),
-        });
+  getDocRef(req, res, collectionName)
+    .then((docRef) => {
+      // send the query to database
+      docRef.update(data);
+      updateCollection(collectionName);
+      // send query to db
+      sendSingleResponse(docRef, res, undefined, false);
+    })
+    .catch((error) => {
+      return res.status(400).json({
+        errorDescription:
+          HTTP400 +
+          "Could not update the specified document. It most likely does not exist.",
+        errorDetails: error.toString(),
       });
-  });
+    });
 }
 
 /** Deletes a document from the database and sends the appropriate response.

@@ -38,7 +38,7 @@ function resolveShortLink(url, callback) {
   function sendDoc(doc) {
     const data = doc?.data();
     if (data) {
-      callback({ id: doc?.id, ...data });
+      callback({ id: doc?.id, ...data }, doc.ref);
     } else {
       callback();
     }
@@ -127,9 +127,12 @@ router
 
   // GET shortened URL
   .get("/:link", (req, res) =>
-    resolveShortLink(req.params.link, (data) => {
+    resolveShortLink(req.params.link, (data, docRef) => {
       if (data) {
-        return void res.status(200).json(data);
+        // increment the view count
+        const views = (data.views ?? 0) + 1;
+        docRef.update({ views });
+        return void res.status(200).json({ ...data, views });
       }
       return void res
         .status(400)
