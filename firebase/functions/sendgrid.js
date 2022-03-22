@@ -31,7 +31,7 @@ function sendEventNotification(recipients, event, eventID) {
   sgMail
     .send(msg)
     .then(() => {
-      console.log("Event notification email sent to", recipients);
+      console.info("Event notification email sent to", recipients);
     })
     .catch((error) => {
       console.error(error.toString());

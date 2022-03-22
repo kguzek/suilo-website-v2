@@ -123,7 +123,7 @@ function generateLuckyNumbers(previousData) {
 
     luckyNumbers.push(selection);
   }
-  console.log("Generated new lucky numbers data:", luckyNumbers);
+  console.info("Generated new lucky numbers data:", luckyNumbers);
   const todayString = serialiseDateArray(dateToArray());
   const newData = {
     date: todayString,
@@ -278,7 +278,7 @@ function sendListResponse(docListQuery, queryOptions, res, callback = null) {
 
   function defaultCallback(error, responseArray, collectionDocs) {
     if (error) {
-      console.log(error);
+      console.error(error);
       return res.status(500).json({
         errorDescription: HTTP500 + "Could not retrieve the documents.",
         errorDetails: error.toString(),

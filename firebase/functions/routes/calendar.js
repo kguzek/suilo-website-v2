@@ -19,48 +19,7 @@ const eventAttributeSanitisers = {
   type: (type) => Math.min(Math.max(parseInt(type) || 2, 2), 7),
   startDate: (startDate) => getIntArray(startDate, "-", "1970-01-01"),
   endDate: (endDate) => getIntArray(endDate, "-", "1970-01-01"),
-  // isPrimary: (isPrimary) => (isPrimary || "true").toLowerCase() !== "false",
-  // colour: hexStringToDecimal,
 };
-
-// const defaultCalendarEventTypes = [
-//   "inne",
-//   "święta/wydarzenia szkolne",
-//   "święta/wydarzenia ogólnopolskie",
-//   "dzień wolny od zajęć dydaktycznych",
-//   "ferie zimowe",
-//   "przerwa wakacyjna",
-//   "nauka zdalna/hybrydowa",
-//   "matury i inne egzaminy",
-// ];
-
-// const defaultEventColours = [0xfd3153, 0x1ccb9e, 0x3694df];
-
-/*      ======== CALENDAR FUNCTIONS ========      */
-
-// /** Converts a string containing a hexadecimal number either in plain digits or prepended with `#` or `0x` into a decimal number.*/
-// function hexStringToDecimal(hexString) {
-//   if (!hexString) {
-//     const randIdx = randomArraySelection(defaultEventColours);
-//     const randomColour = defaultEventColours[randIdx];
-//     console.log("Defaulting to event colour", randomColour);
-//     return randomColour;
-//   }
-//   // trim the leading hashtag
-//   const iOffset = hexString.startsWith("#");
-//   // starts substring at either index 0 or 1 and includes the next 6 characters
-//   hexString = hexString.substring(iOffset, 6 + iOffset);
-//   // convert the hexadecimal number string from base-16 into base-10
-//   // parseInt automatically converts strings beginning with 0x... into HEX.
-//   return parseInt(hexString, 16);
-// }
-
-// /** Converts base-10 into base-16 as a string with a leading `#`. */
-// function decimalToHexString(decimal, hexLength = 6) {
-//   decimal ?? (decimal = hexStringToDecimal());
-//   const hex = decimal.toString(16).toUpperCase();
-//   return "#" + hex.padStart(hexLength, "0");
-// }
 
 /** Returns the Polish name for the month of the year with the given one-based index. */
 function getMonthName(monthInt) {
@@ -127,91 +86,6 @@ function processEventData(data) {
 
 /** Queries the database for all the calendar events and sends a response containing those that fall within the defined time range.  */
 function sendEventsList(res, year, month, lowerLimit, upperLimit) {
-  // let response;
-  // let eventSubtypes;
-
-  // /** Function to call when one of the two document fetches finishes. */
-  // function queryCallback(isResponse = false, data = []) {
-  //   // Check if the document fetch contains the response that is to be sent to the user
-  //   if (isResponse) {
-  //     response = data;
-  //   } else {
-  //     eventSubtypes = data;
-  //   }
-  //   // Check if both document fetches have completed
-  //   if (response && eventSubtypes) {
-  //     // User response and event subtypes are both defined; send the response
-  //     response.eventSubtypes = eventSubtypes;
-  //     res.status(200).json(response);
-  //   }
-  // }
-
-  // /** Sets the calendar event subtypes to the default values. */
-  // function setDefaultSubtypes() {
-  //   // Set the default subtypes
-  //   infoDocRef.set({ eventSubtypes: defaultCalendarEventTypes });
-  //   queryCallback(false, defaultCalendarEventTypes);
-  // }
-
-  // // Get the calendar event subtypes
-  // const infoDocRef = db.collection("_general").doc("calendarInfo");
-  // infoDocRef
-  //   .get()
-  //   .then((doc) => {
-  //     const data = doc.data();
-  //     if (data?.eventSubtypes) {
-  //       return void queryCallback(false, data.eventSubtypes);
-  //     }
-  //     setDefaultSubtypes();
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //     setDefaultSubtypes();
-  //   });
-
-  function generateResponse(error, events = [], _rawSnapshotDocuments) {
-    // some kind of error occured while processing the collection contents
-    if (error) {
-      return void res.status(500).json({
-        errorDescription: HTTP.err500 + "Could not retrieve calendar data.",
-        errorDetails: error.toString(),
-      });
-    }
-    const response = { numEvents: 0, events: [] };
-
-    // filter the events that are within the time range we specified
-    for (const rawEvent of events) {
-      // format all the data for the API
-      const event = processEventData(rawEvent);
-      // intialise the date string as Date objects which have a time of 00:00:00
-      const startDate = new Date(event.date.start);
-      const endDate = new Date(event.date.end);
-      // ignore events that don't fall within the time range
-      if (startDate > upperLimit || endDate < lowerLimit) {
-        continue;
-      }
-      // if (month) {
-      //   // only include the day numbers if the month is provided
-      //   event.date = { start: startDate.getDate(), end: endDate.getDate() };
-      // }
-      // initialise final event properties
-      // if (!event.isPrimary) {
-      //   event.date.startsInPastMonth = startDate < lowerLimit;
-      //   event.date.endsInFutureMonth = endDate > upperLimit;
-      // }
-      // add the event details to the response
-      response.numEvents++;
-      response.events.push(event);
-    }
-
-    const data = { year, ...response };
-    if (month) {
-      data.month = month;
-      data.monthName = getMonthName(month);
-    }
-    res.status(200).json(data);
-  }
-
   // 'all' query parameter ensures the list response contains every document in the collection
   // by default it's limited to 25 items
   // could also manually set the number of items with { items: xxx }
@@ -219,7 +93,39 @@ function sendEventsList(res, year, month, lowerLimit, upperLimit) {
     db.collection("calendar").orderBy("startDate", "asc"),
     { all: "true" },
     res,
-    generateResponse
+    (error, events = [], _rawSnapshotDocuments) => {
+      // some kind of error occured while processing the collection contents
+      if (error) {
+        return void res.status(500).json({
+          errorDescription: HTTP.err500 + "Could not retrieve calendar data.",
+          errorDetails: error.toString(),
+        });
+      }
+      const response = { numEvents: 0, events: [] };
+
+      // filter the events that are within the time range we specified
+      for (const rawEvent of events) {
+        // format all the data for the API
+        const event = processEventData(rawEvent);
+        // intialise the date string as Date objects which have a time of 00:00:00
+        const startDate = new Date(event.date.start);
+        const endDate = new Date(event.date.end);
+        // ignore events that don't fall within the time range
+        if (startDate > upperLimit || endDate < lowerLimit) {
+          continue;
+        }
+        // add the event details to the response
+        response.numEvents++;
+        response.events.push(event);
+      }
+
+      const data = { year, ...response };
+      if (month) {
+        data.month = month;
+        data.monthName = getMonthName(month);
+      }
+      res.status(200).json(data);
+    }
   );
 }
 

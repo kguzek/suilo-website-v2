@@ -29,7 +29,7 @@ const ROUTES = [
 ];
 
 app.use(cors());
-app.use("/api/", require("./authMiddlewareV2"));
+app.use("/api/", require("./authMiddleware"));
 
 // define sort options for sending list responses
 const sortOptions = {
@@ -82,7 +82,7 @@ for (const route of ROUTES) {
   // catch all requests to paths that are listed above but use the incorrect HTTP method
   for (const pathSuffix of ["/", "/:foo"]) {
     app.all("/api/" + route + pathSuffix, (req, res) => {
-      console.log(`Received invalid request method: ${req.method} ${req.path}`);
+      console.warn(`Received invalid request method: ${req.method} ${req.path}`);
       return res.status(405).json({
         errorDescription: `${HTTP.err405}Cannot ${req.method} '${req.path}'.`,
       });
@@ -92,7 +92,7 @@ for (const route of ROUTES) {
 
 // catch all requests to paths that are not listed above
 app.all("*", (req, res) => {
-  console.log(`Received invalid request path: ${req.method} ${req.path}`);
+  console.warn(`Received invalid request path: ${req.method} ${req.path}`);
   return res.status(404).json({
     errorDescription: `${HTTP.err404}The server could not locate the resource at '${req.path}'.`,
   });

@@ -48,7 +48,7 @@ router
         );
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         return void res.status(400).json({
           errorDescription: `${HTTP.err400}No user with email '${email}'.`,
           errorDetails: error.toString(),

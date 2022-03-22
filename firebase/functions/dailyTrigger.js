@@ -26,10 +26,10 @@ async function updateLuckyNumbers() {
   const data = doc.data();
   // Check if it's a holiday, weekend etc.
   if (numbersAreCurrent(data)) {
-    console.log("Not generating new numbers as they are current.");
+    console.info("Not generating new numbers as they are current.");
     return;
   }
-  console.log("Updating the lucky numbers.");
+  console.info("Updating the lucky numbers.");
   // Regenerate lucky numbers data
   const newData = generateLuckyNumbers(data);
   // Update the data in the database
@@ -46,7 +46,7 @@ async function notifyAboutEvents() {
   querySnapshot.forEach((doc) => {
     const data = doc.data();
     if (!data) return;
-    console.log("Processing event", doc.id, data.title, "...");
+    console.debug("Processing notifications for event", doc.id, data.title);
     // Don't send the email if there are no recipients
     if (Object.keys(data.notificationsFor ?? {}).length === 0) return;
     sendEventNotification(data.notificationsFor, data, doc.id);

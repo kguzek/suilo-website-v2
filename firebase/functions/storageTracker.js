@@ -14,7 +14,7 @@ async function trackStorage(object) {
 		return;
 	}
 	// The uploaded file is the raw file before resize procesing
-	console.log("Uploaded file with metadata:", object.metadata);
+	console.info("Uploaded file with metadata:", object.metadata);
 	// Add the filename to the storage collection
 	const collectionRef = db.collection("_general");
 	await collectionRef.doc("storage").update({

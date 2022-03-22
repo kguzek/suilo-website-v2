@@ -18,7 +18,6 @@ function generateRandomURL(callback, length = 7) {
 
   // generate alphanumeric string with given length
   const randStr = randomstring.generate(length);
-  console.log(`Generated URL '${randStr}'`);
   // regenerate if the link is taken
   resolveShortLink(randStr, (data) => {
     // check if the document exists in the database
