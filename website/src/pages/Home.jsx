@@ -232,7 +232,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
               Mikołaj Mrózek
             </p>
             <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">
-              Skarbink
+              Skarbnik
             </p>
           </div>
         </div>
