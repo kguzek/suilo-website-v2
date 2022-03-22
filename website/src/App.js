@@ -121,7 +121,7 @@ export default function App() {
     if (user) {
       if (user.email.endsWith("@lo1.gliwice.pl")) {
         // Refresh the user authentication level each time if debug mode is enabled
-        if (!cookies.userAccounts[user.email] || DEBUG_MODE || force) {
+        if (!cookies.userAccounts?.[user.email] || DEBUG_MODE || force) {
           /** Update the cookie with the proper user pemissions. */
           function setUserEditPermissions(usrInfo) {
             const perms = {
