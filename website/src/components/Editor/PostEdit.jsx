@@ -9,13 +9,20 @@ import LoadingScreen from "../LoadingScreen";
 import { setErrorMessage } from "../../misc";
 import InputPhoto from "./InputComponents/InputPhoto";
 
-export const PostEdit = ({ data, loaded, refetchData, photos }) => {
+export const PostEdit = ({
+  data,
+  loaded,
+  refetchData,
+  refetchStorage,
+  photos,
+}) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [author, setAuthor] = useState(auth.currentUser?.displayName);
   const [title, setTitle] = useState("");
   const [formattedContent, setFormattedContent] = useState("");
   const [rawContent, setRawContent] = useState("");
-  const [imageURL, setImageURL] = useState("");
+  const [oldImageURL, setOldImageURL] = useState("");
+  const [newImageURL, setNewImageURL] = useState("");
   const [imageAuthor, setImageAuthor] = useState("");
   const [imageAltText, setImageAltText] = useState("");
   const [ytID, setYtID] = useState("");
@@ -59,7 +66,8 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     setRawContent(post.rawContent);
     setFormattedContent(post.formattedContent);
     // these properties are all nullable
-    setImageURL(post.photo ?? "");
+    setOldImageURL(post.photo ?? "");
+    setNewImageURL(post.photo ?? "");
     setImageAuthor(post.photoAuthor ?? "");
     setImageAltText(post.alt ?? "");
 
@@ -79,15 +87,13 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     posts[post.id] = post.title;
   }
 
-  // Bitwise AND to ensure both functions are called
-  const refresh = () => refetchData() & _resetAllInputs();
-
   function _resetAllInputs() {
     for (const setVar of [
       setTitle,
       setFormattedContent,
       setRawContent,
-      setImageURL,
+      setOldImageURL,
+      setNewImageURL,
       setImageAuthor,
       setImageAltText,
       setYtID,
@@ -116,7 +122,7 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
       title,
       rawContent,
       formattedContent,
-      photo: imageURL,
+      photo: newImageURL,
       ytID,
       link,
       // these two should be stored with the photo imo
@@ -142,7 +148,8 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
       if (res.ok) {
-        refresh();
+        refetchData();
+        _resetAllInputs();
         setPopupSuccess(true);
       } else {
         setErrorCode(res.status);
@@ -164,7 +171,8 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
     setClickedDelete(true);
     fetchWithToken(`/news/${currentlyActive}`, "DELETE").then((_res) => {
       // Update the data once request is processed
-      refresh();
+      refetchData();
+      _resetAllInputs();
       setClickedDelete(false);
     });
   }
@@ -222,13 +230,16 @@ export const PostEdit = ({ data, loaded, refetchData, photos }) => {
         disabled
       />
       <InputPhoto
-        imageURL={imageURL}
-        setImageURL={setImageURL}
+        oldImageURL={oldImageURL}
+        newImageURL={newImageURL}
+        setNewImageURL={setNewImageURL}
         photos={photos}
         imageAuthor={imageAuthor}
         setImageAuthor={setImageAuthor}
         imageAltText={imageAltText}
         setImageAltText={setImageAltText}
+        currentlyActive={currentlyActive}
+        refetchPhotos={refetchStorage}
       />
       <div>
         <label className="select-none">

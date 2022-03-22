@@ -232,7 +232,8 @@ export default function Edit({
             <PostEdit
               data={newsData}
               loaded={loadedNews && loadedStorageContents}
-              refetchData={() => fetchNews(true) & fetchStorageContents(true)}
+              refetchData={() => fetchNews(true)}
+              refetchStorage={() => fetchStorageContents(true)}
               photos={storageContents.photos}
             />
           ) : selectedPage === PAGE_NAMES[1] ? (
@@ -240,6 +241,7 @@ export default function Edit({
               data={eventsData}
               loaded={loadedEvents && loadedStorageContents}
               refetchData={() => fetchEvents(true) & fetchStorageContents(true)}
+              refetchStorage={() => fetchStorageContents(true)}
               photos={storageContents.photos}
             />
           ) : selectedPage === PAGE_NAMES[2] ? (

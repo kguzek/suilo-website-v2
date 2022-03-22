@@ -15,51 +15,83 @@ const OPTIONS = [
 ];
 
 export default function InputPhoto({
-  imageURL,
-  setImageURL,
+  oldImageURL,
+  newImageURL,
+  setNewImageURL,
   photos,
   imageAuthor,
   setImageAuthor,
   imageAltText,
   setImageAltText,
+  currentlyActive,
+  refetchPhotos,
 }) {
-  const [selectedOption, setSelectedOption] = useState(0);
-  const [existingPhoto, setExistingPhoto] = useState("");
+  const [selectedOption, setSelectedOption] = useState(
+    photos.includes(newImageURL) ? 2 : 0
+  );
+  const [existingPhoto, setExistingPhoto] = useState(undefined);
   const [preview, setPreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(null);
 
   useEffect(() => {
     // Set the default option whenever the post is changed
-    if (photos.includes(imageURL)) {
+    if (photos.includes(oldImageURL)) {
+      // "Use existing photo"
       setSelectedOption(2);
-      if (existingPhoto !== imageURL) {
-        _handlePreviewChange(imageURL);
-      }
+      return;
+    }
+    if (oldImageURL) {
+      // "Enter image URL"
+      setSelectedOption(1);
     } else {
-      if (imageURL) {
-        selectedOption !== 3 && setSelectedOption(1);
+      if (currentlyActive === "_default") {
+        // "Upload new photo"
+        newImageURL || setSelectedOption(0);
       } else {
-        setExistingPhoto("");
+        // "No image"
+        setSelectedOption(3);
+        setExistingPhoto(undefined);
         setPreview(null);
       }
     }
-  }, [imageURL]);
+  }, [oldImageURL]);
 
   useEffect(() => {
+    if (existingPhoto === newImageURL) return;
+    if (!photos.includes(newImageURL)) {
+      setPreview(null);
+      return void setExistingPhoto(undefined);
+    };
+    _handlePreviewChange(newImageURL);
+  }, [newImageURL]);
+
+  useEffect(() => {
+    console.log("Selected option:", selectedOption);
     // Reset the inputs whenever the selected option is changed
     if (selectedOption === 2) {
-      if (photos.includes(imageURL) && !preview) {
-        _handlePreviewChange(imageURL);
+      if (photos.includes(newImageURL)) {
+        preview || _handlePreviewChange(newImageURL);
+      } else {
+        setNewImageURL("");
       }
     } else {
       if (selectedOption !== 1) {
-        setImageURL("");
+        setNewImageURL("");
       }
-      setExistingPhoto("");
+      setExistingPhoto(undefined);
       setPreview(null);
     }
     setImageFile(null);
   }, [selectedOption]);
+
+  useEffect(() => {
+    if (uploadProgress === null) {
+      document.body.style.cursor = "default";
+    } else {
+      document.body.style.cursor = "progress";
+    }
+  }, [uploadProgress]);
 
   /** Reads the relevant fields from the image's metadata and updates the client-side data. */
   function setMetadata(rawMetadata) {
@@ -67,7 +99,7 @@ export default function InputPhoto({
     try {
       metadata = JSON.parse(rawMetadata)?.customMetadata ?? {};
     } catch (parseError) {
-      console.error(parseError);
+      console.error(rawMetadata, parseError);
     }
     setImageAuthor && setImageAuthor(metadata.author ?? "");
     setImageAltText && setImageAltText(metadata.altText ?? "");
@@ -76,7 +108,7 @@ export default function InputPhoto({
   function _handlePreviewChange(photoName) {
     setExistingPhoto(photoName);
 
-    setImageURL(photoName);
+    setNewImageURL(photoName);
     setPreview(DEFAULT_IMAGE);
     getDataFromFilename(photoName, "400x300", setPreview, setMetadata);
   }
@@ -86,20 +118,37 @@ export default function InputPhoto({
   }
 
   const canUploadFile =
-    (!setImageAuthor || imageAuthor) && (!setImageAltText || imageAltText);
-
+    uploadProgress === null &&
+    (!setImageAuthor || imageAuthor) &&
+    (!setImageAltText || imageAltText);
   const showImageMetadataInputs = [0, 1].includes(selectedOption);
 
-  const uploadBtnStyle = { marginTop: -10, marginBottom: 8 };
-  canUploadFile || (uploadBtnStyle.cursor = "not-allowed");
+  const uploadBtnStyle = {
+    marginTop: -10,
+    marginBottom: 8,
+    cursor: canUploadFile
+      ? "pointer"
+      : uploadProgress === null
+      ? "not-allowed"
+      : "wait",
+  };
 
   /** Uploads the selected file to the server. */
   function _handleSubmitPhoto(e) {
-    if (canUploadFile) {
-      handlePhotoUpdate(imageFile, setImageURL, imageAuthor, imageAltText);
-    } else {
-      e.preventDefault();
+    if (!canUploadFile) {
+      return void e.preventDefault();
     }
+    handlePhotoUpdate(
+      imageFile,
+      setUploadProgress,
+      imageAuthor,
+      imageAltText
+    ).then((photoName) => {
+      setNewImageURL(photoName);
+      setSelectedOption(2);
+      refetchPhotos();
+      setUploadProgress(null);
+    });
   }
 
   return (
@@ -132,9 +181,9 @@ export default function InputPhoto({
             name="image-url"
             placeholder={selectedOption === 1 ? "URL zdjęcia" : "Nazwa zdjęcia"}
             maxLength={256}
-            value={imageURL}
-            onChange={setImageURL}
-            choices={photos}
+            value={newImageURL}
+            onChange={setNewImageURL}
+            choices={selectedOption === 2 ? photos : []}
             required
           />
         )
@@ -172,8 +221,11 @@ export default function InputPhoto({
             className="add-btn"
             style={uploadBtnStyle}
             onClick={_handleSubmitPhoto}
+            title={canUploadFile ? "" : "Pola oznaczone gwiazdką są wymagane."}
           >
-            <p>Prześlij zdjęcie</p>
+            <p>
+              {uploadProgress === null ? "Prześlij zdjęcie" : uploadProgress}
+            </p>
           </button>
         </div>
       )}

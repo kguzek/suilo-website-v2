@@ -138,7 +138,7 @@ export const CalendarEdit = ({
       // Invalid year inputted
       setDisplayYear(year);
     } else {
-      setYear(displayYear)
+      setYear(displayYear);
     }
   }
 
@@ -243,7 +243,9 @@ export const CalendarEdit = ({
           (clickedDelete ? (
             <button
               type="button"
-              className="delete-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}
+              className="delete-btn select-none cursor-wait"
+              disabled
+              style={{ pointerEvents: "none" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -252,35 +254,50 @@ export const CalendarEdit = ({
           ) : (
             <button
               type="button"
-              className="delete-btn select-none cursor-pointer" style={{ pointerEvents: "all" }}
+              className="delete-btn select-none cursor-pointer"
+              style={{ pointerEvents: "all" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń wydarzenie</p>
             </button>
           ))}
-        {clickedSubmit ?
-          <button type="submit" className="add-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}>
+        {clickedSubmit ? (
+          <button
+            type="submit"
+            className="add-btn select-none cursor-wait"
+            disabled
+            style={{ pointerEvents: "none" }}
+          >
             {currentlyActive !== "_default" ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
             <p>
-              {currentlyActive !== "_default" ? "zaktualizuj wydarzenie" : "dodaj wydarzenie"}
-            </p>
-          </button> :
-          <button type="submit  " className="add-btn select-none cursor-pointer" style={{ pointerEvents: "all" }} >
-            {currentlyActive !== "_default" ? (
-              <Edit3 color="#FFFFFF" size={24} />
-            ) : (
-              <Plus color="#FFFFFF" size={24} />
-            )}
-            <p>
-              {currentlyActive !== "_default" ? "zaktualizuj wydarzenie" : "dodaj wydarzenie"}
+              {currentlyActive !== "_default"
+                ? "zaktualizuj wydarzenie"
+                : "dodaj wydarzenie"}
             </p>
           </button>
-        }
+        ) : (
+          <button
+            type="submit  "
+            className="add-btn select-none cursor-pointer"
+            style={{ pointerEvents: "all" }}
+          >
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "zaktualizuj wydarzenie"
+                : "dodaj wydarzenie"}
+            </p>
+          </button>
+        )}
       </div>
     </form>
   );

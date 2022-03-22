@@ -4,18 +4,20 @@ import InputBox from "./InputComponents/InputBox";
 import InputArea from "./InputComponents/InputArea";
 import InputDropdown from "./InputComponents/InputDropdown";
 import DialogBox from "../DialogBox";
-import {
-  formatDate,
-  formatTime,
-  setErrorMessage,
-} from "../../misc";
+import { formatDate, formatTime, setErrorMessage } from "../../misc";
 import { serialiseDateArray } from "../../common";
 import { fetchWithToken } from "../../firebase";
-import LoadingScreen, { LoadingButton } from "../LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 import { eventSubtypes } from "../Events/Calendar";
 import InputPhoto from "./InputComponents/InputPhoto";
 
-export const EventEdit = ({ data, loaded, refetchData, photos }) => {
+export const EventEdit = ({
+  data,
+  loaded,
+  refetchData,
+  refetchStorage,
+  photos,
+}) => {
   const [currentlyActive, setCurrentlyActive] = useState("_default");
   const [title, setTitle] = useState("");
   const [type, setType] = useState(0);
@@ -24,10 +26,11 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
-  const [imageURL, setImageURL] = useState("");
+  const [oldImageURL, setOldImageURL] = useState("");
+  const [newImageURL, setNewImageURL] = useState("");
   const [eventURL, setEventURL] = useState("");
-  const [imageAuthor, setImageAuthor] = useState("");
-  const [imageAltText, setImageAltText] = useState("");
+  // const [imageAuthor, setImageAuthor] = useState("");
+  // const [imageAltText, setImageAltText] = useState("");
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
@@ -56,7 +59,8 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
     setEndTime(formatTime(event.endTime));
     // location, image and external URL are all nullable
     setLocation(event.location ?? "");
-    setImageURL(event.photo ?? "");
+    setOldImageURL(event.photo ?? "");
+    setNewImageURL(event.photo ?? "");
     setEventURL(event.link ?? "");
   }, [currentlyActive]);
 
@@ -71,9 +75,6 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
     events[event.id] = `${event.title} (${date})`;
   }
 
-  // Bitwise AND to ensure both functions are called
-  const refresh = () => refetchData() & _resetAllInputs();
-
   function _resetAllInputs() {
     for (const setVar of [
       setTitle,
@@ -82,7 +83,8 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
       setStartTime,
       setEndTime,
       setLocation,
-      setImageURL,
+      setOldImageURL,
+      setNewImageURL,
       setEventURL,
     ]) {
       setVar("");
@@ -109,7 +111,7 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
       startTime,
       endTime,
       location,
-      photo: imageURL,
+      photo: newImageURL,
       link: eventURL,
       content: description,
     };
@@ -132,7 +134,8 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
     fetchWithToken(url, method, params).then((res) => {
       // Update the data once request is processed
       if (res.ok) {
-        refresh();
+        refetchData();
+        _resetAllInputs();
         setPopupSuccess(true);
       } else {
         setErrorCode(res.status);
@@ -146,7 +149,8 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
     setClickedDelete(true);
     fetchWithToken(`/events/${currentlyActive}`, "DELETE").then((_res) => {
       // Update the data once request is processed
-      refresh();
+      refetchData();
+      _resetAllInputs();
       setClickedDelete(false);
     });
   }
@@ -252,9 +256,12 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
       />
       {/* PLACE FOR TEXT EDITOR */}
       <InputPhoto
-        imageURL={imageURL}
-        setImageURL={setImageURL}
+        oldImageURL={oldImageURL}
+        newImageURL={newImageURL}
+        setNewImageURL={setNewImageURL}
         photos={photos}
+        currentlyActive={currentlyActive}
+        refetchPhotos={refetchStorage}
       />
       <InputBox
         name="event-url"
@@ -269,7 +276,9 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
           (clickedDelete ? (
             <button
               type="button"
-              className="delete-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}
+              className="delete-btn select-none cursor-wait"
+              disabled
+              style={{ pointerEvents: "none" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -278,35 +287,50 @@ export const EventEdit = ({ data, loaded, refetchData, photos }) => {
           ) : (
             <button
               type="button"
-              className="delete-btn select-none cursor-pointer" style={{ pointerEvents: "all" }}
+              className="delete-btn select-none cursor-pointer"
+              style={{ pointerEvents: "all" }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
               <p>usuń wydarzenie</p>
             </button>
           ))}
-        {clickedSubmit ?
-          <button type="submit" className="add-btn select-none cursor-wait" disabled style={{ pointerEvents: "none" }}>
+        {clickedSubmit ? (
+          <button
+            type="submit"
+            className="add-btn select-none cursor-wait"
+            disabled
+            style={{ pointerEvents: "none" }}
+          >
             {currentlyActive !== "_default" ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
             <p>
-              {currentlyActive !== "_default" ? "zaktualizuj wydarzenie" : "dodaj wydarzenie"}
-            </p>
-          </button> :
-          <button type="submit  " className="add-btn select-none cursor-pointer" style={{ pointerEvents: "all" }} >
-            {currentlyActive !== "_default" ? (
-              <Edit3 color="#FFFFFF" size={24} />
-            ) : (
-              <Plus color="#FFFFFF" size={24} />
-            )}
-            <p>
-              {currentlyActive !== "_default" ? "zaktualizuj wydarzenie" : "dodaj wydarzenie"}
+              {currentlyActive !== "_default"
+                ? "zaktualizuj wydarzenie"
+                : "dodaj wydarzenie"}
             </p>
           </button>
-        }
+        ) : (
+          <button
+            type="submit  "
+            className="add-btn select-none cursor-pointer"
+            style={{ pointerEvents: "all" }}
+          >
+            {currentlyActive !== "_default" ? (
+              <Edit3 color="#FFFFFF" size={24} />
+            ) : (
+              <Plus color="#FFFFFF" size={24} />
+            )}
+            <p>
+              {currentlyActive !== "_default"
+                ? "zaktualizuj wydarzenie"
+                : "dodaj wydarzenie"}
+            </p>
+          </button>
+        )}
       </div>
     </form>
   );

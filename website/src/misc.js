@@ -256,7 +256,7 @@ export function setErrorMessage(res, setErrorFunc) {
   });
 }
 
-export function handlePhotoUpdate(file, setImageURL, author, altText) {
+export function handlePhotoUpdate(file, setUploadProgress, author, altText) {
   if (!file) return;
   // Regular expression to trim the filename extension
   // Matches all characters including and after the last found "." character in the string,
@@ -267,15 +267,22 @@ export function handlePhotoUpdate(file, setImageURL, author, altText) {
 
   const storageRef = ref(storage, `/photos/${file.name}`);
   const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-  uploadTask.on(
-    "state_changed",
-    (snapshot) => {
-      const prog = snapshot.bytesTransferred / snapshot.totalBytes;
-      setImageURL(`Postęp: ${Math.round(prog * 100)}%`);
+  return {
+    then: (resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const prog = snapshot.bytesTransferred / snapshot.totalBytes;
+          setUploadProgress(`Postęp: ${Math.round(prog * 100)}%`);
+        },
+        (error) => {
+          console.error(error);
+          reject && reject(error);
+        },
+        () => void resolve(photoName)
+      );
     },
-    (error) => console.error(error),
-    () => void setImageURL(photoName)
-  );
+  };
 }
 
 /** Returns true if the string starts with either the HTTP or HTTPS protocol identifier. */
@@ -304,4 +311,19 @@ export function formatTimeDiff(differenceMillis) {
   // Show seconds if any of the previous are shown or if seconds > 0
   (formatted !== "" || seconds > 0) && (formatted += `${seconds} sek.`);
   return formatted;
+}
+
+/** Inserts an item into an array, comparing each previous item to the new one using the `<` operator. */
+export function sortIntoArray(arr, item) {
+  for (let i = 0; i < arr.length; i++) {
+    if (item <= arr[i]) {
+      // Item should go here
+      arr.splice(i, 0, item);
+      break;
+    }
+    if (i + 1 === arr.length) {
+      // Item should go at the end
+      arr.push(item);
+    }
+  }
 }
