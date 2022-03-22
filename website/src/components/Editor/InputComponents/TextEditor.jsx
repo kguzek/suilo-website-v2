@@ -17,7 +17,7 @@ const TextEditor = ({ onChange, value }) => {
   }
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" style={{ cursor: "text" }}>
       <p className="absolute -top-[.55rem] leading-3 bg-bg scale-[.785] font-semibold text-text6 -left-[.25rem] ">
         {!value.html && <span style={{ color: "red" }}>*</span>}
         Treść
