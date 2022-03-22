@@ -2,10 +2,11 @@ const { db, sendSingleResponse, formatTimestamps } = require("../util");
 
 function getRouter(availableEndpoints) {
   const defaultValues = {};
+  const now = new Date();
   for (const endpoint of availableEndpoints) {
     if (endpoint === "collectionInfo") continue;
-    // Initialise the last updated date of each collection to Unix epoch (01/01/1970) and a document count of 0
-    defaultValues[endpoint] = { lastUpdated: new Date(0), numDocs: 0 };
+    // Initialise the last updated date of each collection to the current time and a document count of 0
+    defaultValues[endpoint] = { lastUpdated: now, numDocs: 0 };
   }
 
   return async (_req, res) => {
