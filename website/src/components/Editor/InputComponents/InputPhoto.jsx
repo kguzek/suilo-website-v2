@@ -62,12 +62,11 @@ export default function InputPhoto({
     if (!photos.includes(newImageURL)) {
       setPreview(null);
       return void setExistingPhoto(undefined);
-    };
+    }
     _handlePreviewChange(newImageURL);
   }, [newImageURL]);
 
   useEffect(() => {
-    console.log("Selected option:", selectedOption);
     // Reset the inputs whenever the selected option is changed
     if (selectedOption === 2) {
       if (photos.includes(newImageURL)) {

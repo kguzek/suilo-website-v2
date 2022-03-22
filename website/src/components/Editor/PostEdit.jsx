@@ -243,10 +243,7 @@ export const PostEdit = ({
       />
       <div>
         <label className="select-none">
-          <input
-            type="checkbox"
-            onClick={() => (addYtID ? setAddYtID(false) : setAddYtID(true))}
-          />
+          <input type="checkbox" onClick={() => setAddYtID(!addYtID)} />
           &nbsp;Dodaj film z serwisu YouTube
         </label>
       </div>
@@ -262,10 +259,7 @@ export const PostEdit = ({
       )}
       <div>
         <label className="select-none">
-          <input
-            type="checkbox"
-            onClick={() => (addLink ? setAddLink(false) : setAddLink(true))}
-          />
+          <input type="checkbox" onClick={() => setAddLink(!addLink)} />
           &nbsp;Dodaj link do zewnętrznego serwisu
         </label>
       </div>
