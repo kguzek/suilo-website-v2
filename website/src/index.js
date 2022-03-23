@@ -4,6 +4,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { hydrate, render } from "react-dom";
+import * as serviceWorker from './serviceWorker';
 
 const rootElement = document.getElementById("root");
 
@@ -26,3 +27,4 @@ if (rootElement.hasChildNodes()) {
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+// serviceWorker.unregister();
