@@ -24,6 +24,7 @@ function readNumbersData(res, forceUpdate = false) {
       let data = doc.data();
       if (forceUpdate || !data) {
         // Regenerate the lucky numbers data
+        data || console.log("Data missing. Regenerating lucky numbers.");
         data = generateLuckyNumbers(data);
         // Update in database
         docRef.set(data);

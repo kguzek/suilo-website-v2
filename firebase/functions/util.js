@@ -125,7 +125,24 @@ function generateLuckyNumbers(previousData) {
   }
   console.info("Generated new lucky numbers data:", luckyNumbers);
   const todayString = serialiseDateArray(dateToArray());
-  const newData = {
+  // Increment the number of documents in the lucky numbers archive
+  // Add the new data to the lucky numbers archive
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+
+  db.collection("archivedNumbers")
+    .doc()
+    .set({
+      date: todayString,
+      luckyNumbers,
+      // e.g. 2022-03-16 -> month < 8 (September) -> "2021/2022"
+      // e.g. 2024-09-30 -> month >= 8 (September) -> "2024/2025"
+      schoolYear: getSchoolYearString(year - (month < 8)),
+    });
+  updateCollection("luckyNumbers", 1);
+
+  return {
     date: todayString,
     luckyNumbers,
     excludedClasses: previousData?.excludedClasses ?? [],
@@ -135,22 +152,6 @@ function generateLuckyNumbers(previousData) {
     numberPoolA: numberPools[0],
     numberPoolB: numberPools[1],
   };
-  // Increment the number of documents in the lucky numbers archive
-  const dataToBeArchived = {
-    date: todayString,
-    luckyNumbers,
-  };
-  // Add the new data to the lucky numbers archive
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  // e.g. 2022-03-16 -> month < 8 (September) -> "2021/2022"
-  // e.g. 2024-09-30 -> month >= 8 (September) -> "2024/2025"
-  dataToBeArchived.schoolYear = getSchoolYearString(year - (month < 8));
-  db.collection("archivedNumbers").doc().set(dataToBeArchived);
-  updateCollection("luckyNumbers", 1);
-
-  return newData;
 }
 
 /** Returns an array made from the given range. E.g. (2, 5) => [2, 3, 4, 5]. */
