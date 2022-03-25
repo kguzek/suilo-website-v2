@@ -23,25 +23,21 @@ import {
   auth,
   DEBUG_MODE,
 } from "./firebase";
-import NotFound from "./pages/NotFound";
 
 export default function App() {
   const [page, setPage] = useState(null);
-  const [loggedInUser, setLoggedInUser] = useState(undefined);
+  const [userEmail, setUserEmail] = useState(undefined);
   const [footerVisible, setFooterVisible] = useState(true);
   const [shouldRefresh, setShouldRefresh] = useState(false);
   const [collectionInfo, setCollectionInfo] = useState({});
-  const [cookies, setCookies] = useCookies(["loginStage", "userAccounts"]);
+  const [cookies, setCookies, removeCookies] = useCookies([
+    "loginStage",
+    "userPerms",
+  ]);
+  const [userPerms, setUserPerms] = useState(cookies.userPerms);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   const handleResize = () => setScreenWidth(window.innerWidth);
-
-  /** Sets the user accounts cookie to an empty object. */
-  const resetUserAccounts = () =>
-    setCookies("userAccounts", {}, { sameSite: "lax" });
-
-  // Default the user accounts to an empty object
-  cookies.userAccounts ?? resetUserAccounts();
 
   useEffect(() => {
     // This function could also be called in the below useEffect hook,
@@ -99,7 +95,7 @@ export default function App() {
             localStorage.removeItem(cacheName);
             if (cacheName === "users") {
               // Re-evaluate user permissions if the users were modified
-              setLoggedInUser(undefined);
+              setUserEmail(undefined);
               setUserPermissions(auth.currentUser, true);
             }
             shouldRefresh = true;
@@ -119,52 +115,51 @@ export default function App() {
    */
   function setUserPermissions(user, force = false) {
     if (user) {
-      if (user.email.endsWith("@lo1.gliwice.pl")) {
-        // Refresh the user authentication level each time if debug mode is enabled
-        if (!cookies.userAccounts?.[user.email] || DEBUG_MODE || force) {
-          /** Update the cookie with the proper user pemissions. */
-          function setUserEditPermissions(usrInfo) {
-            const perms = {
-              isAdmin: usrInfo?.isAdmin ?? false,
-              canEdit: usrInfo?.canEdit ?? [],
-            };
-            // Update the userAccounts cookie
-            const userAccounts = cookies.userAccounts;
-            userAccounts[user.email] = perms;
-            // Determine if the user is permitted to edit any pages
-            DEBUG_MODE &&
-              (perms.isAdmin || perms.canEdit.length > 0) &&
-              console.info(`Enabled edit screen for ${user.email}.`);
-            setCookies("userAccounts", userAccounts, { sameSite: "lax" });
-          }
-
-          // Check if the user has edit permissions by performing a dummy PUT request to the API
-          DEBUG_MODE && console.info("Checking user permissions...");
-          fetchWithToken("/").then(
-            (res) => {
-              // Log user permissions
-              res.json().then((data) => {
-                DEBUG_MODE && console.debug(data);
-                setUserEditPermissions(data.userInfo); // userInfo can be undefined
-              });
-            },
-            (error) => {
-              console.error("Error setting user permissions!", error);
-              setUserEditPermissions();
-            }
-          );
-        }
-        setLoggedInUser(user.email);
-      } else {
+      if (!user.email.endsWith("@lo1.gliwice.pl")) {
         DEBUG_MODE && console.info("Invalid email. Logging out.");
         return false;
       }
+      // Refresh the user authentication level each time if debug mode is enabled
+      if (cookies.userPerms?.email !== user.email || DEBUG_MODE || force) {
+        /** Update the cookie with the proper user pemissions. */
+        function setUserEditPermissions(permsInfo) {
+          const perms = {
+            email: user.email,
+            isAdmin: permsInfo?.isAdmin ?? false,
+            canEdit: permsInfo?.canEdit ?? [],
+          };
+          // Determine if the user is permitted to edit any pages
+          DEBUG_MODE &&
+            (perms.isAdmin || perms.canEdit.length > 0) &&
+            console.info(`Enabled edit screen for ${user.email}.`);
+          // Update the user cookie
+          setUserPerms(perms);
+          setCookies("userPerms", perms, { sameSite: "lax" });
+        }
+
+        // Check if the user has edit permissions by performing a dummy PUT request to the API
+        DEBUG_MODE && console.info("Checking user permissions...");
+        fetchWithToken("/").then(
+          (res) => {
+            // Log user permissions
+            res.json().then((data) => {
+              DEBUG_MODE && console.debug(data);
+              setUserEditPermissions(data.userInfo); // userInfo can be undefined
+            });
+          },
+          (error) => {
+            console.error("Error setting user permissions!", error);
+            setUserEditPermissions();
+          }
+        );
+      }
+      setUserEmail(user.email);
     } else {
       DEBUG_MODE && console.info("No user. Logging out.");
-      setLoggedInUser(null);
-      // Remove all entries from the user accounts object
+      setUserEmail(null);
       // This means that the next time someone logs in the API will have to verify if they are an editor
-      resetUserAccounts();
+      setUserPerms(undefined);
+      removeCookies("userPerms");
     }
     return true;
   }
@@ -177,11 +172,6 @@ export default function App() {
     logOut().then();
   }
 
-  // Determine the current logged in user's permissions
-  const users = cookies.userAccounts ?? {};
-  // If the user hasn't been determined yet, temporarily use the details of the last logged in user
-  const userInfo = users[loggedInUser] ?? users[Object.keys(users).shift()];
-
   return (
     <AuthProvider setUserCallback={setUserPermissions}>
       <Routes>
@@ -192,7 +182,7 @@ export default function App() {
               page={page}
               loginAction={loginAction}
               logoutAction={logoutAction}
-              userInfo={userInfo}
+              userInfo={userPerms}
               footerVisible={footerVisible}
               screenWidth={screenWidth}
             />
@@ -224,7 +214,7 @@ export default function App() {
               path="post"
               element={
                 <Post
-                  user={loggedInUser}
+                  user={userEmail}
                   setPage={setPage}
                   reload={shouldRefresh}
                   setReload={setShouldRefresh}
@@ -260,8 +250,8 @@ export default function App() {
             element={
               <Edit
                 setPage={setPage}
-                user={loggedInUser}
-                userPerms={userInfo}
+                user={userEmail}
+                userPerms={userPerms}
                 loginAction={loginAction}
                 reload={shouldRefresh}
                 setReload={setShouldRefresh}
@@ -310,22 +300,26 @@ const Layout = ({
       className={`
   -z-50 right-0 
   ${page === "contact" ? "md:max-h-[100vh] " : "md:max-h-[100vh]"} 
-  ${page === "home"
-          ? "-top-[16.5rem] scale-[.275]"
-          : "-top-[16.5rem] scale-[.275]"
-        } 
-  ${page === "home"
-          ? "max-h-[100rem] md:max-h-[175vh] md:scale-[.475]"
-          : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
-        } 
-  ${page === "home"
-          ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
-          : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16 lg:max-h-[70rem] "
-        }
-  ${page === "home"
-          ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
-          : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32 lg:max-h-[70rem] "
-        }  
+  ${
+    page === "home"
+      ? "-top-[16.5rem] scale-[.275]"
+      : "-top-[16.5rem] scale-[.275]"
+  } 
+  ${
+    page === "home"
+      ? "max-h-[100rem] md:max-h-[175vh] md:scale-[.475]"
+      : "md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]"
+  } 
+  ${
+    page === "home"
+      ? "lg:scale-[.8] lg:max-h-[175vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12"
+      : "lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16 lg:max-h-[70rem] "
+  }
+  ${
+    page === "home"
+      ? "xl:-rotate xl:max-h-[175vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]"
+      : "xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32 lg:max-h-[70rem] "
+  }  
   origin-top-right absolute
 `}
       style={{
