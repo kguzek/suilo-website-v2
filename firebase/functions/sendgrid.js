@@ -4,7 +4,9 @@ const { formatTime } = require("./common");
 const SENDER_EMAIL = "konrad@guzek.uk"; // TODO: change to SUILO email address
 const EMAIL_TEMPLATE_ID = "d-cd68b8c003d44d578b73fa5c849e4ff4";
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Determine if the API key environment variable is set
+const ENABLED = !!process.env.SENDGRID_API_KEY;
+ENABLED && sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 /** Sends an email notification to the given recipients about the given event
  *
@@ -13,6 +15,11 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
  * @param {*} eventID -- The event unique ID string.
  */
 function sendEventNotification(recipients, event, eventID) {
+  if (!ENABLED) {
+    return void console.warn(
+      "Not sending email notification as the sendgrid API key environment variable is not set."
+    );
+  }
   const msg = {
     from: SENDER_EMAIL,
     templateId: EMAIL_TEMPLATE_ID,
