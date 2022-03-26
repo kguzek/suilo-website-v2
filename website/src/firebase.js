@@ -133,7 +133,7 @@ export function AuthProvider({ children, setUserCallback }) {
         }
       } else {
         // The user is from outside the LO1 organisation.
-        logOut().then();
+        logOut();
       }
     });
   }, []);
@@ -184,7 +184,7 @@ function getResults(getResult, processLoginCallback) {
     });
 }
 
-export async function logOut() {
+export function logOut() {
   signOut(auth)
     .then(() => {
       DEBUG_MODE &&

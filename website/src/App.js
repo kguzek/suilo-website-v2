@@ -114,53 +114,60 @@ export default function App() {
    * Returns false if the user is from outside of the LO1 organisation.
    */
   function setUserPermissions(user, force = false) {
-    if (user) {
-      if (!user.email.endsWith("@lo1.gliwice.pl")) {
-        DEBUG_MODE && console.info("Invalid email. Logging out.");
-        return false;
-      }
-      // Refresh the user authentication level each time if debug mode is enabled
-      if (cookies.userPerms?.email !== user.email || DEBUG_MODE || force) {
-        /** Update the cookie with the proper user pemissions. */
-        function setUserEditPermissions(permsInfo) {
-          const perms = {
-            email: user.email,
-            isAdmin: permsInfo?.isAdmin ?? false,
-            canEdit: permsInfo?.canEdit ?? [],
-          };
-          // Determine if the user is permitted to edit any pages
-          DEBUG_MODE &&
-            (perms.isAdmin || perms.canEdit.length > 0) &&
-            console.info(`Enabled edit screen for ${user.email}.`);
-          // Update the user cookie
-          setUserPerms(perms);
-          setCookies("userPerms", perms, { sameSite: "lax" });
-        }
-
-        // Check if the user has edit permissions by performing a dummy PUT request to the API
-        DEBUG_MODE && console.info("Checking user permissions...");
-        fetchWithToken("/").then(
-          (res) => {
-            // Log user permissions
-            res.json().then((data) => {
-              DEBUG_MODE && console.debug(data);
-              setUserEditPermissions(data.userInfo); // userInfo can be undefined
-            });
-          },
-          (error) => {
-            console.error("Error setting user permissions!", error);
-            setUserEditPermissions();
-          }
-        );
-      }
-      setUserEmail(user.email);
-    } else {
+    if (!user) {
       DEBUG_MODE && console.info("No user. Logging out.");
       setUserEmail(null);
       // This means that the next time someone logs in the API will have to verify if they are an editor
       setUserPerms(undefined);
       removeCookies("userPerms");
+      return true;
     }
+    if (!user.email.endsWith("@lo1.gliwice.pl")) {
+      DEBUG_MODE && console.info("Invalid email. Logging out.");
+      setUserEmail(null);
+      setUserPerms(undefined);
+      removeCookies("userPerms");
+      return false;
+    }
+    setUserEmail(user.email);
+    if (userPerms?.email === user.email && !force) {
+      return true;
+    }
+    // Refresh the user authentication level each time if debug mode is enabled
+
+    // Check if the user has edit permissions by performing a dummy PUT request to the API
+    DEBUG_MODE && console.info("Checking user permissions...");
+
+    /** Update the cookie with the proper user pemissions. */
+    function setUserEditPermissions(permsInfo) {
+      const perms = {
+        email: user.email,
+        isAdmin: permsInfo?.isAdmin ?? false,
+        canEdit: permsInfo?.canEdit ?? [],
+      };
+      // Determine if the user is permitted to edit any pages
+      DEBUG_MODE &&
+        (perms.isAdmin || perms.canEdit.length > 0) &&
+        console.info(`Enabled edit screen for ${user.email}.`);
+      // Update the user cookie
+      setUserPerms(perms);
+      setCookies("userPerms", perms, { sameSite: "lax" });
+    }
+
+    fetchWithToken("/").then(
+      (res) => {
+        // Log user permissions
+        res.json().then((data) => {
+          DEBUG_MODE && console.debug(data);
+          setUserEditPermissions(data.userInfo); // userInfo can be undefined
+        });
+      },
+      (error) => {
+        console.error("Error setting user permissions!", error);
+        setUserEditPermissions();
+      }
+    );
+
     return true;
   }
 
@@ -169,7 +176,7 @@ export default function App() {
     setCookies("loginStage", "started", { sameSite: "lax" });
   }
   function logoutAction() {
-    logOut().then();
+    logOut();
   }
 
   return (
