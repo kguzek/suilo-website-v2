@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import CalendarPreview from "../components/Events/Calendar";
 import EventPreview from "../components/Events/EventPreview";
 import { fetchCachedData, removeSearchParam, setSearchParam } from "../misc";
-import { serialiseDateArray } from "../common";
+import { dateToArray, serialiseDateArray } from "../common";
 import LoadingScreen from "../components/LoadingScreen";
 import { DEBUG_MODE } from "../firebase";
 
@@ -75,7 +75,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
   }, [reload]);
 
   useEffect(() => {
-    processPrimaryEvents(true);
+    processPrimaryEvents();
   }, [rawPrimEvents]);
 
   useEffect(() => {
@@ -89,26 +89,27 @@ function Events({ setPage, reload, setReload, loginAction }) {
     return <LoadingScreen />;
   }
 
-  /** Checks if the event is the next event. */
-  function checkIfNextEvent(event, comparisonEvent) {
-    typeof comparisonEvent !== "object" && (comparisonEvent = undefined);
-    const eventDate = new Date(event.date);
-    eventDate.setHours(...event.startTime);
-    // Check if the event is in the future
-    if (eventDate < new Date()) return;
-    if (!comparisonEvent || new Date(comparisonEvent.date) > eventDate) {
-      // The next event hasn't been defined yet or is after this event
+  /** Determine the next event. */
+  function updateNextEvent() {
+    const now = new Date();
+    const today = new Date(dateToArray(now));
+    for (const event of rawPrimEvents) {
+      const eventDate = new Date(event.date);
+      eventDate.setHours(...event.startTime);
+      if (eventDate < today) continue; // The event is in the past
+      eventDate.setHours(...event.endTime);
+      if (eventDate < now) continue; // The event is today but has ended
       setNextEvent(event);
+      break;
     }
   }
 
   /** Filters out the primary events that are not this month and converts them into calendar format. */
-  function processPrimaryEvents(determineNextEvent = false) {
+  function processPrimaryEvents() {
     const queryEventID = searchParams.get("event");
     const _primEvents = [];
     for (const event of rawPrimEvents) {
       // date comparison for 'event' objects to check the next event
-      determineNextEvent && checkIfNextEvent(event, nextEvent);
       event.id === queryEventID && setSelectedEvent(event);
       const [year, month, _day] = event.date;
       if (year !== calendarYear || month !== calendarMonth) {
@@ -123,6 +124,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
         title: event.title,
       });
     }
+    updateNextEvent();
     setPrimEvents(_primEvents);
   }
 
@@ -138,7 +140,8 @@ function Events({ setPage, reload, setReload, loginAction }) {
       // setSelectedEvent(undefined);
       return;
     }
-    DEBUG_MODE && console.debug("Setting currently selected event to:", event.title);
+    DEBUG_MODE &&
+      console.debug("Setting currently selected event to:", event.title);
     setSelectedEvent(event);
     setSearchParam(searchParams, setSearchParams, "event", event.id);
   }
@@ -163,7 +166,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
           event={nextEvent}
           isNextEvent
           loginAction={loginAction}
-          updateNextEvent={() => rawPrimEvents.forEach(checkIfNextEvent)}
+          updateNextEvent={updateNextEvent}
         />
       ) : (
         // TODO: Render something better if there are no future events
