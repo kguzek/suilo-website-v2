@@ -7,7 +7,7 @@
 // }, [editorState])
 //<Editor editorState={editorState} onChange={setEditorState} />
 
-const TextEditor = ({ onChange, value }) => {
+const TextEditor = ({ onChange, value, isNew }) => {
   function _handleChange(e) {
     let html = e.target.innerHTML.trim();
     if (html.endsWith("<br>")) {
@@ -25,10 +25,11 @@ const TextEditor = ({ onChange, value }) => {
       <div
         contentEditable
         suppressContentEditableWarning
+        // dangerouslySetInnerHTML={!isNew ? {__html: html}: null}
         className=" p-[.1rem] px-1 ring-2 outline-none ring-[#d4d4d4] rounded-sm hover:ring-primary/50 focus:ring-primary text-[#222222] text-justify md:text-left mt-2 leading-[1.85rem] lg:leading-9 lg:mt-2  lg:text-xl  font-normal text-lg"
         onBlur={_handleChange}
       >
-        {value.text}
+        {!isNew ? value.text : null}
         {/* TODO: find a way to show previously enteret value that do not destroy layout when re-edited */}
         {/* {value} */}
         {/* TODO: Implement placeholder text */}

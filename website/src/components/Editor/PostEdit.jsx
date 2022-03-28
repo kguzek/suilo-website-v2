@@ -220,6 +220,7 @@ export const PostEdit = ({
         onChange={setTitle}
       />
       <TextEditor
+        isNew={(currentlyActive === "_default")}
         onChange={setPostContent}
         value={{ html: formattedContent, text: rawContent }}
       />
