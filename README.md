@@ -1,6 +1,6 @@
 # School Council Webiste
 
-Website created for school council from 1 Liceum Ogólnokształcące Dwujęzyczne im.Edwarda Dembowskiego in Gliwice
+Website created for school council from 1 Liceum Ogólnokształcące Dwujęzyczne im. Edwarda Dembowskiego in Gliwice
 
 # Link
 http://suilo.pl/
