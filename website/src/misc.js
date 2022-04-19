@@ -206,8 +206,8 @@ export function fetchCachedData(
 export function getDataFromFilename(
   name,
   size = "1920x1080",
-  urlCallback = () => {},
-  metadataCallback = () => {}
+  urlCallback = () => { },
+  metadataCallback = () => { }
 ) {
   // Use default image if the image name is not provided
   if (!name) {
