@@ -1,16 +1,15 @@
 # School Council Webiste
+A responsive, 'single-page design' website created for the *[1 Liceum Ogólnokształcące Dwujęzyczne im. Edwarda Dembowskiego in Gliwice](http://www.lo1.gliwice.pl/)* School Council.
 
-Website created for school council from 1 Liceum Ogólnokształcące Dwujęzyczne im. Edwarda Dembowskiego in Gliwice
+## Website Link
+The website is fully hosted on an independent service and can be accessed via the following URL:    
+https://suilo.pl/
 
-# Link
-http://suilo.pl/
-
-
-# Features
+## Features
 - news feed
 - event calendar
 - custom events
-- notifications
-- daily "lucky numbers" generation
-- build-in content management system
-- ...and more
+- email notifications
+- daily "lucky number" generation
+- built-in content management system
+- ... and more!
