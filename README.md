@@ -1,5 +1,5 @@
 # School Council Webiste
-A responsive, 'single-page design' website created for the *[1 Liceum Ogólnokształcące Dwujęzyczne im. Edwarda Dembowskiego in Gliwice](http://www.lo1.gliwice.pl/)* School Council.
+A responsive website created for the *[1 Liceum Ogólnokształcące Dwujęzyczne im. Edwarda Dembowskiego in Gliwice](http://www.lo1.gliwice.pl/)* School Council.
 
 ## Website Link
 The website is fully hosted on an independent service and can be accessed via the following URL:    
