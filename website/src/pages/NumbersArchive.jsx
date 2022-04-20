@@ -13,13 +13,15 @@ const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
   /** Fetch the data from cache or the API. */
   function fetchArchive(forceUpdate = false, pageNo) {
     setLoadedArchive(false);
+    const page = pageNo ?? archivePage;
+    const cacheName = `luckyNumbers_archive_page_${page}`;
     const fetchArgs = {
       setData: setArchive,
       setLoaded: setLoadedArchive,
       updateCache: forceUpdate,
-      params: { page: pageNo ?? archivePage, sort: "descending" },
+      params: { page, sort: "descending" },
     };
-    fetchCachedData("luckyNumbers_archive", "/luckyNumbers/archive", fetchArgs);
+    fetchCachedData(cacheName, "/luckyNumbers/archive", fetchArgs);
   }
 
   useEffect(() => {
