@@ -26,6 +26,7 @@ const ROUTES = [
   "calendar",
   "luckyNumbers",
   "collectionInfo",
+  "books"
 ];
 
 app.use(cors());
@@ -37,10 +38,11 @@ const sortOptions = {
   links: ["destination", "asc"],
   news: ["date", "desc"],
   users: ["displayName", "asc"],
+  books: ["title","asc"]
 };
 
 // define routes that have similar structures to avoid repeating the code in the separate route files
-for (const endpoint of ["calendar", "events", "links", "news", "users"]) {
+for (const endpoint of ["calendar", "events", "links", "news", "users", "books"]) {
   // READ all events/links/news
   if (endpoint !== "calendar") {
     app.get(`/api/${endpoint}/`, (req, res) => {

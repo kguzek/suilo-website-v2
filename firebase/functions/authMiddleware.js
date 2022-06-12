@@ -44,14 +44,17 @@ async function validateToken(req, res, next, requiredPerm) {
       return send403("Invalid Google account.", userRecord.displayName);
     }
     const userInfo = userIdentities[0];
-    const docRef = db.collection("users").doc(userInfo.uid);
-
-    docRef.get().then((doc) => {
-      const data = doc.data();
-      const isAdmin = data?.isAdmin ?? false;
-      const canEdit = data?.canEdit ?? [];
-      if (data) {
-        if (requiredPerm && !(isAdmin || canEdit.includes(requiredPerm))) {
+    const docRefUser = db.collection("users").doc(userInfo.uid);
+    const docRefData = requiredPerm==="books" && req.method === "DELETE"? db.collection(requiredPerm).doc(req.path.split('/')[2]):null;
+    const promU = docRefUser.get();
+    const promD = docRefData?.get();
+    Promise.all([promU,promD]).then((docs) => {
+      const userData = docs[0].data();
+      const data = docs[1]?.data(1);
+      const isAdmin = userData?.isAdmin ?? false;
+      const canEdit = userData?.canEdit ?? [];
+      if (userData) {
+        if (requiredPerm && !(isAdmin || canEdit.includes(requiredPerm)|| (requiredPerm==="books" && req.method==="DELETE"&& data?.user === userInfo.uid))) {
           return send403(
             undefined,
             {
@@ -62,7 +65,7 @@ async function validateToken(req, res, next, requiredPerm) {
         }
       } else {
         // user is not yet in the database; add default entry
-        docRef.set({
+        docRefUser.set({
           ...userInfo,
           isAdmin,
           canEdit,
