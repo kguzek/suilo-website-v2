@@ -15,7 +15,7 @@ import React, { useEffect } from "react";
 export const DEBUG_MODE = false;
 
 /** Determines the API URL. */
-const USE_EMULATOR_API = false;
+const USE_EMULATOR_API = true;
 
 /** The root URL for the Firebase backend API. */
 const API_URL = USE_EMULATOR_API
@@ -23,7 +23,7 @@ const API_URL = USE_EMULATOR_API
   : "https://europe-west1-suilo-page.cloudfunctions.net/app/api"; // Production cloud function
 
 /** If true, logs the logged in user's API token in the console whenever a request to the API is made. */
-const DISPLAY_TOKEN_ON_REQUEST = false;
+const DISPLAY_TOKEN_ON_REQUEST = true;
 
 // CONFIDENTIAL DATA
 const firebaseConfig = {

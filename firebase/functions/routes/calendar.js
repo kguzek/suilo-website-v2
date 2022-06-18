@@ -5,7 +5,6 @@ const {
   HTTP,
   getDocRef,
   getIntArray,
-  randomArraySelection,
   sendListResponse,
   sendSingleResponse,
   createSingleDocument,

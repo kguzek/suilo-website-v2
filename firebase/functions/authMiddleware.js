@@ -45,16 +45,20 @@ async function validateToken(req, res, next, requiredPerm) {
     }
     const userInfo = userIdentities[0];
     const docRefUser = db.collection("users").doc(userInfo.uid);
-    const docRefData = requiredPerm==="books" && req.method === "DELETE"? db.collection(requiredPerm).doc(req.path.split('/')[2]):null;
-    const promU = docRefUser.get();
-    const promD = docRefData?.get();
-    Promise.all([promU,promD]).then((docs) => {
-      const userData = docs[0].data();
-      const data = docs[1]?.data(1);
+    docRefUser.get().then((doc) => {
+      const userData = doc.data();
       const isAdmin = userData?.isAdmin ?? false;
       const canEdit = userData?.canEdit ?? [];
+      const bookIDs = userData?.bookIDs ?? [];
       if (userData) {
-        if (requiredPerm && !(isAdmin || canEdit.includes(requiredPerm)|| (requiredPerm==="books" && req.method==="DELETE"&& data?.user === userInfo.uid))) {
+        const canEditThisBook =
+          requiredPerm === "books" &&
+          req.method === "DELETE" &&
+          bookIDs.includes(req.path.split("/").at(-1));
+        if (
+          requiredPerm &&
+          !(isAdmin || canEdit.includes(requiredPerm) || canEditThisBook)
+        ) {
           return send403(
             undefined,
             {
@@ -69,6 +73,7 @@ async function validateToken(req, res, next, requiredPerm) {
           ...userInfo,
           isAdmin,
           canEdit,
+          bookIDs,
         });
         updateCollection("users", 1);
         if (requiredPerm) {
@@ -89,6 +94,7 @@ async function validateToken(req, res, next, requiredPerm) {
         ...userInfo,
         isAdmin,
         canEdit,
+        books: bookIDs,
       };
       next();
     });
