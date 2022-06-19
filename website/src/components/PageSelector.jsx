@@ -41,21 +41,41 @@ const PageSelector = ({
   };
   return (
     <div className={`inline-flex flex-row w-fit`}>
-      {page > 2 && (
-        <PageBox changePage={_changePage} page={1} activePage={page} />
+      {Number(page) > 2 && (
+        <PageBox changePage={_changePage} page={1} activePage={Number(page)} />
       )}
-      {page > 1 && page - 1 < noPages && (
-        <PageBox changePage={_changePage} page={page - 1} activePage={page} />
+      {Number(page) > 1 && Number(page) - 1 < noPages && (
+        <PageBox
+          changePage={_changePage}
+          page={Number(page) - 1}
+          activePage={Number(page)}
+        />
       )}
-      <PageBox changePage={_changePage} page={page} activePage={page} />
-      {page < noPages && (
-        <PageBox changePage={_changePage} page={page + 1} activePage={page} />
+      <PageBox
+        changePage={_changePage}
+        page={Number(page)}
+        activePage={Number(page)}
+      />
+      {Number(page) < noPages && (
+        <PageBox
+          changePage={_changePage}
+          page={Number(page) + 1}
+          activePage={Number(page)}
+        />
       )}
-      {page === 1 && page + 2 < noPages && (
-        <PageBox changePage={_changePage} page={page + 2} activePage={page} />
+      {Number(page) === 1 && Number(page) + 2 < noPages && (
+        <PageBox
+          changePage={_changePage}
+          page={Number(page) + 2}
+          activePage={Number(page)}
+        />
       )}
-      {page < noPages - 1 && (
-        <PageBox changePage={_changePage} page={noPages} activePage={page} />
+      {Number(page) < noPages - 1 && (
+        <PageBox
+          changePage={_changePage}
+          page={noPages}
+          activePage={Number(page)}
+        />
       )}
     </div>
   );
