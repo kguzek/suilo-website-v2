@@ -50,7 +50,7 @@ export default function App() {
     // Window width event listener
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  });
+  },[]);
 
   useEffect(() => {
     if (page === "edit") {
