@@ -191,7 +191,8 @@ function randomArraySelection(array) {
 /*      ======== GENERAL CRUD FUNCTIONS ========      */
 
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
-function createSingleDocument(data, res, collectionName, docID) {
+function createSingleDocument(data, res, collectionName, docID, sendRes) {
+  sendRes ?? (sendRes = res.status(200).json);
   const collectionRef = db.collection(collectionName);
   // attempts to add the data to the given collection
   const promise = docID
@@ -202,7 +203,7 @@ function createSingleDocument(data, res, collectionName, docID) {
       updateCollection(collectionName, 1);
       // success; return the data along with the document id
       formatTimestamps(data);
-      return res.status(200).json({ id: doc.id, ...data });
+      return sendRes({ id: doc.id, ...data });
     })
     .catch((error) => {
       // return an error when the document could not be added, e.g. invalid collection name

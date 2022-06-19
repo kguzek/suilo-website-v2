@@ -26,6 +26,7 @@ const ROUTES = [
   "calendar",
   "luckyNumbers",
   "collectionInfo",
+  "books",
 ];
 
 app.use(cors());
@@ -37,11 +38,19 @@ const sortOptions = {
   links: ["destination", "asc"],
   news: ["date", "desc"],
   users: ["displayName", "asc"],
+  books: ["title", "asc"],
 };
 
 // define routes that have similar structures to avoid repeating the code in the separate route files
-for (const endpoint of ["calendar", "events", "links", "news", "users"]) {
-  // READ all events/links/news
+for (const endpoint of [
+  "calendar",
+  "events",
+  "links",
+  "news",
+  "users",
+  "books",
+]) {
+  // READ all events/links/news/books
   if (endpoint !== "calendar") {
     app.get(`/api/${endpoint}/`, (req, res) => {
       // ?page=1&items=25&all=false
@@ -52,7 +61,7 @@ for (const endpoint of ["calendar", "events", "links", "news", "users"]) {
     });
   }
 
-  // DELETE single calendar event/event/link/news
+  // DELETE single calendar event/event/link/news/book
   app.delete(`/api/${endpoint}/:id`, (req, res) =>
     deleteSingleDocument(req, res, endpoint)
   );
@@ -82,7 +91,9 @@ for (const route of ROUTES) {
   // catch all requests to paths that are listed above but use the incorrect HTTP method
   for (const pathSuffix of ["/", "/:foo"]) {
     app.all("/api/" + route + pathSuffix, (req, res) => {
-      console.warn(`Received invalid request method: ${req.method} ${req.path}`);
+      console.warn(
+        `Received invalid request method: ${req.method} ${req.path}`
+      );
       return res.status(405).json({
         errorDescription: `${HTTP.err405}Cannot ${req.method} '${req.path}'.`,
       });
