@@ -131,6 +131,9 @@ const Marketplace = ({ setPage }) => {
 
   useEffect(() => {
     setPage("contact");
+
+    // IMPLEMENT DATA FETCHING HERE
+
     setOffers(TEST_OFFERS);
   }, []);
 
@@ -179,11 +182,15 @@ const Marketplace = ({ setPage }) => {
   return (
     <div className='w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10'>
       <div className='min-h-screen flex flex-col'>
-        <Form />
+        <Form
+          isOpen={openForm}
+          closeForm={() => setOpenForm(false)}
+          options={FILTERS}
+        />
         <div className='flex flex-row flex-wrap gap-1 mb-2'>
           <button
             className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
-            onClick={() => openForm((prev) => !prev)}
+            onClick={() => setOpenForm(true)}
           >
             <p className='p-0 m-0 text-sm'>DODAJ PODRĘCZNIK</p>
           </button>
@@ -197,8 +204,9 @@ const Marketplace = ({ setPage }) => {
             <p className='p-0 m-0 text-sm'>RESET</p>
           </button>
         </div>
-
-        {_generateOffers(offers, query)}
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-5 my-6 md:my-9 md:gap-4 lg:gap-7 w-full'>
+          {_generateOffers(offers, query)}
+        </div>
       </div>
     </div>
   );
