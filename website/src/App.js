@@ -10,6 +10,7 @@ import Edit from "./pages/Edit";
 import Events from "./pages/Events";
 import Contact from "./pages/Contact";
 import NumbersArchive from "./pages/NumbersArchive";
+import Marketplace from "./pages/Marketplace";
 import ShortLinkRedirect from "./components/Main/ShortLinkRedirect";
 import NavBar from "./components/Main/NavBar";
 import Footer from "./components/Main/Footer";
@@ -49,7 +50,7 @@ export default function App() {
     // Window width event listener
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  });
 
   useEffect(() => {
     if (page === "edit") {
@@ -183,7 +184,7 @@ export default function App() {
     <AuthProvider setUserCallback={setUserPermissions}>
       <Routes>
         <Route
-          path="/"
+          path='/'
           element={
             <Layout
               page={page}
@@ -207,7 +208,7 @@ export default function App() {
             }
           />
           <Route
-            path="aktualnosci"
+            path='aktualnosci'
             element={
               <News
                 setPage={setPage}
@@ -218,7 +219,7 @@ export default function App() {
             }
           >
             <Route
-              path="post"
+              path='post'
               element={
                 <Post
                   user={userEmail}
@@ -229,7 +230,7 @@ export default function App() {
               }
             >
               <Route
-                path=":postID"
+                path=':postID'
                 element={
                   <Post
                     setPage={setPage}
@@ -241,7 +242,7 @@ export default function App() {
             </Route>
           </Route>
           <Route
-            path="wydarzenia"
+            path='wydarzenia'
             element={
               <Events
                 setPage={setPage}
@@ -251,9 +252,10 @@ export default function App() {
               />
             }
           />
-          <Route path="kontakt" element={<Contact setPage={setPage} />} />
+          <Route path='kontakt' element={<Contact setPage={setPage} />} />
+          <Route path='kiermasz' element={<Marketplace setPage={setPage} />} />
           <Route
-            path="edycja"
+            path='edycja'
             element={
               <Edit
                 setPage={setPage}
@@ -266,7 +268,7 @@ export default function App() {
             }
           />
           <Route
-            path="archiwum-numerkow"
+            path='archiwum-numerkow'
             element={
               <NumbersArchive
                 setPage={setPage}
@@ -276,7 +278,7 @@ export default function App() {
               />
             }
           />
-          <Route path="*" element={<ShortLinkRedirect setPage={setPage} />} />
+          <Route path='*' element={<ShortLinkRedirect setPage={setPage} />} />
           {/* <Route path="*" element={<NotFound setPage={setPage} />} /> */}
         </Route>
       </Routes>
@@ -292,9 +294,9 @@ const Layout = ({
   footerVisible,
   screenWidth,
 }) => (
-  <main className="min-h-screen">
+  <main className='min-h-screen'>
     <div
-      className="-z-50 -left-12  -top-0 scale-[.4] md:scale-[.5] lg:scale-[.575] xl:scale-[.65] xl:-left-0 xl:-top-[1rem] origin-top-left absolute"
+      className='-z-50 -left-12  -top-0 scale-[.4] md:scale-[.5] lg:scale-[.575] xl:scale-[.65] xl:-left-0 xl:-top-[1rem] origin-top-left absolute'
       style={{
         width: "30em",
         height: "100vh",
@@ -345,7 +347,7 @@ const Layout = ({
       logoutAction={logoutAction}
       screenWidth={screenWidth}
     />
-    <div className="h-14 md:h-[4.5rem]" />
+    <div className='h-14 md:h-[4.5rem]' />
     <Outlet />
     <ScrollToTop />
     <LoginScreen screenWidth={screenWidth} />
