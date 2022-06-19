@@ -16,12 +16,13 @@ const bookAttributeSanitisers = {
   name: (name) => name || null,
   studentClass: (studentClass) => studentClass || null,
   email: (email) => email || null,
-  quality: (quality) => quality || "dobra",
+  quality: (quality) => quality || null,
   publisher: (publisher) => publisher || null,
+  subject: (subject) => subject || null,
   year: (year) => year || null,
   photo: (photo) => photo || null,
   level: (level) => level || null,
-  content: (content) => content || "Opis Książki...",
+  price: (price) => price || null,
 };
 
 router
