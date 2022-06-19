@@ -82,42 +82,34 @@ const TEST_OFFERS = [
   },
 ];
 
-const FILTERS = [
-  "polski",
-  "angielski",
-  "niemiecki",
-  "hiszpański",
-  "francuski",
-  "matematyka",
-  "fizyka",
-  "chemia",
-  "biologia",
-  "geografia",
-  "historia",
-  "HiT",
-  "HiS",
-  "WoS",
-  "informatyka",
-  "ekonomia",
-  "ToK",
-  "przedsiębiorczość",
-  "kultura",
-  "inne",
-  "1. liceum",
-  "2. liceum",
-  "3. liceum",
-  "4. liceum",
-  "1. DP",
-  "2. DP",
-  "Nowa Era",
-  "Operon",
-  "WSiP",
-  "Oxford",
-  "nowa",
-  "używana",
-  "rozszerzony",
-  "podstawowy",
-];
+const FILTERS = {
+  SUBJECT: [
+    "polski",
+    "angielski",
+    "niemiecki",
+    "hiszpański",
+    "francuski",
+    "matematyka",
+    "fizyka",
+    "chemia",
+    "biologia",
+    "geografia",
+    "historia",
+    "HiT",
+    "HiS",
+    "WoS",
+    "informatyka",
+    "ekonomia",
+    "ToK",
+    "przedsiębiorczość",
+    "kultura",
+    "inne",
+  ],
+  CLASS: ["1. liceum", "2. liceum", "3. liceum", "4. liceum", "1. DP", "2. DP"],
+  QUALITY: ["nowa", "używana"],
+  LEVEL: ["rozszerzony", "podstawowy"],
+  OTHER: ["Nowa Era", "Operon", "WSiP", "Oxford"],
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -167,7 +159,14 @@ const Marketplace = ({ setPage }) => {
 
   // generate filters based on avialable ones
   const _generateFilters = (filters, activeQuerry) => {
-    return filters.map((filter, idx) => (
+    const joinedFilters = [
+      ...filters.SUBJECT,
+      ...filters.CLASS,
+      ...filters.LEVEL,
+      ...filters.QUALITY,
+      ...filters.OTHER,
+    ];
+    return joinedFilters.map((filter, idx) => (
       <Filter
         key={`${filter}-${idx}`}
         name={filter}
@@ -178,18 +177,27 @@ const Marketplace = ({ setPage }) => {
   };
 
   return (
-    <div className='w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-8 md:pt-16'>
+    <div className='w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10'>
       <div className='min-h-screen flex flex-col'>
         <Form />
-        <div className='flex flex-row flex-wrap gap-1'>
+        <div className='flex flex-row flex-wrap gap-1 mb-2'>
           <button
-            className='bg-primary text-white rounded-md inline-block px-3 py-1'
+            className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
             onClick={() => openForm((prev) => !prev)}
           >
             <p className='p-0 m-0 text-sm'>DODAJ PODRĘCZNIK</p>
           </button>
-          {_generateFilters(FILTERS, query)}
         </div>
+        <div className='flex flex-row flex-wrap gap-1 mb-8'>
+          {_generateFilters(FILTERS, query)}
+          <button
+            className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
+            onClick={() => dispatch({ type: "RESET" })}
+          >
+            <p className='p-0 m-0 text-sm'>RESET</p>
+          </button>
+        </div>
+
         {_generateOffers(offers, query)}
       </div>
     </div>

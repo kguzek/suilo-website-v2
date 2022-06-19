@@ -12,7 +12,12 @@ const Filter = ({ name, onChange, active }) => {
   return (
     <button
       className={`
-        ${active ? "bg-primary text-white" : "bg-gray-200 text-text1"}
+        ${
+          active
+            ? "bg-primary text-white hover:bg-primaryDark"
+            : "bg-gray-200 text-text1 hover:bg-gray-300"
+        }
+        transition-all duration-75
         rounded-md inline-block px-3 py-1
       `}
       onClick={() => _onChange()}
