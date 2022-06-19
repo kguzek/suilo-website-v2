@@ -20,19 +20,19 @@ const Footer = ({ isVisible }) => {
 
   return (
     <div
-      className={`flex w-screen bg-footer text-white font-light text-[.8rem] block mt-7 justify-center align-middle relative`}
+      className={`flex w-screen bg-footer text-white font-light text-[.8rem] mt-7 justify-center align-middle relative`}
     >
       <DialogBox
         header="Hey, you! You're finally awake."
-        content="Strona została dostarczona dla Was dzięki pracy w pocie czoła przez drużynę w składzie: Konrad Guzek, Adam Maciuga, Mikołaj Mrózek"
-        buttonOneLabel="Super!"
-        buttonTwoLabel="Dziękuję"
-        type="DIALOG"
+        content='Strona została dostarczona dla Was dzięki pracy w pocie czoła przez drużynę w składzie: Konrad Guzek, Adam Maciuga, Mikołaj Mrózek'
+        buttonOneLabel='Super!'
+        buttonTwoLabel='Dziękuję'
+        type='DIALOG'
         isVisible={easterEgg}
         setVisible={setEasterEgg}
       />
       <p
-        className="my-2 mt-3 select-none"
+        className='my-2 mt-3 select-none'
         onClick={() => setClicks(clicks + 1)}
       >
         {WEBSITE_DOMAIN} | {new Date().getFullYear()} © Wszystkie prawa
