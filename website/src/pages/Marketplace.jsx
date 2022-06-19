@@ -3,6 +3,7 @@ import Filter from "../components/Marketplace/Filter";
 import Form from "../components/Marketplace/Form";
 import Card from "../components/Marketplace/Card";
 import { MetaTags } from "react-meta-tags";
+import { fetchWithToken } from "../firebase";
 
 const TEST_OFFERS = [
   {
@@ -124,15 +125,20 @@ const reducer = (state, action) => {
   }
 };
 
-const Marketplace = ({ setPage }) => {
+const Marketplace = ({ setPage, email, userInfo }) => {
   const [query, dispatch] = useReducer(reducer, []);
   const [offers, setOffers] = useState([]);
   const [openForm, setOpenForm] = useState(false);
 
   useEffect(() => {
     setPage("contact");
+    console.log(userInfo)
+    fetchWithToken("/books/", "GET").then((res)=>{
+      res.json().then(data => {
+        setOffers(data.contents)
+      })
+    })
 
-    // IMPLEMENT DATA FETCHING HERE
 
     setOffers(TEST_OFFERS);
   }, []);
@@ -150,12 +156,16 @@ const Marketplace = ({ setPage }) => {
             <Card
               key={`${offerProperties.title}-${idx}`}
               offerData={offerProperties}
+              email={email}
+              userInfo={userInfo}
             />
           ))
       : data.map((offerProperties, idx) => (
           <Card
             key={`${offerProperties.title}-${idx}`}
             offerData={offerProperties}
+            userEmail={email}
+            userInfo={userInfo}
           />
         ));
   };
@@ -187,14 +197,17 @@ const Marketplace = ({ setPage }) => {
           closeForm={() => setOpenForm(false)}
           options={FILTERS}
         />
-        <div className='flex flex-row flex-wrap gap-1 mb-2'>
-          <button
-            className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
-            onClick={() => setOpenForm(true)}
-          >
-            <p className='p-0 m-0 text-sm'>DODAJ PODRĘCZNIK</p>
-          </button>
-        </div>
+        {email &&
+            <div className='flex flex-row flex-wrap gap-1 mb-2'>
+            <button
+              className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
+              onClick={() => setOpenForm(true)}
+            >
+              <p className='p-0 m-0 text-sm'>DODAJ PODRĘCZNIK</p>
+            </button>
+            </div>
+        }
+       
         <div className='flex flex-row flex-wrap gap-1 mb-8'>
           {_generateFilters(FILTERS, query)}
           <button

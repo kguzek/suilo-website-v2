@@ -253,7 +253,7 @@ export default function App() {
             }
           />
           <Route path='kontakt' element={<Contact setPage={setPage} />} />
-          <Route path='kiermasz' element={<Marketplace setPage={setPage} />} />
+          <Route path='kiermasz' element={<Marketplace setPage={setPage} email={userEmail} userInfo={userPerms}/>} />
           <Route
             path='edycja'
             element={

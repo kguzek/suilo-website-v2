@@ -13,6 +13,7 @@ const Form = ({ isOpen, closeForm, options }) => {
   const [year,setYear] = useState();
   const [level, setLevel]  = useState("rozszerzony");
   const [price, setPrice] = useState();
+  const [photo, setPhoto] = useState();
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(e);
@@ -25,7 +26,8 @@ const Form = ({ isOpen, closeForm, options }) => {
       subject:subject,
       year:year,
       level:level,
-      price:price  
+      price:price,
+      photo:photo  
     }
     fetchWithToken("/books/", "POST", params).then((res) => {
       if (res.ok) {

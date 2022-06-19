@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Trash } from "react-feather";
+import { fetchWithToken } from "../../firebase";
 
-const Card = ({ offerData }) => {
+const Card = ({ offerData,userEmail,userInfo }) => {
   const {
     title,
     user,
@@ -15,17 +16,27 @@ const Card = ({ offerData }) => {
     photo,
     price,
     level,
+    id,
   } = offerData;
 
   const _handleDelete = () => {
-    // IMPLEMENT DELETING HERE
+    fetchWithToken("/books/" + id, "DELETE").then((res)=>{
+      console.log(res);
+    })
   };
 
   return (
     <div className='w-full'>
-      <button onClick={() => _handleDelete()}>
-        <Trash />
-      </button>
+      {
+        (userEmail === email || userInfo?.isAdmin)&&
+
+        <button onClick={() => _handleDelete()}>
+          <Trash />
+        </button>
+
+
+      }
+     
       <img
         src={photo}
         className='bg-gray-200/75 object-cover w-full aspect-[16/11] rounded-t-lg'
