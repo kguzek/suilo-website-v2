@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { fetchCachedData } from "../../misc";
+import React from "react";
 import CustomCalendar from "./CustomCalendar";
 
 const legendColours = [
@@ -28,18 +27,20 @@ const CalendarPreview = ({
   onMonthChange,
   onYearChange,
 }) => {
-  const _generateLegend = () => {
-    return eventSubtypes.map((el, i) => (
+  const _generateLegend = () =>
+    eventSubtypes.map((el, i) => (
       <li
         key={i}
-        className={`flex flex-row justify-start align-middle w-full my-2 lg:my-3 ${i === 1 ? "mb-4 mt-3 lg:mt-4 lg:mb-5" : null
-          } `}
+        className={`flex flex-row justify-start align-middle w-full my-2 lg:my-3 ${
+          i === 1 ? "mb-4 mt-3 lg:mt-4 lg:mb-5" : null
+        }`}
       >
         <div
-          className={`${i < 2
-            ? "h-6 w-6 lg:h-7 lg:w-7 "
-            : "w-3 h-3 lg:w-4 lg:h-4 ml-[1.1rem] lg:ml-[1.15rem]"
-            } rounded-full my-auto m-3 drop-shadow-2xl`}
+          className={`${
+            i < 2
+              ? "w-6 h-6 lg:h-7 lg:w-7 "
+              : "w-3 h-3 lg:w-4 lg:h-4 ml-[1.1rem] lg:ml-[1.15rem]"
+          } rounded-full my-auto m-3 drop-shadow-2xl`}
           style={{
             background:
               i < 2
@@ -53,7 +54,6 @@ const CalendarPreview = ({
         </p>
       </li>
     ));
-  };
 
   return (
     <div className="flex flex-col md:flex-row mx-auto justify-center lg:justify-evenly align-middle my-6 md:my-8 w-full sm:w-10/12 md:w-full lg:w-10/12 xl:-translate-x-10">

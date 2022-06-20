@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { X } from "react-feather";
 import { fetchWithToken } from "../../firebase";
-import { setErrorMessage } from "../../misc";
 
 const SUBJECT_IMAGES = {
   polski:
@@ -41,7 +40,7 @@ const SUBJECT_IMAGES = {
   inne: "https://images.unsplash.com/photo-1493612276216-ee3925520721?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80",
 };
 
-const Form = ({ isOpen, closeForm, options }) => {
+const Form = ({ isOpen, closeForm, options, handlePostResponse }) => {
   const [title, setTitle] = useState("");
   const [studentClass, setStudentClass] = useState("1. liceum");
   const [quality, setQuality] = useState("nowa");
@@ -51,6 +50,7 @@ const Form = ({ isOpen, closeForm, options }) => {
   const [level, setLevel] = useState("rozszerzony");
   const [price, setPrice] = useState();
   const [photo, setPhoto] = useState();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(e);
@@ -66,115 +66,46 @@ const Form = ({ isOpen, closeForm, options }) => {
       price: price,
       photo: photo,
     };
-    fetchWithToken("/books/", "POST", params).then((res) => {
-      if (res.ok) {
-        //whatever should  be done it it succeds
-      } else {
-        //whatever should be done it if fails
-      }
-    });
-    //IMPLEMENTSENDING OFFER AND VALIDATING ON SERVER
+    fetchWithToken("/books/", "POST", params).then(handlePostResponse);
   };
 
   useEffect(() => {
-    switch (subject) {
-      case "polski":
-        setPhoto(SUBJECT_IMAGES.polski);
-        break;
-      case "angielski":
-        setPhoto(SUBJECT_IMAGES.angielski);
-        break;
-      case "niemiecki":
-        setPhoto(SUBJECT_IMAGES.niemiecki);
-        break;
-      case "hiszpański":
-        setPhoto(SUBJECT_IMAGES.hiszpański);
-        break;
-      case "francuski":
-        setPhoto(SUBJECT_IMAGES.francuski);
-        break;
-      case "matematyka":
-        setPhoto(SUBJECT_IMAGES.matematyka);
-        break;
-      case "fizyka":
-        setPhoto(SUBJECT_IMAGES.fizyka);
-        break;
-      case "chemia":
-        setPhoto(SUBJECT_IMAGES.chemia);
-        break;
-      case "biologia":
-        setPhoto(SUBJECT_IMAGES.biologia);
-        break;
-      case "geografia":
-        setPhoto(SUBJECT_IMAGES.geografia);
-        break;
-      case "historia":
-        setPhoto(SUBJECT_IMAGES.historia);
-        break;
-      case "HiT":
-        setPhoto(SUBJECT_IMAGES.HiT);
-        break;
-      case "HiS":
-        setPhoto(SUBJECT_IMAGES.HiS);
-        break;
-      case "WoS":
-        setPhoto(SUBJECT_IMAGES.WoS);
-        break;
-      case "informatyka":
-        setPhoto(SUBJECT_IMAGES.informatyka);
-        break;
-      case "ekonomia":
-        setPhoto(SUBJECT_IMAGES.ekonomia);
-        break;
-      case "ToK":
-        setPhoto(SUBJECT_IMAGES.ToK);
-        break;
-      case "przedsiębiorczość":
-        setPhoto(SUBJECT_IMAGES.przedsiębiorczość);
-        break;
-      case "kultura":
-        setPhoto(SUBJECT_IMAGES.kultura);
-        break;
-      case "inne":
-        setPhoto(SUBJECT_IMAGES.inne);
-        break;
-      default:
-        setPhoto(SUBJECT_IMAGES.inne);
-    }
+    setPhoto(SUBJECT_IMAGES[subject]);
   }, [subject]);
 
   if (!isOpen) return null;
+
   return (
-    <div className='fixed flex h-screen w-screen justify-center align-middle inset-0 z-[99999999]'>
+    <div className="fixed flex h-screen w-screen justify-center align-middle inset-0 z-[99999999]">
       <div
         onClick={() => closeForm()}
-        className='bg-black/20 w-full h-full absolute inset-0'
+        className="bg-black/20 w-full h-full absolute inset-0"
       />
-      <div className='absolute drop-shadow-2xl bg-white rounded-xl p-5 top-[47.5%] -translate-y-[50%]'>
-        <div className='flex flex-row justify-end w-full '>
-          <button onClick={() => closeForm()} className='pointer'>
-            <X size={24} className='stroke-gray-500' />
+      <div className="absolute drop-shadow-2xl bg-white rounded-xl p-5 top-[47.5%] -translate-y-[50%]">
+        <div className="flex flex-row justify-end w-full ">
+          <button onClick={() => closeForm()} className="pointer">
+            <X size={24} className="stroke-gray-500" />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className='flex flex-col'>
-          <label className='flex flex-col pt-2 text-text4 text-sm'>
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <label className="flex flex-col pt-2 text-text4 text-sm">
             Tytuł
             <input
               required
-              className='text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md'
-              placeholder='np. Biologia na czasie 1'
-              type='text'
+              className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
+              placeholder="np. Biologia na czasie 1"
+              type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </label>
-          <label className='flex flex-col pt-2 text-text4 text-sm'>
+          <label className="flex flex-col pt-2 text-text4 text-sm">
             Przedmiot
             <select
               required
-              className='text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md'
-              name='subject'
-              placeholder='Wybierz z listy'
+              className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
+              name="subject"
+              placeholder="Wybierz z listy"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
             >
@@ -186,35 +117,35 @@ const Form = ({ isOpen, closeForm, options }) => {
             </select>
           </label>
 
-          <label className='flex flex-col pt-2 text-text4 text-sm'>
+          <label className="flex flex-col pt-2 text-text4 text-sm">
             Wydawca
             <input
               required
-              className='text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md'
-              placeholder='np. Nowa Era'
-              type='text'
+              className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
+              placeholder="np. Nowa Era"
+              type="text"
               value={publisher}
               onChange={(e) => setPublisher(e.target.value)}
             />
           </label>
-          <label className='flex flex-col pt-2 text-text4 text-sm'>
+          <label className="flex flex-col pt-2 text-text4 text-sm">
             Rok
             <input
               required
-              className='text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md'
-              placeholder='np. 2010'
-              type='number'
+              className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
+              placeholder="np. 2010"
+              type="number"
               value={year}
               onChange={(e) => setYear(e.target.value)}
             />
           </label>
-          <label className='flex flex-col pt-2 text-text4 text-sm'>
+          <label className="flex flex-col pt-2 text-text4 text-sm">
             Poziom
             <select
               required
-              className='text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md'
-              name='level'
-              placeholder='Wybierz z listy'
+              className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
+              name="level"
+              placeholder="Wybierz z listy"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
             >
@@ -225,13 +156,13 @@ const Form = ({ isOpen, closeForm, options }) => {
               ))}
             </select>
           </label>
-          <label className='flex flex-col pt-2 text-text4 text-sm'>
+          <label className="flex flex-col pt-2 text-text4 text-sm">
             Klasa
             <select
               required
-              className='text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md'
-              name='level'
-              placeholder='Wybierz z listy'
+              className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
+              name="level"
+              placeholder="Wybierz z listy"
               value={studentClass}
               onChange={(e) => setStudentClass(e.target.value)}
             >
@@ -242,13 +173,13 @@ const Form = ({ isOpen, closeForm, options }) => {
               ))}
             </select>
           </label>
-          <label className='flex flex-col pt-2 text-text4 text-sm'>
+          <label className="flex flex-col pt-2 text-text4 text-sm">
             Jakość
             <select
               required
-              className='text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md'
-              name='quality'
-              placeholder='Wybierz z listy'
+              className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
+              name="quality"
+              placeholder="Wybierz z listy"
               value={quality}
               onChange={(e) => setQuality(e.target.value)}
             >
@@ -259,20 +190,20 @@ const Form = ({ isOpen, closeForm, options }) => {
               ))}
             </select>
           </label>
-          <label className='flex flex-col pt-2 text-text4 text-sm'>
+          <label className="flex flex-col pt-2 text-text4 text-sm">
             Cena
             <input
               required
-              className='text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md'
-              type='number'
-              placeholder='np. 25'
+              className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
+              type="number"
+              placeholder="np. 25"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
             />
           </label>
           <button
-            type='submit'
-            className='bg-primary py-2 rounded-md text-white mt-4 hover:bg-primaryDark transition-all duration-100'
+            type="submit"
+            className="bg-primary py-2 rounded-md text-white mt-4 hover:bg-primaryDark transition-all duration-100"
           >
             Dodaj ogłoszenie
           </button>

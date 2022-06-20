@@ -2,8 +2,10 @@ import { useState, useEffect, useReducer } from "react";
 import Filter from "../components/Marketplace/Filter";
 import Form from "../components/Marketplace/Form";
 import Card from "../components/Marketplace/Card";
-import { MetaTags } from "react-meta-tags";
-import { fetchWithToken } from "../firebase";
+// import { MetaTags } from "react-meta-tags";
+import { fetchCachedData, setErrorMessage } from "../misc";
+import LoadingScreen from "../components/LoadingScreen";
+import DialogBox from "../components/DialogBox";
 
 const TEST_OFFERS = [
   {
@@ -127,20 +129,39 @@ const reducer = (state, action) => {
 
 const Marketplace = ({ setPage, email, userInfo }) => {
   const [query, dispatch] = useReducer(reducer, []);
-  const [offers, setOffers] = useState([]);
+  const [data, setData] = useState({ contents: TEST_OFFERS });
+  const [loaded, setLoaded] = useState(false);
   const [openForm, setOpenForm] = useState(false);
+
+  const [popupSuccess, setPopupSuccess] = useState(false);
+  const [popupDelete, setPopupDelete] = useState(false);
+  const [popupError, setPopupError] = useState(false);
+  const [errorCode, setErrorCode] = useState(null);
+
+  function fetchBooks(force = false) {
+    const fetchArgs = {
+      setData,
+      setLoaded,
+      updateCache: force,
+    };
+    fetchCachedData("books", "/books", fetchArgs);
+  }
 
   useEffect(() => {
     setPage("contact");
-    console.log(userInfo);
-    fetchWithToken("/books/", "GET").then((res) => {
-      res.json().then((data) => {
-        setOffers(data.contents);
-      });
-    });
-
-    setOffers(TEST_OFFERS);
+    // console.log(userInfo);
+    fetchBooks();
   }, []);
+
+  function handlePostResponse(res) {
+    if (res.ok) {
+      fetchBooks(true);
+      setPopupSuccess(true);
+    } else {
+      setErrorCode(res.status);
+      setErrorMessage(res, setPopupError);
+    }
+  }
 
   // generate offers based on querry
   const _generateOffers = (data, filter) => {
@@ -188,40 +209,54 @@ const Marketplace = ({ setPage, email, userInfo }) => {
     ));
   };
 
+  if (!loaded) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className='w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10'>
-      <div className='min-h-screen flex flex-col'>
+    <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10">
+      <DialogBox
+        header={`Bład! (HTTP ${errorCode})`}
+        content="Nastąpił błąd podczas dodawania książki. Spróbuj ponownie."
+        extra={popupError}
+        type="DIALOG"
+        buttonOneLabel="Ok"
+        isVisible={popupError}
+        setVisible={setPopupError}
+      />
+      <div className="min-h-screen flex flex-col">
         <Form
           isOpen={openForm}
           closeForm={() => setOpenForm(false)}
           options={FILTERS}
+          handlePostResponse={handlePostResponse}
         />
         {email ? (
-          <div className='flex flex-row flex-wrap gap-1 mb-2'>
+          <div className="flex flex-row flex-wrap gap-1 mb-2">
             <button
-              className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
+              className="bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark"
               onClick={() => setOpenForm(true)}
             >
-              <p className='p-0 m-0 text-sm'>DODAJ PODRĘCZNIK</p>
+              <p className="p-0 m-0 text-sm">DODAJ PODRĘCZNIK</p>
             </button>
           </div>
         ) : (
-          <p className='text-text4 text-sm py-1'>
+          <p className="text-text4 text-sm py-1">
             Zaloguj się, aby dodać podręcznik
           </p>
         )}
 
-        <div className='flex flex-row flex-wrap gap-1 mb-8'>
+        <div className="flex flex-row flex-wrap gap-1 mb-8">
           {_generateFilters(FILTERS, query)}
           <button
-            className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
+            className="bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark"
             onClick={() => dispatch({ type: "RESET" })}
           >
-            <p className='p-0 m-0 text-sm'>RESET</p>
+            <p className="p-0 m-0 text-sm">RESET</p>
           </button>
         </div>
-        <div className='grid items-stretch grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5 my-6 md:my-9 md:gap-4 lg:gap-5 w-full'>
-          {_generateOffers(offers, query)}
+        <div className="grid items-stretch grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5 my-6 md:my-9 md:gap-4 lg:gap-5 w-full">
+          {_generateOffers(data.contents, query)}
         </div>
       </div>
     </div>
