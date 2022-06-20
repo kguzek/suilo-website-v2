@@ -54,7 +54,7 @@ async function validateToken(req, res, next, requiredPerm) {
         const canEditThisBook =
           requiredPerm === "books" &&
           req.method === "DELETE" &&
-          bookIDs.includes(req.path.split("/").at(-1));
+          bookIDs.includes(req.path.split("/")[2]);
         if (
           requiredPerm &&
           !(isAdmin || canEdit.includes(requiredPerm) || canEditThisBook)
