@@ -132,13 +132,12 @@ const Marketplace = ({ setPage, email, userInfo }) => {
 
   useEffect(() => {
     setPage("contact");
-    console.log(userInfo)
-    fetchWithToken("/books/", "GET").then((res)=>{
-      res.json().then(data => {
-        setOffers(data.contents)
-      })
-    })
-
+    console.log(userInfo);
+    fetchWithToken("/books/", "GET").then((res) => {
+      res.json().then((data) => {
+        setOffers(data.contents);
+      });
+    });
 
     setOffers(TEST_OFFERS);
   }, []);
@@ -197,17 +196,17 @@ const Marketplace = ({ setPage, email, userInfo }) => {
           closeForm={() => setOpenForm(false)}
           options={FILTERS}
         />
-        {email &&
-            <div className='flex flex-row flex-wrap gap-1 mb-2'>
+        {email && (
+          <div className='flex flex-row flex-wrap gap-1 mb-2'>
             <button
               className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
               onClick={() => setOpenForm(true)}
             >
               <p className='p-0 m-0 text-sm'>DODAJ PODRĘCZNIK</p>
             </button>
-            </div>
-        }
-       
+          </div>
+        )}
+
         <div className='flex flex-row flex-wrap gap-1 mb-8'>
           {_generateFilters(FILTERS, query)}
           <button
@@ -217,7 +216,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
             <p className='p-0 m-0 text-sm'>RESET</p>
           </button>
         </div>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-5 my-6 md:my-9 md:gap-4 lg:gap-7 w-full'>
+        <div className='grid items-stretch grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5 my-6 md:my-9 md:gap-4 lg:gap-5 w-full'>
           {_generateOffers(offers, query)}
         </div>
       </div>
