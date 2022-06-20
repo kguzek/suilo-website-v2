@@ -192,7 +192,6 @@ function randomArraySelection(array) {
 
 /** Creates a single document with the specified data in the specified collection and sends the appropriate response. */
 function createSingleDocument(data, res, collectionName, docID, sendRes) {
-  sendRes ?? (sendRes = res.status(200).json);
   const collectionRef = db.collection(collectionName);
   // attempts to add the data to the given collection
   const promise = docID
@@ -203,10 +202,16 @@ function createSingleDocument(data, res, collectionName, docID, sendRes) {
       updateCollection(collectionName, 1);
       // success; return the data along with the document id
       formatTimestamps(data);
-      return sendRes({ id: doc.id, ...data });
+      const toSend = { id: doc.id, ...data };
+      if (sendRes) {
+        sendRes(toSend);
+      } else {
+        res.status(200).json(toSend);
+      }
     })
     .catch((error) => {
       // return an error when the document could not be added, e.g. invalid collection name
+      console.error(error);
       return res.status(500).json({
         errorDescription:
           HTTP500 + "The specified document could not be created.",
