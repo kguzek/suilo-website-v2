@@ -46,10 +46,10 @@ const Form = ({ isOpen, closeForm, options, handlePostResponse }) => {
   const [quality, setQuality] = useState("nowa");
   const [publisher, setPublisher] = useState("");
   const [subject, setSubject] = useState("polski");
-  const [year, setYear] = useState();
+  const [year, setYear] = useState("");
   const [level, setLevel] = useState("rozszerzony");
-  const [price, setPrice] = useState();
-  const [photo, setPhoto] = useState();
+  const [price, setPrice] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
