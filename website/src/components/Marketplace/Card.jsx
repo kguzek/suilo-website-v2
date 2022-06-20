@@ -1,8 +1,13 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import { Trash2 } from "react-feather";
-import { fetchWithToken } from "../../firebase";
 
-const Card = ({ offerData, userEmail, userInfo }) => {
+const Card = ({
+  offerData,
+  userEmail,
+  userInfo,
+  setPopupDelete,
+  setDeletedBookID,
+}) => {
   const {
     title,
     user,
@@ -19,57 +24,54 @@ const Card = ({ offerData, userEmail, userInfo }) => {
     id,
   } = offerData;
 
-  const _handleDelete = () => {
-    fetchWithToken("/books/" + id, "DELETE").then((res) => {
-      console.log(res);
-    });
-  };
-
   return (
-    <div className='w-full drop-shadow-6xl relative bg-white h-auto flex flex-col justify-between rounded-lg'>
+    <div className="w-full drop-shadow-6xl relative bg-white h-auto flex flex-col justify-between rounded-lg">
       {(userEmail === email || userInfo?.isAdmin) && (
         <button
-          onClick={() => _handleDelete()}
-          className='absolute top-2 left-2 bg-black/20 p-[.3rem] rounded-lg'
+          onClick={() => {
+            setPopupDelete(true);
+            setDeletedBookID(id);
+          }}
+          className="absolute top-2 left-2 bg-black/20 p-[.3rem] rounded-lg"
         >
-          <Trash2 size={22} color='white' />
+          <Trash2 size={22} color="white" />
         </button>
       )}
       <div>
         <img
           src={photo}
-          className='bg-gray-200/75 object-cover w-full aspect-[11/6] rounded-t-lg'
-          loading='lazy'
+          className="bg-gray-200/75 object-cover w-full aspect-[11/6] rounded-t-lg"
+          loading="lazy"
         />
-        <div className='px-3 pt-3'>
+        <div className="px-3 pt-3">
           <div>
-            <p className='text-text1 leading-6 font-medium text-xl tracking-tight'>
+            <p className="text-text1 leading-6 font-medium text-xl tracking-tight">
               {title}
             </p>
-            <p className='text-text4 text-sm -mt-[.15rem] pb-1'>
+            <p className="text-text4 text-sm -mt-[.15rem] pb-1">
               {publisher} - {year}
             </p>
-            <p className='text-text4 text-sm'>
-              Przedmiot: <span className='text-text2 text-base'>{subject}</span>
+            <p className="text-text4 text-sm">
+              Przedmiot: <span className="text-text2 text-base">{subject}</span>
             </p>
-            <p className='text-text4 text-sm'>
+            <p className="text-text4 text-sm">
               Poziom:{" "}
-              <span className='text-text2 text-base'>
+              <span className="text-text2 text-base">
                 {level} - {studentClass}
               </span>
             </p>
-            <p className='text-text4 text-sm'>
-              Stan: <span className='text-text2 text-base'>{quality}</span>
+            <p className="text-text4 text-sm">
+              Stan: <span className="text-text2 text-base">{quality}</span>
             </p>
-            <a href={`mailto:${email}`} className=''>
+            <a href={`mailto:${email}`} className="">
               {email}
             </a>
           </div>
         </div>
       </div>
 
-      <div className='w-full flex flex-row justify-end pt-1'>
-        <p className='pr-4 pb-3 text-primary font-semibold text-2xl'>
+      <div className="w-full flex flex-row justify-end pt-1">
+        <p className="pr-4 pb-3 text-primary font-semibold text-2xl">
           {price} zł
         </p>
       </div>

@@ -6,6 +6,7 @@ import Card from "../components/Marketplace/Card";
 import { fetchCachedData, setErrorMessage } from "../misc";
 import LoadingScreen from "../components/LoadingScreen";
 import DialogBox from "../components/DialogBox";
+import { fetchWithToken } from "../firebase";
 
 const TEST_OFFERS = [
   {
@@ -133,8 +134,9 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   const [loaded, setLoaded] = useState(false);
   const [openForm, setOpenForm] = useState(false);
 
-  const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupDelete, setPopupDelete] = useState(false);
+  const [deletedBookID, setDeletedBookID] = useState(null);
+  const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupError, setPopupError] = useState(false);
   const [errorCode, setErrorCode] = useState(null);
 
@@ -165,6 +167,17 @@ const Marketplace = ({ setPage, email, userInfo }) => {
 
   // generate offers based on querry
   const _generateOffers = (data, filter) => {
+    const getCard = (offerProperties, idx) => (
+      <Card
+        key={`${offerProperties.title}-${idx}`}
+        offerData={offerProperties}
+        userEmail={email}
+        userInfo={userInfo}
+        setPopupDelete={setPopupDelete}
+        setDeletedBookID={setDeletedBookID}
+      />
+    );
+
     return query[0] // if query is empty enerate all offers
       ? data
           .filter((offer) =>
@@ -172,22 +185,8 @@ const Marketplace = ({ setPage, email, userInfo }) => {
               query.includes(offerProperty)
             )
           )
-          .map((offerProperties, idx) => (
-            <Card
-              key={`${offerProperties.title}-${idx}`}
-              offerData={offerProperties}
-              email={email}
-              userInfo={userInfo}
-            />
-          ))
-      : data.map((offerProperties, idx) => (
-          <Card
-            key={`${offerProperties.title}-${idx}`}
-            offerData={offerProperties}
-            userEmail={email}
-            userInfo={userInfo}
-          />
-        ));
+          .map(getCard)
+      : data.map(getCard);
   };
 
   // generate filters based on avialable ones
@@ -209,12 +208,36 @@ const Marketplace = ({ setPage, email, userInfo }) => {
     ));
   };
 
+  const _handleDelete = () => {
+    fetchWithToken("/books/" + deletedBookID, "DELETE").then((res) => {
+      console.debug(res);
+      fetchBooks(true);
+    });
+  };
+
   if (!loaded) {
     return <LoadingScreen />;
   }
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10">
+      <DialogBox
+        header="Sukces!"
+        content="Pomyślnie dodano książkę do kiermaszu."
+        duration={2000}
+        isVisible={popupSuccess}
+        setVisible={setPopupSuccess}
+      />
+      <DialogBox
+        header="Uwaga!"
+        content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
+        type="DIALOG"
+        buttonOneLabel="Nie usuwaj"
+        buttonTwoLabel="Usuń"
+        buttonTwoCallback={_handleDelete}
+        isVisible={popupDelete}
+        setVisible={setPopupDelete}
+      />
       <DialogBox
         header={`Bład! (HTTP ${errorCode})`}
         content="Nastąpił błąd podczas dodawania książki. Spróbuj ponownie."
