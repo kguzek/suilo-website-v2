@@ -196,7 +196,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
           closeForm={() => setOpenForm(false)}
           options={FILTERS}
         />
-        {email && (
+        {email ? (
           <div className='flex flex-row flex-wrap gap-1 mb-2'>
             <button
               className='bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark'
@@ -205,6 +205,10 @@ const Marketplace = ({ setPage, email, userInfo }) => {
               <p className='p-0 m-0 text-sm'>DODAJ PODRĘCZNIK</p>
             </button>
           </div>
+        ) : (
+          <p className='text-text4 text-sm py-1'>
+            Zaloguj się, aby dodać podręcznik
+          </p>
         )}
 
         <div className='flex flex-row flex-wrap gap-1 mb-8'>

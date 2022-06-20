@@ -39,6 +39,7 @@ const Card = ({ offerData, userEmail, userInfo }) => {
         <img
           src={photo}
           className='bg-gray-200/75 object-cover w-full aspect-[11/6] rounded-t-lg'
+          loading='lazy'
         />
         <div className='px-3 pt-3'>
           <div>
