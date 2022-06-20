@@ -76,6 +76,73 @@ const Form = ({ isOpen, closeForm, options }) => {
     //IMPLEMENTSENDING OFFER AND VALIDATING ON SERVER
   };
 
+  useEffect(() => {
+    switch (subject) {
+      case "polski":
+        setPhoto(SUBJECT_IMAGES.polski);
+        break;
+      case "angielski":
+        setPhoto(SUBJECT_IMAGES.angielski);
+        break;
+      case "niemiecki":
+        setPhoto(SUBJECT_IMAGES.niemiecki);
+        break;
+      case "hiszpański":
+        setPhoto(SUBJECT_IMAGES.hiszpański);
+        break;
+      case "francuski":
+        setPhoto(SUBJECT_IMAGES.francuski);
+        break;
+      case "matematyka":
+        setPhoto(SUBJECT_IMAGES.matematyka);
+        break;
+      case "fizyka":
+        setPhoto(SUBJECT_IMAGES.fizyka);
+        break;
+      case "chemia":
+        setPhoto(SUBJECT_IMAGES.chemia);
+        break;
+      case "biologia":
+        setPhoto(SUBJECT_IMAGES.biologia);
+        break;
+      case "geografia":
+        setPhoto(SUBJECT_IMAGES.geografia);
+        break;
+      case "historia":
+        setPhoto(SUBJECT_IMAGES.historia);
+        break;
+      case "HiT":
+        setPhoto(SUBJECT_IMAGES.HiT);
+        break;
+      case "HiS":
+        setPhoto(SUBJECT_IMAGES.HiS);
+        break;
+      case "WoS":
+        setPhoto(SUBJECT_IMAGES.WoS);
+        break;
+      case "informatyka":
+        setPhoto(SUBJECT_IMAGES.informatyka);
+        break;
+      case "ekonomia":
+        setPhoto(SUBJECT_IMAGES.ekonomia);
+        break;
+      case "ToK":
+        setPhoto(SUBJECT_IMAGES.ToK);
+        break;
+      case "przedsiębiorczość":
+        setPhoto(SUBJECT_IMAGES.przedsiębiorczość);
+        break;
+      case "kultura":
+        setPhoto(SUBJECT_IMAGES.kultura);
+        break;
+      case "inne":
+        setPhoto(SUBJECT_IMAGES.inne);
+        break;
+      default:
+        setPhoto(SUBJECT_IMAGES.inne);
+    }
+  }, [subject]);
+
   if (!isOpen) return null;
   return (
     <div className='fixed flex h-screen w-screen justify-center align-middle inset-0 z-[99999999]'>
