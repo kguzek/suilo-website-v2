@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Trash } from "react-feather";
+import { Trash2 } from "react-feather";
 import { fetchWithToken } from "../../firebase";
 
-const Card = ({ offerData,userEmail,userInfo }) => {
+const Card = ({ offerData, userEmail, userInfo }) => {
   const {
     title,
     user,
@@ -20,41 +20,57 @@ const Card = ({ offerData,userEmail,userInfo }) => {
   } = offerData;
 
   const _handleDelete = () => {
-    fetchWithToken("/books/" + id, "DELETE").then((res)=>{
+    fetchWithToken("/books/" + id, "DELETE").then((res) => {
       console.log(res);
-    })
+    });
   };
 
   return (
-    <div className='w-full'>
-      {
-        (userEmail === email || userInfo?.isAdmin)&&
-
-        <button onClick={() => _handleDelete()}>
-          <Trash />
+    <div className='w-full drop-shadow-6xl relative bg-white h-auto flex flex-col justify-between rounded-lg'>
+      {(userEmail === email || userInfo?.isAdmin) && (
+        <button
+          onClick={() => _handleDelete()}
+          className='absolute top-2 left-2 bg-black/20 p-[.3rem] rounded-lg'
+        >
+          <Trash2 size={22} color='white' />
         </button>
-
-
-      }
-     
-      <img
-        src={photo}
-        className='bg-gray-200/75 object-cover w-full aspect-[16/11] rounded-t-lg'
-      />
+      )}
       <div>
-        <p>{title}</p>
-        <p>
-          {publisher} - {year}
-        </p>
-        <p>Przedmiot: {subject}</p>
-        <p>
-          Poziom: {level} - {studentClass}
-        </p>
-        <p>Stan: {quality}</p>
-        <a href={`mailto:${email}`}>{email}</a>
-        <div>
-          <p>{price}</p>
+        <img
+          src={photo}
+          className='bg-gray-200/75 object-cover w-full aspect-[11/6] rounded-t-lg'
+        />
+        <div className='px-3 pt-3'>
+          <div>
+            <p className='text-text1 leading-6 font-medium text-xl tracking-tight'>
+              {title}
+            </p>
+            <p className='text-text4 text-sm -mt-[.15rem] pb-1'>
+              {publisher} - {year}
+            </p>
+            <p className='text-text4 text-sm'>
+              Przedmiot: <span className='text-text2 text-base'>{subject}</span>
+            </p>
+            <p className='text-text4 text-sm'>
+              Poziom:{" "}
+              <span className='text-text2 text-base'>
+                {level} - {studentClass}
+              </span>
+            </p>
+            <p className='text-text4 text-sm'>
+              Stan: <span className='text-text2 text-base'>{quality}</span>
+            </p>
+            <a href={`mailto:${email}`} className=''>
+              {email}
+            </a>
+          </div>
         </div>
+      </div>
+
+      <div className='w-full flex flex-row justify-end pt-1'>
+        <p className='pr-4 pb-3 text-primary font-semibold text-2xl'>
+          {price} zł
+        </p>
       </div>
     </div>
   );
