@@ -158,6 +158,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   function handlePostResponse(res) {
     if (res.ok) {
       fetchBooks(true);
+      setLoaded(false);
       setPopupSuccess(true);
     } else {
       setErrorCode(res.status);
@@ -212,6 +213,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
     fetchWithToken("/books/" + deletedBookID, "DELETE").then((res) => {
       console.debug(res);
       fetchBooks(true);
+      setLoaded(false);
     });
   };
 
