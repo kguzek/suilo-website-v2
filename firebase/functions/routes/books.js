@@ -4,8 +4,7 @@ const {
   createSingleDocument,
   sendSingleResponse,
   db,
-  updateSingleDocument,
-  admin,
+  fs,
 } = require("../util");
 
 const router = express.Router();
@@ -51,7 +50,7 @@ router
       db.collection("users")
         .doc(userID)
         .update({
-          bookIDs: admin.firestore.FieldValue.arrayUnion(bookResponse.id),
+          bookIDs: fs.FieldValue.arrayUnion(bookResponse.id),
         });
       res.json(bookResponse);
     });
