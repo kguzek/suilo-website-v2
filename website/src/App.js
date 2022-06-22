@@ -43,7 +43,6 @@ export default function App() {
   useEffect(() => {
     // Redirect to ensure HTTPS and no 'www' subdomain
     const IN_PRODUCTION = window.location.host.includes("suilo.pl");
-    console.log("Production:", IN_PRODUCTION);
     if (IN_PRODUCTION) {
       if (window.location.hostname !== "suilo.pl") {
         window.location.hostname = "suilo.pl";

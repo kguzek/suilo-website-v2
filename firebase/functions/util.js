@@ -6,10 +6,10 @@ const { dateToArray, serialiseDateArray } = require("./common");
 // Authorise Firebase
 admin.initializeApp({
   credential: admin.credential.cert({
-    project_id: process.env.GCLOUD_PROJECT,
-    client_email: process.env.SERVICE_ACCOUNT_CLIENT_EMAIL,
+    projectId: process.env.SERVICE_ACCOUNT_PROJECT_ID,
+    clientEmail: process.env.SERVICE_ACCOUNT_CLIENT_EMAIL,
     // replace `\` and `n` character pairs w/ single `\n` character
-    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    privateKey: process.env.SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/gm, "\n"),
   }),
 });
 
