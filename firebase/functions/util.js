@@ -1,10 +1,9 @@
 const admin = require("firebase-admin");
 
-// Private service account key
-const serviceAccount = require("./permissions.json");
 const { dateToArray, serialiseDateArray } = require("./common");
 
 // Authorise Firebase
+const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_DETAILS);
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 
 // Assign database reference
