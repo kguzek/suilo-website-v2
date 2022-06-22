@@ -1,10 +1,17 @@
 const admin = require("firebase-admin");
+require("dotenv").config();
 
 const { dateToArray, serialiseDateArray } = require("./common");
 
 // Authorise Firebase
-const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_DETAILS);
-admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+admin.initializeApp({
+  credential: admin.credential.cert({
+    project_id: process.env.GCLOUD_PROJECT,
+    client_email: process.env.SERVICE_ACCOUNT_CLIENT_EMAIL,
+    // replace `\` and `n` character pairs w/ single `\n` character
+    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+  }),
+});
 
 // Assign database reference
 const fs = admin.firestore;
