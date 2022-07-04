@@ -9,7 +9,7 @@ admin.initializeApp({
     projectId: process.env.SERVICE_ACCOUNT_PROJECT_ID,
     clientEmail: process.env.SERVICE_ACCOUNT_CLIENT_EMAIL,
     // replace `\` and `n` character pairs w/ single `\n` character
-    privateKey: process.env.SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/gm, "\n"),
+    privateKey: process.env.SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/gm, "\n"),
   }),
 });
 

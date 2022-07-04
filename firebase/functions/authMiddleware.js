@@ -50,23 +50,49 @@ async function validateToken(req, res, next, requiredPerm) {
       const isAdmin = userData?.isAdmin ?? false;
       const canEdit = userData?.canEdit ?? [];
       const bookIDs = userData?.bookIDs ?? [];
+
+      /** Accept the request. */
+      function authorise() {
+        console.info(
+          `Validated ${userRecord.displayName}'s ${req.method} request to endpoint '${req.path}'.`
+        );
+        req.userInfo = {
+          ...userInfo,
+          isAdmin,
+          canEdit,
+          books: bookIDs,
+        };
+        next();
+      }
+
       if (userData) {
-        const canEditThisBook =
-          requiredPerm === "books" &&
-          req.method === "DELETE" &&
-          bookIDs.includes(req.path.split("/")[2]);
-        if (
-          requiredPerm &&
-          !(isAdmin || canEdit.includes(requiredPerm) || canEditThisBook)
-        ) {
-          return send403(
-            undefined,
-            {
-              msg: "Missing permission for this endpoint.",
-            },
-            userRecord.displayName
-          );
+        // Allow public endpoints for everybody
+        // Allow all requests for admins
+        // Allow all requests for editors of this endpoint
+        if (!requiredPerm || isAdmin || canEdit.includes(requiredPerm)) {
+          return authorise();
         }
+        if (requiredPerm === "books") {
+          // Allow anybody to create books
+          if (req.method === "POST") {
+            return authorise();
+          }
+          // Allow users to delete their own books
+          if (
+            req.method === "DELETE" &&
+            bookIDs.includes(req.path.split("/")[2])
+          ) {
+            return authorise();
+          }
+        }
+
+        return send403(
+          undefined,
+          {
+            msg: "Missing permission for this endpoint.",
+          },
+          userRecord.displayName
+        );
       } else {
         // user is not yet in the database; add default entry
         docRefUser.set({
@@ -86,17 +112,7 @@ async function validateToken(req, res, next, requiredPerm) {
           );
         }
       }
-      // accept the request
-      console.info(
-        `Validated ${userRecord.displayName}'s ${req.method} request to endpoint '${req.path}'.`
-      );
-      req.userInfo = {
-        ...userInfo,
-        isAdmin,
-        canEdit,
-        books: bookIDs,
-      };
-      next();
+      authorise();
     });
   }
 
