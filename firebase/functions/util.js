@@ -455,6 +455,53 @@ function createGeneralInfoPacket(req, res) {
   );
 }
 
+function createElectionInfo(data, res) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      if (docRef) {
+        res.status(500).json({
+          errorDescription:
+            "Election info is already created update it with PUT or delete it to create a new one",
+        });
+      } else {
+        createSingleDocument(data, res, "info", 1);
+      }
+    });
+}
+function updateElectionInfo(data, res) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      if (docRef) {
+        const CurrData = docRef.data();
+        const currentTime = new Date();
+        formatTimestamps(CurrData);
+        const startDate = new Date(CurrData.startDate);
+        const endDate = new Date(CurrData.endDate);
+        if (currentTime > startDate && currentTime < endDate) {
+          res.status(500).json({
+            errorDescription:
+              "You are not allowed to edit settings during election",
+          });
+        } else {
+          db.collection("info")
+            .doc("1")
+            .update(data)
+            .then(() => {
+              res.status(200).json({ message: "Election info edited" });
+            });
+        }
+      } else {
+        res.status(500).json({
+          errorDescription: "There isn't a election info to update",
+        });
+      }
+    });
+}
+
 module.exports = {
   admin,
   db,
@@ -478,4 +525,6 @@ module.exports = {
   updateSingleDocument,
   deleteSingleDocument,
   createGeneralInfoPacket,
+  createElectionInfo,
+  updateElectionInfo,
 };

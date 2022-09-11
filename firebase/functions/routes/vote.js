@@ -7,6 +7,8 @@ const {
   createSingleDocument,
   updateSingleDocument,
   createGeneralInfoPacket,
+  createElectionInfo,
+  updateElectionInfo,
 } = require("../util");
 
 const voteAttributeSanitisers = {
@@ -64,8 +66,19 @@ router.post("/setup/election", (req, res) => {
     const sanitiser = voteAttributeSanitisers[attrib];
     data[attrib] = sanitiser(req.query[attrib] || req.body[attrib]);
   }
-  createSingleDocument(data, res, "info", 1);
+  createElectionInfo(data, res);
 });
+router.put("/setup/election", (req, res) => {
+  const data = {};
+  for (const attrib in voteAttributeSanitisers) {
+    const sanitiser = voteAttributeSanitisers[attrib];
+    if (req.query[attrib] || req.body[attrib]) {
+      data[attrib] = sanitiser(req.query[attrib] || req.body[attrib]);
+    }
+  }
+  updateElectionInfo(data, res);
+});
+
 router.post("/setup/candidate", (req, res) => {
   const data = { reachedTreshold: true, official: true };
   for (const attrib in candidateAttributeSanitisers) {
@@ -74,4 +87,5 @@ router.post("/setup/candidate", (req, res) => {
   }
   createSingleDocument(data, res, "candidate");
 });
+
 module.exports = router;
