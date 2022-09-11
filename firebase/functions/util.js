@@ -4,6 +4,8 @@ require("dotenv").config();
 const { dateToArray, serialiseDateArray } = require("./common");
 
 // Authorise Firebase
+/* 
+//Production
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.SERVICE_ACCOUNT_PROJECT_ID,
@@ -11,6 +13,11 @@ admin.initializeApp({
     // replace `\` and `n` character pairs w/ single `\n` character
     privateKey: process.env.SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/gm, "\n"),
   }),
+});
+*/
+//Local Emulator
+admin.initializeApp({
+  databaseURL: "http://localhost:8080",
 });
 
 // Assign database reference
