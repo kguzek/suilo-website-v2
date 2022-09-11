@@ -426,6 +426,34 @@ function deleteSingleDocument(req, res, collectionName) {
       });
   });
 }
+//Voting functions
+function createGeneralInfoPacket(req, res) {
+  const electionInfoProm = db.collection("info").doc("1").get();
+  const candidatesProm = db.collection("candidate").get();
+  Promise.all([electionInfoProm, candidatesProm]).then(
+    ([infoDoc, candidatesSnapshot]) => {
+      let response = infoDoc.data();
+      if (!response) {
+        res
+          .status(500)
+          .json({ errorDescription: "There are no active elections" });
+        return;
+      }
+      formatTimestamps(response);
+      let candidates = [];
+      if (candidatesSnapshot) {
+        candidatesSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data) {
+            candidates.push({ id: doc.id, ...data });
+          }
+        });
+      }
+      response["candidates"] = candidates;
+      res.status(200).json(response);
+    }
+  );
+}
 
 module.exports = {
   admin,
@@ -449,4 +477,5 @@ module.exports = {
   sendListResponse,
   updateSingleDocument,
   deleteSingleDocument,
+  createGeneralInfoPacket,
 };

@@ -6,6 +6,7 @@ const {
   dateToTimestamp,
   createSingleDocument,
   updateSingleDocument,
+  createGeneralInfoPacket,
 } = require("../util");
 
 const voteAttributeSanitisers = {
@@ -48,12 +49,16 @@ const voteAttributeSanitisers = {
           "4e",
         ],
 };
+const candidateAttributeSanitisers = {
+  name: (name) => name || "Imię",
+  surname: (surname) => surname || "Nazwisko",
+  className: (className) => className || "klasa",
+};
 
 router.get("/info", (req, res) => {
-  req.params.id = "1";
-  getDocRef(req, res, "info").then((docRef) => sendSingleResponse(docRef, res));
+  createGeneralInfoPacket(req, res);
 });
-router.post("/info", (req, res) => {
+router.post("/setup/election", (req, res) => {
   const data = {};
   for (const attrib in voteAttributeSanitisers) {
     const sanitiser = voteAttributeSanitisers[attrib];
@@ -61,8 +66,12 @@ router.post("/info", (req, res) => {
   }
   createSingleDocument(data, res, "info", 1);
 });
-router.put("/info", (req, res) => {
-  req.params.id = "1";
-  updateSingleDocument(req, res, "info", voteAttributeSanitisers);
+router.post("/setup/candidate", (req, res) => {
+  const data = { reachedTreshold: true, official: true };
+  for (const attrib in candidateAttributeSanitisers) {
+    const sanitiser = candidateAttributeSanitisers[attrib];
+    data[attrib] = sanitiser(req.query[attrib] || req.body[attrib]);
+  }
+  createSingleDocument(data, res, "candidate");
 });
 module.exports = router;
