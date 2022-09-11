@@ -10,6 +10,7 @@ const {
   createElectionInfo,
   updateElectionInfo,
   editClassList,
+  deleteSingleDocument,
 } = require("../util");
 
 const voteAttributeSanitisers = {
@@ -88,7 +89,9 @@ router.post("/setup/candidate", (req, res) => {
   }
   createSingleDocument(data, res, "candidate");
 });
-
+app.delete("/setup/candidate/:id", (req, res) =>
+  deleteSingleDocument(req, res, "candidate")
+);
 router.put("/setup/election/classes", (req, res) => {
   const classList = req.query["classList"] || req.body["classList"];
   if (Array.isArray(classList)) {
@@ -101,4 +104,5 @@ router.delete("/setup/election/classes", (req, res) => {
     editClassList(classList, res, false);
   }
 });
+
 module.exports = router;
