@@ -18,7 +18,7 @@ export const DEBUG_MODE = false;
 const USE_EMULATOR_API = false;
 
 /** The root URL for the Firebase backend API. */
-const API_URL = USE_EMULATOR_API
+export const API_URL = USE_EMULATOR_API
   ? "http://localhost:5001/suilo-page/europe-west1/app/api" // Temporary emulator API URL assignment
   : "https://europe-west1-suilo-page.cloudfunctions.net/app/api"; // Production cloud function
 
