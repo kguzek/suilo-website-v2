@@ -11,6 +11,7 @@ import { LinkEdit } from "../components/Editor/LinkEdit";
 import { PermissionEdit } from "../components/Editor/PermissionEdit";
 import LoadingScreen from "../components/LoadingScreen";
 import { DEBUG_MODE } from "../firebase";
+import { VotingEdit } from "../components/Editor/VotingEdit";
 
 const PAGES = {
   news: "Aktualności",
@@ -18,6 +19,7 @@ const PAGES = {
   calendar: "Kalendarz",
   links: "Skracanie linków",
   users: "Użytkownicy",
+  voting: "Głosowanie",
 };
 
 const PAGE_NAMES = Object.values(PAGES);
@@ -183,9 +185,10 @@ export default function Edit({
 
   // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {
-    DEBUG_MODE && console.debug(
-      "Waiting for the user to be determined before displaying edit screen."
-    );
+    DEBUG_MODE &&
+      console.debug(
+        "Waiting for the user to be determined before displaying edit screen."
+      );
     return <LoadingScreen />;
   }
 
@@ -260,14 +263,20 @@ export default function Edit({
               loaded={loadedLinks}
               refetchData={() => fetchLinks(true)}
             />
+          ) : selectedPage === PAGE_NAMES[4] ? (
+            <PermissionEdit
+              data={usersData}
+              loaded={loadedUsers}
+              refetchData={() => fetchUsers(true)}
+              userPerms={userPerms}
+              allPerms={Object.keys(PAGES)}
+            />
           ) : (
-            selectedPage === PAGE_NAMES[4] && (
-              <PermissionEdit
+            selectedPage === PAGE_NAMES[5] && (
+              <VotingEdit
                 data={usersData}
                 loaded={loadedUsers}
                 refetchData={() => fetchUsers(true)}
-                userPerms={userPerms}
-                allPerms={Object.keys(PAGES)}
               />
             )
           )}
