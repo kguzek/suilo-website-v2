@@ -1,6 +1,8 @@
 const admin = require("firebase-admin");
 require("dotenv").config();
 
+const FieldValue = admin.firestore.FieldValue;
+
 const { dateToArray, serialiseDateArray } = require("./common");
 
 // Authorise Firebase
@@ -501,7 +503,41 @@ function updateElectionInfo(data, res) {
       }
     });
 }
-
+function editClassList(classList, res, add) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      if (docRef) {
+        const CurrData = docRef.data();
+        const currentTime = new Date();
+        formatTimestamps(CurrData);
+        const startDate = new Date(CurrData.startDate);
+        const endDate = new Date(CurrData.endDate);
+        if (currentTime > startDate && currentTime < endDate) {
+          res.status(500).json({
+            errorDescription:
+              "You are not allowed to edit settings during election",
+          });
+        } else {
+          db.collection("info")
+            .doc("1")
+            .update({
+              classList: add
+                ? FieldValue.arrayUnion(...classList)
+                : FieldValue.arrayRemove(...classList),
+            })
+            .then(() => {
+              res.status(200).json({ message: "Class list updated" });
+            });
+        }
+      } else {
+        res.status(500).json({
+          errorDescription: "There isn't a election info to update",
+        });
+      }
+    });
+}
 module.exports = {
   admin,
   db,
@@ -527,4 +563,5 @@ module.exports = {
   createGeneralInfoPacket,
   createElectionInfo,
   updateElectionInfo,
+  editClassList,
 };

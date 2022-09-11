@@ -9,6 +9,7 @@ const {
   createGeneralInfoPacket,
   createElectionInfo,
   updateElectionInfo,
+  editClassList,
 } = require("../util");
 
 const voteAttributeSanitisers = {
@@ -88,4 +89,16 @@ router.post("/setup/candidate", (req, res) => {
   createSingleDocument(data, res, "candidate");
 });
 
+router.put("/setup/election/classes", (req, res) => {
+  const classList = req.query["classList"] || req.body["classList"];
+  if (Array.isArray(classList)) {
+    editClassList(classList, res, true);
+  }
+});
+router.delete("/setup/election/classes", (req, res) => {
+  const classList = req.query["classList"] || req.body["classList"];
+  if (Array.isArray(classList)) {
+    editClassList(classList, res, false);
+  }
+});
 module.exports = router;
