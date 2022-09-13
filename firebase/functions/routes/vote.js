@@ -12,6 +12,7 @@ const {
   editClassList,
   deleteSingleDocument,
   vote,
+  voteForCustomCandidate,
 } = require("../util");
 
 const voteAttributeSanitisers = {
@@ -71,15 +72,19 @@ router.post("/:id", (req, res) => {
   }
   vote(req, res, VoterInfo);
 });
-router.post("/:id", (req, res) => {
+router.post("/", (req, res) => {
   const candidate = { reachedTreshold: false, official: false, currVotes: 0 };
+  const preSanitized = req.query.candidate || req.body.candidate;
   for (const attrib in candidateAttributeSanitisers) {
     const sanitiser = candidateAttributeSanitisers[attrib];
-    candidate[attrib] = sanitiser(
-      req.query.candidate[attrib] || req.body.candidate[attrib]
-    );
+    candidate[attrib] = sanitiser(preSanitized[attrib]);
   }
-  //submit vote for new candidate
+  const VoterInfo = {};
+  for (const attrib in VoterAttributeSanitisers) {
+    const sanitiser = VoterAttributeSanitisers[attrib];
+    VoterInfo[attrib] = sanitiser(req.query[attrib] || req.body[attrib]);
+  }
+  voteForCustomCandidate(req, res, candidate, VoterInfo);
 });
 router.get("/info", (req, res) => {
   createGeneralInfoPacket(req, res);

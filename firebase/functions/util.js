@@ -620,12 +620,38 @@ function checkIfAbleTovote(req, res, next) {
           errorDescription: "There is no election",
         });
       }
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        errorDescription:
+          HTTP500 +
+          "Something went wrong and your vote couldn't have benn submited properly",
+        errorDetails: error.toString(),
+      });
     });
 }
 function vote(req, res, voterInfo) {
   checkIfAbleTovote(req, res, (settings) =>
     submitVoteForExistingCandidate(req, res, settings, voterInfo)
   );
+}
+function voteForCustomCandidate(req, res, candidate, voterInfo) {
+  checkIfAbleTovote(req, res, (settings) => {
+    db.collection("candidate")
+      .add(candidate)
+      .then((doc) => {
+        req.params.id = doc.id;
+        submitVoteForExistingCandidate(req, res, settings, voterInfo);
+      })
+      .catch((error) => {
+        return res.status(500).json({
+          errorDescription:
+            HTTP500 +
+            "Something went wrong and your vote couldn't have benn submited properly",
+          errorDetails: error.toString(),
+        });
+      });
+  });
 }
 module.exports = {
   admin,
@@ -654,4 +680,5 @@ module.exports = {
   updateElectionInfo,
   editClassList,
   vote,
+  voteForCustomCandidate,
 };
