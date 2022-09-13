@@ -11,6 +11,7 @@ const {
   updateElectionInfo,
   editClassList,
   deleteSingleDocument,
+  vote,
 } = require("../util");
 
 const voteAttributeSanitisers = {
@@ -58,7 +59,28 @@ const candidateAttributeSanitisers = {
   surname: (surname) => surname || "Nazwisko",
   className: (className) => className || "klasa",
 };
-
+const VoterAttributeSanitisers = {
+  gender: (gender) => gender || "Nie chcę podawać",
+  className: (className) => className || "Inna",
+};
+router.post("/:id", (req, res) => {
+  const VoterInfo = {};
+  for (const attrib in VoterAttributeSanitisers) {
+    const sanitiser = VoterAttributeSanitisers[attrib];
+    VoterInfo[attrib] = sanitiser(req.query[attrib] || req.body[attrib]);
+  }
+  vote(req, res, VoterInfo);
+});
+router.post("/:id", (req, res) => {
+  const candidate = { reachedTreshold: false, official: false, currVotes: 0 };
+  for (const attrib in candidateAttributeSanitisers) {
+    const sanitiser = candidateAttributeSanitisers[attrib];
+    candidate[attrib] = sanitiser(
+      req.query.candidate[attrib] || req.body.candidate[attrib]
+    );
+  }
+  //submit vote for new candidate
+});
 router.get("/info", (req, res) => {
   createGeneralInfoPacket(req, res);
 });
@@ -82,27 +104,26 @@ router.put("/setup/election", (req, res) => {
 });
 
 router.post("/setup/candidate", (req, res) => {
-  const data = { reachedTreshold: true, official: true };
+  const data = { reachedTreshold: true, official: true, currVotes: 0 };
   for (const attrib in candidateAttributeSanitisers) {
     const sanitiser = candidateAttributeSanitisers[attrib];
     data[attrib] = sanitiser(req.query[attrib] || req.body[attrib]);
   }
   createSingleDocument(data, res, "candidate");
 });
-app.delete("/setup/candidate/:id", (req, res) =>
+router.delete("/setup/candidate/:id", (req, res) =>
   deleteSingleDocument(req, res, "candidate")
 );
 router.put("/setup/election/classes", (req, res) => {
-  const classList = req.query["classList"] || req.body["classList"];
+  const classList = req.query.classList || req.body.classList;
   if (Array.isArray(classList)) {
     editClassList(classList, res, true);
   }
 });
 router.delete("/setup/election/classes", (req, res) => {
-  const classList = req.query["classList"] || req.body["classList"];
+  const classList = req.query.classList || req.body.classList;
   if (Array.isArray(classList)) {
     editClassList(classList, res, false);
   }
 });
-
 module.exports = router;

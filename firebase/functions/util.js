@@ -447,6 +447,7 @@ function createGeneralInfoPacket(req, res) {
         candidatesSnapshot.forEach((doc) => {
           const data = doc.data();
           if (data) {
+            delete data.currVotes;
             candidates.push({ id: doc.id, ...data });
           }
         });
@@ -462,12 +463,13 @@ function createElectionInfo(data, res) {
     .doc("1")
     .get()
     .then((docRef) => {
-      if (docRef) {
+      if (docRef.data()) {
         res.status(500).json({
           errorDescription:
             "Election info is already created update it with PUT or delete it to create a new one",
         });
       } else {
+        data.totalVotes = 0;
         createSingleDocument(data, res, "info", 1);
       }
     });
@@ -538,6 +540,93 @@ function editClassList(classList, res, add) {
       }
     });
 }
+function submitVoteForExistingCandidate(req, res, settings, voterInfo) {
+  db.collection("candidate")
+    .doc(req.params.id)
+    .get()
+    .then((docRef) => {
+      const currentCandidate = docRef.data();
+      if (currentCandidate) {
+        const votePromise = db.collection("votes").add({
+          candidate: req.params.id,
+          gender: voterInfo.gender,
+          className: voterInfo.className,
+        });
+        const candidatePromise = db
+          .collection("candidate")
+          .doc(req.params.id)
+          .update({
+            currVotes: FieldValue.increment(1),
+            reachedTreshold:
+              currentCandidate.currVotes + 1 >= settings.voteTreshold,
+          });
+        const usedAccountsPromise = db
+          .collection("usedAccounts")
+          .doc(req.userInfo.uid)
+          .set({ used: true });
+        Promise.all([votePromise, candidatePromise, usedAccountsPromise])
+          .then(([voteRef, candidateRef, usedAccountsRef]) => {
+            res.status(200).json({
+              message: "Vote Submited",
+            });
+          })
+          .catch((error) => {
+            return res.status(500).json({
+              errorDescription:
+                HTTP500 +
+                "Something went wrong and your vote couldn't have benn submited properly",
+              errorDetails: error.toString(),
+            });
+          });
+      } else {
+        res.status(500).json({
+          errorDescription:
+            "Candidate That you are trying to vote for doesn't exist",
+        });
+      }
+    });
+}
+function checkIfAbleTovote(req, res, next) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      const settings = docRef.data();
+      if (settings) {
+        const currentTime = new Date();
+        formatTimestamps(settings);
+        const startDate = new Date(settings.startDate);
+        const endDate = new Date(settings.endDate);
+        if (currentTime > startDate && currentTime < endDate) {
+          db.collection("usedAccounts")
+            .doc(req.userInfo.uid)
+            .get()
+            .then((userRef) => {
+              if (userRef.data()) {
+                res.status(500).json({
+                  errorDescription: "You can only vote once",
+                });
+              } else {
+                next(settings);
+              }
+            });
+        } else {
+          res.status(500).json({
+            errorDescription: "The election isnn't active",
+          });
+        }
+      } else {
+        res.status(500).json({
+          errorDescription: "There is no election",
+        });
+      }
+    });
+}
+function vote(req, res, voterInfo) {
+  checkIfAbleTovote(req, res, (settings) =>
+    submitVoteForExistingCandidate(req, res, settings, voterInfo)
+  );
+}
 module.exports = {
   admin,
   db,
@@ -564,4 +653,5 @@ module.exports = {
   createElectionInfo,
   updateElectionInfo,
   editClassList,
+  vote,
 };
