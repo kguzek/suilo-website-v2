@@ -85,6 +85,11 @@ async function validateToken(req, res, next, requiredPerm) {
             return authorise();
           }
         }
+        if (requiredPerm === "vote") {
+          if (!req.path.startsWith("/vote/setup")) {
+            return authorise();
+          }
+        }
 
         return send403(
           undefined,
