@@ -564,8 +564,20 @@ function submitVoteForExistingCandidate(req, res, settings, voterInfo) {
           .collection("usedAccounts")
           .doc(req.userInfo.uid)
           .set({ used: true });
-        Promise.all([votePromise, candidatePromise, usedAccountsPromise])
-          .then(([voteRef, candidateRef, usedAccountsRef]) => {
+        const infoPromise = db
+          .collection("info")
+          .doc("1")
+          .update({
+            totalVotes: FieldValue.increment(1),
+          });
+
+        Promise.all([
+          votePromise,
+          candidatePromise,
+          usedAccountsPromise,
+          infoPromise,
+        ])
+          .then(([voteRef, candidateRef, usedAccountsRef, infoRef]) => {
             res.status(200).json({
               message: "Vote Submited",
             });
