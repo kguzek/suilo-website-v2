@@ -127,11 +127,11 @@ export const PermissionEdit = ({
     const labelStyle = admin || disabled ? { color: "dimgrey" } : {};
     return (
       <div>
-        <label className="select-none">
+        <label className='select-none'>
           <input
-            type="checkbox"
+            type='checkbox'
             name={perm}
-            className="mr-2"
+            className='mr-2'
             checked={admin ? isAdmin : canEdit.has(perm)}
             onChange={admin ? setIsAdmin : onChange}
             disabled={admin || disabled}
@@ -143,90 +143,91 @@ export const PermissionEdit = ({
   }
 
   return (
-    <form className="w-full mt-6" onSubmit={_handleSubmit}>
+    <form className='w-full mt-6' onSubmit={_handleSubmit}>
       <DialogBox
-        header="Sukces!"
-        content="Pomyślnie dokonano wszelkich zmian"
+        header='Sukces!'
+        content='Pomyślnie dokonano wszelkich zmian'
         duration={2000}
         isVisible={popupSuccess}
         setVisible={setPopupSuccess}
       />
       <DialogBox
-        header="Uwaga!"
-        content="Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna."
-        type="DIALOG"
-        buttonOneLabel="Kontynuuj edycje"
-        buttonTwoLabel="Usuń"
+        header='Uwaga!'
+        content='Czy na pewno chcesz usunąć zawartość? Ta akcja jest nieodwracalna.'
+        type='DIALOG'
+        buttonOneLabel='Kontynuuj edycje'
+        buttonTwoLabel='Usuń'
         buttonTwoCallback={_handleDelete}
         isVisible={popupDelete}
         setVisible={setPopupDelete}
       />
       <DialogBox
         header={errorCode ? `Bład! (HTTP ${errorCode})` : "Błąd!"}
-        content="Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie."
+        content='Nastąpił błąd podczas wykonywania tej akcji. Spróbuj ponownie.'
         extra={popupError}
-        type="DIALOG"
-        buttonOneLabel="Ok"
+        type='DIALOG'
+        buttonOneLabel='Ok'
         isVisible={popupError}
         setVisible={setPopupError}
       />
       <InputDropdown
-        label="Użytkownik do edycji"
+        label='Użytkownik do edycji'
         currentValue={currentlyActive}
         onChangeCallback={setCurrentlyActive}
-        defaultLabel="Nowy użytkownik"
+        defaultLabel='Nowy użytkownik'
         valueDisplayObject={users}
       />
       <InputBox
-        name="email"
-        placeholder="Adres mailowy użytkownika"
+        name='email'
+        placeholder='Adres mailowy użytkownika'
         value={email}
         onChange={setEmail}
         maxLength={128}
         choices={data.contents?.map((user) => user.email) ?? []}
         disabled={currentlyActive !== "_default"}
       />
-      <PermissionCheckbox perm="isAdmin">Administrator</PermissionCheckbox>
+      <PermissionCheckbox perm='isAdmin'>Administrator</PermissionCheckbox>
+      <PermissionCheckbox perm='isAdmin'>Edycja głosowania</PermissionCheckbox>
       {allPerms.map((perm, idx) => (
         <PermissionCheckbox key={idx} perm={perm}>
           {PERMISSION_NAMES[idx]}
         </PermissionCheckbox>
       ))}
-      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
+      <div className='fr' style={{ width: "100%", justifyContent: "right" }}>
         {currentlyActive !== "_default" &&
           (clickedDelete ? (
             <button
-              type="button"
-              className="delete-btn select-none cursor-wait"
+              type='button'
+              className='delete-btn select-none cursor-wait'
               disabled
               style={{ pointerEvents: "none" }}
               onClick={() => setPopupDelete(true)}
             >
-              <Trash color="rgb(252, 63, 30)" size={20} />
+              <Trash color='rgb(252, 63, 30)' size={20} />
               <p>usuń użytkownika</p>
             </button>
           ) : (
             <button
-              type="button"
-              className="delete-btn select-none cursor-pointer"
+              type='button'
+              className='delete-btn select-none cursor-pointer'
               style={{ pointerEvents: "all" }}
               onClick={() => setPopupDelete(true)}
             >
-              <Trash color="rgb(252, 63, 30)" size={20} />
+              <Trash color='rgb(252, 63, 30)' size={20} />
               <p>usuń użytkownika</p>
             </button>
           ))}
         {clickedSubmit ? (
           <button
-            type="submit"
-            className="add-btn select-none cursor-wait"
+            type='submit'
+            className='add-btn select-none cursor-wait'
             disabled
             style={{ pointerEvents: "none" }}
           >
             {currentlyActive !== "_default" ? (
-              <Edit3 color="#FFFFFF" size={24} />
+              <Edit3 color='#FFFFFF' size={24} />
             ) : (
-              <Plus color="#FFFFFF" size={24} />
+              <Plus color='#FFFFFF' size={24} />
             )}
             <p>
               {currentlyActive !== "_default"
@@ -236,14 +237,14 @@ export const PermissionEdit = ({
           </button>
         ) : (
           <button
-            type="submit"
-            className="add-btn select-none cursor-pointer"
+            type='submit'
+            className='add-btn select-none cursor-pointer'
             style={{ pointerEvents: "all" }}
           >
             {currentlyActive !== "_default" ? (
-              <Edit3 color="#FFFFFF" size={24} />
+              <Edit3 color='#FFFFFF' size={24} />
             ) : (
-              <Plus color="#FFFFFF" size={24} />
+              <Plus color='#FFFFFF' size={24} />
             )}
             <p>
               {currentlyActive !== "_default"

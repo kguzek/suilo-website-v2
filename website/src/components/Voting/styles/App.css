@@ -33,8 +33,6 @@
   border-radius: 15px;
   -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
           box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
-  -webkit-transition: all 200ms ease-in-out;
-  transition: all 200ms ease-in-out;
 }
 
 @media (max-width: 620px) {
@@ -67,7 +65,7 @@
   margin-top: 15px;
   padding: 0;
   text-transform: uppercase;
-  letter-spacing: .005em;
+  letter-spacing: 0.005em;
   -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
@@ -90,7 +88,7 @@
 
 @media (max-width: 620px) {
   .h2 {
-    font-size: .8em;
+    font-size: 0.8em;
   }
 }
 
@@ -111,12 +109,13 @@
 }
 
 .time-label {
-  font-size: .9em;
+  font-size: 0.9em;
 }
 
 .time-number {
   font-size: 3em;
   font-weight: 500;
+  padding-right: 0.05em;
 }
 
 @media (max-width: 620px) {
@@ -136,7 +135,7 @@
 
 @media (max-width: 620px) {
   .countdown-label {
-    font-size: .8em;
+    font-size: 0.8em;
   }
 }
 
@@ -160,7 +159,7 @@
 
 @media (max-width: 620px) {
   .dummy p {
-    font-size: .9em;
+    font-size: 0.9em;
   }
 }
 
@@ -171,7 +170,7 @@
 
 .warning {
   max-width: 92.5%;
-  font-size: .75em;
+  font-size: 0.75em;
   margin: 0;
   margin-top: 5px;
   padding: 0;
@@ -193,7 +192,7 @@
   padding: 0;
   margin: 0;
   font-weight: 700;
-  letter-spacing: .015em;
+  letter-spacing: 0.015em;
 }
 
 .voting-spec-info {
@@ -215,11 +214,11 @@
 }
 
 .voting-spec-info h4 span {
-  font-size: .45em;
+  font-size: 0.45em;
 }
 
 .signed {
-  font-size: .6em;
+  font-size: 0.6em;
   position: absolute;
   bottom: 0;
 }
@@ -264,14 +263,14 @@
 }
 
 .candidate-name {
-  font-size: .85em;
+  font-size: 0.85em;
   font-weight: 500;
   margin: 0;
   padding: 0;
 }
 
 .candidate-class {
-  font-size: .7em;
+  font-size: 0.7em;
   font-weight: 400;
   font-style: italic;
   margin: 0;
@@ -299,7 +298,7 @@
 }
 
 .input-box p {
-  font-size: .6em;
+  font-size: 0.6em;
   text-transform: uppercase;
   font-weight: 500;
   margin: 0;
@@ -327,6 +326,6 @@
   font-weight: 600;
   margin: 10px 0;
   margin-top: 20px;
-  color: #00A962;
+  color: #00a962;
 }
 /*# sourceMappingURL=App.css.map */

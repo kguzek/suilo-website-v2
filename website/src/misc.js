@@ -25,10 +25,13 @@ export function conjugatePolish(
   base,
   suffixSingular,
   suffixPluralA,
-  suffixPluralB
+  suffixPluralB,
+  returnWithoutBase = false
 ) {
   if (value === 1) {
-    return `1 ${base}${suffixSingular}`;
+    return returnWithoutBase
+      ? `${base}${suffixSingular}`
+      : `1 ${base}${suffixSingular}`;
   }
   const lastLetter = value.toString()[value.toString().length - 1];
   const lastDigit = parseInt(lastLetter);
@@ -36,9 +39,13 @@ export function conjugatePolish(
     [2, 3, 4].includes(lastDigit) &&
     ![12, 13, 14].includes(Math.abs(value))
   ) {
-    return `${value} ${base}${suffixPluralA}`;
+    return returnWithoutBase
+      ? `${base}${suffixPluralA}`
+      : `${value} ${base}${suffixPluralA}`;
   }
-  return `${value} ${base}${suffixPluralB}`;
+  return returnWithoutBase
+    ? `${base}${suffixPluralB}`
+    : `${value} ${base}${suffixPluralB}`;
 }
 
 /* Copy content to clipboard */
@@ -206,8 +213,8 @@ export function fetchCachedData(
 export function getDataFromFilename(
   name,
   size = "1920x1080",
-  urlCallback = () => { },
-  metadataCallback = () => { }
+  urlCallback = () => {},
+  metadataCallback = () => {}
 ) {
   // Use default image if the image name is not provided
   if (!name) {

@@ -22,6 +22,8 @@ const PAGES = {
   voting: "Głosowanie",
 };
 
+const PERMS = [...Object.keys(PAGES).filter((p) => p !== "voting")];
+
 const PAGE_NAMES = Object.values(PAGES);
 
 export default function Edit({
@@ -208,29 +210,29 @@ export default function Edit({
 
   const selectedPage = editPickerOptions[editPicker];
   return (
-    <div className="w-11/12 xl:w-10/12 min-h-[80vh] mt-16 flex flex-col justify-start align-middle mb-6 ">
+    <div className='w-11/12 xl:w-10/12 min-h-[80vh] mt-16 flex flex-col justify-start align-middle mb-6 '>
       <MetaTags>
         <title>
           Edycja treści | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w
           Gliwicach
         </title>
         <meta
-          name="description"
-          content="Edycja zawartości strony Samorządu Uczniowskiego 1 Liceum Ogólnokształącego w Gliwicach."
+          name='description'
+          content='Edycja zawartości strony Samorządu Uczniowskiego 1 Liceum Ogólnokształącego w Gliwicach.'
         />
-        <meta property="og:title" content="Edycja | SUILO Gliwice" />
-        <meta property="og:image" content="" /> {/* TODO: Add image */}
+        <meta property='og:title' content='Edycja | SUILO Gliwice' />
+        <meta property='og:image' content='' /> {/* TODO: Add image */}
       </MetaTags>
-      <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-3/4 xl:w-2/3">
-        <div className=" m-auto w-1/2">
+      <div className='mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-3/4 xl:w-2/3'>
+        <div className=' m-auto w-1/2'>
           <InputDropdown
-            label="Element strony do edycji"
+            label='Element strony do edycji'
             currentValue={editPicker}
             onChangeCallback={(val) => setEditPicker(parseInt(val))}
             valueDisplayObject={editPickerOptions}
           />
         </div>
-        <div className="w-full m-auto">
+        <div className='w-full m-auto'>
           {selectedPage === PAGE_NAMES[0] ? (
             <PostEdit
               data={newsData}
@@ -269,7 +271,7 @@ export default function Edit({
               loaded={loadedUsers}
               refetchData={() => fetchUsers(true)}
               userPerms={userPerms}
-              allPerms={Object.keys(PAGES)}
+              allPerms={PERMS}
             />
           ) : (
             selectedPage === PAGE_NAMES[5] && (

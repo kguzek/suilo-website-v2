@@ -23,15 +23,19 @@ const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
   const [currentCard, setCurrentCard] = useState("before-time");
   const [token, setToken] = useState();
   const [settings, setSettings] = useState({
-    startTime: { _seconds: 16325877560 },
-    endTime: { _seconds: 163258775600 },
+    startTime: { _seconds: 1663363714 - 99999 },
+    endTime: { _seconds: 1663363714 - 100000 },
   });
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(true);
   const [message, setMessage] = useState("");
   const [waitingForServer, setWaitingForServer] = useState(false);
+  const [showed, setShowed] = useState(false);
 
   useEffect(() => {
     setPage("voting");
+    setShowed(true);
+    setWaitingForServer(true);
+
     console.log("DOWNLOADING");
     fetch(baseApiLink + "/settings")
       .then((response) => response.json())
@@ -42,21 +46,29 @@ const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
         }
       });
 
-    setWaitingForServer(true);
+    setWaitingForServer(false);
   }, []);
 
   return (
-    <div style={{ backgroundColor: colors.bgPage }} className="background">
-      <main className="mainer" style={{ backgroundColor: colors.bgCard }}>
-        <div className="upper-row" style={{ backgroundColor: colors.bgPage }} />
+    <div
+      style={{ backgroundColor: showed ? colors.bgPage : "#F8F8F8" }}
+      className='background transition-all duration-500 delay-200 ease-in'
+    >
+      <main
+        style={{ backgroundColor: colors.bgCard }}
+        className={`mainer transition-all duration-[750ms] ease-in-out delay-[600ms] ${
+          showed ? "opacity-100" : "opacity-0  translate-y-1/4"
+        } `}
+      >
+        <div className='upper-row' style={{ backgroundColor: colors.bgPage }} />
         <div
-          className="center"
+          className='center'
           style={{ padding: "20px 20px 15px 20px", position: "relative" }}
         >
-          <h1 className="h1" style={{ color: colors.header }}>
+          <h1 className='h1' style={{ color: colors.header }}>
             Głosowanie na Marszałka
           </h1>
-          <h2 className="h2" style={{ color: colors.description }}>
+          <h2 className='h2' style={{ color: colors.description }}>
             I Liceum Ogółnokształcące w Gliwicach
           </h2>
           {loaded && !waitingForServer ? (
@@ -70,6 +82,7 @@ const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
               <BeforeVoting
                 loginAction={loginAction}
                 colors={colors}
+                userInfo={userInfo}
                 changeCard={setCurrentCard}
                 endDate={settings.endTime._seconds * 1000}
               />
@@ -99,7 +112,7 @@ const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
             </div>
           )}
           <p
-            className="signed"
+            className='signed'
             style={{ color: colors.description, paddingBottom: "4px" }}
           >
             {"By: Maciuga Adam & Mrózek Mikołaj - 2022"}

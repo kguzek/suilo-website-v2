@@ -28,11 +28,13 @@ const AfterTime = ({ colors, changeCard }) => {
     );
   };
   return (
-    <div className="center">
-      <div className="dummy center" style={{ height: "auto" }}>
+    <div className='center w-full'>
+      <div className='dummy center w-full' style={{ height: "auto" }}>
         <p>
           {waitingForServer ? (
-            <Bars color={colors.primary} height={40} width={40} />
+            <div className='py-8'>
+              <Bars color={colors.primary} height={40} width={40} />
+            </div>
           ) : specialMessage !== "" ? (
             specialMessage
           ) : (
@@ -40,16 +42,15 @@ const AfterTime = ({ colors, changeCard }) => {
           )}
         </p>
       </div>
-      <div className="center" style={{ width: "95%", marginBottom: "20px" }}>
-        <p className="support-text">
-          Możesz wspomóc nasz rozwój stawiając nam kawę, oraz dodając w
-          wiadomości: 'suilo głosowanie'
+      <div className='center' style={{ width: "95%", marginBottom: "20px" }}>
+        <p className='support-text'>
+          {"Możesz wspomóc nasz rozwój stawiając nam kawę ;)"}
         </p>
-        <a href="https://buycoffee.to/mikixm" target="_blank">
+        <a href='https://buycoffee.to/mikixm' target='_blank'>
           <img
-            src="https://buycoffee.to/btn/buycoffeeto-btn-primary.svg"
+            src='https://buycoffee.to/btn/buycoffeeto-btn-primary.svg'
             style={{ width: "150px" }}
-            alt="Postaw mi kawę na buycoffee.to"
+            alt='Postaw mi kawę na buycoffee.to'
           />
         </a>
       </div>
