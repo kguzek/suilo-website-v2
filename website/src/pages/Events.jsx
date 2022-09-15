@@ -170,7 +170,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
         />
       ) : (
         // TODO: Render something better if there are no future events
-        <div className="grid lg:mb-14">
+        <div className="grid lg:mb-14 py-36 my-16">
           <p className="mx-auto">
             Nie ma w najbliższym czasie żadnych wydarzeń.
           </p>

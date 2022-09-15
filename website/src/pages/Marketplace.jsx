@@ -150,7 +150,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   }
 
   useEffect(() => {
-    setPage("contact");
+    setPage("marketplace");
     // console.log(userInfo);
     fetchBooks();
   }, []);
