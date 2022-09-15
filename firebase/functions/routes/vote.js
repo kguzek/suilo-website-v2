@@ -13,6 +13,7 @@ const {
   deleteSingleDocument,
   vote,
   voteForCustomCandidate,
+  getResults,
 } = require("../util");
 
 const voteAttributeSanitisers = {
@@ -58,11 +59,11 @@ const voteAttributeSanitisers = {
 const candidateAttributeSanitisers = {
   name: (name) => name || "Imię",
   surname: (surname) => surname || "Nazwisko",
-  className: (className) => className || "klasa",
+  className: (className) => className || "Other",
 };
 const VoterAttributeSanitisers = {
-  gender: (gender) => gender || "Nie chcę podawać",
-  className: (className) => className || "Inna",
+  gender: (gender) => gender || "Other",
+  className: (className) => className || "Other",
 };
 router.post("/:id", (req, res) => {
   const VoterInfo = {};
@@ -88,6 +89,9 @@ router.post("/", (req, res) => {
 });
 router.get("/info", (req, res) => {
   createGeneralInfoPacket(req, res);
+});
+router.get("/results", (req, res) => {
+  getResults(res);
 });
 router.post("/setup/election", (req, res) => {
   const data = {};
@@ -116,9 +120,7 @@ router.post("/setup/candidate", (req, res) => {
   }
   createSingleDocument(data, res, "candidate");
 });
-router.delete("/setup/candidate/:id", (req, res) =>
-  deleteSingleDocument(req, res, "candidate")
-);
+router.delete("/setup/candidate/:id", (req, res) => deleteSingleDocument(req, res, "candidate"));
 router.put("/setup/election/classes", (req, res) => {
   const classList = req.query.classList || req.body.classList;
   if (Array.isArray(classList)) {
