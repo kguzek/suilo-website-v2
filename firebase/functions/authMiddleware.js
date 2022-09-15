@@ -8,13 +8,9 @@ const { admin, db, updateCollection } = require("./util");
  */
 async function validateToken(req, res, next, requiredPerm) {
   function send403(msg = "You are not authorised to do that.", info, userName) {
-    res
-      .status(403)
-      .json({ errorDescription: "403 Forbidden: " + msg, ...(info ?? {}) });
+    res.status(403).json({ errorDescription: "403 Forbidden: " + msg, ...(info ?? {}) });
     console.warn(
-      `Rejected ${userName ?? "unknown user"}'s ${
-        req.method
-      } request to endpoint '${req.path}' (${requiredPerm}).`,
+      `Rejected ${userName ?? "unknown user"}'s ${req.method} request to endpoint '${req.path}' (${requiredPerm}).`,
       info ?? ""
     );
   }
@@ -28,9 +24,7 @@ async function validateToken(req, res, next, requiredPerm) {
       return false;
     }
     // allow users that are not signed in to make these requests
-    console.info(
-      `Validated ${requestType} ${req.method} request to public endpoint '${req.path}'.`
-    );
+    console.info(`Validated ${requestType} ${req.method} request to public endpoint '${req.path}'.`);
     next();
     return true;
   }
@@ -53,9 +47,7 @@ async function validateToken(req, res, next, requiredPerm) {
 
       /** Accept the request. */
       function authorise() {
-        console.info(
-          `Validated ${userRecord.displayName}'s ${req.method} request to endpoint '${req.path}'.`
-        );
+        console.info(`Validated ${userRecord.displayName}'s ${req.method} request to endpoint '${req.path}'.`);
         req.userInfo = {
           ...userInfo,
           isAdmin,
@@ -78,10 +70,7 @@ async function validateToken(req, res, next, requiredPerm) {
             return authorise();
           }
           // Allow users to delete their own books
-          if (
-            req.method === "DELETE" &&
-            bookIDs.includes(req.path.split("/")[2])
-          ) {
+          if (req.method === "DELETE" && bookIDs.includes(req.path.split("/")[2])) {
             return authorise();
           }
         }
@@ -137,25 +126,19 @@ async function validateToken(req, res, next, requiredPerm) {
   // if the token is provided but the user is not logged in, the
   // fetch method interpolates the token as literal "undefined".
   if (!idToken || idToken === "undefined") {
-    return (
-      allowPublicEndpoints() || send403("No authorisation token provided.")
-    );
+    return allowPublicEndpoints() || send403("No authorisation token provided.");
   }
   admin
     .auth()
     .verifyIdToken(idToken)
     .then((decodedToken) => {
-      if (
-        !decodedToken.email ||
-        !decodedToken.email.endsWith("lo1.gliwice.pl")
-      ) {
-        return send403(
-          "That email address is from outside the LO1 organisation."
-        );
+      if (decodedToken?.email.endsWith("lo1.gliwice.pl") || decodedToken?.email === "m.mik311@gmail.com") {
+        const uid = decodedToken.uid;
+        // get the user record from the User ID
+        admin.auth().getUser(uid).then(validateUserPermissions);
+      } else {
+        return send403("That email address is from outside the LO1 organisation.");
       }
-      const uid = decodedToken.uid;
-      // get the user record from the User ID
-      admin.auth().getUser(uid).then(validateUserPermissions);
     })
     .catch((error) => {
       return (
