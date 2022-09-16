@@ -1,7 +1,7 @@
+const { FieldValue, Timestamp } = require("firebase-admin/firestore");
+
 const admin = require("firebase-admin");
 require("dotenv").config();
-
-const FieldValue = admin.firestore.FieldValue;
 
 const { dateToArray, serialiseDateArray } = require("./common");
 
@@ -59,7 +59,7 @@ function formatTimestamps(dataObject = {}) {
 
 /** Converts a JavaScript Date object into a Firestore timestamp. */
 function dateToTimestamp(date) {
-  return fs.Timestamp.fromDate(date);
+  return Timestamp.fromDate(date);
 }
 
 /** Checks if the request params or query contains a document ID.
@@ -178,10 +178,10 @@ function arrayFromRange(start, end) {
  */
 function updateCollection(collectionName, collectionSizeChange) {
   // Set the last updated time for the collection to the current date
-  const newData = { lastUpdate: { [collectionName]: fs.Timestamp.now() } };
+  const newData = { lastUpdate: { [collectionName]: Timestamp.now() } };
   if (collectionSizeChange) {
     newData.collectionSizes = {
-      [collectionName]: fs.FieldValue.increment(collectionSizeChange),
+      [collectionName]: FieldValue.increment(collectionSizeChange),
     };
   }
   db.collection("_general").doc("collectionInfo").set(newData, { merge: true });
@@ -337,7 +337,7 @@ function updateSingleDocument(req, res, collectionName, attributeSanitisers) {
   // initialise new data
   const newData = {
     // add parameter indicating when the news was last edited
-    modified: fs.Timestamp.now(),
+    modified: Timestamp.now(),
   };
   // initialise boolean to indicate if any parameters were updated
   let dataUpdated = false;
@@ -551,7 +551,7 @@ function submitVoteForExistingCandidate(req, res, settings, voterInfo) {
       const currentCandidate = docRef.data();
       if (currentCandidate) {
         const votePromise = db.collection("votes").add({
-          date: fs.Timestamp.now(),
+          date: Timestamp.now(),
           candidate: req.params.id,
           gender: voterInfo.gender,
           className: voterInfo.className,
