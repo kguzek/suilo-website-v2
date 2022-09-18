@@ -6,7 +6,7 @@ const AfterVoting = ({ colors, changeCard, endDate, message, waitingForServer })
   const renderer = (args) => (
     <Timer
       {...args}
-      {...colors}
+      colors={colors}
       message="Zakończono głosowanie!"
       nextCardAction={() => changeCard('after-time')}
     />

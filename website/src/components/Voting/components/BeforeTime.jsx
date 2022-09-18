@@ -5,7 +5,7 @@ const BeforeTime = ({ colors, changeCard, endDate }) => {
   const renderer = (args) => (
     <Timer
       {...args}
-      {...colors}
+      colors={colors}
       message="Można głosować!"
       nextCardAction={() => changeCard('before-voting')}
     />

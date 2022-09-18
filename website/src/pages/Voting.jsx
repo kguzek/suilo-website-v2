@@ -22,31 +22,50 @@ const colorScheme = {
 const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
   const [colors, setColors] = useState(colorScheme);
   const [currentCard, setCurrentCard] = useState('before-time');
-  const [token, setToken] = useState();
-  const [settings, setSettings] = useState({
-    startTime: { _seconds: 1663363714 - 99999 },
-    endTime: { _seconds: 1663363714 - 100000 },
-  });
-  const [loaded, setLoaded] = useState(true);
+  const [dates, setDates] = useState({});
+  const [classList, setClassList] = useState([]);
+  const [candidates, setCandidates] = useState([]);
+  const [totalVotes, setTotalVotes] = useState(0);
+  const [loaded, setLoaded] = useState(false);
   const [message, setMessage] = useState('');
-  const [waitingForServer, setWaitingForServer] = useState(false);
   const [showed, setShowed] = useState(false);
+  const [isVoting, setIsVoting] = useState(undefined);
 
   useEffect(() => {
     setPage('voting');
     setShowed(true);
-    setWaitingForServer(true);
 
-    fetch(baseApiLink + '/settings')
+    fetch(baseApiLink + '/vote/info')
       .then((response) => response.json())
-      .then((data) => {
-        if (data.startTime !== undefined && data.endTime !== undefined) {
-          setSettings(data);
-          setLoaded(true);
-        }
-      });
+      .then(({ startDate, endDate, resultsDate, classList, candidates, totalVotes }) => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const now = new Date();
 
-    setWaitingForServer(false);
+        setDates({
+          startDate: start.getTime(),
+          endDate: end.getTime(),
+          resultsDate: new Date(resultsDate).getUTCDate(),
+        });
+
+        if (now > start && now < end) {
+          console.log('before');
+          setCurrentCard('before-voting');
+        } else if (now > end) {
+          console.log('after');
+
+          setCurrentCard('after-time');
+        }
+        setClassList(classList);
+        setCandidates(candidates);
+        setTotalVotes(totalVotes);
+        setLoaded(true);
+        setIsVoting(true);
+      })
+      .catch(() => {
+        setIsVoting(false);
+        setLoaded(true);
+      });
   }, []);
 
   return (
@@ -76,34 +95,32 @@ const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
           <h2 className="h2" style={{ color: colors.description }}>
             I Liceum Ogółnokształcące w Gliwicach
           </h2>
-          {loaded && !waitingForServer ? (
+          {loaded ? (
             currentCard === 'before-time' ? (
-              <BeforeTime
-                colors={colors}
-                changeCard={setCurrentCard}
-                endDate={settings.startTime._seconds * 1000}
-              />
+              <BeforeTime colors={colors} changeCard={setCurrentCard} endDate={dates.startDate} />
             ) : currentCard === 'before-voting' ? (
               <BeforeVoting
                 loginAction={loginAction}
                 colors={colors}
                 userInfo={userInfo}
                 changeCard={setCurrentCard}
-                endDate={settings.endTime._seconds * 1000}
+                endDate={dates.endDate}
+                totalVotes={totalVotes}
               />
             ) : currentCard === 'during-voting' ? (
               <DuringVoting
                 colors={colors}
                 changeCard={setCurrentCard}
-                endDate={settings.endTime._seconds * 1000}
-                token={token}
+                endDate={dates.endDate}
                 setMessage={setMessage}
+                candidates={candidates}
+                classList={classList}
               />
             ) : currentCard === 'after-voting' ? (
               <AfterVoting
                 colors={colors}
                 changeCard={setCurrentCard}
-                endDate={settings.endTime._seconds * 1000}
+                endDate={dates.endDate}
                 message={message}
               />
             ) : currentCard === 'after-time' ? (

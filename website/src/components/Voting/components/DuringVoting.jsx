@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import Countdown from 'react-countdown';
 import { Bars } from 'react-loader-spinner';
 
-import { API_URL as baseApiLink } from '../../../firebase';
+import { API_URL as baseApiLink, auth, fetchWithToken } from '../../../firebase';
+import { badWords } from './badWords.constants';
 import { Timer } from './Timer';
 
 var Filter = require('bad-words');
@@ -41,655 +42,17 @@ const VoteOption = ({ colors, idx, activeIdx, setActiveIdx, id, name, classLabel
   );
 };
 
-const DuringVoting = ({ colors, changeCard, endDate, token, setMessage }) => {
+const DuringVoting = ({ colors, changeCard, endDate, setMessage, candidates, classList }) => {
   const [activeIdx, setActiveIdx] = useState(null);
   const [customCandidateId, setCustomCandidateId] = useState('');
-  const [candidates, setCandidates] = useState([]);
-  const [classNameVoter, setClassNameVoter] = useState('1a');
-  const [sexVoter, setSexVoter] = useState('kobieta');
-  const [classNameCandidate, setClassNameCandidate] = useState('1a');
+  const [classNameVoter, setClassNameVoter] = useState(classList[0]);
+  const [sexVoter, setSexVoter] = useState('female');
+  const [classNameCandidate, setClassNameCandidate] = useState(classList[0]);
   const [additionalCandidateName, setAdditionalCandidateName] = useState('');
   const [waitingForServer, setWaitingForServer] = useState(false);
 
   useEffect(() => {
-    filter.addWords(
-      'chuj',
-      'chuja',
-      'chujek',
-      'chuju',
-      'chujem',
-      'chujnia',
-      'chujowy',
-      'chujowa',
-      'chujowe',
-      'cipa',
-      'cipę',
-      'cipe',
-      'cipą',
-      'cipie',
-      'dojebać',
-      'dojebac',
-      'dojebie',
-      'dojebał',
-      'dojebal',
-      'dojebała',
-      'dojebala',
-      'dojebałem',
-      'dojebalem',
-      'dojebałam',
-      'dojebalam',
-      'dojebię',
-      'dojebie',
-      'dopieprzać',
-      'dopieprzac',
-      'dopierdalać',
-      'dopierdalac',
-      'dopierdala',
-      'dopierdalał',
-      'dopierdalal',
-      'dopierdalała',
-      'dopierdalala',
-      'dopierdoli',
-      'dopierdolił',
-      'dopierdolil',
-      'dopierdolę',
-      'dopierdole',
-      'dopierdoli',
-      'dopierdalający',
-      'dopierdalajacy',
-      'dopierdolić',
-      'dopierdolic',
-      'dupa',
-      'dupie',
-      'dupą',
-      'dupcia',
-      'dupeczka',
-      'dupy',
-      'dupe',
-      'huj',
-      'hujek',
-      'hujnia',
-      'huja',
-      'huje',
-      'hujem',
-      'huju',
-      'jebać',
-      'jebac',
-      'jebał',
-      'jebal',
-      'jebie',
-      'jebią',
-      'jebia',
-      'jebak',
-      'jebaka',
-      'jebal',
-      'jebał',
-      'jebany',
-      'jebane',
-      'jebanka',
-      'jebanko',
-      'jebankiem',
-      'jebanymi',
-      'jebana',
-      'jebanym',
-      'jebanej',
-      'jebaną',
-      'jebana',
-      'jebani',
-      'jebanych',
-      'jebanymi',
-      'jebcie',
-      'jebiący',
-      'jebiacy',
-      'jebiąca',
-      'jebiaca',
-      'jebiącego',
-      'jebiacego',
-      'jebiącej',
-      'jebiacej',
-      'jebia',
-      'jebią',
-      'jebie',
-      'jebię',
-      'jebliwy',
-      'jebnąć',
-      'jebnac',
-      'jebnąc',
-      'jebnać',
-      'jebnął',
-      'jebnal',
-      'jebną',
-      'jebna',
-      'jebnęła',
-      'jebnela',
-      'jebnie',
-      'jebnij',
-      'jebut',
-      'koorwa',
-      'kórwa',
-      'kurestwo',
-      'kurew',
-      'kurewski',
-      'kurewska',
-      'kurewskiej',
-      'kurewską',
-      'kurewska',
-      'kurewsko',
-      'kurewstwo',
-      'kurwa',
-      'kurwaa',
-      'kurwami',
-      'kurwą',
-      'kurwe',
-      'kurwę',
-      'kurwie',
-      'kurwiska',
-      'kurwo',
-      'kurwy',
-      'kurwach',
-      'kurwami',
-      'kurewski',
-      'kurwiarz',
-      'kurwiący',
-      'kurwica',
-      'kurwić',
-      'kurwic',
-      'kurwidołek',
-      'kurwik',
-      'kurwiki',
-      'kurwiszcze',
-      'kurwiszon',
-      'kurwiszona',
-      'kurwiszonem',
-      'kurwiszony',
-      'kutas',
-      'kutasa',
-      'kutasie',
-      'kutasem',
-      'kutasy',
-      'kutasów',
-      'kutasow',
-      'kutasach',
-      'kutasami',
-      'matkojebca',
-      'matkojebcy',
-      'matkojebcą',
-      'matkojebca',
-      'matkojebcami',
-      'matkojebcach',
-      'nabarłożyć',
-      'najebać',
-      'najebac',
-      'najebał',
-      'najebal',
-      'najebała',
-      'najebala',
-      'najebane',
-      'najebany',
-      'najebaną',
-      'najebana',
-      'najebie',
-      'najebią',
-      'najebia',
-      'naopierdalać',
-      'naopierdalac',
-      'naopierdalał',
-      'naopierdalal',
-      'naopierdalała',
-      'naopierdalala',
-      'naopierdalała',
-      'napierdalać',
-      'napierdalac',
-      'napierdalający',
-      'napierdalajacy',
-      'napierdolić',
-      'napierdolic',
-      'nawpierdalać',
-      'nawpierdalac',
-      'nawpierdalał',
-      'nawpierdalal',
-      'nawpierdalała',
-      'nawpierdalala',
-      'obsrywać',
-      'obsrywac',
-      'obsrywający',
-      'obsrywajacy',
-      'odpieprzać',
-      'odpieprzac',
-      'odpieprzy',
-      'odpieprzył',
-      'odpieprzyl',
-      'odpieprzyła',
-      'odpieprzyla',
-      'odpierdalać',
-      'odpierdalac',
-      'odpierdol',
-      'odpierdolił',
-      'odpierdolil',
-      'odpierdoliła',
-      'odpierdolila',
-      'odpierdoli',
-      'odpierdalający',
-      'odpierdalajacy',
-      'odpierdalająca',
-      'odpierdalajaca',
-      'odpierdolić',
-      'odpierdolic',
-      'odpierdoli',
-      'odpierdolił',
-      'opieprzający',
-      'opierdalać',
-      'opierdalac',
-      'opierdala',
-      'opierdalający',
-      'opierdalajacy',
-      'opierdol',
-      'opierdolić',
-      'opierdolic',
-      'opierdoli',
-      'opierdolą',
-      'opierdola',
-      'piczka',
-      'pieprznięty',
-      'pieprzniety',
-      'pieprzony',
-      'pierdel',
-      'pierdlu',
-      'pierdolą',
-      'pierdola',
-      'pierdolący',
-      'pierdolacy',
-      'pierdoląca',
-      'pierdolaca',
-      'pierdol',
-      'pierdole',
-      'pierdolenie',
-      'pierdoleniem',
-      'pierdoleniu',
-      'pierdolę',
-      'pierdolec',
-      'pierdola',
-      'pierdolą',
-      'pierdolić',
-      'pierdolicie',
-      'pierdolic',
-      'pierdolił',
-      'pierdolil',
-      'pierdoliła',
-      'pierdolila',
-      'pierdoli',
-      'pierdolnięty',
-      'pierdolniety',
-      'pierdolisz',
-      'pierdolnąć',
-      'pierdolnac',
-      'pierdolnął',
-      'pierdolnal',
-      'pierdolnęła',
-      'pierdolnela',
-      'pierdolnie',
-      'pierdolnięty',
-      'pierdolnij',
-      'pierdolnik',
-      'pierdolona',
-      'pierdolone',
-      'pierdolony',
-      'pierdołki',
-      'pierdzący',
-      'pierdzieć',
-      'pierdziec',
-      'pizda',
-      'pizdą',
-      'pizde',
-      'pizdę',
-      'piździe',
-      'pizdzie',
-      'pizdnąć',
-      'pizdnac',
-      'pizdu',
-      'podpierdalać',
-      'podpierdalac',
-      'podpierdala',
-      'podpierdalający',
-      'podpierdalajacy',
-      'podpierdolić',
-      'podpierdolic',
-      'podpierdoli',
-      'pojeb',
-      'pojeba',
-      'pojebami',
-      'pojebani',
-      'pojebanego',
-      'pojebanemu',
-      'pojebani',
-      'pojebany',
-      'pojebanych',
-      'pojebanym',
-      'pojebanymi',
-      'pojebem',
-      'pojebać',
-      'pojebac',
-      'pojebalo',
-      'popierdala',
-      'popierdalac',
-      'popierdalać',
-      'popierdolić',
-      'popierdolic',
-      'popierdoli',
-      'popierdolonego',
-      'popierdolonemu',
-      'popierdolonym',
-      'popierdolone',
-      'popierdoleni',
-      'popierdolony',
-      'porozpierdalać',
-      'porozpierdala',
-      'porozpierdalac',
-      'poruchac',
-      'poruchać',
-      'przejebać',
-      'przejebane',
-      'przejebac',
-      'przyjebali',
-      'przepierdalać',
-      'przepierdalac',
-      'przepierdala',
-      'przepierdalający',
-      'przepierdalajacy',
-      'przepierdalająca',
-      'przepierdalajaca',
-      'przepierdolić',
-      'przepierdolic',
-      'przyjebać',
-      'przyjebac',
-      'przyjebie',
-      'przyjebała',
-      'przyjebala',
-      'przyjebał',
-      'przyjebal',
-      'przypieprzać',
-      'przypieprzac',
-      'przypieprzający',
-      'przypieprzajacy',
-      'przypieprzająca',
-      'przypieprzajaca',
-      'przypierdalać',
-      'przypierdalac',
-      'przypierdala',
-      'przypierdoli',
-      'przypierdalający',
-      'przypierdalajacy',
-      'przypierdolić',
-      'przypierdolic',
-      'qrwa',
-      'rozjebać',
-      'rozjebac',
-      'rozjebie',
-      'rozjebała',
-      'rozjebią',
-      'rozpierdalać',
-      'rozpierdalac',
-      'rozpierdala',
-      'rozpierdolić',
-      'rozpierdolic',
-      'rozpierdole',
-      'rozpierdoli',
-      'rozpierducha',
-      'skurwić',
-      'skurwiel',
-      'skurwiela',
-      'skurwielem',
-      'skurwielu',
-      'skurwysyn',
-      'skurwysynów',
-      'skurwysynow',
-      'skurwysyna',
-      'skurwysynem',
-      'skurwysynu',
-      'skurwysyny',
-      'skurwysyński',
-      'skurwysynski',
-      'skurwysyństwo',
-      'skurwysynstwo',
-      'spieprzać',
-      'spieprzac',
-      'spieprza',
-      'spieprzaj',
-      'spieprzajcie',
-      'spieprzają',
-      'spieprzaja',
-      'spieprzający',
-      'spieprzajacy',
-      'spieprzająca',
-      'spieprzajaca',
-      'spierdalać',
-      'spierdalac',
-      'spierdala',
-      'spierdalał',
-      'spierdalała',
-      'spierdalal',
-      'spierdalalcie',
-      'spierdalala',
-      'spierdalający',
-      'spierdalajacy',
-      'spierdolić',
-      'spierdolic',
-      'spierdoli',
-      'spierdoliła',
-      'spierdoliło',
-      'spierdolą',
-      'spierdola',
-      'srać',
-      'srac',
-      'srający',
-      'srajacy',
-      'srając',
-      'srajac',
-      'sraj',
-      'sukinsyn',
-      'sukinsyny',
-      'sukinsynom',
-      'sukinsynowi',
-      'sukinsynów',
-      'sukinsynow',
-      'śmierdziel',
-      'udupić',
-      'ujebać',
-      'ujebac',
-      'ujebał',
-      'ujebal',
-      'ujebana',
-      'ujebany',
-      'ujebie',
-      'ujebała',
-      'ujebala',
-      'upierdalać',
-      'upierdalac',
-      'upierdala',
-      'upierdoli',
-      'upierdolić',
-      'upierdolic',
-      'upierdoli',
-      'upierdolą',
-      'upierdola',
-      'upierdoleni',
-      'wjebać',
-      'wjebac',
-      'wjebie',
-      'wjebią',
-      'wjebia',
-      'wjebiemy',
-      'wjebiecie',
-      'wkurwiać',
-      'wkurwiac',
-      'wkurwi',
-      'wkurwia',
-      'wkurwiał',
-      'wkurwial',
-      'wkurwiający',
-      'wkurwiajacy',
-      'wkurwiająca',
-      'wkurwiajaca',
-      'wkurwić',
-      'wkurwic',
-      'wkurwi',
-      'wkurwiacie',
-      'wkurwiają',
-      'wkurwiali',
-      'wkurwią',
-      'wkurwia',
-      'wkurwimy',
-      'wkurwicie',
-      'wkurwiacie',
-      'wkurwić',
-      'wkurwic',
-      'wkurwia',
-      'wpierdalać',
-      'wpierdalac',
-      'wpierdalający',
-      'wpierdalajacy',
-      'wpierdol',
-      'wpierdolić',
-      'wpierdolic',
-      'wpizdu',
-      'wyjebać',
-      'wyjebac',
-      'wyjebali',
-      'wyjebał',
-      'wyjebac',
-      'wyjebała',
-      'wyjebały',
-      'wyjebie',
-      'wyjebią',
-      'wyjebia',
-      'wyjebiesz',
-      'wyjebie',
-      'wyjebiecie',
-      'wyjebiemy',
-      'wypieprzać',
-      'wypieprzac',
-      'wypieprza',
-      'wypieprzał',
-      'wypieprzal',
-      'wypieprzała',
-      'wypieprzala',
-      'wypieprzy',
-      'wypieprzyła',
-      'wypieprzyla',
-      'wypieprzył',
-      'wypieprzyl',
-      'wypierdal',
-      'wypierdalać',
-      'wypierdalac',
-      'wypierdala',
-      'wypierdalaj',
-      'wypierdalał',
-      'wypierdalal',
-      'wypierdalała',
-      'wypierdalala',
-      'wypierdalać',
-      'wypierdolić',
-      'wypierdolic',
-      'wypierdoli',
-      'wypierdolimy',
-      'wypierdolicie',
-      'wypierdolą',
-      'wypierdola',
-      'wypierdolili',
-      'wypierdolił',
-      'wypierdolil',
-      'wypierdoliła',
-      'wypierdolila',
-      'zajebać',
-      'zajebac',
-      'zajebie',
-      'zajebią',
-      'zajebia',
-      'zajebiał',
-      'zajebial',
-      'zajebała',
-      'zajebiala',
-      'zajebali',
-      'zajebana',
-      'zajebani',
-      'zajebane',
-      'zajebany',
-      'zajebanych',
-      'zajebanym',
-      'zajebanymi',
-      'zajebiste',
-      'zajebisty',
-      'zajebistych',
-      'zajebista',
-      'zajebistym',
-      'zajebistymi',
-      'zajebiście',
-      'zajebiscie',
-      'zapieprzyć',
-      'zapieprzyc',
-      'zapieprzy',
-      'zapieprzył',
-      'zapieprzyl',
-      'zapieprzyła',
-      'zapieprzyla',
-      'zapieprzą',
-      'zapieprza',
-      'zapieprzy',
-      'zapieprzymy',
-      'zapieprzycie',
-      'zapieprzysz',
-      'zapierdala',
-      'zapierdalać',
-      'zapierdalac',
-      'zapierdalaja',
-      'zapierdalał',
-      'zapierdalaj',
-      'zapierdalajcie',
-      'zapierdalała',
-      'zapierdalala',
-      'zapierdalali',
-      'zapierdalający',
-      'zapierdalajacy',
-      'zapierdolić',
-      'zapierdolic',
-      'zapierdoli',
-      'zapierdolił',
-      'zapierdolil',
-      'zapierdoliła',
-      'zapierdolila',
-      'zapierdolą',
-      'zapierdola',
-      'zapierniczać',
-      'zapierniczający',
-      'zasrać',
-      'zasranym',
-      'zasrywać',
-      'zasrywający',
-      'zesrywać',
-      'zesrywający',
-      'zjebać',
-      'zjebac',
-      'zjebał',
-      'zjebal',
-      'zjebała',
-      'zjebala',
-      'zjebana',
-      'zjebią',
-      'zjebali',
-      'zjeby',
-      'cycuszki',
-      'seks',
-      'seksik',
-      'ruchańsko',
-      'cymbały',
-      'dzban',
-      'siurek'
-    );
-    fetch(baseApiLink + '/candidates?specialShowing=true')
-      .then((response) => response.json())
-      .then((data) => {
-        setCandidates(data);
-      });
+    filter.addWords(...badWords);
   }, []);
 
   useEffect(() => {
@@ -709,42 +72,45 @@ const DuringVoting = ({ colors, changeCard, endDate, token, setMessage }) => {
     );
     if (!filtered.includes('*')) {
       setWaitingForServer(true);
-      let path = '';
+      let path = '/vote/';
       let dataToSend = {};
       if (customCandidateId === '' && activeIdx === 'CUSTOM') {
-        path = '/addCandidate';
         dataToSend = {
-          fullName: additionalCandidateName,
-          classNameCandidate: classNameCandidate,
-          classNameVoter: classNameVoter,
-          sex: sexVoter,
+          candidate: {
+            fullName: additionalCandidateName,
+            className: classNameCandidate,
+          },
+          className: classNameVoter,
+          gender: sexVoter,
         };
       } else {
-        path = '/vote';
+        path += activeIdx === 'CUSTOM' ? customCandidateId : activeIdx;
         dataToSend = {
           className: classNameVoter,
-          sex: sexVoter,
-          submitVote: activeIdx === 'CUSTOM' ? customCandidateId : activeIdx,
+          gender: sexVoter,
         };
       }
-      fetch(baseApiLink + path, {
-        method: 'post',
-        headers: new Headers({
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
-        }),
-        body: JSON.stringify(dataToSend),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.errorMessage === undefined) {
-            setMessage(data.message);
-          } else {
-            setMessage(data.errorMessage);
-          }
-          setWaitingForServer(false);
-          changeCard('after-voting');
-        });
+
+      auth.currentUser.getIdToken().then((token) => {
+        fetch(baseApiLink + path, {
+          method: 'post',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          }),
+          body: JSON.stringify(dataToSend),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.errorDescription === undefined) {
+              setMessage(data.message);
+            } else {
+              setMessage(data.errorDescription);
+            }
+            setWaitingForServer(false);
+            changeCard('after-voting');
+          });
+      });
     } else {
       setAdditionalCandidateName('');
     }
@@ -752,7 +118,7 @@ const DuringVoting = ({ colors, changeCard, endDate, token, setMessage }) => {
 
   const _renderOptions = () => {
     return candidates
-      .filter((candidate) => candidate.reachedTreshold === true)
+      .filter((candidate) => candidate.reachedTreshold || candidate.official)
       .map((candidate) => (
         <VoteOption
           colors={colors}
@@ -761,18 +127,19 @@ const DuringVoting = ({ colors, changeCard, endDate, token, setMessage }) => {
           setActiveIdx={setActiveIdx}
           name={candidate.fullName}
           classLabel={candidate.className}
+          key={candidate.fullName + candidate.id}
         />
       ));
   };
   const _renderAdditionalOptions = () => {
     return candidates
-      .filter((candidate) => candidate.reachedTreshold === false)
+      .filter((candidate) => !(candidate.reachedTreshold || candidate.official))
       .map((candidate) => <option value={candidate.fullName} key={candidate.fullName} />);
   };
 
   const renderer = (args) => (
     <Timer
-      {...colors}
+      colors={colors}
       {...args}
       message="Zakończono głosowanie!"
       nextCardAction={() => changeCard('after-voting')}
@@ -843,66 +210,11 @@ const DuringVoting = ({ colors, changeCard, endDate, token, setMessage }) => {
                     }}
                     required
                   >
-                    <option className="def" value="1a">
-                      1a
-                    </option>
-                    <option className="def" value="1b">
-                      1b
-                    </option>
-                    <option className="def" value="1c">
-                      1c
-                    </option>
-                    <option className="def" value="1d">
-                      1d
-                    </option>
-                    <option className="def" value="1e">
-                      1e
-                    </option>
-                    <option className="def" value="2a">
-                      2a
-                    </option>
-                    <option className="def" value="2b">
-                      2b
-                    </option>
-                    <option className="def" value="2c">
-                      2c
-                    </option>
-                    <option className="def" value="2d">
-                      2d
-                    </option>
-                    <option className="def" value="2e">
-                      2e
-                    </option>
-                    <option className="def" value="3ap">
-                      3ap
-                    </option>
-                    <option className="def" value="3bp">
-                      3bp
-                    </option>
-                    <option className="def" value="3cp">
-                      3cp
-                    </option>
-                    <option className="def" value="3dp">
-                      3dp
-                    </option>
-                    <option className="def" value="3ep">
-                      3ep
-                    </option>
-                    <option className="def" value="3ag">
-                      3ag
-                    </option>
-                    <option className="def" value="3bg">
-                      3bg
-                    </option>
-                    <option className="def" value="3cg">
-                      3cg
-                    </option>
-                    <option className="def" value="3dg">
-                      3dg
-                    </option>
-                    <option className="def" value="3eg">
-                      3eg
-                    </option>
+                    {classList.map((c, idx) => (
+                      <option className="def" value={c} key={c + idx + 'a'}>
+                        {c}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -924,66 +236,11 @@ const DuringVoting = ({ colors, changeCard, endDate, token, setMessage }) => {
                   id="classLabel"
                   required
                 >
-                  <option className="def" value="1a">
-                    1a
-                  </option>
-                  <option className="def" value="1b">
-                    1b
-                  </option>
-                  <option className="def" value="1c">
-                    1c
-                  </option>
-                  <option className="def" value="1d">
-                    1d
-                  </option>
-                  <option className="def" value="1e">
-                    1e
-                  </option>
-                  <option className="def" value="2a">
-                    2a
-                  </option>
-                  <option className="def" value="2b">
-                    2b
-                  </option>
-                  <option className="def" value="2c">
-                    2c
-                  </option>
-                  <option className="def" value="2d">
-                    2d
-                  </option>
-                  <option className="def" value="2e">
-                    2e
-                  </option>
-                  <option className="def" value="3ap">
-                    3ap
-                  </option>
-                  <option className="def" value="3bp">
-                    3bp
-                  </option>
-                  <option className="def" value="3cp">
-                    3cp
-                  </option>
-                  <option className="def" value="3dp">
-                    3dp
-                  </option>
-                  <option className="def" value="3ep">
-                    3ep
-                  </option>
-                  <option className="def" value="3ag">
-                    3ag
-                  </option>
-                  <option className="def" value="3bg">
-                    3bg
-                  </option>
-                  <option className="def" value="3cg">
-                    3cg
-                  </option>
-                  <option className="def" value="3dg">
-                    3dg
-                  </option>
-                  <option className="def" value="3eg">
-                    3eg
-                  </option>
+                  {classList.map((c, idx) => (
+                    <option className="def" value={c} key={c + idx + 'b'}>
+                      {c}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="input-box">
@@ -996,16 +253,16 @@ const DuringVoting = ({ colors, changeCard, endDate, token, setMessage }) => {
                   onChange={(e) => setSexVoter(e.target.value)}
                   required
                 >
-                  <option className="def" value="kobieta">
+                  <option className="def" value="female">
                     kobieta
                   </option>
-                  <option className="def" value="mezczyzna">
+                  <option className="def" value="male">
                     mężczyzna
                   </option>
-                  <option className="def" value="nie-podawac">
+                  <option className="def" value="notSpecified">
                     nie chcę podawać
                   </option>
-                  <option className="def" value="inne">
+                  <option className="def" value="other">
                     inne
                   </option>
                 </select>
