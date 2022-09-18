@@ -6,7 +6,6 @@ import DuringVoting from '../components/Voting/components/DuringVoting';
 import AfterVoting from '../components/Voting/components/AfterVoting';
 import AfterTime from '../components/Voting/components/AfterTime';
 import { API_URL as baseApiLink } from '../firebase';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import { Bars } from 'react-loader-spinner';
 
 const colorScheme = {
