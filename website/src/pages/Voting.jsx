@@ -7,6 +7,8 @@ import AfterVoting from '../components/Voting/components/AfterVoting';
 import AfterTime from '../components/Voting/components/AfterTime';
 import { API_URL as baseApiLink } from '../firebase';
 import { Bars } from 'react-loader-spinner';
+import { Link } from 'react-router-dom';
+import LogoSU from '../media/LogoSU';
 
 const colorScheme = {
   primary: '#e6710b',
@@ -50,8 +52,16 @@ const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
   return (
     <div
       style={{ backgroundColor: showed ? colors.bgPage : '#F8F8F8' }}
-      className="background transition-all duration-500 delay-200 ease-in"
+      className="background transition-all duration-500 delay-200 ease-in relative"
     >
+      <Link
+        className={`absolute top-2 left-2  ${
+          showed ? 'opacity-100' : 'opacity-0  -translate-y-[40%]'
+        } transition-all duration-[750ms] ease-in-out delay-[600ms]`}
+        to="/"
+      >
+        <LogoSU width="2em" height="2em" />
+      </Link>
       <main
         style={{ backgroundColor: colors.bgCard }}
         className={`mainer transition-all duration-[750ms] ease-in-out delay-[600ms] ${
