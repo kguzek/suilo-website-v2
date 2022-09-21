@@ -101,6 +101,11 @@ for (const route of ROUTES) {
   }
 }
 
+//route all vote related trafic to ./routes/vote
+const vote = require("./routes/vote");
+
+app.use("/api/vote/", vote);
+
 // catch all requests to paths that are not listed above
 app.all("*", (req, res) => {
   console.warn(`Received invalid request path: ${req.method} ${req.path}`);

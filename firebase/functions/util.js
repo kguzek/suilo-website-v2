@@ -1,9 +1,13 @@
+const { FieldValue, Timestamp } = require("firebase-admin/firestore");
+
 const admin = require("firebase-admin");
 require("dotenv").config();
 
 const { dateToArray, serialiseDateArray } = require("./common");
 
 // Authorise Firebase
+/* 
+//Production
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.SERVICE_ACCOUNT_PROJECT_ID,
@@ -11,6 +15,11 @@ admin.initializeApp({
     // replace `\` and `n` character pairs w/ single `\n` character
     privateKey: process.env.SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/gm, "\n"),
   }),
+});
+*/
+//Local Emulator
+admin.initializeApp({
+  databaseURL: "http://localhost:8080",
 });
 
 // Assign database reference
@@ -50,7 +59,7 @@ function formatTimestamps(dataObject = {}) {
 
 /** Converts a JavaScript Date object into a Firestore timestamp. */
 function dateToTimestamp(date) {
-  return fs.Timestamp.fromDate(date);
+  return Timestamp.fromDate(date);
 }
 
 /** Checks if the request params or query contains a document ID.
@@ -62,9 +71,7 @@ function getDocRef(req, res, collectionName) {
 
   function defaultReject() {
     // default to sending a HTTP 400 response
-    res
-      .status(400)
-      .json({ errorDescription: HTTP400 + "No document ID specified." });
+    res.status(400).json({ errorDescription: HTTP400 + "No document ID specified." });
   }
 
   function _getRef(resolve = (docRef) => docRef, reject = defaultReject) {
@@ -171,10 +178,10 @@ function arrayFromRange(start, end) {
  */
 function updateCollection(collectionName, collectionSizeChange) {
   // Set the last updated time for the collection to the current date
-  const newData = { lastUpdate: { [collectionName]: fs.Timestamp.now() } };
+  const newData = { lastUpdate: { [collectionName]: Timestamp.now() } };
   if (collectionSizeChange) {
     newData.collectionSizes = {
-      [collectionName]: fs.FieldValue.increment(collectionSizeChange),
+      [collectionName]: FieldValue.increment(collectionSizeChange),
     };
   }
   db.collection("_general").doc("collectionInfo").set(newData, { merge: true });
@@ -200,9 +207,7 @@ function randomArraySelection(array) {
 function createSingleDocument(data, res, collectionName, docID, sendRes) {
   const collectionRef = db.collection(collectionName);
   // attempts to add the data to the given collection
-  const promise = docID
-    ? collectionRef.doc(docID.toString()).set(data, { merge: true })
-    : collectionRef.add(data);
+  const promise = docID ? collectionRef.doc(docID.toString()).set(data, { merge: true }) : collectionRef.add(data);
   promise
     .then((doc) => {
       updateCollection(collectionName, 1);
@@ -219,21 +224,14 @@ function createSingleDocument(data, res, collectionName, docID, sendRes) {
       // return an error when the document could not be added, e.g. invalid collection name
       console.error(error);
       return res.status(500).json({
-        errorDescription:
-          HTTP500 + "The specified document could not be created.",
+        errorDescription: HTTP500 + "The specified document could not be created.",
         errorDetails: error.toString(),
       });
     });
 }
 
 /** Sends a response containing the data of the specified document query. */
-function sendSingleResponse(
-  docRef,
-  res,
-  sendData = (data) => data,
-  incrementViewCount = true,
-  defaultData
-) {
+function sendSingleResponse(docRef, res, sendData = (data) => data, incrementViewCount = true, defaultData) {
   function _sendResponse(data) {
     res.status(200).json(sendData(data));
   }
@@ -339,7 +337,7 @@ function updateSingleDocument(req, res, collectionName, attributeSanitisers) {
   // initialise new data
   const newData = {
     // add parameter indicating when the news was last edited
-    modified: fs.Timestamp.now(),
+    modified: Timestamp.now(),
   };
   // initialise boolean to indicate if any parameters were updated
   let dataUpdated = false;
@@ -381,9 +379,7 @@ function actuallyUpdateSingleDocument(req, res, collectionName, data) {
     })
     .catch((error) => {
       return res.status(400).json({
-        errorDescription:
-          HTTP400 +
-          "Could not update the specified document. It most likely does not exist.",
+        errorDescription: HTTP400 + "Could not update the specified document. It most likely does not exist.",
         errorDetails: error.toString(),
       });
     });
@@ -412,14 +408,355 @@ function deleteSingleDocument(req, res, collectionName) {
       .catch((error) => {
         return res.status(500).json({
           errorDescription:
-            HTTP500 +
-            "Could not delete the specified document. This does not mean that it doesn't exist.",
+            HTTP500 + "Could not delete the specified document. This does not mean that it doesn't exist.",
           errorDetails: error.toString(),
         });
       });
   });
 }
+//Voting functions
+function createGeneralInfoPacket(req, res) {
+  const electionInfoProm = db.collection("info").doc("1").get();
+  const candidatesProm = db.collection("candidate").get();
+  Promise.all([electionInfoProm, candidatesProm]).then(([infoDoc, candidatesSnapshot]) => {
+    let settings = infoDoc.data();
+    let response = infoDoc.data();
 
+    if (!response) {
+      res.status(500).json({ errorDescription: "There are no active elections" });
+      return;
+    }
+    formatTimestamps(response);
+    delete response.voteTreshold;
+    delete response.resultsId;
+    let candidates = [];
+    if (candidatesSnapshot) {
+      candidatesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data) {
+          delete data.currVotes;
+          candidates.push({ id: doc.id, ...data });
+        }
+      });
+    }
+    response.candidates = candidates;
+    const currentTime = new Date();
+    formatTimestamps(settings);
+    const resultsDate = new Date(settings.resultsDate);
+    const endDate = new Date(settings.endDate);
+    if (currentTime > endDate && currentTime > resultsDate) {
+      db.collection("results")
+        .doc(settings.resultsId)
+        .get()
+        .then((resultsRef) => {
+          const results = resultsRef.data();
+          if (results.simple === "") {
+            generateResults();
+          } else {
+            response.results = JSON.parse(results.simple);
+            res.status(200).json(response);
+          }
+        });
+    } else {
+      res.status(200).json(response);
+    }
+  });
+}
+
+function createElectionInfo(data, res) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      if (docRef.data()) {
+        res.status(500).json({
+          errorDescription: "Election info is already created update it with PUT or delete it to create a new one",
+        });
+      } else {
+        db.collection("results")
+          .add({ simple: "", detailed: "" })
+          .then((doc) => {
+            data.resultsId = doc.id;
+            data.totalVotes = 0;
+            createSingleDocument(data, res, "info", 1);
+          });
+      }
+    });
+}
+function updateElectionInfo(data, res) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      if (docRef) {
+        const CurrData = docRef.data();
+        const currentTime = new Date();
+        formatTimestamps(CurrData);
+        const startDate = new Date(CurrData.startDate);
+        const endDate = new Date(CurrData.endDate);
+        if (currentTime > startDate && currentTime < endDate) {
+          res.status(500).json({
+            errorDescription: "You are not allowed to edit settings during election",
+          });
+        } else {
+          db.collection("info")
+            .doc("1")
+            .update(data)
+            .then(() => {
+              res.status(200).json({ message: "Election info edited" });
+            });
+        }
+      } else {
+        res.status(500).json({
+          errorDescription: "There isn't a election info to update",
+        });
+      }
+    });
+}
+function editClassList(classList, res, add) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      if (docRef) {
+        const CurrData = docRef.data();
+        const currentTime = new Date();
+        formatTimestamps(CurrData);
+        const startDate = new Date(CurrData.startDate);
+        const endDate = new Date(CurrData.endDate);
+        if (currentTime > startDate && currentTime < endDate) {
+          res.status(500).json({
+            errorDescription: "You are not allowed to edit settings during election",
+          });
+        } else {
+          db.collection("info")
+            .doc("1")
+            .update({
+              classList: add ? FieldValue.arrayUnion(...classList) : FieldValue.arrayRemove(...classList),
+            })
+            .then(() => {
+              res.status(200).json({ message: "Class list updated" });
+            });
+        }
+      } else {
+        res.status(500).json({
+          errorDescription: "There isn't a election info to update",
+        });
+      }
+    });
+}
+function submitVoteForExistingCandidate(req, res, settings, voterInfo) {
+  db.collection("candidate")
+    .doc(req.params.id)
+    .get()
+    .then((docRef) => {
+      const currentCandidate = docRef.data();
+      if (currentCandidate) {
+        const votePromise = db.collection("votes").add({
+          date: Timestamp.now(),
+          candidate: req.params.id,
+          gender: voterInfo.gender,
+          className: voterInfo.className,
+        });
+        const candidatePromise = db
+          .collection("candidate")
+          .doc(req.params.id)
+          .update({
+            currVotes: FieldValue.increment(1),
+            reachedTreshold: currentCandidate.currVotes + 1 >= settings.voteTreshold,
+          });
+        const usedAccountsPromise = db.collection("usedAccounts").doc(req.userInfo.uid).set({ used: true });
+        const infoPromise = db
+          .collection("info")
+          .doc("1")
+          .update({
+            totalVotes: FieldValue.increment(1),
+          });
+
+        Promise.all([votePromise, candidatePromise, usedAccountsPromise, infoPromise])
+          .then(([voteRef, candidateRef, usedAccountsRef, infoRef]) => {
+            res.status(200).json({
+              message: "Pomyślnie oddano głos",
+            });
+          })
+          .catch((error) => {
+            return res.status(500).json({
+              errorDescription: HTTP500 + "Something went wrong and your vote couldn't have benn submited properly",
+              errorDetails: error.toString(),
+            });
+          });
+      } else {
+        res.status(500).json({
+          errorDescription: "Candidate That you are trying to vote for doesn't exist",
+        });
+      }
+    });
+}
+function checkIfAbleTovote(req, res, next) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      const settings = docRef.data();
+      if (settings) {
+        const currentTime = new Date();
+        formatTimestamps(settings);
+        const startDate = new Date(settings.startDate);
+        const endDate = new Date(settings.endDate);
+        if (currentTime > startDate && currentTime < endDate) {
+          db.collection("usedAccounts")
+            .doc(req.userInfo.uid)
+            .get()
+            .then((userRef) => {
+              if (userRef.data()) {
+                res.status(500).json({
+                  errorDescription: "Możesz oddać tylko jeden głos",
+                });
+              } else {
+                next(settings);
+              }
+            });
+        } else {
+          res.status(500).json({
+            errorDescription: "The election isnn't active",
+          });
+        }
+      } else {
+        res.status(500).json({
+          errorDescription: "There is no election",
+        });
+      }
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        errorDescription: HTTP500 + "Something went wrong and your vote couldn't have benn submited properly",
+        errorDetails: error.toString(),
+      });
+    });
+}
+function vote(req, res, voterInfo) {
+  checkIfAbleTovote(req, res, (settings) => submitVoteForExistingCandidate(req, res, settings, voterInfo));
+}
+function voteForCustomCandidate(req, res, candidate, voterInfo) {
+  checkIfAbleTovote(req, res, (settings) => {
+    db.collection("candidate")
+      .add(candidate)
+      .then((doc) => {
+        req.params.id = doc.id;
+        submitVoteForExistingCandidate(req, res, settings, voterInfo);
+      })
+      .catch((error) => {
+        return res.status(500).json({
+          errorDescription: HTTP500 + "Something went wrong and your vote couldn't have benn submited properly",
+          errorDetails: error.toString(),
+        });
+      });
+  });
+}
+function getResults(res) {
+  db.collection("info")
+    .doc("1")
+    .get()
+    .then((docRef) => {
+      const settings = docRef.data();
+      if (settings) {
+        const currentTime = new Date();
+        formatTimestamps(settings);
+        const resultsDate = new Date(settings.resultsDate);
+        const endDate = new Date(settings.endDate);
+        if (currentTime > endDate && currentTime > resultsDate) {
+          db.collection("results")
+            .doc(settings.resultsId)
+            .get()
+            .then((resultsRef) => {
+              const results = resultsRef.data();
+              if (results.simple === "" || results.detailed === "") {
+                generateResults();
+                res.status(500).json({
+                  errorDescription: "Results are not yet generated",
+                });
+              } else {
+                res.status(200).json(JSON.parse(results.detailed));
+              }
+            });
+        } else {
+          res.status(500).json({
+            errorDescription: "You are not able to view  the results yet",
+          });
+        }
+      } else {
+        res.status(500).json({
+          errorDescription: "There is no election",
+        });
+      }
+    });
+}
+function generateResults() {
+  const candidatePromise = db.collection("candidate").get();
+  const votesPromise = db.collection("votes").get();
+  const infoPromise = db.collection("info").doc("1").get();
+  Promise.all([candidatePromise, votesPromise, infoPromise]).then(([candidatesSnapshot, voteSnapshot, infoDoc]) => {
+    const byCandidates = {};
+    const settings = infoDoc.data();
+    const byClass = {};
+    const byGender = { male: 0, female: 0, other: 0, notSpecified: 0 };
+    const byHour = new Array(Math.ceil((settings.endDate.seconds - settings.startDate.seconds) / 3600)).fill(0);
+    const simpleResult = [];
+    const sortedCandidates = [];
+
+    settings.classList.forEach((className) => {
+      byClass[className] = 0;
+    });
+    candidatesSnapshot.forEach((doc) => {
+      const { fullName, className } = doc.data();
+      byCandidates[doc.id] = {
+        fullName,
+        className,
+        male: 0,
+        female: 0,
+        other: 0,
+        totalVotes: 0,
+        byClass,
+      };
+    });
+    voteSnapshot.forEach((doc) => {
+      const { candidate, className, gender, date } = doc.data();
+      const statsForCandidate = byCandidates[candidate];
+      if (date.seconds > settings.startDate.seconds && date.seconds < settings.endDate.seconds) {
+        statsForCandidate.totalVotes++;
+        statsForCandidate[gender]++;
+        statsForCandidate.byClass[className]++;
+        byClass[className]++;
+        byGender[gender]++;
+        byHour[Math.floor((date.seconds - settings.startDate.seconds) / 3600)]++;
+      }
+    });
+
+    for (const [key, value] of Object.entries(byCandidates)) {
+      sortedCandidates.push({ ...value, id: key });
+      simpleResult.push({
+        fullName: value.fullName,
+        className: value.className,
+        id: key,
+        totalVotes: value.totalVotes,
+      });
+    }
+
+    simpleResult.sort((a, b) => b.totalVotes - a.totalVotes);
+    sortedCandidates.sort((a, b) => b.totalVotes - a.totalVotes);
+
+    const detailedResult = {
+      byCandidates: sortedCandidates,
+      byHour: byHour,
+      byGender: byGender,
+      byClass: byClass,
+    };
+
+    db.collection("results")
+      .doc(settings.resultsId)
+      .update({ simple: JSON.stringify(simpleResult), detailed: JSON.stringify(detailedResult) });
+  });
+}
 module.exports = {
   admin,
   db,
@@ -442,4 +779,11 @@ module.exports = {
   sendListResponse,
   updateSingleDocument,
   deleteSingleDocument,
+  createGeneralInfoPacket,
+  createElectionInfo,
+  updateElectionInfo,
+  editClassList,
+  vote,
+  voteForCustomCandidate,
+  getResults,
 };

@@ -1,12 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import { Editor, EditorState } from "draft-js";
-// import 'draft-js/dist/Draft.css';
-// const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
-// useEffect(() => {
-//     onChange()
-// }, [editorState])
-//<Editor editorState={editorState} onChange={setEditorState} />
-
 const TextEditor = ({ onChange, value, isNew }) => {
   function _handleChange(e) {
     let html = e.target.innerHTML.trim();

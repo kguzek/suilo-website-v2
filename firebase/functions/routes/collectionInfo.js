@@ -19,10 +19,14 @@ function getRouter(availableEndpoints) {
         formatTimestamps(rawData.lastUpdate);
         const dataToSend = { ...defaultValues };
         for (const endpoint in rawData.collectionSizes) {
-          dataToSend[endpoint].numDocs = rawData.collectionSizes[endpoint];
+          if (dataToSend[endpoint]) {
+            dataToSend[endpoint].numDocs = rawData.collectionSizes[endpoint];
+          }
         }
         for (const endpoint in rawData.lastUpdate) {
-          dataToSend[endpoint].lastUpdated = rawData.lastUpdate[endpoint];
+          if (dataToSend[endpoint]) {
+            dataToSend[endpoint].lastUpdated = rawData.lastUpdate[endpoint];
+          }
         }
         return dataToSend;
       },
