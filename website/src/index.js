@@ -1,12 +1,12 @@
-import React from 'react';
-import './styles/index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
-import { hydrate, render } from 'react-dom';
+import React from "react";
+import "./styles/index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter } from "react-router-dom";
+import { hydrate, render } from "react-dom";
 import * as serviceWorker from './serviceWorker';
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 
 const toRender = [
   <React.StrictMode>
