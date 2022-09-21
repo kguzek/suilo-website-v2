@@ -427,8 +427,6 @@ function createGeneralInfoPacket(req, res) {
       return;
     }
     formatTimestamps(response);
-    delete response.voteTreshold;
-    delete response.resultsId;
     let candidates = [];
     if (candidatesSnapshot) {
       candidatesSnapshot.forEach((doc) => {
@@ -576,7 +574,7 @@ function submitVoteForExistingCandidate(req, res, settings, voterInfo) {
         Promise.all([votePromise, candidatePromise, usedAccountsPromise, infoPromise])
           .then(([voteRef, candidateRef, usedAccountsRef, infoRef]) => {
             res.status(200).json({
-              message: "Pomyślnie oddano głos",
+              message: "Vote Submited",
             });
           })
           .catch((error) => {
@@ -610,7 +608,7 @@ function checkIfAbleTovote(req, res, next) {
             .then((userRef) => {
               if (userRef.data()) {
                 res.status(500).json({
-                  errorDescription: "Możesz oddać tylko jeden głos",
+                  errorDescription: "You can only vote once",
                 });
               } else {
                 next(settings);
@@ -699,7 +697,7 @@ function generateResults() {
     const byCandidates = {};
     const settings = infoDoc.data();
     const byClass = {};
-    const byGender = { male: 0, female: 0, other: 0, notSpecified: 0 };
+    const byGender = { male: 0, female: 0, other: 0 };
     const byHour = new Array(Math.ceil((settings.endDate.seconds - settings.startDate.seconds) / 3600)).fill(0);
     const simpleResult = [];
     const sortedCandidates = [];
@@ -707,10 +705,13 @@ function generateResults() {
     settings.classList.forEach((className) => {
       byClass[className] = 0;
     });
+    console.log("wtf");
     candidatesSnapshot.forEach((doc) => {
-      const { fullName, className } = doc.data();
+      console.log("rolf");
+      const { name, surname, className } = doc.data();
       byCandidates[doc.id] = {
-        fullName,
+        name,
+        surname,
         className,
         male: 0,
         female: 0,
@@ -720,9 +721,11 @@ function generateResults() {
       };
     });
     voteSnapshot.forEach((doc) => {
+      console.log("lol");
       const { candidate, className, gender, date } = doc.data();
       const statsForCandidate = byCandidates[candidate];
       if (date.seconds > settings.startDate.seconds && date.seconds < settings.endDate.seconds) {
+        console.log("liga legend");
         statsForCandidate.totalVotes++;
         statsForCandidate[gender]++;
         statsForCandidate.byClass[className]++;
@@ -735,7 +738,8 @@ function generateResults() {
     for (const [key, value] of Object.entries(byCandidates)) {
       sortedCandidates.push({ ...value, id: key });
       simpleResult.push({
-        fullName: value.fullName,
+        name: value.name,
+        surname: value.surname,
         className: value.className,
         id: key,
         totalVotes: value.totalVotes,
