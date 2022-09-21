@@ -17,7 +17,7 @@ const VoteOption = ({ colors, idx, activeIdx, setActiveIdx, id, name, classLabel
     if (activeIdx === idx) {
       setColor('rgba(230, 113, 11, .75)');
     } else {
-      setColor('rgba(0,0,0,.05)');
+      setColor('rgba(0,0,0,.055)');
     }
   }, [activeIdx]);
 
