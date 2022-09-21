@@ -73,7 +73,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
         </title>
         <meta
           name="description"
-          content={`Oficjalna strona internetowa Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach Gliwice. Informacje z życia szkoły, o Samorządzie i  kontakt. Szczęśliwe numerki na dzień ${forDate} to: ${luckyNumbers[0]} i ${luckyNumbers[1]}`}
+          content={`Oficjalna strona internetowa Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach Gliwice. Informacje z życia szkoły, o Samorządzie i  kontakt. Szczęśliwe numerki na dzień ${forDate} to: ${luckyNumbers?.[0]} i ${luckyNumbers?.[1]}`}
         />
         <meta
           property="og:title"
@@ -106,7 +106,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
         </div>
         <div
           className="flex flex-col pt-8 md:pt-0 col-span-1 lg:col-span-2 sm:pt-7 sm:-mb-6 lg:mb-0"
-          title={`Szczęśliwe numerki na ${forDate} to ${luckyNumbers[0]} i ${luckyNumbers[1]}.`}
+          title={`Szczęśliwe numerki na ${forDate} to ${luckyNumbers?.[0]} i ${luckyNumbers?.[1]}.`}
         >
           <h5 className="font-light text-text2 text-xl lg:text-white lg:text-2xl xl:text-[1.6rem] text-right mt-5 lg:mt-0 pt-3 pb-2 lg:pt-0 ">
             Szczęśliwe numerki:
@@ -114,12 +114,12 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           <div className="flex flex-row justify-end">
             <div className="bg-white rounded-2xl w-28 md:w-32 lg:w-[8.75rem] xl:w-[9.25rem] lg:rounded-[1.25rem] transition-all aspect-LN justify-center align-middle inline-flex drop-shadow-3xl ">
               <p className="font-extrabold text-primary text-6xl md:text-7xl xl:text-[4.85rem] m-auto">
-                {luckyNumbers[0]}
+                {luckyNumbers?.[0]}
               </p>
             </div>
             <div className="bg-white rounded-2xl w-28 md:w-32 lg:w-[8.75rem] xl:w-[9.25rem] lg:rounded-[1.25rem] transition-all aspect-LN justify-center align-middle inline-flex drop-shadow-3xl ml-5">
               <p className="font-extrabold text-primary text-6xl md:text-7xl xl:text-[4.85rem] m-auto">
-                {luckyNumbers[1]}
+                {luckyNumbers?.[1]}
               </p>
             </div>
           </div>
