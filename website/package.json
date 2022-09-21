@@ -16,8 +16,8 @@
     "react-feather": "^2.0.10",
     "react-loader-spinner": "^5.3.4",
     "react-meta-tags": "^1.0.1",
-    "react-router-dom": "6.4.0",
-    "react-scripts": "5.0.1",
+    "react-router-dom": "^6.4.0",
+    "react-scripts": "^5.0.1",
     "react-youtube": "^10.0.0",
     "web-vitals": "^3.0.2"
   },
@@ -51,6 +51,7 @@
     "postcss": "^8.4.16",
     "postcss-cli": "^10.0.0",
     "react-spa-prerender": "^1.0.14",
-    "tailwindcss": "^3.1.8"
+    "tailwindcss": "^3.1.8",
+    "yarn-upgrade-all": "^0.7.1"
   }
 }

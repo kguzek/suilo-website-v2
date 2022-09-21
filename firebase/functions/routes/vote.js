@@ -57,12 +57,11 @@ const voteAttributeSanitisers = {
         ],
 };
 const candidateAttributeSanitisers = {
-  name: (name) => name || "Imię",
-  surname: (surname) => surname || "Nazwisko",
+  fullName: (fullName) => fullName || "Imię i Nazwisko",
   className: (className) => className || "Other",
 };
 const VoterAttributeSanitisers = {
-  gender: (gender) => gender || "Other",
+  gender: (gender) => gender || "notSpecified",
   className: (className) => className || "Other",
 };
 router.post("/:id", (req, res) => {
@@ -113,7 +112,7 @@ router.put("/setup/election", (req, res) => {
 });
 
 router.post("/setup/candidate", (req, res) => {
-  const data = { reachedTreshold: true, official: true, currVotes: 0 };
+  const data = { reachedTreshold: false, official: true, currVotes: 0 };
   for (const attrib in candidateAttributeSanitisers) {
     const sanitiser = candidateAttributeSanitisers[attrib];
     data[attrib] = sanitiser(req.query[attrib] || req.body[attrib]);
