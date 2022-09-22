@@ -1,39 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import MetaTags from "react-meta-tags";
-import InputDropdown from "../components/Editor/InputComponents/InputDropdown";
-import { fetchNewsData } from "../components/News/PostCardPreview";
-import { fetchCachedData, removeSearchParam } from "../misc";
-import { PostEdit } from "../components/Editor/PostEdit";
-import { EventEdit } from "../components/Editor/EventEdit";
-import { CalendarEdit } from "../components/Editor/CalendarEdit";
-import { LinkEdit } from "../components/Editor/LinkEdit";
-import { PermissionEdit } from "../components/Editor/PermissionEdit";
-import LoadingScreen from "../components/LoadingScreen";
-import { DEBUG_MODE } from "../firebase";
-import { VotingEdit } from "../components/Editor/VotingEdit";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import MetaTags from 'react-meta-tags';
+import InputDropdown from '../components/Editor/InputComponents/InputDropdown';
+import { fetchNewsData } from '../components/News/PostCardPreview';
+import { fetchCachedData, removeSearchParam } from '../misc';
+import { PostEdit } from '../components/Editor/PostEdit';
+import { EventEdit } from '../components/Editor/EventEdit';
+import { CalendarEdit } from '../components/Editor/CalendarEdit';
+import { LinkEdit } from '../components/Editor/LinkEdit';
+import { PermissionEdit } from '../components/Editor/PermissionEdit';
+import LoadingScreen from '../components/LoadingScreen';
+import { DEBUG_MODE, fetchWithToken } from '../firebase';
+import { VotingEdit } from '../components/Editor/VotingEdit';
 
 const PAGES = {
-  news: "Aktualności",
-  events: "Wydarzenia",
-  calendar: "Kalendarz",
-  links: "Skracanie linków",
-  users: "Użytkownicy",
-  voting: "Głosowanie",
+  news: 'Aktualności',
+  events: 'Wydarzenia',
+  calendar: 'Kalendarz',
+  links: 'Skracanie linków',
+  users: 'Użytkownicy',
+  voting: 'Głosowanie',
 };
 
-const PERMS = [...Object.keys(PAGES).filter((p) => p !== "voting")];
+const PERMS = [...Object.keys(PAGES).filter((p) => p !== 'voting')];
 
 const PAGE_NAMES = Object.values(PAGES);
 
-export default function Edit({
-  setPage,
-  user,
-  userPerms = {},
-  loginAction,
-  reload,
-  setReload,
-}) {
+export default function Edit({ setPage, user, userPerms = {}, loginAction, reload, setReload }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   // `editPicker` is an index of `editPickerOptions`
@@ -46,12 +39,14 @@ export default function Edit({
   const [eventsData, setEventsData] = useState({});
   const [calendarData, setCalendarData] = useState({});
   const [storageContents, setStorageContents] = useState({});
+  const [votingData, setVotingData] = useState({});
   const [loadedNews, setLoadedNews] = useState(false);
   const [loadedLinks, setLoadedLinks] = useState(false);
   const [loadedUsers, setLoadedUsers] = useState(false);
   const [loadedEvents, setLoadedEvents] = useState(false);
   const [loadedCalendar, setLoadedCalendar] = useState(false);
   const [loadedStorageContents, setLoadedPhotos] = useState(false);
+  const [loadedVoting, setLodadedVoting] = useState(false);
 
   // Calendar fetch options
   const [year, setYear] = useState(new Date().getFullYear());
@@ -75,7 +70,7 @@ export default function Edit({
       setLoaded: setLoadedLinks,
       updateCache: forceUpdate,
     };
-    fetchCachedData("links_all", "links", fetchArgs);
+    fetchCachedData('links_all', 'links', fetchArgs);
   }
 
   /** Fetch the users data from the cache or API. */
@@ -86,7 +81,7 @@ export default function Edit({
       setLoaded: setLoadedUsers,
       updateCache: forceUpdate,
     };
-    fetchCachedData("users", "/users", fetchArgs);
+    fetchCachedData('users', '/users', fetchArgs);
   }
 
   /** Fetch the events data from the cache or API. */
@@ -97,7 +92,7 @@ export default function Edit({
       setLoaded: setLoadedEvents,
       updateCache: forceUpdate,
     };
-    fetchCachedData("events", "/events", fetchArgs);
+    fetchCachedData('events', '/events', fetchArgs);
   }
 
   /** Fetch the calendar data from the cache or API. */
@@ -106,7 +101,7 @@ export default function Edit({
     if (forceUpdate) {
       // Remove calendar caches for all months
       for (const cacheName in localStorage) {
-        if (cacheName.startsWith("calendar")) {
+        if (cacheName.startsWith('calendar')) {
           localStorage.removeItem(cacheName);
         }
       }
@@ -130,16 +125,23 @@ export default function Edit({
       setLoaded: setLoadedPhotos,
       updateCache: forceUpdate,
     };
-    fetchCachedData("storage", "/storage", fetchArgs);
+    fetchCachedData('storage', '/storage', fetchArgs);
+  }
+
+  function fetchVotingInfo() {
+    setLodadedVoting(false);
+    fetchWithToken('/vote/info', 'GET').then((response) =>
+      response.json().then((data) => {
+        console.log(data);
+        setVotingData(data);
+        setLodadedVoting(true);
+      })
+    );
   }
 
   /** Populate the data from the cache or API. */
   function fetchData() {
-    const updateCache = !!removeSearchParam(
-      searchParams,
-      setSearchParams,
-      "refresh"
-    );
+    const updateCache = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
 
     for (const fetchFunc of [
       fetchNews,
@@ -147,6 +149,7 @@ export default function Edit({
       fetchUsers,
       fetchEvents,
       fetchStorageContents,
+      fetchVotingInfo,
     ]) {
       fetchFunc(updateCache);
     }
@@ -173,11 +176,11 @@ export default function Edit({
   useEffect(() => {
     if (userPerms.isAdmin || userPerms.canEdit?.length > 0) {
       // Wait until the user is determined; don't kick out just yet in case the user is logged in
-      setPage("edit");
+      setPage('edit');
     } else {
       // User has been determined to be `null`, or they have no edit permissions
-      navigate("/");
-      setPage("home");
+      navigate('/');
+      setPage('home');
       if (user === null) {
         // User is not logged in; show popup
         loginAction();
@@ -188,9 +191,7 @@ export default function Edit({
   // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {
     DEBUG_MODE &&
-      console.debug(
-        "Waiting for the user to be determined before displaying edit screen."
-      );
+      console.debug('Waiting for the user to be determined before displaying edit screen.');
     return <LoadingScreen />;
   }
 
@@ -201,38 +202,31 @@ export default function Edit({
 
   // Failsafe to prevent the user seeing the edit UI in case of a bug - ez?
   if (editPickerOptions.length === 0) {
-    return (
-      <p style={{ paddingBottom: "100%" }}>
-        Nie masz uprawnień do wyświetlania tej strony.
-      </p>
-    );
+    return <p style={{ paddingBottom: '100%' }}>Nie masz uprawnień do wyświetlania tej strony.</p>;
   }
 
   const selectedPage = editPickerOptions[editPicker];
   return (
-    <div className='w-11/12 xl:w-10/12 min-h-[80vh] mt-16 flex flex-col justify-start align-middle mb-6 '>
+    <div className="w-11/12 xl:w-10/12 min-h-[80vh] mt-16 flex flex-col justify-start align-middle mb-6 ">
       <MetaTags>
-        <title>
-          Edycja treści | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w
-          Gliwicach
-        </title>
+        <title>Edycja treści | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
         <meta
-          name='description'
-          content='Edycja zawartości strony Samorządu Uczniowskiego 1 Liceum Ogólnokształącego w Gliwicach.'
+          name="description"
+          content="Edycja zawartości strony Samorządu Uczniowskiego 1 Liceum Ogólnokształącego w Gliwicach."
         />
-        <meta property='og:title' content='Edycja | SUILO Gliwice' />
-        <meta property='og:image' content='' /> {/* TODO: Add image */}
+        <meta property="og:title" content="Edycja | SUILO Gliwice" />
+        <meta property="og:image" content="" /> {/* TODO: Add image */}
       </MetaTags>
-      <div className='mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-3/4 xl:w-2/3'>
-        <div className=' m-auto w-1/2'>
+      <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-3/4 xl:w-2/3">
+        <div className=" m-auto w-1/2">
           <InputDropdown
-            label='Element strony do edycji'
+            label="Element strony do edycji"
             currentValue={editPicker}
             onChangeCallback={(val) => setEditPicker(parseInt(val))}
             valueDisplayObject={editPickerOptions}
           />
         </div>
-        <div className='w-full m-auto'>
+        <div className="w-full m-auto">
           {selectedPage === PAGE_NAMES[0] ? (
             <PostEdit
               data={newsData}
@@ -260,11 +254,7 @@ export default function Edit({
               refetchData={() => fetchCalendar(true)}
             />
           ) : selectedPage === PAGE_NAMES[3] ? (
-            <LinkEdit
-              data={linksData}
-              loaded={loadedLinks}
-              refetchData={() => fetchLinks(true)}
-            />
+            <LinkEdit data={linksData} loaded={loadedLinks} refetchData={() => fetchLinks(true)} />
           ) : selectedPage === PAGE_NAMES[4] ? (
             <PermissionEdit
               data={usersData}
@@ -276,9 +266,9 @@ export default function Edit({
           ) : (
             selectedPage === PAGE_NAMES[5] && (
               <VotingEdit
-                data={usersData}
-                loaded={loadedUsers}
-                refetchData={() => fetchUsers(true)}
+                data={votingData}
+                loaded={loadedVoting}
+                refetchData={() => fetchVotingInfo()}
               />
             )
           )}
