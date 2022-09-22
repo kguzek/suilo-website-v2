@@ -1,46 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { Plus, Trash, Edit3 } from "react-feather";
-import InputBox from "./InputComponents/InputBox";
-import InputDropdown from "./InputComponents/InputDropdown";
-import DialogBox from "../DialogBox";
-import LoadingScreen from "../LoadingScreen";
-import { eventSubtypes } from "../Events/Calendar";
-import { fetchWithToken } from "../../firebase";
-import { setErrorMessage } from "../../misc";
+import React, { useEffect, useState } from 'react';
+import { Plus, Trash, Edit3 } from 'react-feather';
+import InputBox from './InputComponents/InputBox';
+import InputDropdown from './InputComponents/InputDropdown';
+import DialogBox from '../DialogBox';
+import LoadingScreen from '../LoadingScreen';
+import { eventSubtypes } from '../Events/Calendar';
+import { fetchWithToken } from '../../firebase';
+import { setErrorMessage } from '../../misc';
 
 const MONTHS = [
-  "Styczeń",
-  "Luty",
-  "Marzec",
-  "Kwiecień",
-  "Maj",
-  "Czerwiec",
-  "Lipiec",
-  "Sierpień",
-  "Wrzesień",
-  "Październik",
-  "Listopad",
-  "Grudzień",
+  'Styczeń',
+  'Luty',
+  'Marzec',
+  'Kwiecień',
+  'Maj',
+  'Czerwiec',
+  'Lipiec',
+  'Sierpień',
+  'Wrzesień',
+  'Październik',
+  'Listopad',
+  'Grudzień',
 ];
 
-export const CalendarEdit = ({
-  data,
-  loaded,
-  refetchData,
-  year,
-  month,
-  setYear,
-  setMonth,
-}) => {
-  const [currentlyActive, setCurrentlyActive] = useState("_default");
-  const [title, setTitle] = useState("");
-  const [type, setType] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+export const CalendarEdit = ({ data, loaded, refetchData, year, month, setYear, setMonth }) => {
+  const [currentlyActive, setCurrentlyActive] = useState('_default');
+  const [title, setTitle] = useState('');
+  const [type, setType] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
-  const [displayYear, setDisplayYear] = useState(
-    year ?? new Date().getFullYear()
-  );
+  const [displayYear, setDisplayYear] = useState(year ?? new Date().getFullYear());
 
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
@@ -55,9 +45,7 @@ export const CalendarEdit = ({
       return;
     }
     // Get the currently selected event
-    const event = (data?.events ?? [])
-      .filter((event) => event.id === currentlyActive)
-      .shift();
+    const event = (data?.events ?? []).filter((event) => event.id === currentlyActive).shift();
     if (!event) {
       // No currently selected event
       return void _resetAllInputs();
@@ -71,7 +59,7 @@ export const CalendarEdit = ({
   useEffect(() => {
     // Set the selected option to "new event" when the calendar period is changed
     _resetAllInputs();
-    setCurrentlyActive("_default");
+    setCurrentlyActive('_default');
   }, [year, month]);
 
   // Display loading screen if calendar data hasn't been retrieved yet
@@ -89,19 +77,19 @@ export const CalendarEdit = ({
 
   function _resetAllInputs() {
     for (const setVar of [setTitle, setType, setStartDate, setEndDate]) {
-      setVar("");
+      setVar('');
     }
-    setCurrentlyActive("_default");
+    setCurrentlyActive('_default');
   }
 
   function _handleSubmit(e) {
     e.preventDefault();
     setClickedSubmit(true);
-    let url = "/calendar/";
-    let method = "POST";
+    let url = '/calendar/';
+    let method = 'POST';
     // Check if an existing event is selected
-    if (currentlyActive !== "_default") {
-      method = "PUT";
+    if (currentlyActive !== '_default') {
+      method = 'PUT';
       url += currentlyActive;
     }
     // ?title=Nazwa wydarzenia kalendarzowego.&type=2&startDate=1&endDate=1
@@ -126,7 +114,7 @@ export const CalendarEdit = ({
 
   function _handleDelete() {
     setClickedDelete(true);
-    fetchWithToken(`/calendar/${currentlyActive}`, "DELETE").then((_res) => {
+    fetchWithToken(`/calendar/${currentlyActive}`, 'DELETE').then((_res) => {
       // Update the data once request is processed
       refresh();
       setClickedDelete(false);
@@ -210,9 +198,9 @@ export const CalendarEdit = ({
       <div
         className="fr"
         style={{
-          width: "100%",
-          margin: "-1em 0",
-          justifyContent: "space-between",
+          width: '100%',
+          margin: '-1em 0',
+          justifyContent: 'space-between',
         }}
       >
         <InputBox
@@ -238,14 +226,14 @@ export const CalendarEdit = ({
         />
       </div>
 
-      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "_default" &&
+      <div className="fr" style={{ width: '100%', justifyContent: 'right' }}>
+        {currentlyActive !== '_default' &&
           (clickedDelete ? (
             <button
               type="button"
               className="delete-btn select-none cursor-wait"
               disabled
-              style={{ pointerEvents: "none" }}
+              style={{ pointerEvents: 'none' }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -255,7 +243,7 @@ export const CalendarEdit = ({
             <button
               type="button"
               className="delete-btn select-none cursor-pointer"
-              style={{ pointerEvents: "all" }}
+              style={{ pointerEvents: 'all' }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -267,35 +255,27 @@ export const CalendarEdit = ({
             type="submit"
             className="add-btn select-none cursor-wait"
             disabled
-            style={{ pointerEvents: "none" }}
+            style={{ pointerEvents: 'none' }}
           >
-            {currentlyActive !== "_default" ? (
+            {currentlyActive !== '_default' ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
-            <p>
-              {currentlyActive !== "_default"
-                ? "zaktualizuj wydarzenie"
-                : "dodaj wydarzenie"}
-            </p>
+            <p>{currentlyActive !== '_default' ? 'zaktualizuj wydarzenie' : 'dodaj wydarzenie'}</p>
           </button>
         ) : (
           <button
             type="submit  "
             className="add-btn select-none cursor-pointer"
-            style={{ pointerEvents: "all" }}
+            style={{ pointerEvents: 'all' }}
           >
-            {currentlyActive !== "_default" ? (
+            {currentlyActive !== '_default' ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
-            <p>
-              {currentlyActive !== "_default"
-                ? "zaktualizuj wydarzenie"
-                : "dodaj wydarzenie"}
-            </p>
+            <p>{currentlyActive !== '_default' ? 'zaktualizuj wydarzenie' : 'dodaj wydarzenie'}</p>
           </button>
         )}
       </div>

@@ -15,7 +15,7 @@ import React, { useEffect } from 'react';
 export const DEBUG_MODE = false;
 
 /** Determines the API URL. */
-const USE_EMULATOR_API = true;
+const USE_EMULATOR_API = false;
 
 /** The root URL for the Firebase backend API. */
 export const API_URL = USE_EMULATOR_API

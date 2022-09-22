@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import MetaTags from "react-meta-tags";
-import { ArrowRight, Youtube, Instagram, Facebook } from "react-feather";
-import PostCardPreview, {
-  fetchNewsData,
-} from "../components/News/PostCardPreview";
-import SuPhoto from "../media/su-photo.jpg";
-import { fetchCachedData, formatDate } from "../misc";
-import LoadingScreen from "../components/LoadingScreen";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import MetaTags from 'react-meta-tags';
+import { ArrowRight, Youtube, Instagram, Facebook } from 'react-feather';
+import PostCardPreview, { fetchNewsData } from '../components/News/PostCardPreview';
+import SuPhoto from '../media/su-photo.jpg';
+import { fetchCachedData, formatDate } from '../misc';
+import LoadingScreen from '../components/LoadingScreen';
 
 const Home = ({ setPage, reload, setReload, screenWidth }) => {
   const [newsData, setNewsData] = useState([]);
@@ -15,8 +13,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
   const [loadedNews, setLoadedNews] = useState(false);
   const [loadedNumbers, setLoadedNumbers] = useState(false);
 
-  const newsItems =
-    screenWidth > 1024 ? 5 : screenWidth > 768 ? 4 : screenWidth > 640 ? 3 : 2;
+  const newsItems = screenWidth > 1024 ? 5 : screenWidth > 768 ? 4 : screenWidth > 640 ? 3 : 2;
 
   /** Fetch the news data from cache or API. */
   function fetchNews() {
@@ -36,11 +33,11 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
       setLoaded: setLoadedNumbers,
       updateCache: forceUpdate,
     };
-    fetchCachedData("luckyNumbers", "/luckyNumbers/v2", fetchArgs);
+    fetchCachedData('luckyNumbers', '/luckyNumbers/v2', fetchArgs);
   }
 
   useEffect(() => {
-    setPage("home");
+    setPage('home');
     fetchLuckyNumbers();
     fetchNews();
   }, []);
@@ -56,21 +53,15 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
   }, [reload]);
 
   const _scrollDown = () => {
-    document
-      .getElementById("home-2")
-      .scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById('home-2').scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   const forDate = formatDate(numbersData.date);
-  const luckyNumbers = loadedNumbers
-    ? numbersData.luckyNumbers
-    : ["...", "..."];
+  const luckyNumbers = loadedNumbers ? numbersData.luckyNumbers : ['...', '...'];
 
   return (
     <div className="flex w-11/12 xl:w-10/12 flex-col justify-center align-top">
       <MetaTags>
-        <title>
-          Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach
-        </title>
+        <title>Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
         <meta
           name="description"
           content={`Oficjalna strona internetowa Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach Gliwice. Informacje z życia szkoły, o Samorządzie i  kontakt. Szczęśliwe numerki na dzień ${forDate} to: ${luckyNumbers?.[0]} i ${luckyNumbers?.[1]}`}
@@ -131,10 +122,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
             </Link>
           </div>
         </div>
-        <div
-          className="more animate-bounce -rotate-90 duration-[5000]"
-          onClick={_scrollDown}
-        >
+        <div className="more animate-bounce -rotate-90 duration-[5000]" onClick={_scrollDown}>
           <div className="-rotate-90 origin-bottom-left">
             <div className="more1" />
             <div className="more2">więcej</div>
@@ -158,15 +146,13 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
               Nasza drużyna
             </h2>
             <p className="text-text2 select-all font-normal leading-8 text-lg xl:text-[1.2rem] xl:leading-[2.2rem] text-left md:text-left pt-3">
-              Do Samorządu Uczniowskiego I Liceum Ogólnokształcącego im. Edwarda
-              Dembowskiego w Gliwicach należą wszyscy uczniowie, a w jego radzie
-              zasiadają przewodniczący klas oraz osoby wybrane na stanowiska
-              Marszałka, Sekretarza i Skarbnika. Wspólnie dbamy o to, aby
-              szkolna norma była bardziej atrakcyjna, a codzienność - bardziej
-              urozmaicona. Organizujemy i współorganizujemy wydarzenia
-              okolicznościowe, prowadzimy tzw. szczęśliwe numerki, niesiemy
-              pomoc poprzez nagłaśnianie spraw uczniowskich, organizację zbiórek
-              i wiele innych. Jesteśmy tu dla was -&nbsp;
+              Do Samorządu Uczniowskiego I Liceum Ogólnokształcącego im. Edwarda Dembowskiego w
+              Gliwicach należą wszyscy uczniowie, a w jego radzie zasiadają przewodniczący klas oraz
+              osoby wybrane na stanowiska Marszałka, Sekretarza i Skarbnika. Wspólnie dbamy o to,
+              aby szkolna norma była bardziej atrakcyjna, a codzienność - bardziej urozmaicona.
+              Organizujemy i współorganizujemy wydarzenia okolicznościowe, prowadzimy tzw.
+              szczęśliwe numerki, niesiemy pomoc poprzez nagłaśnianie spraw uczniowskich,
+              organizację zbiórek i wiele innych. Jesteśmy tu dla was -&nbsp;
               <i className="font-medium text-text2">od uczniów dla uczniów.</i>
             </p>
           </article>
@@ -178,7 +164,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
             2C
           </p>
           <img
-            src={require("../media/wrobel.jpg")}
+            src={require('../media/wrobel.jpg')}
             className="z-10  drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
             alt="Szymon Wróbel"
           />
@@ -199,7 +185,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
             3Ap
           </p>
           <img
-            src={require("../media/kurzak.jpg")}
+            src={require('../media/kurzak.jpg')}
             className="z-10  drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
             alt="Adam Kurzak"
           />
@@ -220,7 +206,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
             3Bg
           </p>
           <img
-            src={require("../media/mruz.jpg")}
+            src={require('../media/mruz.jpg')}
             className="z-10 drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
             alt="Mikołaj Mrózek"
           />
@@ -238,7 +224,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
         </div>
         <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
           <img
-            src={require("../media/bialowas.png")}
+            src={require('../media/bialowas.png')}
             className="z-10  drop-shadow-3xl aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
             alt="Barbara Białowąs"
           />
@@ -256,9 +242,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
         </div>
       </div>
       <div className="w-full justify-between inline-flex align-bottom flex-row mt-16">
-        <h2 className="text-text1 font-semibold text-2xl lg:text-3xl text-left">
-          Aktualności
-        </h2>
+        <h2 className="text-text1 font-semibold text-2xl lg:text-3xl text-left">Aktualności</h2>
         <Link
           to="/aktualnosci"
           className="inline-flex flex-row align-middle group transition-all pt-1"
@@ -295,9 +279,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           rel="noreferrer"
         >
           <Facebook size={38} strokeWidth={1.4} color="#858585" />
-          <p className="font-semibold text-lg tracking-wide m-auto">
-            /SUILOGliwice
-          </p>
+          <p className="font-semibold text-lg tracking-wide m-auto">/SUILOGliwice</p>
         </a>
         <a
           className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
@@ -305,15 +287,8 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           target="_blank"
           rel="noreferrer"
         >
-          <Instagram
-            size={38}
-            strokeWidth={1.4}
-            color="#858585"
-            style={{ marginRight: ".4em" }}
-          />
-          <p className="font-semibold text-lg tracking-wide m-auto">
-            /suilo_gliwice
-          </p>
+          <Instagram size={38} strokeWidth={1.4} color="#858585" style={{ marginRight: '.4em' }} />
+          <p className="font-semibold text-lg tracking-wide m-auto">/suilo_gliwice</p>
         </a>
         <a
           className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
@@ -321,15 +296,8 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           target="_blank"
           rel="noreferrer"
         >
-          <Youtube
-            size={38}
-            strokeWidth={1.4}
-            color="#858585"
-            style={{ marginRight: ".4em" }}
-          />
-          <p className="font-semibold text-lg tracking-wide m-auto">
-            /SUILOGliwice
-          </p>
+          <Youtube size={38} strokeWidth={1.4} color="#858585" style={{ marginRight: '.4em' }} />
+          <p className="font-semibold text-lg tracking-wide m-auto">/SUILOGliwice</p>
         </a>
         <a
           className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
@@ -337,15 +305,8 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           target="_blank"
           rel="noreferrer"
         >
-          <Instagram
-            size={38}
-            strokeWidth={1.4}
-            color="#858585"
-            style={{ marginRight: ".4em" }}
-          />
-          <p className="font-semibold text-lg tracking-wide m-auto">
-            /jedynkatv
-          </p>
+          <Instagram size={38} strokeWidth={1.4} color="#858585" style={{ marginRight: '.4em' }} />
+          <p className="font-semibold text-lg tracking-wide m-auto">/jedynkatv</p>
         </a>
         <a
           className="cursor-pointer text-[#858585] opacity-75 hover:opacity-100 transition-all px-5 py-3 inline-flex flex-row align-middle"
@@ -353,15 +314,8 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           target="_blank"
           rel="noreferrer"
         >
-          <Youtube
-            size={38}
-            strokeWidth={1.4}
-            color="#858585"
-            style={{ marginRight: ".4em" }}
-          />
-          <p className="font-semibold text-lg tracking-wide m-auto">
-            /JedynkaTV
-          </p>
+          <Youtube size={38} strokeWidth={1.4} color="#858585" style={{ marginRight: '.4em' }} />
+          <p className="font-semibold text-lg tracking-wide m-auto">/JedynkaTV</p>
         </a>
       </div>
     </div>
