@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Countdown from 'react-countdown';
 import { Bars } from 'react-loader-spinner';
 
-import { API_URL as baseApiLink, auth, fetchWithToken } from '../../../firebase';
+import { fetchWithToken } from '../../../firebase';
 import { badWords } from './badWords.constants';
 import { Timer } from './Timer';
 
@@ -91,26 +91,22 @@ const DuringVoting = ({ colors, changeCard, endDate, setMessage, candidates, cla
         };
       }
 
-      auth.currentUser.getIdToken().then((token) => {
-        fetch(baseApiLink + path, {
-          method: 'post',
-          headers: new Headers({
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          }),
-          body: JSON.stringify(dataToSend),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.errorDescription === undefined) {
+      fetchWithToken(path, 'POST', undefined, dataToSend).then(
+        (res) =>
+          res.json().then((data) => {
+            if (res.ok) {
               setMessage(data.message);
             } else {
               setMessage(data.errorDescription);
             }
             setWaitingForServer(false);
             changeCard('after-voting');
-          });
-      });
+          }),
+        (err) => {
+          console.error(err);
+          setWaitingForServer(false);
+        }
+      );
     } else {
       setAdditionalCandidateName('');
     }

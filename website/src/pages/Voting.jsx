@@ -5,7 +5,7 @@ import BeforeVoting from '../components/Voting/components/BeforeVoting';
 import DuringVoting from '../components/Voting/components/DuringVoting';
 import AfterVoting from '../components/Voting/components/AfterVoting';
 import AfterTime from '../components/Voting/components/AfterTime';
-import { API_URL as baseApiLink } from '../firebase';
+import { fetchWithToken } from '../firebase';
 import { Bars } from 'react-loader-spinner';
 import { Link } from 'react-router-dom';
 import LogoSU from '../media/LogoSU';
@@ -19,7 +19,7 @@ const colorScheme = {
   description: '#666666',
 };
 
-const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
+const Voting = ({ userInfo, setPage, loginAction }) => {
   const [colors, setColors] = useState(colorScheme);
   const [currentCard, setCurrentCard] = useState('before-time');
   const [dates, setDates] = useState({});
@@ -35,37 +35,46 @@ const Voting = ({ userInfo, setPage, userEmail, loginAction }) => {
     setPage('voting');
     setShowed(true);
 
-    fetch(baseApiLink + '/vote/info')
-      .then((response) => response.json())
-      .then(({ startDate, endDate, resultsDate, classList, candidates, totalVotes }) => {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        const now = new Date();
-
-        setDates({
-          startDate: start.getTime(),
-          endDate: end.getTime(),
-          resultsDate: new Date(resultsDate).getUTCDate(),
-        });
-
-        if (now > start && now < end) {
-          console.log('before');
-          setCurrentCard('before-voting');
-        } else if (now > end) {
-          console.log('after');
-
-          setCurrentCard('after-time');
+    fetchWithToken('/vote/info').then(
+      (res) => {
+        if (!res.ok) {
+          setIsVoting(false);
+          setLoaded(true);
+          return;
         }
-        setClassList(classList);
-        setCandidates(candidates);
-        setTotalVotes(totalVotes);
-        setLoaded(true);
-        setIsVoting(true);
-      })
-      .catch(() => {
+        res
+          .json()
+          .then(({ startDate, endDate, resultsDate, classList, candidates, totalVotes }) => {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const now = new Date();
+
+            setDates({
+              startDate: start.getTime(),
+              endDate: end.getTime(),
+              resultsDate: new Date(resultsDate).getUTCDate(),
+            });
+
+            if (now > start && now < end) {
+              console.log('before');
+              setCurrentCard('before-voting');
+            } else if (now > end) {
+              console.log('after');
+              setCurrentCard('after-time');
+            }
+            setClassList(classList);
+            setCandidates(candidates);
+            setTotalVotes(totalVotes);
+            setLoaded(true);
+            setIsVoting(true);
+          });
+      },
+      (err) => {
+        console.error(err);
         setIsVoting(false);
         setLoaded(true);
-      });
+      }
+    );
   }, []);
 
   return (

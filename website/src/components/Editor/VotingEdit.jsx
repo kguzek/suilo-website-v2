@@ -23,15 +23,20 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
   const _handleSubmit = () => {
     const body = { startDate, endDate, resultDate, voteTreshold, classList };
     setIsSubmitting(true);
-    fetchWithToken('vote/setup/election', 'POST', undefined, body).then((res) => {
-      if (res.ok) {
-        //dobrze I guess nie wiem
+    fetchWithToken('vote/setup/election', 'POST', undefined, body).then(
+      (res) => {
         setIsSubmitting(false);
-      } else {
-        //źle
+        if (res.ok) {
+          // dobrze I guess nie wiem
+        } else {
+          // źle
+        }
+      },
+      (err) => {
+        console.error(err);
         setIsSubmitting(false);
       }
-    });
+    );
   };
 
   if (!loaded) {

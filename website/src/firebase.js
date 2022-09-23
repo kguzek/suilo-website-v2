@@ -44,7 +44,7 @@ const provider = new GoogleAuthProvider();
 auth.useDeviceLanguage();
 provider.setCustomParameters({ prompt: 'select_account' });
 
-export const AuthContext = React.createContext();
+const AuthContext = React.createContext();
 
 // initialise container for API requests to be made when the user token is determined
 const _fetchStack = [];

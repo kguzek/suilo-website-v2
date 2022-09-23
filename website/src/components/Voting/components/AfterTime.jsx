@@ -1,23 +1,28 @@
 import { useState, useEffect } from 'react';
-import { API_URL as baseApiLink } from '../../../firebase';
+import { fetchWithToken } from '../../../firebase';
 import { Bars } from 'react-loader-spinner';
 
 const AfterTime = ({ colors, changeCard }) => {
   const [votes, setVotes] = useState([]);
-  const [waitingForServer, setWaitingForServer] = useState(false);
+  const [waitingForServer, setWaitingForServer] = useState(true);
   const [specialMessage, setSpecialMessage] = useState('');
+
   useEffect(() => {
-    setWaitingForServer(true);
-    fetch(baseApiLink + '/vote/results')
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.errorMessage === undefined) {
-          setVotes(data.byCandidates.sort((a, b) => b.votes - a.votes));
-        } else {
-          setSpecialMessage(data.errorMessage);
-        }
+    fetchWithToken('/vote/results').then(
+      (res) =>
+        res.json().then((data) => {
+          if (res.ok) {
+            setVotes(data.byCandidates.sort((a, b) => b.votes - a.votes));
+          } else {
+            setSpecialMessage(data.errorMessage);
+          }
+          setWaitingForServer(false);
+        }),
+      (err) => {
+        console.error(err);
         setWaitingForServer(false);
-      });
+      }
+    );
   }, []);
   const _createCandidateDisplay = (candidate) => {
     return (
@@ -29,17 +34,13 @@ const AfterTime = ({ colors, changeCard }) => {
   return (
     <div className="center w-full">
       <div className="dummy center w-full" style={{ height: 'auto' }}>
-        <p>
-          {waitingForServer ? (
-            <div className="py-8">
-              <Bars color={colors.primary} height={40} width={40} />
-            </div>
-          ) : specialMessage !== '' ? (
-            specialMessage
-          ) : (
-            votes.map(_createCandidateDisplay)
-          )}
-        </p>
+        {waitingForServer ? (
+          <div className="py-8">
+            <Bars color={colors.primary} height={40} width={40} />
+          </div>
+        ) : (
+          <p>{specialMessage !== '' ? specialMessage : votes.map(_createCandidateDisplay)}</p>
+        )}
       </div>
       <div className="center" style={{ width: '95%', marginBottom: '20px' }}>
         <p className="support-text">{'Możesz wspomóc nasz rozwój stawiając nam kawę ;)'}</p>

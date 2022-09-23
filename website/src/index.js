@@ -1,26 +1,24 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
-import { hydrate, render } from 'react-dom';
-import * as serviceWorker from './serviceWorker';
+// import * as serviceWorker from './serviceWorker';
 
 const rootElement = document.getElementById('root');
 
-const toRender = [
+const toRender = (
   <React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>,
-  rootElement,
-];
-
+  </React.StrictMode>
+);
 if (rootElement.hasChildNodes()) {
-  hydrate(...toRender);
+  hydrateRoot(rootElement, toRender);
 } else {
-  render(...toRender);
+  createRoot(rootElement).render(toRender);
 }
 
 // If you want to start measuring performance in your app, pass a function

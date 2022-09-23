@@ -46,7 +46,7 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction, reloa
   const [loadedEvents, setLoadedEvents] = useState(false);
   const [loadedCalendar, setLoadedCalendar] = useState(false);
   const [loadedStorageContents, setLoadedPhotos] = useState(false);
-  const [loadedVoting, setLodadedVoting] = useState(false);
+  const [loadedVoting, setLoadedVoting] = useState(false);
 
   // Calendar fetch options
   const [year, setYear] = useState(new Date().getFullYear());
@@ -129,13 +129,18 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction, reloa
   }
 
   function fetchVotingInfo() {
-    setLodadedVoting(false);
-    fetchWithToken('/vote/info', 'GET').then((response) =>
-      response.json().then((data) => {
-        console.log(data);
-        setVotingData(data);
-        setLodadedVoting(true);
-      })
+    setLoadedVoting(false);
+    fetchWithToken('/vote/info').then(
+      (res) =>
+        res.json().then((data) => {
+          console.log(data);
+          setVotingData(data);
+          setLoadedVoting(true);
+        }),
+      (err) => {
+        console.error(err);
+        setLoadedVoting(true);
+      }
     );
   }
 
