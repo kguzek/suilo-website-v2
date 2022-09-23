@@ -27,6 +27,7 @@ const ROUTES = [
   "luckyNumbers",
   "collectionInfo",
   "books",
+  "vote",
 ];
 
 app.use(cors());
@@ -100,11 +101,6 @@ for (const route of ROUTES) {
     });
   }
 }
-
-//route all vote related trafic to ./routes/vote
-const vote = require("./routes/vote");
-
-app.use("/api/vote/", vote);
 
 // catch all requests to paths that are not listed above
 app.all("*", (req, res) => {
