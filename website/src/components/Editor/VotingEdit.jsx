@@ -7,58 +7,75 @@ import LoadingScreen from '../LoadingScreen';
 import InputBox from './InputComponents/InputBox';
 import InputDropdown from './InputComponents/InputDropdown';
 
+const LOCAL_TIME_OFFSET = 2 * 60 * 60 * 1000;
+const getDateString = (baseStr) => {
+  const newDate = new Date();
+  newDate.setTime(new Date(baseStr).getTime() + LOCAL_TIME_OFFSET);
+  return newDate.toJSON().split('.')[0];
+};
 export const VotingEdit = ({ data, loaded, refetchData }) => {
-  const [startDate, setStartDate] = useState(data.startDate || '');
-  const [endDate, setEndDate] = useState(data.startDate || '');
-  const [resultDate, setResultDate] = useState(data.resultData || '');
+  const [startDate, setStartDate] = useState(getDateString(data.startDate) || '');
+  const [endDate, setEndDate] = useState(getDateString(data.endDate) || '');
+  const [resultsDate, setResultsDate] = useState(getDateString(data.resultsDate) || '');
   const [voteTreshold, setVoteTreshold] = useState(data.voteTreshold || 0);
   const [classList, setClassList] = useState(data.classList || []);
   const [newClass, setNewClass] = useState('');
   const [currentClass, setCurrentClass] = useState(0);
   const [candidates, setCandidates] = useState([]);
-  const [apiCandidates, setApiCandidates] = useState(data.candidates || []);
+  const [apiCandidates, setApiCandidates] = useState(data.candidates);
   const [candidateName, setCandidateName] = useState('');
   const [currentCandidate, setCurrentCandidate] = useState(0);
   const [candidateClass, setCandidateClass] = useState(0);
-  const [candidateNames, setCandidateNames] = useState([]);
-  const [candidateClasses, setCandidateClasses] = useState([]);
+  const [candidateNames, setCandidateNames] = useState(
+    data?.candidates?.map((c) => c.fullName) || []
+  );
+  const [candidateClasses, setCandidateClasses] = useState(
+    data?.candidates?.map((c) => c.className) || []
+  );
+  const [deletedCandidates, setDeletedCandidates] = useState([]);
+  const [newCandidates, setNewCandidates] = useState([]);
 
   const [popupConfirm, setPopupConfirm] = useState(false);
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(data.errorDescription ? false : true);
 
   const [error, setError] = useState({ code: '', message: '' });
   const [popupError, setPopupError] = useState(false);
 
   const _handleSubmit = () => {
-    const body = { startDate, endDate, resultDate, voteTreshold, classList };
+    const body = {
+      startDate: new Date(startDate).toISOString(),
+      endDate: new Date(endDate).toISOString(),
+      resultsDate: new Date(resultsDate).toISOString(),
+      voteTreshold: +voteTreshold,
+      classList,
+    };
     setIsSubmitting(true);
-    fetchWithToken('vote/setup/election', 'POST', undefined, body).then(
-      (res) => {
-        setIsSubmitting(false);
-        if (res.ok) {
-          // dobrze I guess nie wiem
-        } else {
-          // źle
-        }
-      },
-      (err) => {
-        console.error(err);
-        setIsSubmitting(false);
-      }
+    fetchWithToken('vote/setup/election', isEditing ? 'PUT' : 'POST', undefined, body).then(
+      () => {}
     );
-  };
 
-  useEffect(() => {
-    apiCandidates.forEach((ac) => {
-      setCandidateNames((prev) => [...prev, ac.fullName]);
-      setCandidateClasses((prev) => [...prev, ac.className]);
-    });
-    candidateClasses.forEach((cc, idx) => {
-      setCandidates((prev) => [...prev, `${candidateNames[idx]} ${cc}`]);
-    });
-  }, []);
+    for (const idToDelete of deletedCandidates) {
+      fetchWithToken(`vote/setup/candidate/${idToDelete}`, 'DELETE').then(() => {});
+    }
+    for (const candidate of newCandidates) {
+      fetchWithToken('vote/setup/candidate', 'POST', undefined, candidate).then((res) => {
+        res.json().then((data) => {
+          setApiCandidates((prev) => {
+            prev?.map((cand) => {
+              if (cand.fullName === data.fullName) {
+                cand.id = data.id;
+              }
+              return cand;
+            });
+          });
+        });
+      });
+    }
+    setNewCandidates([]);
+    console.log(deletedCandidates);
+  };
 
   const addClass = () => {
     setNewClass('');
@@ -75,8 +92,14 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
     if (!candidateName) return;
     setApiCandidates((prev) => [
       ...prev,
-      { fullName: candidateName, classList: classList[candidateClass] },
+      { fullName: candidateName, className: classList[candidateClass] },
     ]);
+
+    setNewCandidates((prev) =>
+      prev
+        ? [...prev, { fullName: candidateName, className: classList[candidateClass] }]
+        : { fullName: candidateName, className: classList[candidateClass] }
+    );
     setCandidateNames([...candidateNames, candidateName]);
     setCandidateClasses([...candidateClasses, classList[candidateClass]]);
     setCandidates((prev) => [...prev, `${candidateName} ${classList[candidateClass]}`]);
@@ -84,17 +107,24 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
   };
 
   const deleteCandidate = () => {
+    if (apiCandidates[currentCandidate]?.id) {
+      setDeletedCandidates((prev) => [...prev, apiCandidates[currentCandidate].id]);
+    }
     setApiCandidates((prev) => [
-      ...prev.filter(
-        (ac) =>
-          ac.fullName !== candidateNames[currentCandidate] &&
-          ac.className !== candidateClasses[currentCandidate]
-      ),
+      ...prev.filter((ac) => ac.fullName !== candidateNames[currentCandidate]),
+    ]);
+    setNewCandidates((prev) => [
+      ...prev.filter((ac) => ac.fullName !== candidateNames[currentCandidate]),
     ]);
     setCandidates((prev) => [...prev.filter((c) => c !== prev[currentCandidate])]);
     setCandidateClasses((prev) => [...prev.filter((cc) => cc !== prev[currentCandidate])]);
     setCandidateNames((prev) => [...prev.filter((cn) => cn !== prev[currentCandidate])]);
   };
+
+  useEffect(() => {
+    setCandidates([...candidateNames.map((cn, i) => `${cn} ${candidateClasses[i]}`)]);
+    setApiCandidates(data?.candidates || []);
+  }, []);
 
   if (!loaded) {
     return <LoadingScreen />;
@@ -159,7 +189,7 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
             type="button"
           >
             <Plus color="#FFFFFF" size={24} />
-            <p>Dodaj klasę</p>
+            <p>Dodaj</p>
           </button>
         </div>
         <div className="flex flex-row h-min">
@@ -178,7 +208,7 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
             type="button"
           >
             <Trash color="#FFFFFF" size={24} />
-            <p>Usuń klasę</p>
+            <p>Usuń</p>
           </button>
         </div>
       </div>
@@ -286,8 +316,8 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
           min={endDate}
           pattern="dd/mm/yyyy HH:mm"
           placeholder="Ukazanie wyników"
-          value={resultDate}
-          onChange={setResultDate}
+          value={resultsDate}
+          onChange={setResultsDate}
         />
         <InputBox
           width="30%"
@@ -312,7 +342,7 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
           ) : (
             <Plus color="#FFFFFF" size={24} />
           )}
-          <p>ustaw głosowanie</p>
+          <p>{isEditing ? 'zmień głosowanie' : 'ustaw głosowanie'}</p>
         </button>
       </div>
     </form>

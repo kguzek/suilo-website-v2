@@ -52,7 +52,7 @@ const voteAttributeSanitisers = {
     const date = new Date(dateStr);
     return dateToTimestamp(date == "Invalid Date" ? new Date() : date);
   },
-  voteTreshold: (treshold) => treshold || 20,
+  voteTreshold: (treshold) => parseInt(treshold) || 20,
   classList: (classList) =>
     Array.isArray(classList) ? classList : DEFAULT_CLASS_LIST,
 };
