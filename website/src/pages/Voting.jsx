@@ -39,7 +39,8 @@ const Voting = ({ userInfo, setPage, loginAction }) => {
       (res) => {
         if (!res.ok) {
           setIsVoting(false);
-          setLoaded(true);
+          setLoaded(false);
+
           return;
         }
         res
@@ -52,7 +53,7 @@ const Voting = ({ userInfo, setPage, loginAction }) => {
             setDates({
               startDate: start.getTime(),
               endDate: end.getTime(),
-              resultsDate: new Date(resultsDate).getUTCDate(),
+              resultsDate: new Date(resultsDate),
             });
 
             if (now > start && now < end) {
@@ -81,7 +82,7 @@ const Voting = ({ userInfo, setPage, loginAction }) => {
       className="background transition-all duration-500 delay-200 ease-in relative"
     >
       <Link
-        className={`absolute top-2 left-2  ${
+        className={`absolute top-2 left-2 hidden md:block  ${
           showed ? 'opacity-100' : 'opacity-0  -translate-y-[40%]'
         } transition-all duration-[750ms] ease-in-out delay-[600ms]`}
         to="/"
@@ -131,7 +132,7 @@ const Voting = ({ userInfo, setPage, loginAction }) => {
                 message={message}
               />
             ) : currentCard === 'after-time' ? (
-              <AfterTime colors={colors} />
+              <AfterTime resultsDate={dates.resultsDate} colors={colors} />
             ) : (
               <p>Tell me how</p>
             )

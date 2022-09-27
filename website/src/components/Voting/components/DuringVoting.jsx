@@ -232,6 +232,10 @@ const DuringVoting = ({ colors, changeCard, endDate, setMessage, candidates, cla
                   id="classLabel"
                   required
                 >
+                  <option disabled selected value>
+                    {' '}
+                    ---{' '}
+                  </option>
                   {classList.map((c, idx) => (
                     <option className="def" value={c} key={c + idx + 'b'}>
                       {c}
@@ -249,6 +253,10 @@ const DuringVoting = ({ colors, changeCard, endDate, setMessage, candidates, cla
                   onChange={(e) => setSexVoter(e.target.value)}
                   required
                 >
+                  <option disabled selected value>
+                    {' '}
+                    ---{' '}
+                  </option>
                   <option className="def" value="female">
                     kobieta
                   </option>

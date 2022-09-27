@@ -1,45 +1,27 @@
 .background {
   width: 100%;
   height: 100vh;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .mainer {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
   width: 100%;
   height: auto;
   max-height: 810px;
   max-width: 620px;
   border-radius: 15px;
-  -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
-          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
 }
-
 @media (max-width: 620px) {
   .mainer {
     border-radius: 0px;
-    -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0);
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0);
     height: 100vh;
   }
 }
@@ -50,7 +32,6 @@
   max-width: 620px;
   display: none;
 }
-
 @media (max-width: 620px) {
   .upper-row {
     display: block;
@@ -66,10 +47,8 @@
   padding: 0;
   text-transform: uppercase;
   letter-spacing: 0.005em;
-  -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
-
 @media (max-width: 620px) {
   .h1 {
     font-size: 1.7em;
@@ -82,10 +61,8 @@
   font-size: 1em;
   padding: 0;
   margin: 7px 0;
-  -webkit-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
-
 @media (max-width: 620px) {
   .h2 {
     font-size: 0.8em;
@@ -93,19 +70,10 @@
 }
 
 .center {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .time-label {
@@ -117,7 +85,6 @@
   font-weight: 500;
   padding-right: 0.05em;
 }
-
 @media (max-width: 620px) {
   .time-number {
     font-size: 2em;
@@ -132,7 +99,6 @@
   margin-top: 30px;
   margin-bottom: -10px;
 }
-
 @media (max-width: 620px) {
   .countdown-label {
     font-size: 0.8em;
@@ -147,16 +113,14 @@
   background-color: rgba(0, 0, 0, 0.05);
   border: 2px dashed rgba(0, 0, 0, 0.05);
 }
-
 .dummy p {
-  color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.4);
   font-weight: 600;
   max-width: 350px;
   text-align: center;
   font-size: 1.1em;
   line-height: 1.5em;
 }
-
 @media (max-width: 620px) {
   .dummy p {
     font-size: 0.9em;
@@ -205,14 +169,12 @@
   border: 2px dashed rgba(0, 0, 0, 0.05);
   border-radius: 10px;
 }
-
 .voting-spec-info h4 {
   font-weight: 500;
   font-size: 2em;
   margin: 5px 0;
   padding: 0;
 }
-
 .voting-spec-info h4 span {
   font-size: 0.45em;
 }
@@ -227,18 +189,14 @@
   width: 92%;
   margin: 10px 0;
   margin-top: 25px;
-  display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (1fr)[3];
-      grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   grid-auto-rows: minmax(1fr, auto);
 }
-
 @media (max-width: 620px) {
   .options {
-    -ms-grid-columns: (1fr)[2];
-        grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -252,13 +210,8 @@
 }
 
 .onerow {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  flex-direction: row;
   margin-bottom: 15px;
 }
 
@@ -296,7 +249,6 @@
   border-radius: 10px;
   margin: 0 5px;
 }
-
 .input-box p {
   font-size: 0.6em;
   text-transform: uppercase;
@@ -327,5 +279,4 @@
   margin: 10px 0;
   margin-top: 20px;
   color: #00a962;
-}
-/*# sourceMappingURL=App.css.map */
+}/*# sourceMappingURL=App.css.map */

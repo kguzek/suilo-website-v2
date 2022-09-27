@@ -320,17 +320,17 @@ const Layout = ({ page, userInfo, loginAction, logoutAction, footerVisible, scre
   ${page === 'home' ? '-top-[16.5rem] scale-[.275]' : '-top-[16.5rem] scale-[.275]'} 
   ${
     page === 'home'
-      ? 'max-h-[100rem] md:max-h-[200vh] md:scale-[.475]'
+      ? 'max-h-[100rem] md:max-h-[250vh] md:scale-[.475]'
       : 'md:scale-[.7] md:-top-[18rem] md:-rotate-[30deg]'
   } 
   ${
     page === 'home'
-      ? 'lg:scale-[.8] lg:max-h-[200vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12'
+      ? 'lg:scale-[.8] lg:max-h-[250vh] lg:rotate-[2.45deg] lg:-top-[11rem] lg:-right-12'
       : 'lg:scale-[.8] lg:-rotate-[30deg] lg:-top-[24rem] lg:right-16 lg:max-h-[70rem] '
   }
   ${
     page === 'home'
-      ? 'xl:-rotate xl:max-h-[200vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]'
+      ? 'xl:-rotate xl:max-h-[250vh] -[1.5deg] xl:-top-[17.5rem] xl:-right-16 xl:scale-[1.05]'
       : 'xl:-rotate-[30deg] xl:-top-[42rem] xl:scale-[1.1] xl:right-32 lg:max-h-[70rem] '
   }  
   origin-top-right absolute
