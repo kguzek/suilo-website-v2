@@ -48,9 +48,7 @@ const Voting = ({ userInfo, setPage, loginAction }) => {
             const start = new Date(startDate);
             const end = new Date(endDate);
             const now = new Date();
-            console.log(start);
-            console.log(end);
-            console.log(now);
+
             setDates({
               startDate: start.getTime(),
               endDate: end.getTime(),

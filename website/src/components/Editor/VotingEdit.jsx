@@ -11,7 +11,7 @@ const LOCAL_TIME_OFFSET = 2 * 60 * 60 * 1000;
 const getDateString = (baseStr) => {
   const newDate = new Date();
   newDate.setTime(new Date(baseStr).getTime() + LOCAL_TIME_OFFSET);
-  return newDate.toJSON().split('.')[0];
+  return newDate.toJSON()?.split('.')[0];
 };
 export const VotingEdit = ({ data, loaded, refetchData }) => {
   const [startDate, setStartDate] = useState(getDateString(data.startDate) || '');
