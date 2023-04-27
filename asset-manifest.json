@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/suilo-website-v2/static/css/main.81b44d82.css",
-    "main.js": "/suilo-website-v2/static/js/main.64defe41.js",
+    "main.js": "/suilo-website-v2/static/js/main.da7bd49c.js",
     "static/js/496.78e90e54.chunk.js": "/suilo-website-v2/static/js/496.78e90e54.chunk.js",
     "static/media/su-photo.jpg": "/suilo-website-v2/static/media/su-photo.f0c1e53d6b81c82a04a7.jpg",
     "static/media/mruz.jpg": "/suilo-website-v2/static/media/mruz.2138236bff983236a1ed.jpg",
@@ -12,11 +12,11 @@
     "static/media/facebook.svg": "/suilo-website-v2/static/media/facebook.dd66b0cc48ff2ffe8a33aba38ab9fd56.svg",
     "static/media/gmail.svg": "/suilo-website-v2/static/media/gmail.de9b8f51aa32d3a02b27c0da08767e9e.svg",
     "main.81b44d82.css.map": "/suilo-website-v2/static/css/main.81b44d82.css.map",
-    "main.64defe41.js.map": "/suilo-website-v2/static/js/main.64defe41.js.map",
+    "main.da7bd49c.js.map": "/suilo-website-v2/static/js/main.da7bd49c.js.map",
     "496.78e90e54.chunk.js.map": "/suilo-website-v2/static/js/496.78e90e54.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.81b44d82.css",
-    "static/js/main.64defe41.js"
+    "static/js/main.da7bd49c.js"
   ]
 }
