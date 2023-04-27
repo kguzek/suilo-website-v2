@@ -10,7 +10,7 @@ const rootElement = document.getElementById('root');
 
 const toRender = (
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/suilo-website-v2">
       <App />
     </BrowserRouter>
   </React.StrictMode>
