@@ -1,20 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getDocRef,
-  sendSingleResponse,
   dateToTimestamp,
   createSingleDocument,
-  updateSingleDocument,
+  deleteSingleDocument,
+} = require("../util");
+
+const {
   createGeneralInfoPacket,
   createElectionInfo,
   updateElectionInfo,
   editClassList,
-  deleteSingleDocument,
   vote,
   voteForCustomCandidate,
   getResults,
-} = require("../util");
+} = require("../voting");
 
 const DEFAULT_CLASS_LIST = [
   "1a",
