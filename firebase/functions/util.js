@@ -429,6 +429,15 @@ function deleteSingleDocument(req, res, collectionName) {
   });
 }
 
+/** Obtains the origin IP address of the user's request. */
+function getRequestIpAddress(req) {
+  const ipAddress =
+    req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress ||
+    req.headers["fastly-client-ip"];
+  return ipAddress === undefined ? null : ipAddress.split(",")[0];
+}
+
 module.exports = {
   admin,
   db,
@@ -451,4 +460,5 @@ module.exports = {
   sendListResponse,
   updateSingleDocument,
   deleteSingleDocument,
+  getRequestIpAddress,
 };

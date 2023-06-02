@@ -1,6 +1,6 @@
 // v2 auth middleware using the Firebase SDK
 
-const { admin, db, updateCollection } = require("./util");
+const { admin, db, updateCollection, getRequestIpAddress } = require("./util");
 
 /** Checks if the request contains an authorisation header, and if so, validates the token using Google's API.
  * On success, checks the resulting user's credentials in the permissions database document to ensure the user
@@ -8,12 +8,20 @@ const { admin, db, updateCollection } = require("./util");
  */
 async function validateToken(req, res, next, requiredPerm) {
   function send403(msg = "You are not authorised to do that.", info, userName) {
-    res.status(403).json({ errorDescription: "403 Forbidden: " + msg, ...(info ?? {}) });
+    res
+      .status(403)
+      .json({ errorDescription: "403 Forbidden: " + msg, ...(info ?? {}) });
     console.warn(
-      `Rejected ${userName ?? "unknown user"}'s ${req.method} request to endpoint '${req.path}' (${requiredPerm}).`,
+      `Rejected ${
+        userName ?? "unknown user"
+      }'s ${requestDescription} (${requiredPerm}).`,
       info ?? ""
     );
   }
+
+  const requestDescription = `${req.method} request to endpoint '${
+    req.path
+  }' from IP ${getRequestIpAddress(req)}`;
 
   /** If the permission level is set to public, calls the next middleware function (allows the request) and returns true.
    * Otherwise, returns false.
@@ -24,7 +32,7 @@ async function validateToken(req, res, next, requiredPerm) {
       return false;
     }
     // allow users that are not signed in to make these requests
-    console.info(`Validated ${requestType} ${req.method} request to public endpoint '${req.path}'.`);
+    console.info(`Validated ${requestType} ${requestDescription}.`);
     next();
     return true;
   }
@@ -47,7 +55,9 @@ async function validateToken(req, res, next, requiredPerm) {
 
       /** Accept the request. */
       function authorise() {
-        console.info(`Validated ${userRecord.displayName}'s ${req.method} request to endpoint '${req.path}'.`);
+        console.info(
+          `Validated ${userRecord.displayName}'s ${requestDescription}.`
+        );
         req.userInfo = {
           ...userInfo,
           isAdmin,
@@ -70,7 +80,10 @@ async function validateToken(req, res, next, requiredPerm) {
             return authorise();
           }
           // Allow users to delete their own books
-          if (req.method === "DELETE" && bookIDs.includes(req.path.split("/")[2])) {
+          if (
+            req.method === "DELETE" &&
+            bookIDs.includes(req.path.split("/")[2])
+          ) {
             return authorise();
           }
         }
@@ -126,18 +139,25 @@ async function validateToken(req, res, next, requiredPerm) {
   // if the token is provided but the user is not logged in, the
   // fetch method interpolates the token as literal "undefined".
   if (!idToken || idToken === "undefined") {
-    return allowPublicEndpoints() || send403("No authorisation token provided.");
+    return (
+      allowPublicEndpoints() || send403("No authorisation token provided.")
+    );
   }
   admin
     .auth()
     .verifyIdToken(idToken)
     .then((decodedToken) => {
-      if (decodedToken?.email.endsWith("lo1.gliwice.pl") || decodedToken?.email === "m.mik311@gmail.com") {
+      if (
+        decodedToken?.email.endsWith("lo1.gliwice.pl") ||
+        decodedToken?.email === "m.mik311@gmail.com"
+      ) {
         const uid = decodedToken.uid;
         // get the user record from the User ID
         admin.auth().getUser(uid).then(validateUserPermissions);
       } else {
-        return send403("That email address is from outside the LO1 organisation.");
+        return send403(
+          "That email address is from outside the LO1 organisation."
+        );
       }
     })
     .catch((error) => {
