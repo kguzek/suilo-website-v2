@@ -29,8 +29,10 @@ db.settings({ ignoreUndefinedProperties: true });
 
 // Initialise HTTP error constants
 const HTTP400 = "400 Bad Request: ";
+const HTTP403 = "403 Forbidden: ";
 const HTTP404 = "404 Not Found: ";
 const HTTP405 = "405 Method Not Allowed: ";
+const HTTP429 = "429 Too Many Requests: ";
 const HTTP500 = "500 Internal Server Error: ";
 
 const MAX_LUCKY_NUMBER = 35;
@@ -443,8 +445,10 @@ module.exports = {
   db,
   HTTP: {
     err400: HTTP400,
+    err403: HTTP403,
     err404: HTTP404,
     err405: HTTP405,
+    err429: HTTP429,
     err500: HTTP500,
   },
   formatTimestamps,

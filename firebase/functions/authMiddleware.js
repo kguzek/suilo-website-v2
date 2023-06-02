@@ -1,28 +1,44 @@
 // v2 auth middleware using the Firebase SDK
 
-const { admin, db, updateCollection, getRequestIpAddress } = require("./util");
+const {
+  admin,
+  db,
+  updateCollection,
+  getRequestIpAddress,
+  HTTP,
+} = require("./util");
+
+const RATE_LIMITED_IP_ADDRESSES = [];
 
 /** Checks if the request contains an authorisation header, and if so, validates the token using Google's API.
  * On success, checks the resulting user's credentials in the permissions database document to ensure the user
  * possesses the permissions necessary to access the API.
  */
 async function validateToken(req, res, next, requiredPerm) {
-  function send403(msg = "You are not authorised to do that.", info, userName) {
+  function reject(
+    status,
+    msg = "You are not authorised to do that.",
+    info,
+    userName
+  ) {
+    const statusCode = `err${status}`;
     res
-      .status(403)
-      .json({ errorDescription: "403 Forbidden: " + msg, ...(info ?? {}) });
+      .status(status)
+      .json({ errorDescription: HTTP[statusCode] + msg, ...(info ?? {}) });
     console.warn(
-      `Rejected ${
+      `(${status}) Rejected ${
         userName ?? "unknown user"
       }'s ${requestDescription} (${requiredPerm}).`,
       info ?? ""
     );
   }
 
-  const requestDescription = `${req.method} request to endpoint '${
-    req.path
-  }' from IP ${getRequestIpAddress(req)}`;
+  const requestIpAddress = getRequestIpAddress(req);
+  const requestDescription = `${req.method} request to endpoint '${req.path}' from IP ${requestIpAddress}`;
 
+  if (RATE_LIMITED_IP_ADDRESSES.includes(requestIpAddress)) {
+    return reject(429, "Try again later.");
+  }
   /** If the permission level is set to public, calls the next middleware function (allows the request) and returns true.
    * Otherwise, returns false.
    * Argument `requestType` specifies the request description to be sent to the log. Defaults to "anonymous".
@@ -43,7 +59,7 @@ async function validateToken(req, res, next, requiredPerm) {
   function validateUserPermissions(userRecord) {
     const userIdentities = userRecord.providerData;
     if (userIdentities.length === 0) {
-      return send403("Invalid Google account.", userRecord.displayName);
+      return reject(403, "Invalid Google account.", userRecord.displayName);
     }
     const userInfo = userIdentities[0];
     const docRefUser = db.collection("users").doc(userInfo.uid);
@@ -93,7 +109,8 @@ async function validateToken(req, res, next, requiredPerm) {
           }
         }
 
-        return send403(
+        return reject(
+          403,
           undefined,
           {
             msg: "Missing permission for this endpoint.",
@@ -110,7 +127,8 @@ async function validateToken(req, res, next, requiredPerm) {
         });
         updateCollection("users", 1);
         if (requiredPerm) {
-          return send403(
+          return reject(
+            403,
             undefined,
             {
               msg: "User not found in permissions database.",
@@ -140,7 +158,7 @@ async function validateToken(req, res, next, requiredPerm) {
   // fetch method interpolates the token as literal "undefined".
   if (!idToken || idToken === "undefined") {
     return (
-      allowPublicEndpoints() || send403("No authorisation token provided.")
+      allowPublicEndpoints() || reject(403, "No authorisation token provided.")
     );
   }
   admin
@@ -155,7 +173,8 @@ async function validateToken(req, res, next, requiredPerm) {
         // get the user record from the User ID
         admin.auth().getUser(uid).then(validateUserPermissions);
       } else {
-        return send403(
+        return reject(
+          403,
           "That email address is from outside the LO1 organisation."
         );
       }
@@ -163,7 +182,11 @@ async function validateToken(req, res, next, requiredPerm) {
     .catch((error) => {
       return (
         allowPublicEndpoints("malformed (invalid token)") ||
-        send403("Encountered an error while validating the API token.", error)
+        reject(
+          500,
+          "Encountered an error while validating the API token.",
+          error
+        )
       );
     });
 }

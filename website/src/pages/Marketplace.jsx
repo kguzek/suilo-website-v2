@@ -130,7 +130,7 @@ const reducer = (state, action) => {
 
 const Marketplace = ({ setPage, email, userInfo }) => {
   const [query, dispatch] = useReducer(reducer, []);
-  const [data, setData] = useState({ contents: TEST_OFFERS });
+  const [data, setData] = useState({ contents: [] });
   const [loaded, setLoaded] = useState(false);
   const [openForm, setOpenForm] = useState(false);
 
