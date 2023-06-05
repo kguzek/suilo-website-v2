@@ -8,13 +8,16 @@ const {
   HTTP,
 } = require("./util");
 
-const RATE_LIMITED_IP_ADDRESSES = [];
+const RATE_LIMITED_IP_ADDRESSES = ["46.242.241.98"];
 
 /** Checks if the request contains an authorisation header, and if so, validates the token using Google's API.
  * On success, checks the resulting user's credentials in the permissions database document to ensure the user
  * possesses the permissions necessary to access the API.
  */
 async function validateToken(req, res, next, requiredPerm) {
+  const requestIpAddress = getRequestIpAddress(req);
+  const requestDescription = `${req.method} request to endpoint '${req.path}' from IP ${requestIpAddress}`;
+
   function reject(
     status,
     msg = "You are not authorised to do that.",
@@ -33,11 +36,11 @@ async function validateToken(req, res, next, requiredPerm) {
     );
   }
 
-  const requestIpAddress = getRequestIpAddress(req);
-  const requestDescription = `${req.method} request to endpoint '${req.path}' from IP ${requestIpAddress}`;
-
   if (RATE_LIMITED_IP_ADDRESSES.includes(requestIpAddress)) {
-    return reject(429, "Try again later.");
+    return reject(
+      429,
+      "Contact konrad@guzek.uk if you intend on using this API programmatically."
+    );
   }
   /** If the permission level is set to public, calls the next middleware function (allows the request) and returns true.
    * Otherwise, returns false.
