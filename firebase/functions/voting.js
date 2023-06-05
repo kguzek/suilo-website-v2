@@ -1,4 +1,5 @@
-const { db } = require("./util");
+const { FieldValue, Timestamp } = require("firebase-admin/firestore");
+const { db, formatTimestamps, HTTP } = require("./util");
 
 // Voting functions
 function createGeneralInfoPacket(req, res) {
@@ -10,9 +11,9 @@ function createGeneralInfoPacket(req, res) {
       let response = infoDoc.data();
 
       if (!response) {
-        res
-          .status(500)
-          .json({ errorDescription: "There are no active elections" });
+        res.status(500).json({
+          errorDescription: HTTP.err500 + "There are no active elections",
+        });
         return;
       }
       formatTimestamps(response);
@@ -61,6 +62,7 @@ function createElectionInfo(data, res) {
       if (docRef.data()) {
         res.status(500).json({
           errorDescription:
+            HTTP.err500 +
             "Election info is already created update it with PUT or delete it to create a new one",
         });
       } else {
@@ -81,14 +83,15 @@ function updateElectionInfo(data, res) {
     .get()
     .then((docRef) => {
       if (docRef) {
-        const CurrData = docRef.data();
+        const currData = docRef.data();
         const currentTime = new Date();
-        formatTimestamps(CurrData);
-        const startDate = new Date(CurrData.startDate);
-        const endDate = new Date(CurrData.endDate);
+        formatTimestamps(currData);
+        const startDate = new Date(currData.startDate);
+        const endDate = new Date(currData.endDate);
         if (currentTime > startDate && currentTime < endDate) {
-          res.status(500).json({
+          res.status(403).json({
             errorDescription:
+              HTTP.err403 +
               "You are not allowed to edit settings during election",
           });
         } else {
@@ -100,8 +103,8 @@ function updateElectionInfo(data, res) {
             });
         }
       } else {
-        res.status(500).json({
-          errorDescription: "There isn't a election info to update",
+        res.status(400).json({
+          errorDescription: HTTP.err400 + "There is no election info to update",
         });
       }
     });
@@ -113,14 +116,15 @@ function editClassList(classList, res, add) {
     .get()
     .then((docRef) => {
       if (docRef) {
-        const CurrData = docRef.data();
+        const currData = docRef.data();
         const currentTime = new Date();
-        formatTimestamps(CurrData);
-        const startDate = new Date(CurrData.startDate);
-        const endDate = new Date(CurrData.endDate);
+        formatTimestamps(currData);
+        const startDate = new Date(currData.startDate);
+        const endDate = new Date(currData.endDate);
         if (currentTime > startDate && currentTime < endDate) {
-          res.status(500).json({
+          res.status(403).json({
             errorDescription:
+              HTTP.err403 +
               "You are not allowed to edit settings during election",
           });
         } else {
@@ -189,15 +193,16 @@ function submitVoteForExistingCandidate(req, res, settings, voterInfo) {
           .catch((error) => {
             return res.status(500).json({
               errorDescription:
-                HTTP500 +
-                "Something went wrong and your vote couldn't have benn submited properly",
+                HTTP.err500 +
+                "Something went wrong and your vote couldn't be submited properly",
               errorDetails: error.toString(),
             });
           });
       } else {
-        res.status(500).json({
+        res.status(404).json({
           errorDescription:
-            "Candidate That you are trying to vote for doesn't exist",
+            HTTP.err404 +
+            "The candidate that you are trying to vote for doesn't exist",
         });
       }
     });
@@ -220,29 +225,29 @@ function checkIfAbleToVote(req, res, next) {
             .get()
             .then((userRef) => {
               if (userRef.data()) {
-                res.status(500).json({
-                  errorDescription: "Możesz oddać tylko jeden głos",
+                res.status(400).json({
+                  errorDescription: HTTP.err400 + "You may only vote once",
                 });
               } else {
                 next(settings);
               }
             });
         } else {
-          res.status(500).json({
-            errorDescription: "The election isnn't active",
+          res.status(400).json({
+            errorDescription: HTTP.err400 + "The election isn't active",
           });
         }
       } else {
-        res.status(500).json({
-          errorDescription: "There is no election",
+        res.status(400).json({
+          errorDescription: HTTP.err400 + "There is no election",
         });
       }
     })
     .catch((error) => {
       return res.status(500).json({
         errorDescription:
-          HTTP500 +
-          "Something went wrong and your vote couldn't have benn submited properly",
+          HTTP.err500 +
+          "Something went wrong and your vote couldn't be submited properly",
         errorDetails: error.toString(),
       });
     });
@@ -265,8 +270,8 @@ function voteForCustomCandidate(req, res, candidate, voterInfo) {
       .catch((error) => {
         return res.status(500).json({
           errorDescription:
-            HTTP500 +
-            "Something went wrong and your vote couldn't have benn submited properly",
+            HTTP.err500 +
+            "Something went wrong and your vote couldn't be submited properly",
           errorDetails: error.toString(),
         });
       });
@@ -293,20 +298,22 @@ function getResults(res) {
               if (results.simple === "" || results.detailed === "") {
                 generateResults();
                 res.status(500).json({
-                  errorDescription: "Results are not yet generated",
+                  errorDescription:
+                    HTTP.err500 + "Results are not yet generated",
                 });
               } else {
                 res.status(200).json(JSON.parse(results.detailed));
               }
             });
         } else {
-          res.status(500).json({
-            errorDescription: "You are not able to view  the results yet",
+          res.status(400).json({
+            errorDescription:
+              HTTP.err400 + "You are not able to view the results yet",
           });
         }
       } else {
-        res.status(500).json({
-          errorDescription: "There is no election",
+        res.status(404).json({
+          errorDescription: HTTP.err404 + "There is no election",
         });
       }
     });
