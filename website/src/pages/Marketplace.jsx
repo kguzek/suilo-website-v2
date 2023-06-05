@@ -145,6 +145,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
       setData,
       setLoaded,
       updateCache: force,
+      params: { all: true },
     };
     fetchCachedData('books', '/books', fetchArgs);
   }
