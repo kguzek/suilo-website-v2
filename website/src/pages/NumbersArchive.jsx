@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import LoadingScreen from "../components/LoadingScreen";
-import PageSelector from "../components/PageSelector";
-import { formatDate, fetchCachedData, removeSearchParam } from "../misc";
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import LoadingScreen from '../components/LoadingScreen';
+import PageSelector from '../components/PageSelector';
+import { formatDate, fetchCachedData, removeSearchParam } from '../misc';
 
 const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
   const [archive, setArchive] = useState();
@@ -19,21 +19,17 @@ const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
       setData: setArchive,
       setLoaded: setLoadedArchive,
       updateCache: forceUpdate,
-      params: { page, sort: "descending" },
+      params: { page, sort: 'descending' },
     };
-    fetchCachedData(cacheName, "/luckyNumbers/archive", fetchArgs);
+    fetchCachedData(cacheName, '/luckyNumbers/archive', fetchArgs);
   }
 
   useEffect(() => {
-    const pageNo = searchParams.get("page") || 1;
+    const pageNo = searchParams.get('page') || 1;
     setArchivePage(pageNo);
-    setPage("archive");
+    setPage('archive');
     setLoadedArchive(false);
-    const updateCache = !!removeSearchParam(
-      searchParams,
-      setSearchParams,
-      "refresh"
-    );
+    const updateCache = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
     fetchArchive(updateCache, pageNo);
   }, [searchParams]);
 
@@ -45,12 +41,9 @@ const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
 
   function _generateArchiveRow() {
     return archive?.contents?.map((entry) => (
-      <tr
-        className="even:bg-primary/5 odd:bg-primaryDark/[.15]"
-        key={entry.date}
-      >
+      <tr className="even:bg-primary/5 odd:bg-primaryDark/[.15]" key={entry.date}>
         <td className="py-1 pl-4">{formatDate(entry.date)}</td>
-        <td className="py-1">{entry.luckyNumbers.join(", ")}</td>
+        <td className="py-1">{entry.luckyNumbers.join(', ')}</td>
       </tr>
     ));
   }
@@ -70,15 +63,13 @@ const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
           <tbody>{_generateArchiveRow()}</tbody>
         </table>
       </div>
-      <div className="m-auto my-2">
-        <PageSelector
-          page={archivePage}
-          noPages={Math.ceil(collectionInfo.numDocs / 25)}
-          onChange={setArchivePage}
-          searchParams={searchParams}
-          setSearchParams={setSearchParams}
-        />
-      </div>
+      <PageSelector
+        page={archivePage}
+        numPages={Math.ceil(collectionInfo.numDocs / 25)}
+        onChange={setArchivePage}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
     </div>
   );
 };
