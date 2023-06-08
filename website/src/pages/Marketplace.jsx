@@ -181,7 +181,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   );
 
   const filteredOffers = data.contents.filter((offer) => filterOffer(offer, query));
-  const lastBookIdx = 1 + currentPage * NUM_BOOKS_PER_PAGE;
+  const lastBookIdx = currentPage * NUM_BOOKS_PER_PAGE;
   const firstBookIdx = lastBookIdx - NUM_BOOKS_PER_PAGE;
   const paginatedOffers = filteredOffers.slice(firstBookIdx, lastBookIdx);
 
@@ -253,7 +253,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
           'Brak wyników. Spróbuj wyczyścić filtry.'
         ) : (
           <>
-            {firstBookIdx}-{paginatedOffers.length} z {filteredOffers.length}
+            {firstBookIdx + 1}-{paginatedOffers.length} z {filteredOffers.length}
             <div className="grid items-stretch grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5 my-6 md:my-9 md:gap-4 lg:gap-5 w-full">
               {paginatedOffers.map(getCard)}
             </div>
