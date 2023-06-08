@@ -1,13 +1,7 @@
-import React from "react";
-import { Trash2 } from "react-feather";
+import React from 'react';
+import { Trash2 } from 'react-feather';
 
-const Card = ({
-  offerData,
-  userEmail,
-  userInfo,
-  setPopupDelete,
-  setDeletedBookID,
-}) => {
+const Card = ({ offerData, userEmail, userInfo, setPopupDelete, setDeletedBookID }) => {
   const {
     title,
     user,
@@ -45,7 +39,11 @@ const Card = ({
         />
         <div className="px-3 pt-3">
           <div>
-            <p className="text-text1 leading-6 font-medium text-xl tracking-tight">
+            <p
+              className="text-text1 leading-6 font-medium text-xl tracking-tight mb-2 overflow-hidden whitespace-nowrap"
+              style={{ textOverflow: 'ellipsis' }}
+              title={title}
+            >
               {title}
             </p>
             <p className="text-text4 text-sm -mt-[.15rem] pb-1">
@@ -55,7 +53,7 @@ const Card = ({
               Przedmiot: <span className="text-text2 text-base">{subject}</span>
             </p>
             <p className="text-text4 text-sm">
-              Poziom:{" "}
+              Poziom:{' '}
               <span className="text-text2 text-base">
                 {level} - {studentClass}
               </span>
@@ -71,9 +69,7 @@ const Card = ({
       </div>
 
       <div className="w-full flex flex-row justify-end pt-1">
-        <p className="pr-4 pb-3 text-primary font-semibold text-2xl">
-          {price} zł
-        </p>
+        <p className="pr-4 pb-3 text-primary font-semibold text-2xl">{price} zł</p>
       </div>
     </div>
   );

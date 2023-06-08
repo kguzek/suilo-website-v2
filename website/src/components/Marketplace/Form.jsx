@@ -56,15 +56,15 @@ const Form = ({ isOpen, closeForm, options, handlePostResponse }) => {
     console.log(e);
     closeForm();
     const params = {
-      title: title,
-      studentClass: studentClass,
-      quality: quality,
-      publisher: publisher,
-      subject: subject,
-      year: year,
-      level: level,
-      price: price,
-      photo: photo,
+      title,
+      studentClass,
+      quality,
+      publisher,
+      subject,
+      year,
+      level,
+      price,
+      photo,
     };
     fetchWithToken('/books/', 'POST', params).then(handlePostResponse);
   };
@@ -177,7 +177,7 @@ const Form = ({ isOpen, closeForm, options, handlePostResponse }) => {
             </select>
           </label>
           <label className="flex flex-col pt-2 text-text4 text-sm">
-            Jakość
+            Stan
             <select
               required
               className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
@@ -194,7 +194,7 @@ const Form = ({ isOpen, closeForm, options, handlePostResponse }) => {
             </select>
           </label>
           <label className="flex flex-col pt-2 text-text4 text-sm">
-            Cena
+            Cena (zł)
             <input
               required
               className="text-text1 text-base min-w-[300px] bg-gray-100 box-border px-2 py-1 rounded-md"
