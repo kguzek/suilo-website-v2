@@ -44,9 +44,9 @@ const FILTERS = {
     'OPERON',
     'WSiP',
     'Wiking',
+    'Pearson',
     'Oficyna Edukacyjna',
     'Oxford University Press',
-    'Pearson',
     'Haese Mathematics',
   ],
 };
@@ -84,7 +84,6 @@ function filterOffer(offer, query) {
     if (query[filterGroup].length === 0) return true;
     const translatedFilterGroup = FILTER_TRANSLATIONS[filterGroup].databaseName;
     const offerValue = offer[translatedFilterGroup];
-    const targetValue = query[filterGroup];
     return query[filterGroup].includes(offerValue);
   }
 
@@ -147,16 +146,22 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   );
 
   // generate filters based on avialable ones
-  const generateFilterButtons = (filterGroup) =>
-    FILTERS[filterGroup].map((filter, idx) => (
-      <Filter
-        key={`${filter}-${idx}`}
-        name={filter}
-        filterGroup={filterGroup}
-        active={query[filterGroup].includes(filter)}
-        onChange={dispatch}
-      />
-    ));
+  const generateFilterButtons = (filterGroup) => (
+    <div
+      className="grid gap-1"
+      style={{ gridAutoFlow: 'column', gridTemplateRows: 'auto '.repeat(5) }}
+    >
+      {FILTERS[filterGroup].map((filter, idx) => (
+        <Filter
+          key={`${filter}-${idx}`}
+          name={filter}
+          filterGroup={filterGroup}
+          active={query[filterGroup].includes(filter)}
+          onChange={dispatch}
+        />
+      ))}
+    </div>
+  );
 
   const _handleDelete = () => {
     fetchWithToken('/books/' + deletedBookID, 'DELETE').then((res) => {
@@ -177,7 +182,8 @@ const Marketplace = ({ setPage, email, userInfo }) => {
 
   const filteredOffers = data.contents.filter((offer) => filterOffer(offer, query));
   const lastBookIdx = 1 + currentPage * NUM_BOOKS_PER_PAGE;
-  const paginatedOffers = filteredOffers.slice(lastBookIdx - NUM_BOOKS_PER_PAGE, lastBookIdx);
+  const firstBookIdx = lastBookIdx - NUM_BOOKS_PER_PAGE;
+  const paginatedOffers = filteredOffers.slice(firstBookIdx, lastBookIdx);
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10">
@@ -228,36 +234,36 @@ const Marketplace = ({ setPage, email, userInfo }) => {
             onClick={() => setShowFilters((oldVal) => !oldVal)}
           />
           {showFilters ? (
-            <form onSubmit={(event) => event.preventDefault()}>
-              <div className="flex flex-row gap-3">
-                {Object.entries(FILTER_TRANSLATIONS).map(
-                  ([filterGroup, filterTranslation], idx) => (
-                    <fieldset
-                      className="flex flex-col flex-wrap gap-1"
-                      key={`${filterGroup}-${idx}`}
-                    >
-                      {filterTranslation.userFriendlyName}
-                      {generateFilterButtons(filterGroup)}
-                    </fieldset>
-                  )
-                )}
-              </div>
-            </form>
+            <div className="flex flex-row gap-3 mb-2">
+              {Object.entries(FILTER_TRANSLATIONS).map(([filterGroup, filterTranslation], idx) => (
+                <fieldset key={`${filterGroup}-${idx}`}>
+                  {filterTranslation.userFriendlyName}
+                  {generateFilterButtons(filterGroup)}
+                </fieldset>
+              ))}
+            </div>
           ) : null}
           <Button
-            label="Resetuj filtry"
+            label="Wyczyść filtry"
             onClick={() => dispatch({ type: 'RESET' })}
             disabled={numFiltersApplied === 0}
           />
         </div>
-        <div className="grid items-stretch grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5 my-6 md:my-9 md:gap-4 lg:gap-5 w-full">
-          {paginatedOffers.map(getCard)}
-        </div>
-        <PageSelector
-          page={currentPage}
-          numPages={Math.ceil(filteredOffers.length / NUM_BOOKS_PER_PAGE)}
-          onChange={setCurrentPage}
-        />
+        {filteredOffers.length === 0 ? (
+          'Brak wyników. Spróbuj wyczyścić filtry.'
+        ) : (
+          <>
+            {firstBookIdx}-{paginatedOffers.length} z {filteredOffers.length}
+            <div className="grid items-stretch grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5 my-6 md:my-9 md:gap-4 lg:gap-5 w-full">
+              {paginatedOffers.map(getCard)}
+            </div>
+            <PageSelector
+              page={currentPage}
+              numPages={Math.ceil(filteredOffers.length / NUM_BOOKS_PER_PAGE)}
+              onChange={setCurrentPage}
+            />
+          </>
+        )}
       </div>
     </div>
   );
