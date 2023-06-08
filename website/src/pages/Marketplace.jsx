@@ -97,42 +97,82 @@ const FILTERS = {
     'fizyka',
     'chemia',
     'biologia',
+    'biofizyka',
+    'informatyka',
+    'ekonomia',
+    'przedsiębiorczość',
     'geografia',
     'historia',
     'HiT',
-    'HiS',
-    'WoS',
-    'informatyka',
-    'ekonomia',
-    'ToK',
-    'przedsiębiorczość',
+    'WOS',
+    'EDB',
     'kultura',
-    'inne',
+    'plastyka',
+    'TOK',
+    'inny',
   ],
-  CLASS: ['1. liceum', '2. liceum', '3. liceum', '4. liceum', '1. DP', '2. DP'],
-  QUALITY: ['nowa', 'używana'],
+  GRADE: ['1', '2', '3', '4', 'DP1/DP2 (IB)'],
+  QUALITY: ['nowa', 'jak nowa', 'lekko używana', 'bardzo używana'],
   LEVEL: ['rozszerzony', 'podstawowy'],
-  OTHER: ['Nowa Era', 'Operon', 'WSiP', 'Oxford'],
+  PUBLISHER: [
+    'Nowa Era',
+    'OPERON',
+    'WSiP',
+    'Wiking',
+    'Oficyna Edukacyjna',
+    'Oxford University Press',
+    'Pearson',
+    'Haese Mathematics',
+  ],
+};
+
+const QUERY_DEFAULT_VALUE = Object.fromEntries(Object.keys(FILTERS).map((key) => [key, []]));
+
+const FILTER_TRANSLATIONS = {
+  SUBJECT: { userFriendlyName: 'Przedmiot', databaseName: 'subject' },
+  GRADE: { userFriendlyName: 'Klasa', databaseName: 'studentClass' },
+  QUALITY: { userFriendlyName: 'Jakość', databaseName: 'quality' },
+  LEVEL: { userFriendlyName: 'Poziom', databaseName: 'level' },
+  PUBLISHER: { userFriendlyName: 'Wydawnictwo', databaseName: 'publisher' },
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'ADD':
-      return [...state, action.filter];
+      return { ...state, [action.filterGroup]: [...state[action.filterGroup], action.filter] };
     case 'REMOVE':
-      return state.filter((filter) => !(filter === action.filter));
+      return {
+        ...state,
+        [action.filterGroup]: state[action.filterGroup].filter(
+          (filter) => !(filter === action.filter)
+        ),
+      };
     case 'RESET':
-      return [];
+      return QUERY_DEFAULT_VALUE;
     default:
       throw new Error();
   }
 };
 
+function filterOffer(offer, query) {
+  function filterMatches(filterGroup) {
+    if (query[filterGroup].length === 0) return true;
+    const translatedFilterGroup = FILTER_TRANSLATIONS[filterGroup].databaseName;
+    const offerValue = offer[translatedFilterGroup];
+    const targetValue = query[filterGroup];
+    console.log(offerValue, targetValue);
+    return query[filterGroup].includes(offerValue);
+  }
+
+  return !Object.keys(query).some((filterGroup) => !filterMatches(filterGroup));
+}
+
 const Marketplace = ({ setPage, email, userInfo }) => {
-  const [query, dispatch] = useReducer(reducer, []);
+  const [query, dispatch] = useReducer(reducer, QUERY_DEFAULT_VALUE);
   const [data, setData] = useState({ contents: [] });
   const [loaded, setLoaded] = useState(false);
   const [openForm, setOpenForm] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   const [popupDelete, setPopupDelete] = useState(false);
   const [deletedBookID, setDeletedBookID] = useState(null);
@@ -168,7 +208,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   }
 
   // generate offers based on querry
-  const _generateOffers = (data, filter) => {
+  const _generateOffers = (data) => {
     const getCard = (offerProperties, idx) => (
       <Card
         key={`${offerProperties.title}-${idx}`}
@@ -180,33 +220,20 @@ const Marketplace = ({ setPage, email, userInfo }) => {
       />
     );
 
-    return query[0] // if query is empty enerate all offers
-      ? data
-          .filter((offer) =>
-            Object.values(offer).some((offerProperty) => query.includes(offerProperty))
-          )
-          .map(getCard)
-      : data.map(getCard);
+    return data.filter((offer) => filterOffer(offer, query)).map(getCard);
   };
 
   // generate filters based on avialable ones
-  const _generateFilters = (filters, activeQuerry) => {
-    const joinedFilters = [
-      ...filters.SUBJECT,
-      ...filters.CLASS,
-      ...filters.LEVEL,
-      ...filters.QUALITY,
-      ...filters.OTHER,
-    ];
-    return joinedFilters.map((filter, idx) => (
+  const generateFilterButtons = (filterGroup) =>
+    FILTERS[filterGroup].map((filter, idx) => (
       <Filter
         key={`${filter}-${idx}`}
         name={filter}
-        active={activeQuerry.includes(filter)}
+        filterGroup={filterGroup}
+        active={query[filterGroup].includes(filter)}
         onChange={dispatch}
       />
     ));
-  };
 
   const _handleDelete = () => {
     fetchWithToken('/books/' + deletedBookID, 'DELETE').then((res) => {
@@ -219,6 +246,11 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   if (!loaded) {
     return <LoadingScreen />;
   }
+
+  const numFiltersApplied = Object.values(query).reduce(
+    (total, filter) => total + (filter.length > 0 ? 1 : 0),
+    0
+  );
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10">
@@ -256,33 +288,56 @@ const Marketplace = ({ setPage, email, userInfo }) => {
           handlePostResponse={handlePostResponse}
         />
         {email ? (
-          <div className="flex flex-row flex-wrap gap-1 mb-2">
-            <button
-              className="bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark"
-              onClick={() => setOpenForm(true)}
-            >
-              <p className="p-0 m-0 text-sm">DODAJ PODRĘCZNIK</p>
-            </button>
-          </div>
+          <Button label="Dodaj podręcznik" onClick={() => setOpenForm(true)} />
         ) : (
-          <p className="text-text4 text-sm py-1">Zaloguj się, aby dodać podręcznik</p>
+          <p className="text-text4 text-sm py-1 mb-2">Zaloguj się, aby dodać podręcznik</p>
         )}
-
-        <div className="flex flex-row flex-wrap gap-1 mb-8">
-          {_generateFilters(FILTERS, query)}
-          <button
-            className="bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark"
-            onClick={() => dispatch({ type: 'RESET' })}
-          >
-            <p className="p-0 m-0 text-sm">RESET</p>
-          </button>
+        <div className="flex flex-col flex-wrap gap-1 mb-8">
+          <Button
+            label={
+              `${showFilters ? 'Ukryj' : 'Pokaż'} filtry` +
+              (numFiltersApplied > 0 ? ` (${numFiltersApplied})` : '')
+            }
+            onClick={() => setShowFilters((oldVal) => !oldVal)}
+          />
+          {showFilters ? (
+            <form onSubmit={(event) => event.preventDefault()}>
+              <div className="flex flex-row gap-3">
+                {Object.entries(FILTER_TRANSLATIONS).map(
+                  ([filterGroup, filterTranslation], idx) => (
+                    <fieldset
+                      className="flex flex-col flex-wrap gap-1"
+                      key={`${filterGroup}-${idx}`}
+                    >
+                      {filterTranslation.userFriendlyName}
+                      {generateFilterButtons(filterGroup)}
+                    </fieldset>
+                  )
+                )}
+              </div>
+            </form>
+          ) : null}
+          <Button label="Resetuj filtry" onClick={() => dispatch({ type: 'RESET' })} />
         </div>
         <div className="grid items-stretch grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5 my-6 md:my-9 md:gap-4 lg:gap-5 w-full">
-          {_generateOffers(data.contents, query)}
+          {_generateOffers(data.contents)}
         </div>
       </div>
     </div>
   );
 };
+
+const Button = ({ label, onClick }) => (
+  <div className="flex flex-row flex-wrap gap-1 mb-2">
+    <button
+      className="bg-primary text-white rounded-md inline-block px-3 py-1 transition-all duration-75 hover:bg-primaryDark"
+      onClick={onClick}
+    >
+      <p className="p-0 m-0 text-sm" style={{ textTransform: 'uppercase' }}>
+        {label}
+      </p>
+    </button>
+  </div>
+);
 
 export default Marketplace;
