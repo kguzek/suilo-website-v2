@@ -46,6 +46,17 @@
   </head>
   <!-- Start Single Page Apps for GitHub Pages -->
   <script type="text/javascript">
+    // Redirect to ensure HTTPS and no 'www' subdomain
+    const IN_PRODUCTION = window.location.host.includes('suilo.pl');
+    if (IN_PRODUCTION) {
+      if (window.location.protocol !== 'https:') {
+        window.location.protocol = 'https:';
+      }
+      if (window.location.hostname !== 'suilo.pl') {
+        window.location.hostname = 'suilo.pl';
+      }
+    }
+
     // Single Page Apps for GitHub Pages
     // MIT License
     // https://github.com/rafgraph/spa-github-pages

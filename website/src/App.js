@@ -33,17 +33,6 @@ export default function App() {
   const handleResize = () => setScreenWidth(window.innerWidth);
 
   useEffect(() => {
-    // Redirect to ensure HTTPS and no 'www' subdomain
-    const IN_PRODUCTION = window.location.host.includes('suilo.pl');
-    if (IN_PRODUCTION) {
-      if (window.location.hostname !== 'suilo.pl') {
-        window.location.hostname = 'suilo.pl';
-      }
-      if (window.location.protocol !== 'https:') {
-        window.location.protocol = 'https:';
-      }
-    }
-
     // This function could also be called in the below useEffect hook,
     // however that would result in the API being called each time the user
     // switches page (which could be very often).
