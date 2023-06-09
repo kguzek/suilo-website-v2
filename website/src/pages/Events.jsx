@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import MetaTags from "react-meta-tags";
-import { useSearchParams } from "react-router-dom";
-import CalendarPreview from "../components/Events/Calendar";
-import EventPreview from "../components/Events/EventPreview";
-import { fetchCachedData, removeSearchParam, setSearchParam } from "../misc";
-import { dateToArray, serialiseDateArray } from "../common";
-import LoadingScreen from "../components/LoadingScreen";
-import { DEBUG_MODE } from "../firebase";
+import React, { useState, useEffect } from 'react';
+import MetaTags from 'react-meta-tags';
+import { useSearchParams } from 'react-router-dom';
+import CalendarPreview from '../components/Events/Calendar';
+import EventPreview from '../components/Events/EventPreview';
+import { fetchCachedData, removeSearchParam, setSearchParam } from '../misc';
+import { dateToArray, serialiseDateArray } from '../common';
+import LoadingScreen from '../components/LoadingScreen';
+import { DEBUG_MODE } from '../firebase';
 
 function Events({ setPage, reload, setReload, loginAction }) {
   const [rawPrimEvents, setRawPrimEvents] = useState([]);
@@ -32,7 +32,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
       setLoaded: setLoadedPrim,
       updateCache: forceUpdateCache,
     };
-    fetchCachedData("events", "/events", fetchArgs);
+    fetchCachedData('events', '/events', fetchArgs);
     fetchSecondaryEvents(forceUpdateCache);
   }
 
@@ -57,9 +57,9 @@ function Events({ setPage, reload, setReload, loginAction }) {
 
   useEffect(() => {
     // determines if the cache should be updated by checking the 'refresh' URL query parameter
-    const force = !!removeSearchParam(searchParams, setSearchParams, "refresh");
+    const force = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
     if (force || !loadedPrim) {
-      setPage("events");
+      setPage('events');
       fetchPrimaryEvents(force);
     }
   }, [searchParams]);
@@ -82,7 +82,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
     if (!selectedEvent) return;
     document
       .getElementById(selectedEvent.id)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [selectedEvent]);
 
   if (!loadedPrim || (calendarYear && calendarMonth && !loadedSec)) {
@@ -106,7 +106,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
 
   /** Filters out the primary events that are not this month and converts them into calendar format. */
   function processPrimaryEvents() {
-    const queryEventID = searchParams.get("event");
+    const queryEventID = searchParams.get('event');
     const _primEvents = [];
     for (const event of rawPrimEvents) {
       // date comparison for 'event' objects to check the next event
@@ -119,7 +119,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
         id: event.id,
         startDate: event.date,
         endDate: event.date,
-        renderType: "PRIMARY",
+        renderType: 'PRIMARY',
         type: event.type,
         title: event.title,
       });
@@ -130,35 +130,24 @@ function Events({ setPage, reload, setReload, loginAction }) {
 
   /** Updates the reference to the currently selected event. */
   function updateSelectedEvent({ day, month, year, eventIDs }) {
-    const event = rawPrimEvents
-      .filter((event) => eventIDs.includes(event.id))
-      .shift();
+    const event = rawPrimEvents.filter((event) => eventIDs.includes(event.id)).shift();
     if (!event) {
-      DEBUG_MODE &&
-        console.debug("No event on", serialiseDateArray([year, month, day]));
+      DEBUG_MODE && console.debug('No event on', serialiseDateArray([year, month, day]));
       // Uncomment below to hide event preview when user clicks an empty day in calendar
       // setSelectedEvent(undefined);
       return;
     }
-    DEBUG_MODE &&
-      console.debug("Setting currently selected event to:", event.title);
+    DEBUG_MODE && console.debug('Setting currently selected event to:', event.title);
     setSelectedEvent(event);
-    setSearchParam(searchParams, setSearchParams, "event", event.id);
+    setSearchParam(searchParams, setSearchParams, 'event', event.id);
   }
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
-        <title>
-          Wydarzenia | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w
-          Gliwicach
-        </title>
-        <meta name="description" content="Następne wydarzenie to:" />{" "}
-        {nextEvent?.title}
-        <meta
-          property="og:title"
-          content="Kalendarz i wydarzenia | SUILO Gliwice"
-        />
+        <title>Wydarzenia | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
+        <meta name="description" content="Następne wydarzenie to:" /> {nextEvent?.title}
+        <meta property="og:title" content="Kalendarz i wydarzenia | SUILO Gliwice" />
         <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
       </MetaTags>
       {nextEvent ? (
@@ -171,9 +160,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
       ) : (
         // TODO: Render something better if there are no future events
         <div className="grid lg:mb-14 py-36 my-16">
-          <p className="mx-auto">
-            Nie ma w najbliższym czasie żadnych wydarzeń.
-          </p>
+          <p className="mx-auto">Nie ma w najbliższym czasie żadnych wydarzeń.</p>
         </div>
       )}
       <CalendarPreview
@@ -182,9 +169,7 @@ function Events({ setPage, reload, setReload, loginAction }) {
         onMonthChange={setCalendarMonth}
         onYearChange={setCalendarYear}
       />
-      {selectedEvent && (
-        <EventPreview event={selectedEvent} loginAction={loginAction} />
-      )}
+      {selectedEvent && <EventPreview event={selectedEvent} loginAction={loginAction} />}
     </div>
   );
 }

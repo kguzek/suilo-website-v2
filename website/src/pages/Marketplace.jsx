@@ -227,10 +227,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
         )}
         <div className="flex flex-col flex-wrap gap-1 mb-8">
           <Button
-            label={
-              `${showFilters ? 'Ukryj' : 'Pokaż'} filtry` +
-              (numFiltersApplied > 0 ? ` (${numFiltersApplied})` : '')
-            }
+            label={`${showFilters ? 'Ukryj' : 'Pokaż'} filtry`}
             onClick={() => setShowFilters((oldVal) => !oldVal)}
           />
           {showFilters ? (
@@ -238,13 +235,14 @@ const Marketplace = ({ setPage, email, userInfo }) => {
               {Object.entries(FILTER_TRANSLATIONS).map(([filterGroup, filterTranslation], idx) => (
                 <fieldset key={`${filterGroup}-${idx}`}>
                   {filterTranslation.userFriendlyName}
+                  {query[filterGroup].length === 0 ? '' : ` (${query[filterGroup].length})`}
                   {generateFilterButtons(filterGroup)}
                 </fieldset>
               ))}
             </div>
           ) : null}
           <Button
-            label="Wyczyść filtry"
+            label={'Wyczyść filtry' + (numFiltersApplied > 0 ? ` (${numFiltersApplied})` : '')}
             onClick={() => dispatch({ type: 'RESET' })}
             disabled={numFiltersApplied === 0}
           />
@@ -269,16 +267,17 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   );
 };
 
-const Button = ({ label, onClick, disabled = false }) => (
+const Button = ({ label, disabled = false, ...attributes }) => (
   <div className="flex flex-row flex-wrap gap-1 mb-2">
     <button
-      className={`rounded-md inline-block px-3 py-1 transition-all duration-75 ${
-        disabled
-          ? 'text-[#ededed] bg-primaryDark cursor-not-allowed'
-          : 'text-white bg-primaryhover bg-primary'
-      }`}
-      onClick={onClick}
+      className={
+        'rounded-md inline-block px-3 py-1 transition-all duration-75 ' +
+        (disabled
+          ? 'text-gray-400 bg-gray-300 cursor-not-allowed'
+          : 'text-white bg-primaryhover bg-primary')
+      }
       disabled={disabled}
+      {...attributes}
     >
       <p className="p-0 m-0 text-sm" style={{ textTransform: 'uppercase' }}>
         {label}

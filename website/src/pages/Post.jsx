@@ -1,12 +1,9 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
-import MetaTags from "react-meta-tags";
-import NotFound from "./NotFound";
-import {
-  PostCardPreview,
-  fetchNewsData,
-} from "../components/News/PostCardPreview";
-import DialogBox from "../components/DialogBox";
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import MetaTags from 'react-meta-tags';
+import NotFound from './NotFound';
+import { PostCardPreview, fetchNewsData } from '../components/News/PostCardPreview';
+import DialogBox from '../components/DialogBox';
 import {
   fetchCachedData,
   conjugatePolish,
@@ -15,10 +12,10 @@ import {
   removeSearchParam,
   getDataFromFilename,
   copyToClipboard,
-} from "../misc";
-import YouTube from "react-youtube";
-import LoadingScreen from "../components/LoadingScreen";
-import { ExternalLink, Share2 } from "react-feather";
+} from '../misc';
+import YouTube from 'react-youtube';
+import LoadingScreen from '../components/LoadingScreen';
+import { ExternalLink, Share2 } from 'react-feather';
 
 const Post = ({ setPage, reload, setReload }) => {
   const [loaded, setLoaded] = useState(false);
@@ -43,7 +40,7 @@ const Post = ({ setPage, reload, setReload }) => {
   /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
     function checkLinks(data) {
-      getDataFromFilename(data.photo, "1920x1080", setPhotoLink);
+      getDataFromFilename(data.photo, '1920x1080', setPhotoLink);
       setPostData(data);
     }
 
@@ -52,15 +49,11 @@ const Post = ({ setPage, reload, setReload }) => {
       setLoaded,
       updateCache,
     };
-    fetchCachedData(
-      cacheName,
-      `/news/${encodeURIComponent(params.postID)}`,
-      args
-    );
+    fetchCachedData(cacheName, `/news/${encodeURIComponent(params.postID)}`, args);
   }
 
   useEffect(() => {
-    const updateCache = searchParams.get("refresh");
+    const updateCache = searchParams.get('refresh');
     fetchNewsData({ setNewsData, updateCache });
   }, []);
 
@@ -70,11 +63,7 @@ const Post = ({ setPage, reload, setReload }) => {
     setLoaded(false);
     setPhotoLink(DEFAULT_IMAGE);
     // setPage("news");
-    const updateCache = !!removeSearchParam(
-      searchParams,
-      setSearchParams,
-      "refresh"
-    );
+    const updateCache = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
     updatePostData(updateCache);
   }, [params.postID]);
 
@@ -94,7 +83,7 @@ const Post = ({ setPage, reload, setReload }) => {
   }
   const createdDate = formatDate(postData.date);
   // const modifiedDate = formatDate(postData.modified);
-  const views = conjugatePolish(postData.views, "wyświetle", "nie", "nia", "ń");
+  const views = conjugatePolish(postData.views, 'wyświetle', 'nie', 'nia', 'ń');
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
       <MetaTags>
@@ -157,10 +146,8 @@ const Post = ({ setPage, reload, setReload }) => {
           )}
           {postData.author && (
             <p className=" font-normal text-base w-full text-right mt-6 text-[#444444]/50">
-              Artykuł dodany przez:{" "}
-              <span className="font-medium text-[#444444]/100">
-                {postData.author}
-              </span>
+              Artykuł dodany przez:{' '}
+              <span className="font-medium text-[#444444]/100">{postData.author}</span>
             </p>
           )}
           <div className="w-full inline-flex justify-end mt-3 mb-16">
@@ -170,7 +157,7 @@ const Post = ({ setPage, reload, setReload }) => {
                 title={`Link z posta: ${postData.link}`}
                 href={postData.link}
                 className={
-                  "transition-all cursor-pointer hover:ring-2 hover:ring-primary/30 pb-[.45rem] pr-[.45rem] pt-[.55rem] pl-[.55rem] ml-2 drop-shadow-3xl rounded-xl aspect-square bg-gray-50"
+                  'transition-all cursor-pointer hover:ring-2 hover:ring-primary/30 pb-[.45rem] pr-[.45rem] pt-[.55rem] pl-[.55rem] ml-2 drop-shadow-3xl rounded-xl aspect-square bg-gray-50'
                 }
               >
                 <ExternalLink
@@ -180,12 +167,10 @@ const Post = ({ setPage, reload, setReload }) => {
               </a>
             )}
             <button
-              onClick={() =>
-                copyToClipboard(window.location.href, setSharePopup)
-              }
+              onClick={() => copyToClipboard(window.location.href, setSharePopup)}
               title="Udostępnij"
               className={
-                "transition-all inline-flex py-[.6rem] bg-primary hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]"
+                'transition-all inline-flex py-[.6rem] bg-primary hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]'
               }
             >
               <Share2
@@ -199,22 +184,12 @@ const Post = ({ setPage, reload, setReload }) => {
           </div>
         </article>
         <aside className="hidden lg:grid lg:grid-cols-1 h-fit lg:col-span-1 gap-5 mb-6">
-          <PostCardPreview
-            type="secondary"
-            data={newsData}
-            startIndex={2}
-            numItems={5}
-          />
+          <PostCardPreview type="secondary" data={newsData} startIndex={2} numItems={5} />
           {/* FIX TUTAJ BO NIE DIZALALO TO Z MAIN DEFAULT UP^^*/}
         </aside>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-8 lg:gap-11 my-5 md:my-10">
-        <PostCardPreview
-          type="main"
-          data={newsData}
-          startIndex={0}
-          numItems={4}
-        />
+        <PostCardPreview type="main" data={newsData} startIndex={0} numItems={4} />
       </div>
     </div>
   );

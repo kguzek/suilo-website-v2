@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import MetaTags from 'react-meta-tags';
 import { ArrowRight, Youtube, Instagram, Facebook } from 'react-feather';
-import PostCardPreview, { fetchNewsData } from '../components/News/PostCardPreview';
 import SuPhoto from '../media/su-photo.jpg';
-import { fetchCachedData, formatDate } from '../misc';
+import PostCardPreview, { fetchNewsData } from '../components/News/PostCardPreview';
 import LoadingScreen from '../components/LoadingScreen';
+import { fetchCachedData, formatDate } from '../misc';
 
 const Home = ({ setPage, reload, setReload, screenWidth }) => {
   const [newsData, setNewsData] = useState([]);
