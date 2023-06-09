@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import '../components/Voting/styles/App.css';
+import { Bars } from 'react-loader-spinner';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import BeforeTime from '../components/Voting/components/BeforeTime';
 import BeforeVoting from '../components/Voting/components/BeforeVoting';
 import DuringVoting from '../components/Voting/components/DuringVoting';
 import AfterVoting from '../components/Voting/components/AfterVoting';
 import AfterTime from '../components/Voting/components/AfterTime';
-import { fetchWithToken } from '../firebase';
-import { Bars } from 'react-loader-spinner';
-import { Link } from 'react-router-dom';
 import LogoSU from '../media/LogoSU';
+import { fetchWithToken } from '../firebase';
 
 const colorScheme = {
   primary: '#e6710b',
@@ -81,6 +81,16 @@ const Voting = ({ userInfo, setPage, loginAction }) => {
       style={{ backgroundColor: showed ? colors.bgPage : '#F8F8F8' }}
       className="background transition-all duration-500 delay-200 ease-in relative"
     >
+      <Helmet>
+        <title>Głosowanie | Samorząd Uczniowski I LO</title>
+        <meta
+          name="description"
+          content="Portal do głosowania na marszałka Samorządu Uczniowskiego I Liceum Ogólnokształcącego w Gliwicach."
+        />
+        <meta property="og:title" content="Głosowanie | SUILO Gliwice" />
+        <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
+      </Helmet>
+      ;
       <Link
         className={`absolute top-2 left-2 hidden md:block  ${
           showed ? 'opacity-100' : 'opacity-0  -translate-y-[40%]'

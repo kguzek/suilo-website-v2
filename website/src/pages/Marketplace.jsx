@@ -1,8 +1,8 @@
 import { useState, useEffect, useReducer } from 'react';
+import { Helmet } from 'react-helmet';
 import Filter from '../components/Marketplace/Filter';
 import Form from '../components/Marketplace/Form';
 import Card from '../components/Marketplace/Card';
-// import { MetaTags } from "react-meta-tags";
 import { fetchCachedData, setErrorMessage } from '../misc';
 import LoadingScreen from '../components/LoadingScreen';
 import DialogBox from '../components/DialogBox';
@@ -187,6 +187,15 @@ const Marketplace = ({ setPage, email, userInfo }) => {
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10">
+      <Helmet>
+        <title>Kiermasz | Samorząd Uczniowski I LO</title>
+        <meta
+          name="description"
+          content="Kiermasz książek w I Liceum Ogólnokształcącym w Gliwicach."
+        />
+        <meta property="og:title" content="Kiermasz książek" />
+        <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
+      </Helmet>
       <DialogBox
         header="Sukces!"
         content="Pomyślnie dodano książkę do kiermaszu."

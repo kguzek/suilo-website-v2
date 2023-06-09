@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet';
 import MailBox from '../media/MailBox';
 import FacebookSVG from '../media/facebook.svg';
 import DiscordSVG from '../media/discord.svg';
@@ -12,15 +12,15 @@ const Contact = ({ setPage }) => {
 
   return (
     <div className="flex w-11/12 xl:w-10/12 flex-col justify-start min-h-[77.5vh] mt-20 align-top pb-10 m-auto">
-      <MetaTags>
-        <title>Kontakt | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
+      <Helmet>
+        <title>Kontakt | Samorząd Uczniowski I LO</title>
         <meta
           name="description"
-          content="Można się z nami skontaktować online poprzez Facebooka, Instagrama, Discorda, oraz E-mail, jak i również fizycznie w szkole. Więcej informacji na stronie. "
+          content="Można się z nami skontaktować online poprzez Facebooka, Instagrama, Discorda, oraz e-mail, jak i również fizycznie w szkole. Więcej informacji na stronie."
         />
-        <meta property="og:title" content="Kontakt | SUILO Gliwice" />
+        <meta property="og:title" content="Kontakt" />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
-      </MetaTags>
+      </Helmet>
       <div className="grid grid-cols-1 gap-7 md:gap-9 w-full lg:m-auto items-stretch lg:grid-cols-2  ">
         <div className="w-10/12 m-auto max-w-sm lg:max-w-md">
           <MailBox />

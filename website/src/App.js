@@ -293,7 +293,7 @@ const Layout = ({ page, userInfo, loginAction, logoutAction, footerVisible, scre
     {page !== 'voting' ? (
       <main className="min-h-screen">
         <div
-          className="-z-50 -left-12  -top-0 scale-[.4] md:scale-[.5] lg:scale-[.575] xl:scale-[.65] xl:-left-0 xl:-top-[1rem] origin-top-left absolute"
+          className="-z-50 -left-12 -top-0 scale-[.4] md:scale-[.5] lg:scale-[.575] xl:scale-[.65] xl:-left-0 xl:-top-[1rem] origin-top-left absolute"
           style={{
             width: '30em',
             height: '100vh',

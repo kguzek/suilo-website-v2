@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet';
 import NotFound from './NotFound';
 import { PostCardPreview, fetchNewsData } from '../components/News/PostCardPreview';
 import DialogBox from '../components/DialogBox';
@@ -37,7 +37,7 @@ const Post = ({ setPage, reload, setReload }) => {
 
   const cacheName = `news_post_${params.postID}`;
 
-  /**Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
+  /** Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
   function updatePostData(updateCache = false) {
     function checkLinks(data) {
       getDataFromFilename(data.photo, '1920x1080', setPhotoLink);
@@ -86,12 +86,12 @@ const Post = ({ setPage, reload, setReload }) => {
   const views = conjugatePolish(postData.views, 'wyświetle', 'nie', 'nia', 'ń');
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
-      <MetaTags>
-        <title>{postData.title}</title>
+      <Helmet>
+        <title>{postData.title} | Samorząd Uczniowski I LO</title>
         <meta name="description" content={postData.rawContent} />
         <meta property="og:title" content={postData.title} />
-        <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
-      </MetaTags>
+        <meta property="og:image" content={postData.photo} />
+      </Helmet>
       <DialogBox
         header="Zrobione!"
         content="Skopiowano link do artykułu. Teraz możesz się nim podzielić ze znajomymi."

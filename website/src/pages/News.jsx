@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useParams, useSearchParams } from 'react-router-dom';
-import { MetaTags } from 'react-meta-tags';
+import { Helmet } from 'react-helmet';
 import { PostCardPreview, fetchNewsData } from '../components/News/PostCardPreview';
 import PageSelector from '../components/PageSelector';
 import { removeSearchParam } from '../misc';
@@ -53,15 +53,15 @@ const News = ({ setPage, reload, setReload, collectionInfo }) => {
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
-      <MetaTags>
-        <title>Aktualności | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
+      <Helmet>
+        <title>Aktualności | Samorząd Uczniowski I LO</title>
         <meta
           name="description"
-          content="Aktualności z życia Samorządu Uczniowskiego, oraz 1 Liceum Ogólnokształącego w Gliwicach."
+          content="Aktualności Samorządu Uczniowskiego oraz z życia naszego liceum."
         />
-        <meta property="og:title" content="Aktualności | SUILO Gliwice" />
+        <meta property="og:title" content="Aktualności" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
-      </MetaTags>
+      </Helmet>
       {
         //SHOW THIS LAYOUT ONLY ON FIRST PAGE
         newsPage === 1 ? (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet';
 import InputDropdown from '../components/Editor/InputComponents/InputDropdown';
 import { fetchNewsData } from '../components/News/PostCardPreview';
 import { PostEdit } from '../components/Editor/PostEdit';
@@ -213,15 +213,15 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction, reloa
   const selectedPage = editPickerOptions[editPicker];
   return (
     <div className="w-11/12 xl:w-10/12 min-h-[80vh] mt-16 flex flex-col justify-start align-middle mb-6 ">
-      <MetaTags>
-        <title>Edycja treści | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
+      <Helmet>
+        <title>Edycja treści | Samorząd Uczniowski I LO</title>
         <meta
           name="description"
-          content="Edycja zawartości strony Samorządu Uczniowskiego 1 Liceum Ogólnokształącego w Gliwicach."
+          content="Edytor zawartości strony Samorządu Uczniowskiego I Liceum Ogólnokształącego w Gliwicach."
         />
-        <meta property="og:title" content="Edycja | SUILO Gliwice" />
+        <meta property="og:title" content="Edytor zawartości" />
         <meta property="og:image" content="" /> {/* TODO: Add image */}
-      </MetaTags>
+      </Helmet>
       <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-3/4 xl:w-2/3">
         <div className=" m-auto w-1/2">
           <InputDropdown

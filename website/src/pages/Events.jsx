@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet';
 import { useSearchParams } from 'react-router-dom';
 import CalendarPreview from '../components/Events/Calendar';
 import EventPreview from '../components/Events/EventPreview';
@@ -144,12 +144,15 @@ function Events({ setPage, reload, setReload, loginAction }) {
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top">
-      <MetaTags>
-        <title>Wydarzenia | Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
-        <meta name="description" content="Następne wydarzenie to:" /> {nextEvent?.title}
-        <meta property="og:title" content="Kalendarz i wydarzenia | SUILO Gliwice" />
+      <Helmet>
+        <title>Wydarzenia | Samorząd Uczniowski I LO</title>
+        <meta
+          name="description"
+          content="Kalendarz wydarzeń w I Liceum Ogólnokształcącym w Gliwicach."
+        />
+        <meta property="og:title" content="Kalendarz wydarzeń" />
         <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
-      </MetaTags>
+      </Helmet>
       {nextEvent ? (
         <EventPreview
           event={nextEvent}

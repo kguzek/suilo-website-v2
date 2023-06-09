@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import MetaTags from 'react-meta-tags';
+import { Helmet } from 'react-helmet';
 import { ArrowRight, Youtube, Instagram, Facebook } from 'react-feather';
 import SuPhoto from '../media/su-photo.jpg';
 import PostCardPreview, { fetchNewsData } from '../components/News/PostCardPreview';
@@ -60,18 +60,15 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
 
   return (
     <div className="flex w-11/12 xl:w-10/12 flex-col justify-center align-top">
-      <MetaTags>
-        <title>Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach</title>
+      <Helmet>
+        <title>Samorząd Uczniowski I LO</title>
         <meta
           name="description"
-          content={`Oficjalna strona internetowa Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach Gliwice. Informacje z życia szkoły, o Samorządzie i  kontakt. Szczęśliwe numerki na dzień ${forDate} to: ${luckyNumbers?.[0]} i ${luckyNumbers?.[1]}`}
+          content="Oficjalna strona internetowa Samorządu Uczniowskiego I Liceum Ogólnokształcącego w Gliwicach. Informacje z życia szkoły, wydarzenia, kiermasz książek i więcej."
         />
-        <meta
-          property="og:title"
-          content="Samorząd Uczniowski 1 Liceum Ogólnokształcącego w Gliwicach"
-        />
+        <meta property="og:title" content="Strona Główna" />
         <meta property="og:image" content="" /> {/* IMAGE TO BE ADDED */}
-      </MetaTags>
+      </Helmet>
       <div className=" -mt-14 md:-mt-[4.5rem]  h-screen w-full grid grid-cols-1 lg:grid-cols-5 relative justify-items-stretch content-center">
         <div className="flex flex-col pb-3 pt-4 col-span-1 lg:col-span-3">
           <h1 className="font-bold text-text1 text-5xl pb-2 lg:text-10xl lg:pb-0 xl:text-[3.5rem]">
@@ -135,13 +132,10 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
             <img
               className="drop-shadow-2lg rounded-xl md:rounded-3xl"
               src={SuPhoto}
-              alt="Zdjęcie przewodniczących wchodzących w główny skład Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
+              alt="Zdjęcie przewodniczących wchodzących w główny skład Samorządu Uczniowskiego I LO"
             />
           </div>
-          <article
-            className="w-full lg:pl-3 lg:m-auto"
-            title="O Samorządzie Uczniowskim 1 Liceum Ogólnokształcącego w Gliwicach"
-          >
+          <article className="w-full lg:pl-3 lg:m-auto" title="O Samorządzie Uczniowskim I LO">
             <h2 className="text-text1 font-bold text-3xl xl:text-4xl pt-5 lg:pt-0">
               Nasza drużyna
             </h2>
@@ -170,7 +164,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           />
           <div
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
-            title="Marszałek Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
+            title="Marszałek Samorządu Uczniowskiego I LO"
           >
             <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base select-all lg:text-xl lg:mt-7">
               Szymon Wróbel
@@ -191,7 +185,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           />
           <div
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
-            title="Sekretarz Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
+            title="Sekretarz Samorządu Uczniowskiego I LO"
           >
             <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl select-all lg:mt-7">
               Adam Kurzak
@@ -212,7 +206,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           />
           <div
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
-            title="Skarbnik i Konsultant Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
+            title="Skarbnik i Konsultant Samorządu Uczniowskiego I LO"
           >
             <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl select-all sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">
               Mikołaj Mrózek
@@ -230,7 +224,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
           />
           <div
             className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
-            title="Opiekun Samorządu Uczniowskiego 1 Liceum Ogólnokształcącego w Gliwicach"
+            title="Opiekun Samorządu Uczniowskiego I LO"
           >
             <p className="text-text1 -tracking-[0.015rem] font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base select-all lg:text-xl lg:mt-7">
               Barbara Białowąs

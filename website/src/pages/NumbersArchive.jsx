@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import LoadingScreen from '../components/LoadingScreen';
 import PageSelector from '../components/PageSelector';
 import { formatDate, fetchCachedData, removeSearchParam } from '../misc';
@@ -49,9 +50,17 @@ const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
   }
 
   if (!loadedArchive) return <LoadingScreen />;
-
   return (
     <div className="flex flex-col justify-center align-top">
+      <Helmet>
+        <title>Archiwum Numerków | Samorząd Uczniowski I LO</title>
+        <meta
+          name="description"
+          content="Archiwum szczęśliwych numerków w I Liceum Ogólnokształcącym w Gliwicach."
+        />
+        <meta property="og:title" content="Archiwum szczęśliwych numerków" />
+        <meta property="og:image" content="" /> {/* TODO: ADD IMAGE */}
+      </Helmet>
       <div className="w-11/12 min-h-[82vh] mt-6 justify-center">
         <table className="border-collapse table-auto w-64 md:w-[32rem] mx-auto ">
           <thead>
