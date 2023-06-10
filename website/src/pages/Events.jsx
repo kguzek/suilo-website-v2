@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet';
 import { useSearchParams } from 'react-router-dom';
 import CalendarPreview from '../components/Events/Calendar';
@@ -24,73 +24,40 @@ function Events({ setPage, reload, setReload, loginAction }) {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  /** Fetches the primary events from cache or API. */
-  function fetchPrimaryEvents(forceUpdateCache = false) {
-    // set the data fetch arguments
-    const fetchArgs = {
-      setData: (data) => setRawPrimEvents(data.contents),
-      setLoaded: setLoadedPrim,
-      updateCache: forceUpdateCache,
-    };
-    fetchCachedData('events', '/events', fetchArgs);
-    fetchSecondaryEvents(forceUpdateCache);
-  }
-
   /** Fetches the secondary events from cache or API. */
-  function fetchSecondaryEvents(forceUpdateCache = false) {
-    if (calendarYear === undefined || calendarMonth === undefined) return;
-    const fetchArgs = {
-      setData: (data) => setSecEvents(data.events),
-      setLoaded: setLoadedSec,
-      updateCache: forceUpdateCache,
-    };
-    const fetchURL = `/calendar/${calendarYear}/${calendarMonth}/`;
-    const cacheName = `calendar_${calendarYear}_${calendarMonth}`;
+  const fetchSecondaryEvents = useCallback(
+    (forceUpdateCache = false) => {
+      if (calendarYear === undefined || calendarMonth === undefined) return;
+      const fetchArgs = {
+        setData: (data) => setSecEvents(data.events),
+        setLoaded: setLoadedSec,
+        updateCache: forceUpdateCache,
+      };
+      const fetchURL = `/calendar/${calendarYear}/${calendarMonth}/`;
+      const cacheName = `calendar_${calendarYear}_${calendarMonth}`;
 
-    fetchCachedData(cacheName, fetchURL, fetchArgs);
-  }
+      fetchCachedData(cacheName, fetchURL, fetchArgs);
+    },
+    [calendarMonth, calendarYear]
+  );
 
-  useEffect(() => {
-    fetchSecondaryEvents();
-    processPrimaryEvents();
-  }, [calendarYear, calendarMonth]);
-
-  useEffect(() => {
-    // determines if the cache should be updated by checking the 'refresh' URL query parameter
-    const force = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
-    if (force || !loadedPrim) {
-      setPage('events');
-      fetchPrimaryEvents(force);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (!reload) {
-      return;
-    }
-    // The page content has updated on the server side; reload it
-    setReload(false);
-    setLoadedPrim(false);
-    fetchPrimaryEvents();
-  }, [reload]);
-
-  useEffect(() => {
-    processPrimaryEvents();
-  }, [rawPrimEvents]);
-
-  useEffect(() => {
-    if (!selectedEvent) return;
-    document
-      .getElementById(selectedEvent.id)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [selectedEvent]);
-
-  if (!loadedPrim || (calendarYear && calendarMonth && !loadedSec)) {
-    return <LoadingScreen />;
-  }
+  /** Fetches the primary events from cache or API. */
+  const fetchPrimaryEvents = useCallback(
+    (forceUpdateCache = false) => {
+      // set the data fetch arguments
+      const fetchArgs = {
+        setData: (data) => setRawPrimEvents(data.contents),
+        setLoaded: setLoadedPrim,
+        updateCache: forceUpdateCache,
+      };
+      fetchCachedData('events', '/events', fetchArgs);
+      fetchSecondaryEvents(forceUpdateCache);
+    },
+    [fetchSecondaryEvents]
+  );
 
   /** Determine the next event. */
-  function updateNextEvent() {
+  const updateNextEvent = useCallback(() => {
     const now = new Date();
     const today = new Date(dateToArray(now));
     for (const event of rawPrimEvents) {
@@ -102,16 +69,16 @@ function Events({ setPage, reload, setReload, loginAction }) {
       setNextEvent(event);
       break;
     }
-  }
+  }, [rawPrimEvents]);
 
   /** Filters out the primary events that are not this month and converts them into calendar format. */
-  function processPrimaryEvents() {
+  const processPrimaryEvents = useCallback(() => {
     const queryEventID = searchParams.get('event');
     const _primEvents = [];
     for (const event of rawPrimEvents) {
       // date comparison for 'event' objects to check the next event
       event.id === queryEventID && setSelectedEvent(event);
-      const [year, month, _day] = event.date;
+      const [year, month] = event.date;
       if (year !== calendarYear || month !== calendarMonth) {
         continue;
       }
@@ -126,6 +93,42 @@ function Events({ setPage, reload, setReload, loginAction }) {
     }
     updateNextEvent();
     setPrimEvents(_primEvents);
+  }, [calendarMonth, calendarYear, rawPrimEvents, searchParams, updateNextEvent]);
+
+  useEffect(() => {
+    fetchSecondaryEvents();
+    processPrimaryEvents();
+  }, [fetchSecondaryEvents, processPrimaryEvents]);
+
+  useEffect(() => {
+    // determines if the cache should be updated by checking the 'refresh' URL query parameter
+    const force = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
+    if (force || !loadedPrim) {
+      console.log('got thru');
+      setPage('events');
+      fetchPrimaryEvents(force);
+    }
+  }, [searchParams, fetchPrimaryEvents, loadedPrim, setPage, setSearchParams]);
+
+  useEffect(() => {
+    if (!reload) {
+      return;
+    }
+    // The page content has updated on the server side; reload it
+    setReload(false);
+    setLoadedPrim(false);
+    fetchPrimaryEvents();
+  }, [reload, setReload, fetchPrimaryEvents]);
+
+  useEffect(() => {
+    if (!selectedEvent) return;
+    document
+      .getElementById(selectedEvent.id)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [selectedEvent]);
+
+  if (!loadedPrim || (calendarYear && calendarMonth && !loadedSec)) {
+    return <LoadingScreen />;
   }
 
   /** Updates the reference to the currently selected event. */

@@ -1,4 +1,4 @@
-import { Bars } from "react-loader-spinner";
+import { Bars } from 'react-loader-spinner';
 
 /** An unclickable button to be rendered when an API request has been sent and is awaiting a response. */
 // export function LoadingButton({
@@ -30,10 +30,9 @@ import { Bars } from "react-loader-spinner";
 export default function LoadingScreen({ size = 50, fullscreen = true }) {
   return (
     <div className="h-screen">
-      <div className={fullscreen ? "loading-whole-screen" : ""}>
+      <div className={fullscreen ? 'loading-whole-screen' : ''}>
         <Bars color="#FFA900" height={size} width={size} />
       </div>
     </div>
-
   );
 }

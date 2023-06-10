@@ -9,11 +9,11 @@ import reportWebVitals from './reportWebVitals';
 const rootElement = document.getElementById('root');
 
 const toRender = (
-  <React.StrictMode>
-    <BrowserRouter basename="/">
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <BrowserRouter basename="/">
+    <App />
+  </BrowserRouter>
+  // </React.StrictMode>
 );
 if (rootElement.hasChildNodes()) {
   hydrateRoot(rootElement, toRender);

@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Plus, Trash, Edit3, Copy } from "react-feather";
-import InputBox from "./InputComponents/InputBox";
-import InputDropdown from "./InputComponents/InputDropdown";
-import DialogBox from "../DialogBox";
-import LoadingScreen from "../LoadingScreen";
-import { fetchWithToken } from "../../firebase";
-import { isURL, setErrorMessage, copyToClipboard } from "../../misc";
+import React, { useCallback, useEffect, useState } from 'react';
+import { Plus, Trash, Edit3, Copy } from 'react-feather';
+import InputBox from './InputComponents/InputBox';
+import InputDropdown from './InputComponents/InputDropdown';
+import DialogBox from '../DialogBox';
+import LoadingScreen from '../LoadingScreen';
+import { fetchWithToken } from '../../firebase';
+import { isURL, setErrorMessage, copyToClipboard } from '../../misc';
 
 export const LinkEdit = ({ data, loaded, refetchData }) => {
-  const [currentlyActive, setCurrentlyActive] = useState("_default");
-  const [longLink, setLongLink] = useState("");
+  const [currentlyActive, setCurrentlyActive] = useState('_default');
+  const [longLink, setLongLink] = useState('');
 
-  const [actualLink, setActualLink] = useState("");
+  const [actualLink, setActualLink] = useState('');
   const [visits, setVisits] = useState(0);
 
-  const [shortLink, setShortLink] = useState("");
+  const [shortLink, setShortLink] = useState('');
   const [clickedSubmit, setClickedSubmit] = useState(false);
   const [clickedDelete, setClickedDelete] = useState(false);
 
@@ -25,9 +25,10 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
   const [errorCode, setErrorCode] = useState(null);
 
   /** Gets the reference of the currently selected short link. */
-  function _getCurrentlyActive() {
-    return data?.contents?.[parseInt(currentlyActive)];
-  }
+  const _getCurrentlyActive = useCallback(
+    () => data?.contents?.[parseInt(currentlyActive)],
+    [currentlyActive, data?.contents]
+  );
 
   useEffect(() => {
     if (!loaded) {
@@ -41,14 +42,14 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
     setLongLink(currentLink.destination);
     setShortLink(currentLink.shortLink);
     setVisits(currentLink.views ?? 0);
-  }, [currentlyActive]);
+  }, [_getCurrentlyActive, loaded]);
 
   useEffect(() => {
     if (isURL(shortLink)) {
       setActualLink(shortLink);
     } else {
       // Ensure the path starts with "/"
-      const path = shortLink.startsWith("/") ? shortLink : "/" + shortLink;
+      const path = shortLink.startsWith('/') ? shortLink : '/' + shortLink;
       // Use the current HTTP/HTTPS protocol
       setActualLink(`${window.location.origin}${path}`);
     }
@@ -64,20 +65,20 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
 
   function _resetAllInputs() {
     for (const setVar of [setLongLink, setShortLink]) {
-      setVar("");
+      setVar('');
     }
     setVisits(0);
-    setCurrentlyActive("_default");
+    setCurrentlyActive('_default');
   }
 
   const _handleSubmit = (e) => {
     e.preventDefault();
     setClickedSubmit(true);
-    let url = "/links/";
-    let method = "POST";
+    let url = '/links/';
+    let method = 'POST';
     // Check if an existing event is selected
-    if (currentlyActive !== "_default") {
-      method = "PUT";
+    if (currentlyActive !== '_default') {
+      method = 'PUT';
       url += _getCurrentlyActive().id;
     }
     // ?destination=null&shortLink=null
@@ -97,8 +98,8 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
 
   const _handleDelete = () => {
     setClickedDelete(true);
-    const deleteURL = "/links/" + _getCurrentlyActive().id;
-    fetchWithToken(deleteURL, "DELETE").then((_res) => {
+    const deleteURL = '/links/' + _getCurrentlyActive().id;
+    fetchWithToken(deleteURL, 'DELETE').then((_res) => {
       // Update the data once request is processed
       refresh();
       setClickedDelete(false);
@@ -106,9 +107,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
   };
 
   // Get array of short link URLs
-  const links = (data.contents ?? []).map(
-    (link) => `${link.shortLink} > ${link.destination}`
-  );
+  const links = (data.contents ?? []).map((link) => `${link.shortLink} > ${link.destination}`);
   return (
     <form className="w-full mt-6" onSubmit={_handleSubmit}>
       <DialogBox
@@ -167,12 +166,13 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
         required={false}
       />
       <div className="w-full">
-        {actualLink !== "" && (
+        {actualLink !== '' && (
           <div className="my-1 font-medium text-lg text-text1 inline-flex">
             <span>Link:&nbsp;</span>
             <a
               href={actualLink}
               target="_blank"
+              rel="noreferrer"
               className="text-text1 font-normal tracking-tight hover:text-primary transition-all duration-150"
             >
               {actualLink}
@@ -186,14 +186,14 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
         )}
         {visits !== 0 && <p className="text-text6">Kliknięcia w link: {visits}</p>}
       </div>
-      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "_default" &&
+      <div className="fr" style={{ width: '100%', justifyContent: 'right' }}>
+        {currentlyActive !== '_default' &&
           (clickedDelete ? (
             <button
               type="button"
               className="delete-btn select-none cursor-wait"
               disabled
-              style={{ pointerEvents: "none" }}
+              style={{ pointerEvents: 'none' }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -203,7 +203,7 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
             <button
               type="button"
               className="delete-btn select-none cursor-pointer"
-              style={{ pointerEvents: "all" }}
+              style={{ pointerEvents: 'all' }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -215,34 +215,30 @@ export const LinkEdit = ({ data, loaded, refetchData }) => {
             type="submit"
             className="add-btn select-none cursor-wait"
             disabled
-            style={{ pointerEvents: "none" }}
+            style={{ pointerEvents: 'none' }}
           >
-            {currentlyActive !== "_default" ? (
+            {currentlyActive !== '_default' ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
             <p>
-              {currentlyActive !== "_default"
-                ? "zaktualizuj skrócony link"
-                : "dodaj skrócony link"}
+              {currentlyActive !== '_default' ? 'zaktualizuj skrócony link' : 'dodaj skrócony link'}
             </p>
           </button>
         ) : (
           <button
             type="submit  "
             className="add-btn select-none cursor-pointer"
-            style={{ pointerEvents: "all" }}
+            style={{ pointerEvents: 'all' }}
           >
-            {currentlyActive !== "_default" ? (
+            {currentlyActive !== '_default' ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
             <p>
-              {currentlyActive !== "_default"
-                ? "zaktualizuj skrócony link"
-                : "dodaj skrócony link"}
+              {currentlyActive !== '_default' ? 'zaktualizuj skrócony link' : 'dodaj skrócony link'}
             </p>
           </button>
         )}

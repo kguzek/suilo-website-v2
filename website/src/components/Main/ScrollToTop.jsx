@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { ChevronsUp } from "react-feather";
+import React, { useState, useEffect } from 'react';
+import { ChevronsUp } from 'react-feather';
 
 /**Scrolls the window to the top. */
 export function scrollToTop() {
-  document
-    .getElementById("root")
-    .scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById('root').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 export function ScrollToTop() {
   const [isActive, setActive] = useState(false);
   const [isSafe, setSafety] = useState(true);
-  const [yPos, setY] = useState("translate-y-[120%]");
-  const [display, setDisplay] = useState("hidden");
-  const [opacity, setOpacity] = useState("opacity-0");
+  const [yPos, setY] = useState('translate-y-[120%]');
+  const [display, setDisplay] = useState('hidden');
+  const [opacity, setOpacity] = useState('opacity-0');
   const [scrollPosition, setScrollPosition] = useState(0);
 
   // Detect and set yOffset //
@@ -22,9 +20,9 @@ export function ScrollToTop() {
     setScrollPosition(position);
   };
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -35,24 +33,24 @@ export function ScrollToTop() {
     } else if (scrollPosition < 350 && isActive) {
       setActive(false);
     }
-  }, [scrollPosition]);
+  }, [scrollPosition, isActive]);
 
   // animation on enter
   const _fadeIn = () => {
-    setDisplay("flex");
+    setDisplay('flex');
     setTimeout(() => {
-      setY("translate-y-0");
-      setOpacity("opacity-100")
+      setY('translate-y-0');
+      setOpacity('opacity-100');
       setSafety(true);
     }, 100);
   };
 
   // animation on exit
   const _fadeOut = () => {
-    setY("translate-y-[120%]");
-    setOpacity("opacity-0")
+    setY('translate-y-[120%]');
+    setOpacity('opacity-0');
     setTimeout(() => {
-      setDisplay("hidden");
+      setDisplay('hidden');
       setSafety(true);
     }, 500);
   };
@@ -65,7 +63,7 @@ export function ScrollToTop() {
       _fadeOut();
     }
     setSafety(false);
-  }, [isActive]);
+  }, [isActive, isSafe]);
 
   return (
     <button

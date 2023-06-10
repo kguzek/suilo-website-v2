@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 
@@ -32,7 +32,122 @@ export default function App() {
 
   const handleResize = () => setScreenWidth(window.innerWidth);
 
+  /** Callback to be executed whenever the state of the currently signed in user is changed.
+   * Returns true if the user is a valid option (i.e. actual user from @lo1.gliwice.pl or no user at all).
+   * Returns false if the user is from outside of the LO1 organisation.
+   */
+  const setUserPermissions = useCallback(
+    () =>
+      (user, force = false) => {
+        if (!user) {
+          DEBUG_MODE && console.info('No user. Logging out.');
+          setUserEmail(null);
+          // This means that the next time someone logs in the API will have to verify if they are an editor
+          setUserPerms(undefined);
+          removeCookies('userPerms');
+          return true;
+        }
+        if (!user.email.endsWith('@lo1.gliwice.pl')) {
+          DEBUG_MODE && console.info('Invalid email. Logging out.');
+          setUserEmail(null);
+          setUserPerms(undefined);
+          removeCookies('userPerms');
+          return false;
+        }
+        setUserEmail(user.email);
+        if (userPerms?.email === user.email && !force) {
+          return true;
+        }
+        // Refresh the user authentication level each time if debug mode is enabled
+
+        // Check if the user has edit permissions by performing a dummy PUT request to the API
+        DEBUG_MODE && console.info('Checking user permissions...');
+
+        /** Update the cookie with the proper user pemissions. */
+        function setUserEditPermissions(permsInfo) {
+          const perms = {
+            email: user.email,
+            isAdmin: permsInfo?.isAdmin ?? false,
+            canEdit: permsInfo?.canEdit ?? [],
+          };
+          // Determine if the user is permitted to edit any pages
+          DEBUG_MODE &&
+            (perms.isAdmin || perms.canEdit.length > 0) &&
+            console.info(`Enabled edit screen for ${user.email}.`);
+          // Update the user cookie
+          setUserPerms(perms);
+          setCookies('userPerms', perms, { sameSite: 'lax' });
+        }
+
+        fetchWithToken('/').then(
+          (res) => {
+            // Log user permissions
+            res.json().then((data) => {
+              DEBUG_MODE && console.debug(data);
+              setUserEditPermissions(data.userInfo); // userInfo can be undefined
+            });
+          },
+          (error) => {
+            console.error('Error setting user permissions!', error);
+            setUserEditPermissions();
+          }
+        );
+
+        return true;
+      },
+    [userPerms?.email, setCookies, removeCookies]
+  );
+
   useEffect(() => {
+    /** Pings the server to check when the last database update was made for each individual collection.
+     *  Compares the creation date of each client-side cache with the server-side modification date.
+     *  If the corresponding server-side date is higher than the cache's date, it is removed, and the
+     *  `shouldRefresh` state variable is set to `true`.
+     */
+    function checkForUpdates() {
+      setShouldRefresh(false);
+      DEBUG_MODE && console.info('Checking for server updates...');
+      fetchWithToken('/collectionInfo/').then((res) => {
+        res.json().then((collections) => {
+          setCollectionInfo(collections);
+          let shouldRefresh = false;
+          for (const cacheName in localStorage) {
+            const endpoint = cacheName.split('_').shift();
+            const collection = collections[endpoint];
+            // The cache does not start with a collection name
+            if (!collection) continue;
+            const collectionUpdated = new Date(collection.lastUpdated);
+            try {
+              const cache = JSON.parse(localStorage.getItem(cacheName));
+              if (new Date(cache?.date) > collectionUpdated) {
+                // Cache is newer than the date it was updated
+                continue;
+              }
+            } catch (parseError) {
+              // Data is not serialised JSON
+            }
+
+            // Check if the cache name is a valid endpoint
+            if (collectionUpdated.toString() !== 'Invalid Date') {
+              // The cache is too old
+              console.debug('Removing cache', cacheName, '(server-side update)');
+              localStorage.removeItem(cacheName);
+              if (cacheName === 'users') {
+                // Re-evaluate user permissions if the users were modified
+                setUserEmail(undefined);
+                setUserPermissions(auth.currentUser, true);
+              }
+              shouldRefresh = true;
+            }
+          }
+          // Only update the state when all caches have been processed
+          shouldRefresh
+            ? setShouldRefresh(true)
+            : DEBUG_MODE && console.info('Everything is up-to-date');
+        });
+      });
+    }
+
     // This function could also be called in the below useEffect hook,
     // however that would result in the API being called each time the user
     // switches page (which could be very often).
@@ -42,7 +157,7 @@ export default function App() {
     // Window width event listener
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [setUserPermissions]);
 
   useEffect(() => {
     if (page === 'edit') {
@@ -52,117 +167,6 @@ export default function App() {
     }
     page && scrollToTop();
   }, [page]);
-
-  /** Pings the server to check when the last database update was made for each individual collection.
-   *  Compares the creation date of each client-side cache with the server-side modification date.
-   *  If the corresponding server-side date is higher than the cache's date, it is removed, and the
-   *  `shouldRefresh` state variable is set to `true`.
-   */
-  function checkForUpdates() {
-    setShouldRefresh(false);
-    DEBUG_MODE && console.info('Checking for server updates...');
-    fetchWithToken('/collectionInfo/').then((res) => {
-      res.json().then((collections) => {
-        setCollectionInfo(collections);
-        let shouldRefresh = false;
-        for (const cacheName in localStorage) {
-          const endpoint = cacheName.split('_').shift();
-          const collection = collections[endpoint];
-          // The cache does not start with a collection name
-          if (!collection) continue;
-          const collectionUpdated = new Date(collection.lastUpdated);
-          try {
-            const cache = JSON.parse(localStorage.getItem(cacheName));
-            if (new Date(cache?.date) > collectionUpdated) {
-              // Cache is newer than the date it was updated
-              continue;
-            }
-          } catch (parseError) {
-            // Data is not serialised JSON
-          }
-
-          // Check if the cache name is a valid endpoint
-          if (collectionUpdated.toString() !== 'Invalid Date') {
-            // The cache is too old
-            console.debug('Removing cache', cacheName, '(server-side update)');
-            localStorage.removeItem(cacheName);
-            if (cacheName === 'users') {
-              // Re-evaluate user permissions if the users were modified
-              setUserEmail(undefined);
-              setUserPermissions(auth.currentUser, true);
-            }
-            shouldRefresh = true;
-          }
-        }
-        // Only update the state when all caches have been processed
-        shouldRefresh
-          ? setShouldRefresh(true)
-          : DEBUG_MODE && console.info('Everything is up-to-date');
-      });
-    });
-  }
-
-  /** Callback to be executed whenever the state of the currently signed in user is changed.
-   * Returns true if the user is a valid option (i.e. actual user from @lo1.gliwice.pl or no user at all).
-   * Returns false if the user is from outside of the LO1 organisation.
-   */
-  function setUserPermissions(user, force = false) {
-    if (!user) {
-      DEBUG_MODE && console.info('No user. Logging out.');
-      setUserEmail(null);
-      // This means that the next time someone logs in the API will have to verify if they are an editor
-      setUserPerms(undefined);
-      removeCookies('userPerms');
-      return true;
-    }
-    if (!user.email.endsWith('@lo1.gliwice.pl')) {
-      DEBUG_MODE && console.info('Invalid email. Logging out.');
-      setUserEmail(null);
-      setUserPerms(undefined);
-      removeCookies('userPerms');
-      return false;
-    }
-    setUserEmail(user.email);
-    if (userPerms?.email === user.email && !force) {
-      return true;
-    }
-    // Refresh the user authentication level each time if debug mode is enabled
-
-    // Check if the user has edit permissions by performing a dummy PUT request to the API
-    DEBUG_MODE && console.info('Checking user permissions...');
-
-    /** Update the cookie with the proper user pemissions. */
-    function setUserEditPermissions(permsInfo) {
-      const perms = {
-        email: user.email,
-        isAdmin: permsInfo?.isAdmin ?? false,
-        canEdit: permsInfo?.canEdit ?? [],
-      };
-      // Determine if the user is permitted to edit any pages
-      DEBUG_MODE &&
-        (perms.isAdmin || perms.canEdit.length > 0) &&
-        console.info(`Enabled edit screen for ${user.email}.`);
-      // Update the user cookie
-      setUserPerms(perms);
-      setCookies('userPerms', perms, { sameSite: 'lax' });
-    }
-
-    fetchWithToken('/').then(
-      (res) => {
-        // Log user permissions
-        res.json().then((data) => {
-          DEBUG_MODE && console.debug(data);
-          setUserEditPermissions(data.userInfo); // userInfo can be undefined
-        });
-      },
-      (error) => {
-        console.error('Error setting user permissions!', error);
-        setUserEditPermissions();
-      }
-    );
-
-    return true;
-  }
 
   function loginAction() {
     // CALL LOG SCREEN

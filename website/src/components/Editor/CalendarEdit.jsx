@@ -54,7 +54,7 @@ export const CalendarEdit = ({ data, loaded, refetchData, year, month, setYear, 
     setType(event.type - 2);
     setStartDate(event.date.start);
     setEndDate(event.date.end);
-  }, [currentlyActive]);
+  }, [currentlyActive, data?.events, loaded]);
 
   useEffect(() => {
     // Set the selected option to "new event" when the calendar period is changed

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight } from "react-feather";
-import { DEFAULT_IMAGE, getDataFromFilename } from "../../misc";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'react-feather';
+import { DEFAULT_IMAGE, getDataFromFilename } from '../../misc';
 
 const PostCardPrimary = ({ data }) => {
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
 
   useEffect(() => {
-    getDataFromFilename(data.photo, "800x600", setPhoto);
-  }, []);
+    getDataFromFilename(data.photo, '800x600', setPhoto);
+  }, [data.photo]);
 
   //group-hover:ring-[.2rem] ring-primaryDark/30 transition-all duration-300
   return (
@@ -16,6 +16,7 @@ const PostCardPrimary = ({ data }) => {
       <Link to={data.internalLink} className="flex w-full relative flex-col group">
         <img
           src={photo}
+          alt={data.alt}
           className="bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl"
           loading="lazy"
         />
@@ -36,7 +37,7 @@ const PostCardPrimary = ({ data }) => {
         <div
           className="absolute -bottom-[.175rem] lg:bottom-[.05rem] right-0 py-[.1rem] px-1 pl-8"
           style={{
-            background: "linear-gradient(90deg, rgba(248,248,248,0) 0%, rgba(248,248,248,1) 15%)",
+            background: 'linear-gradient(90deg, rgba(248,248,248,0) 0%, rgba(248,248,248,1) 15%)',
             // backgroundColor: "#F8F8F8",
           }}
         >

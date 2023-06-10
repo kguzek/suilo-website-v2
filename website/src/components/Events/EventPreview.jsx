@@ -1,15 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Users,
-  Bell,
-  UserCheck,
-  ExternalLink,
-  User,
-} from "react-feather";
-import { fetchWithToken, auth, DEBUG_MODE } from "../../firebase";
+import React, { useCallback, useEffect, useState } from 'react';
+import { Calendar, Clock, MapPin, Users, Bell, UserCheck, ExternalLink, User } from 'react-feather';
+import { fetchWithToken, auth, DEBUG_MODE } from '../../firebase';
 import {
   DEFAULT_IMAGE,
   formatDate,
@@ -17,15 +8,15 @@ import {
   formatTimeDiff,
   getDataFromFilename,
   setErrorMessage,
-} from "../../misc";
-import DialogBox from "../DialogBox";
+} from '../../misc';
+import DialogBox from '../DialogBox';
 
 const PARTICIPATE_BTN_CLASS =
-  "transition-all inline-flex py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]";
+  'transition-all inline-flex py-[.5rem]  hover:ring-2 hover:ring-primary/30 active:drop-shadow-5xl cursor-pointer ml-2 drop-shadow-3xl rounded-xl px-[1.1rem]';
 
 // Zmieniłem pt-[.7rem] na pt-[.65rem] żeby się alignowało @Mrózek
 const NOTIFY_BTN_CLASS =
-  "transition-all cursor-pointer hover:ring-2 hover:ring-primary/30  p-[.5rem] ml-2 drop-shadow-3xl rounded-xl";
+  'transition-all cursor-pointer hover:ring-2 hover:ring-primary/30  p-[.5rem] ml-2 drop-shadow-3xl rounded-xl';
 
 // const testEvent = {
 //   photo:
@@ -41,12 +32,7 @@ const NOTIFY_BTN_CLASS =
 //   link: "https://youtu.be/dQw4w9WgXcQ",
 // };
 
-const EventPreview = ({
-  event,
-  isNextEvent = false,
-  loginAction,
-  updateNextEvent = () => { },
-}) => {
+const EventPreview = ({ event, isNextEvent = false, loginAction, updateNextEvent = () => {} }) => {
   const [notification, setNotification] = useState(false);
   const [participance, setParticipance] = useState(false);
   const [canParChange, setCanParChange] = useState(true);
@@ -63,16 +49,29 @@ const EventPreview = ({
   const [popupError, setPopupError] = useState(false);
   const [errorCode, setErrorCode] = useState(null);
 
+  const updateEventCountdown = useCallback(() => {
+    const now = new Date();
+    const eventDate = new Date(event.date);
+    eventDate.setHours(...event.startTime);
+    const diff = eventDate - now;
+    if (diff < 1000) {
+      // Less than 1 second left
+      DEBUG_MODE && console.info('Next event start time reached!');
+      return void updateNextEvent();
+    }
+    const formatted = formatTimeDiff(diff);
+    formatted !== eventCountdown && setEventCountdown(formatted);
+    return diff;
+  }, [event, eventCountdown, updateNextEvent]);
+
   useEffect(() => {
-    getDataFromFilename(event.photo, "1920x1080", setPhoto);
+    getDataFromFilename(event.photo, '1920x1080', setPhoto);
   }, [event]);
 
   useEffect(() => {
     // Either wait 1s or update immediately
-    isNextEvent && eventCountdown
-      ? setTimeout(updateEventCountdown, 1000)
-      : updateEventCountdown();
-  }, [eventCountdown]);
+    isNextEvent && eventCountdown ? setTimeout(updateEventCountdown, 1000) : updateEventCountdown();
+  }, [eventCountdown, isNextEvent, updateEventCountdown]);
 
   useEffect(() => {
     if (!popupNotification) {
@@ -98,27 +97,11 @@ const EventPreview = ({
     const notificationsFor = event.notificationsFor ?? [];
     setParticipance(participants.includes(user.uid));
     setNotification(user.email in notificationsFor);
-  }, [auth.currentUser, event]);
+  }, [event]);
 
   // Display "<20" if there are fewer than 20 event participants
   const numParticipants =
-    (event.participants.length < 20 ? "<20" : event.participants.length) +
-    " uczestników";
-
-  function updateEventCountdown() {
-    const now = new Date();
-    const eventDate = new Date(event.date);
-    eventDate.setHours(...event.startTime);
-    const diff = eventDate - now;
-    if (diff < 1000) {
-      // Less than 1 second left
-      DEBUG_MODE && console.info("Next event start time reached!");
-      return void updateNextEvent();
-    }
-    const formatted = formatTimeDiff(diff);
-    formatted !== eventCountdown && setEventCountdown(formatted);
-    return diff;
-  }
+    (event.participants.length < 20 ? '<20' : event.participants.length) + ' uczestników';
 
   /** This function is called when the au clicks the event participation or notification button.
    *  Returns true if the action should be performed. Returns false if the user is signed out or if
@@ -138,8 +121,8 @@ const EventPreview = ({
   function _toggleNotification(_clickEvent) {
     if (!_handleUserClick()) return;
     setClickedNotify(true);
-    fetchWithToken(`/events/${event.id}`, "PATCH", {
-      toggle: "notification",
+    fetchWithToken(`/events/${event.id}`, 'PATCH', {
+      toggle: 'notification',
     }).then((res) => {
       if (res.ok) {
         setPopupNotification(true);
@@ -150,8 +133,8 @@ const EventPreview = ({
           setClickedNotify(false);
         });
         // Force cache update on next reload
-        localStorage.removeItem("events");
-        localStorage.removeItem("events_" + event.id);
+        localStorage.removeItem('events');
+        localStorage.removeItem('events_' + event.id);
       } else {
         setErrorMessage(res, setPopupError);
         setErrorCode(res.status);
@@ -163,8 +146,8 @@ const EventPreview = ({
   function _toggleParticipance(_clickEvent) {
     if (!_handleUserClick()) return;
     setClickedParticipate(true);
-    fetchWithToken(`/events/${event.id}`, "PATCH", {
-      toggle: "participance",
+    fetchWithToken(`/events/${event.id}`, 'PATCH', {
+      toggle: 'participance',
     }).then((res) => {
       if (res.ok) {
         setPopupParticipance(true);
@@ -176,8 +159,8 @@ const EventPreview = ({
           setClickedParticipate(false);
         });
         // Force cache update on next reload
-        localStorage.removeItem("events");
-        localStorage.removeItem("events_" + event.id);
+        localStorage.removeItem('events');
+        localStorage.removeItem('events_' + event.id);
       } else {
         setErrorMessage(res, setPopupError);
         setErrorCode(res.status);
@@ -188,17 +171,18 @@ const EventPreview = ({
 
   const eventHeader = isNextEvent
     ? `Najbliższe wydarzenie` // (za ${eventCountdown}) - wait here till i find u comy spot in ui
-    : "Wybrane wydarzenie";
+    : 'Wybrane wydarzenie';
 
   return (
     <article
       className="w-full grid mb-6 grid-cols-1 gap-3 lg:gap-8 lg:w-11/12 md:w-10/12 mx-auto lg:grid-cols-2 lg:my-12 mt-8"
-      id={isNextEvent ? "nextEvent" : event.id}
+      id={isNextEvent ? 'nextEvent' : event.id}
     >
       <DialogBox
-        header={notification ? "Zrobione!" : "Zrobione!"}
-        content={`${notification ? "Włączono" : "Wyłączono"
-          } powiadomienie dla wydarzenia "${event.title}".`}
+        header={notification ? 'Zrobione!' : 'Zrobione!'}
+        content={`${notification ? 'Włączono' : 'Wyłączono'} powiadomienie dla wydarzenia "${
+          event.title
+        }".`}
         duration={2000}
         isVisible={popupNotification}
         setVisible={setPopupNotification}
@@ -212,9 +196,10 @@ const EventPreview = ({
         setVisible={setNeedsLogin}
       /> */}
       <DialogBox
-        header={participance ? "Super!" : "Szkoda."}
-        content={`${participance ? "Zadeklarowano" : "Cofnięto deklaracje o"
-          } udział w wydarzeniu "${event.title}".`}
+        header={participance ? 'Super!' : 'Szkoda.'}
+        content={`${
+          participance ? 'Zadeklarowano' : 'Cofnięto deklaracje o'
+        } udział w wydarzeniu "${event.title}".`}
         duration={2000}
         isVisible={popupParticipance}
         setVisible={setPopupParticipance}
@@ -243,10 +228,10 @@ const EventPreview = ({
         <div className="absolute -bottom-1 -right-1 sm:-right-3 lg:right-4 lg:-bottom-4 sm:-bottom-3 h-[4.5rem] lg:h-[6rem] lg:w-[5.2rem] sm:h-[5.4rem] sm:w-[4.7rem] w-16 rounded-lg bg-white flex drop-shadow-3xl flex-col justify-start align-middle">
           <div className="bg-gradient-to-br from-primary to-secondary w-full h-4 lg:h-5 rounded-t-lg" />
           <p className="text-text-1 font-semibold text-2xl sm:text-3xl mx-auto -mb-2 mt-1 sm:mt-2 lg:text-[2rem]">
-            {formatDate(event.date, { day: "numeric" })}
+            {formatDate(event.date, { day: 'numeric' })}
           </p>
           <p className="mx-auto text-text-1 font-semibold text-sm sm:text-base lg:text-lg">
-            {formatDate(event.date, { month: "short" })}
+            {formatDate(event.date, { month: 'short' })}
           </p>
         </div>
       </div>
@@ -315,33 +300,35 @@ const EventPreview = ({
             <button
               onClick={_toggleNotification}
               disabled
-              className={NOTIFY_BTN_CLASS + " aspect-square bg-gray-50"}
-              style={{ cursor: "progress" }}
+              className={NOTIFY_BTN_CLASS + ' aspect-square bg-gray-50'}
+              style={{ cursor: 'progress' }}
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
-                  }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
+                  notification ? 'fill-primary' : 'fill-transparent'
+                }`}
               />
             </button>
           ) : (
             <button
               onClick={_toggleNotification}
-              className={NOTIFY_BTN_CLASS + " aspect-square bg-white"}
-              style={{ cursor: canNotChange ? "pointer" : "not-allowed" }}
+              className={NOTIFY_BTN_CLASS + ' aspect-square bg-white'}
+              style={{ cursor: canNotChange ? 'pointer' : 'not-allowed' }}
             >
               <Bell
                 size={28}
-                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${notification ? "fill-primary" : "fill-transparent"
-                  }`}
+                className={`aspect-square pt-px h-[1.5rem] m-auto stroke-2 stroke-primary transition-all duration-150 ${
+                  notification ? 'fill-primary' : 'fill-transparent'
+                }`}
               />
             </button>
           )}
           {clickedParticipate ? (
             <button
               onClick={_toggleParticipance}
-              className={PARTICIPATE_BTN_CLASS + " bg-primaryDark"}
-              style={{ cursor: "progress" }}
+              className={PARTICIPATE_BTN_CLASS + ' bg-primaryDark'}
+              style={{ cursor: 'progress' }}
               disabled
             >
               {participance ? (
@@ -356,14 +343,14 @@ const EventPreview = ({
                 />
               )}
               <p className="text-white pl-1 my-auto font-medium text-base -tracking-[.015rem]">
-                {participance ? "Bierzesz udział" : "Wezmę udział"}
+                {participance ? 'Bierzesz udział' : 'Wezmę udział'}
               </p>
             </button>
           ) : (
             <button
               onClick={_toggleParticipance}
-              className={PARTICIPATE_BTN_CLASS + " bg-primary"}
-              style={{ cursor: canParChange ? "pointer" : "not-allowed" }}
+              className={PARTICIPATE_BTN_CLASS + ' bg-primary'}
+              style={{ cursor: canParChange ? 'pointer' : 'not-allowed' }}
             >
               {participance ? (
                 <UserCheck
@@ -377,7 +364,7 @@ const EventPreview = ({
                 />
               )}
               <p className="text-white pl-1 my-auto font-medium text-base -tracking-[.015rem]">
-                {participance ? "Bierzesz udział" : "Wezmę udział"}
+                {participance ? 'Bierzesz udział' : 'Wezmę udział'}
               </p>
             </button>
           )}

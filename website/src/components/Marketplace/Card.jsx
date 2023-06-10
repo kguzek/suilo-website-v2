@@ -17,6 +17,7 @@ const Card = ({ offerData, userEmail, userInfo, setPopupDelete, setDeletedBookID
     <div>
       <img
         src={offerData.photo}
+        alt={offerData.title}
         className="bg-gray-200/75 object-cover w-full aspect-[11/6] rounded-t-lg"
         loading="lazy"
       />

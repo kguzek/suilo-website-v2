@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from "react";
-import {
-  DEFAULT_IMAGE,
-  getDataFromFilename,
-  handlePhotoUpdate,
-} from "../../../misc";
-import InputBox from "./InputBox";
-import InputFile from "./InputFile";
+import React, { useCallback, useEffect, useState } from 'react';
+import { DEFAULT_IMAGE, getDataFromFilename, handlePhotoUpdate } from '../../../misc';
+import InputBox from './InputBox';
+import InputFile from './InputFile';
 
 const OPTIONS = [
-  "Prześlij nowe zdjęcie",
-  "Wpisz URL zdjęcia",
-  "Użyj istniejącego zdjęcia",
-  "Brak zdjęcia",
+  'Prześlij nowe zdjęcie',
+  'Wpisz URL zdjęcia',
+  'Użyj istniejącego zdjęcia',
+  'Brak zdjęcia',
 ];
 
 export default function InputPhoto({
@@ -26,13 +22,33 @@ export default function InputPhoto({
   currentlyActive,
   refetchPhotos,
 }) {
-  const [selectedOption, setSelectedOption] = useState(
-    photos.includes(newImageURL) ? 2 : 0
-  );
+  const [selectedOption, setSelectedOption] = useState(photos.includes(newImageURL) ? 2 : 0);
   const [existingPhoto, setExistingPhoto] = useState(undefined);
   const [preview, setPreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(null);
+
+  const _handlePreviewChange = useCallback(
+    (photoName) => {
+      /** Reads the relevant fields from the image's metadata and updates the client-side data. */
+      function setMetadata(rawMetadata) {
+        let metadata = {};
+        try {
+          metadata = JSON.parse(rawMetadata)?.customMetadata ?? {};
+        } catch (parseError) {
+          console.error(rawMetadata, parseError);
+        }
+        setImageAuthor && setImageAuthor(metadata.author ?? '');
+        setImageAltText && setImageAltText(metadata.altText ?? '');
+      }
+      setExistingPhoto(photoName);
+
+      setNewImageURL(photoName);
+      setPreview(DEFAULT_IMAGE);
+      getDataFromFilename(photoName, '400x300', setPreview, setMetadata);
+    },
+    [setNewImageURL, setImageAltText, setImageAuthor]
+  );
 
   useEffect(() => {
     // Set the default option whenever the post is changed
@@ -45,7 +61,7 @@ export default function InputPhoto({
       // "Enter image URL"
       setSelectedOption(1);
     } else {
-      if (currentlyActive === "_default") {
+      if (currentlyActive === '_default') {
         // "Upload new photo"
         newImageURL || setSelectedOption(0);
       } else {
@@ -55,7 +71,7 @@ export default function InputPhoto({
         setPreview(null);
       }
     }
-  }, [oldImageURL]);
+  }, [oldImageURL, currentlyActive, newImageURL, photos]);
 
   useEffect(() => {
     if (existingPhoto === newImageURL) return;
@@ -64,7 +80,7 @@ export default function InputPhoto({
       return void setExistingPhoto(undefined);
     }
     _handlePreviewChange(newImageURL);
-  }, [newImageURL]);
+  }, [newImageURL, _handlePreviewChange, existingPhoto, photos]);
 
   useEffect(() => {
     // Reset the inputs whenever the selected option is changed
@@ -72,45 +88,25 @@ export default function InputPhoto({
       if (photos.includes(newImageURL)) {
         preview || _handlePreviewChange(newImageURL);
       } else {
-        setNewImageURL("");
+        setNewImageURL('');
       }
     } else {
       if (selectedOption !== 1) {
-        setNewImageURL("");
+        setNewImageURL('');
       }
       setExistingPhoto(undefined);
       setPreview(null);
     }
     setImageFile(null);
-  }, [selectedOption]);
+  }, [selectedOption, _handlePreviewChange, newImageURL, photos, preview, setNewImageURL]);
 
   useEffect(() => {
     if (uploadProgress === null) {
-      document.body.style.cursor = "default";
+      document.body.style.cursor = 'default';
     } else {
-      document.body.style.cursor = "progress";
+      document.body.style.cursor = 'progress';
     }
   }, [uploadProgress]);
-
-  /** Reads the relevant fields from the image's metadata and updates the client-side data. */
-  function setMetadata(rawMetadata) {
-    let metadata = {};
-    try {
-      metadata = JSON.parse(rawMetadata)?.customMetadata ?? {};
-    } catch (parseError) {
-      console.error(rawMetadata, parseError);
-    }
-    setImageAuthor && setImageAuthor(metadata.author ?? "");
-    setImageAltText && setImageAltText(metadata.altText ?? "");
-  }
-
-  function _handlePreviewChange(photoName) {
-    setExistingPhoto(photoName);
-
-    setNewImageURL(photoName);
-    setPreview(DEFAULT_IMAGE);
-    getDataFromFilename(photoName, "400x300", setPreview, setMetadata);
-  }
 
   function _handleSelectPhoto(e) {
     setImageFile(e.target.files[0]);
@@ -125,11 +121,7 @@ export default function InputPhoto({
   const uploadBtnStyle = {
     marginTop: -10,
     marginBottom: 8,
-    cursor: canUploadFile
-      ? "pointer"
-      : uploadProgress === null
-      ? "not-allowed"
-      : "wait",
+    cursor: canUploadFile ? 'pointer' : uploadProgress === null ? 'not-allowed' : 'wait',
   };
 
   /** Uploads the selected file to the server. */
@@ -137,12 +129,7 @@ export default function InputPhoto({
     if (!canUploadFile) {
       return void e.preventDefault();
     }
-    handlePhotoUpdate(
-      imageFile,
-      setUploadProgress,
-      imageAuthor,
-      imageAltText
-    ).then((photoName) => {
+    handlePhotoUpdate(imageFile, setUploadProgress, imageAuthor, imageAltText).then((photoName) => {
       setNewImageURL(photoName);
       setSelectedOption(2);
       refetchPhotos();
@@ -168,8 +155,8 @@ export default function InputPhoto({
       </div>
       {selectedOption === 0 ? (
         <InputFile
-          label={"Miniatura"}
-          placeholder={"Wybierz zdjęcie..."}
+          label={'Miniatura'}
+          placeholder={'Wybierz zdjęcie...'}
           onChange={_handleSelectPhoto}
           acceptedExtensions=".jpeg, .jpg, .png"
           required
@@ -178,7 +165,7 @@ export default function InputPhoto({
         [1, 2].includes(selectedOption) && (
           <InputBox
             name="image-url"
-            placeholder={selectedOption === 1 ? "URL zdjęcia" : "Nazwa zdjęcia"}
+            placeholder={selectedOption === 1 ? 'URL zdjęcia' : 'Nazwa zdjęcia'}
             maxLength={256}
             value={newImageURL}
             onChange={setNewImageURL}
@@ -189,6 +176,7 @@ export default function InputPhoto({
       )}
       {preview && (
         <img
+          alt={imageAltText}
           className="mt-3 bg-gray-200/75 object-cover w-full aspect-[16/10] rounded-xl group-hover:ring-[.2rem] ring-primaryDark/40 transition-all duration-300"
           src={preview}
         />
@@ -220,11 +208,9 @@ export default function InputPhoto({
             className="add-btn"
             style={uploadBtnStyle}
             onClick={_handleSubmitPhoto}
-            title={canUploadFile ? "" : "Pola oznaczone gwiazdką są wymagane."}
+            title={canUploadFile ? '' : 'Pola oznaczone gwiazdką są wymagane.'}
           >
-            <p>
-              {uploadProgress === null ? "Prześlij zdjęcie" : uploadProgress}
-            </p>
+            <p>{uploadProgress === null ? 'Prześlij zdjęcie' : uploadProgress}</p>
           </button>
         </div>
       )}

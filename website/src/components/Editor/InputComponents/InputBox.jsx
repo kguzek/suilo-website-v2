@@ -32,7 +32,7 @@ const InputBox = ({
   useEffect(() => {
     if (type !== 'date' || type !== 'datetime-local') return;
     setHidden(!focused && !value);
-  }, [focused, value]);
+  }, [focused, value, type]);
 
   return (
     <div className="main my-1" style={{ width: width }}>

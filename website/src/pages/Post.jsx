@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import NotFound from './NotFound';
@@ -33,39 +33,41 @@ const Post = ({ setPage, reload, setReload }) => {
       width: ref.current ? ref.current.offsetWidth : 0,
       height: ref.current ? ref.current.offsetHeight : 0,
     });
-  }, [ref.current]);
-
-  const cacheName = `news_post_${params.postID}`;
+  }, [ref]);
 
   /** Checks if there is a valid post data cache, and if so, return it if it's not too old. Otherwise fetches new data. */
-  function updatePostData(updateCache = false) {
-    function checkLinks(data) {
-      getDataFromFilename(data.photo, '1920x1080', setPhotoLink);
-      setPostData(data);
-    }
+  const updatePostData = useCallback(
+    (updateCache = false) => {
+      const cacheName = `news_post_${params.postID}`;
+      setPage(cacheName);
 
-    const args = {
-      setData: checkLinks,
-      setLoaded,
-      updateCache,
-    };
-    fetchCachedData(cacheName, `/news/${encodeURIComponent(params.postID)}`, args);
-  }
+      function checkLinks(data) {
+        getDataFromFilename(data.photo, '1920x1080', setPhotoLink);
+        setPostData(data);
+      }
+
+      const args = {
+        setData: checkLinks,
+        setLoaded,
+        updateCache,
+      };
+      fetchCachedData(cacheName, `/news/${encodeURIComponent(params.postID)}`, args);
+    },
+    [setPage, params.postID]
+  );
 
   useEffect(() => {
     const updateCache = searchParams.get('refresh');
     fetchNewsData({ setNewsData, updateCache });
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
-    setPage(cacheName);
     // Start loading animation
     setLoaded(false);
     setPhotoLink(DEFAULT_IMAGE);
-    // setPage("news");
     const updateCache = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
     updatePostData(updateCache);
-  }, [params.postID]);
+  }, [searchParams, setSearchParams, updatePostData]);
 
   useEffect(() => {
     if (!reload) {
@@ -74,8 +76,7 @@ const Post = ({ setPage, reload, setReload }) => {
     // The page content has updated on the server side; reload it
     setReload(false);
     setLoaded(false);
-    updatePostData();
-  }, [reload]);
+  }, [reload, setReload]);
 
   if (!loaded) return <LoadingScreen />;
   if (!postData || postData.errorMessage) {
@@ -154,6 +155,7 @@ const Post = ({ setPage, reload, setReload }) => {
             {postData.link && (
               <a
                 target="_blank"
+                rel="noreferrer"
                 title={`Link z posta: ${postData.link}`}
                 href={postData.link}
                 className={

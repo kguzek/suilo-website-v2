@@ -20,7 +20,8 @@ const colorScheme = {
 };
 
 const Voting = ({ userInfo, setPage, loginAction }) => {
-  const [colors, setColors] = useState(colorScheme);
+  // const [colors, setColors] = useState(colorScheme);
+  const colors = colorScheme;
   const [currentCard, setCurrentCard] = useState('before-time');
   const [dates, setDates] = useState({});
   const [classList, setClassList] = useState([]);
@@ -29,7 +30,8 @@ const Voting = ({ userInfo, setPage, loginAction }) => {
   const [loaded, setLoaded] = useState(false);
   const [message, setMessage] = useState('');
   const [showed, setShowed] = useState(false);
-  const [isVoting, setIsVoting] = useState(undefined);
+  // const [isVoting, setIsVoting] = useState(undefined);
+  const setIsVoting = () => {};
 
   useEffect(() => {
     setPage('voting');
@@ -74,7 +76,7 @@ const Voting = ({ userInfo, setPage, loginAction }) => {
         setLoaded(true);
       }
     );
-  }, []);
+  }, [setPage]);
 
   return (
     <div

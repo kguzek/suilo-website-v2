@@ -1,17 +1,12 @@
-import {
-  getDownloadURL,
-  getMetadata,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { DEBUG_MODE, fetchWithToken, storage } from "./firebase";
+import { getDownloadURL, getMetadata, ref, uploadBytesResumable } from 'firebase/storage';
+import { DEBUG_MODE, fetchWithToken, storage } from './firebase';
 
 export const MAX_CACHE_AGE = 24; // hours
 
 // Temporary image URL if an article has none specified
-export const DEFAULT_IMAGE = "https://i.imgur.com/Rwygn8m.jpg";
+export const DEFAULT_IMAGE = 'https://i.imgur.com/Rwygn8m.jpg';
 
-export const WEBSITE_DOMAIN = "suilo.pl";
+export const WEBSITE_DOMAIN = 'suilo.pl';
 
 /**
  * (1, 'wyświetle', 'nie', 'nia', 'ń') -> '1 wyświetlenie'
@@ -29,23 +24,14 @@ export function conjugatePolish(
   returnWithoutBase = false
 ) {
   if (value === 1) {
-    return returnWithoutBase
-      ? `${base}${suffixSingular}`
-      : `1 ${base}${suffixSingular}`;
+    return returnWithoutBase ? `${base}${suffixSingular}` : `1 ${base}${suffixSingular}`;
   }
   const lastLetter = value.toString()[value.toString().length - 1];
   const lastDigit = parseInt(lastLetter);
-  if (
-    [2, 3, 4].includes(lastDigit) &&
-    ![12, 13, 14].includes(Math.abs(value))
-  ) {
-    return returnWithoutBase
-      ? `${base}${suffixPluralA}`
-      : `${value} ${base}${suffixPluralA}`;
+  if ([2, 3, 4].includes(lastDigit) && ![12, 13, 14].includes(Math.abs(value))) {
+    return returnWithoutBase ? `${base}${suffixPluralA}` : `${value} ${base}${suffixPluralA}`;
   }
-  return returnWithoutBase
-    ? `${base}${suffixPluralB}`
-    : `${value} ${base}${suffixPluralB}`;
+  return returnWithoutBase ? `${base}${suffixPluralB}` : `${value} ${base}${suffixPluralB}`;
 }
 
 /* Copy content to clipboard */
@@ -60,9 +46,9 @@ export function formatDate(
   date,
   // includeTime = false,
   options = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   }
 ) {
   // if (includeTime) {
@@ -74,26 +60,21 @@ export function formatDate(
   //   };
   // }
   const dateObj = date ? new Date(date) : new Date();
-  return dateObj.toLocaleDateString("pl-PL", options);
+  return dateObj.toLocaleDateString('pl-PL', options);
 }
 
 /** Format a time array as a human-readable string. */
 export function formatTime(hoursAndMinutes) {
   const date = new Date();
   date.setHours(...hoursAndMinutes);
-  return date.toLocaleTimeString("pl-PL", {
-    hour: "2-digit",
-    minute: "2-digit",
+  return date.toLocaleTimeString('pl-PL', {
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
 /** Sets the provided search parameter in the URL query. */
-export function setSearchParam(
-  searchParams,
-  setSearchParams,
-  paramToModify,
-  newValue
-) {
+export function setSearchParam(searchParams, setSearchParams, paramToModify, newValue) {
   const newSearchParams = new URLSearchParams(searchParams);
   if (newSearchParams.get(paramToModify)) {
     newSearchParams.set(paramToModify, newValue);
@@ -106,11 +87,7 @@ export function setSearchParam(
 /** Removes the given parameter from the search params object. Returns the key's value prior to deletion.
  *  If the search parameter did not exist in the search query, does nothing and returns `undefined`.
  */
-export function removeSearchParam(
-  searchParams,
-  setSearchParams,
-  paramToRemove
-) {
+export function removeSearchParam(searchParams, setSearchParams, paramToRemove) {
   const value = searchParams.get(paramToRemove);
   if (!value) {
     // skip removing the search param if it's not present in the first place
@@ -120,6 +97,33 @@ export function removeSearchParam(
   newSearchParams.delete(paramToRemove);
   setSearchParams(newSearchParams);
   return value;
+}
+
+function verifyCache(cache, cacheName, cacheArgument) {
+  if (!cache) return false;
+  // check if the cache contains no error
+  if (!cache.data || cache.data.errorDescription) return false;
+
+  DEBUG_MODE && console.debug(`Found existing cache for '${cacheName}'.`, cache);
+  // check if the cache is younger than 2 hours old
+  const cacheDate = Date.parse(cache.date);
+  const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
+  const dateDifferenceHours = dateDifferenceSeconds / 3600;
+  if (dateDifferenceHours < MAX_CACHE_AGE) {
+    // compare arguments for cache, such as maxItems for news fetches.
+    // this ensures that if the current request is for e.g. 8 news articles and we find
+    // a cache containing only 4, that we do not use the old cache and instead make a new request.
+    if ((cache.arg === undefined && cacheArgument === undefined) || cache.arg >= cacheArgument) {
+      return true;
+    }
+    DEBUG_MODE &&
+      console.debug(`The found cache had a different argument (${cache.arg} vs ${cacheArgument}).`);
+  } else {
+    DEBUG_MODE && console.debug(`The found cache is too old (${dateDifferenceHours} hours).`);
+  }
+  // remove the existing cache
+  localStorage.removeItem(cacheName);
+  return false;
 }
 
 /** Attempts to retrieved data from the local storage if it exists, otherwise fetches it from the API. */
@@ -134,45 +138,17 @@ export function fetchCachedData(
     cache = JSON.parse(localStorage.getItem(cacheName));
   } catch (parseError) {
     // Data is not serialised JSON
+    cache = null;
   }
-  verifyCache: {
-    if (!cache || updateCache) break verifyCache;
-    // check if the cache contains no error
-    if (!cache.data || cache.data.errorDescription) {
-      break verifyCache;
-    }
-    DEBUG_MODE &&
-      console.debug(`Found existing cache for '${cacheName}'.`, cache);
-    // check if the cache is younger than 2 hours old
-    const cacheDate = Date.parse(cache.date);
-    const dateDifferenceSeconds = (new Date() - cacheDate) / 1000;
-    const dateDifferenceHours = dateDifferenceSeconds / 3600;
-    if (dateDifferenceHours < MAX_CACHE_AGE) {
-      // compare arguments for cache, such as maxItems for news fetches.
-      // this ensures that if the current request is for e.g. 8 news articles and we find
-      // a cache containing only 4, that we do not use the old cache and instead make a new request.
-      if (
-        (cache.arg === undefined && cacheArgument === undefined) ||
-        cache.arg >= cacheArgument
-      ) {
-        setData(cache.data);
-        return setLoaded(true);
-      }
-      DEBUG_MODE &&
-        console.debug(
-          `The found cache had a different argument (${cache.arg} vs ${cacheArgument}).`
-        );
-    } else {
-      DEBUG_MODE &&
-        console.debug(
-          `The found cache is too old (${dateDifferenceHours} hours).`
-        );
-    }
-    // remove the existing cache
-    localStorage.removeItem(cacheName);
+
+  if (!updateCache && verifyCache(cache, cacheName, cacheArgument)) {
+    setData(cache.data);
+    setLoaded(true);
+    return;
   }
+
   // fetch new data
-  fetchWithToken(fetchURL, "GET", params, body).then(
+  fetchWithToken(fetchURL, 'GET', params, body).then(
     (res) => {
       res.json().then((data) => {
         const newCache = {
@@ -212,7 +188,7 @@ export function fetchCachedData(
  *  - 100x100 */
 export function getDataFromFilename(
   name,
-  size = "1920x1080",
+  size = '1920x1080',
   urlCallback = () => {},
   metadataCallback = () => {}
 ) {
@@ -226,8 +202,8 @@ export function getDataFromFilename(
     return void urlCallback(name);
   }
   // Check if there is a cache for the photo name
-  const URLCacheName = "photo_url_" + name;
-  const metadataCacheName = "photo_metadata_" + name;
+  const URLCacheName = 'photo_url_' + name;
+  const metadataCacheName = 'photo_metadata_' + name;
   const cachedURL = localStorage.getItem(URLCacheName);
   const cachedMetadata = localStorage.getItem(metadataCacheName);
 
@@ -259,7 +235,7 @@ export function getDataFromFilename(
 /** Gets the error description from the HTTP response and calls the callback function with it. */
 export function setErrorMessage(res, setErrorFunc) {
   res.json().then((data) => {
-    setErrorFunc(data.errorDescription ?? "brak");
+    setErrorFunc(data.errorDescription ?? 'brak');
   });
 }
 
@@ -268,7 +244,7 @@ export function handlePhotoUpdate(file, setUploadProgress, author, altText) {
   // Regular expression to trim the filename extension
   // Matches all characters including and after the last found "." character in the string,
   // and replaces them with "" (empty string)
-  const photoName = file.name.replace(/\.[^\/.]+$/, "");
+  const photoName = file.name.replace(/\.[^/.]+$/, '');
 
   const metadata = { customMetadata: { author, altText } };
 
@@ -277,7 +253,7 @@ export function handlePhotoUpdate(file, setUploadProgress, author, altText) {
   return {
     then: (resolve, reject) => {
       uploadTask.on(
-        "state_changed",
+        'state_changed',
         (snapshot) => {
           const prog = snapshot.bytesTransferred / snapshot.totalBytes;
           setUploadProgress(`Postęp: ${Math.round(prog * 100)}%`);
@@ -294,7 +270,7 @@ export function handlePhotoUpdate(file, setUploadProgress, author, altText) {
 
 /** Returns true if the string starts with either the HTTP or HTTPS protocol identifier. */
 export function isURL(string) {
-  return string.startsWith("http://") || string.startsWith("https://");
+  return string.startsWith('http://') || string.startsWith('https://');
 }
 
 /** Formats the difference in milliseconds as a string. E.g. `12 dni 7 godz. 13 min. 49 sek.` */
@@ -308,15 +284,15 @@ export function formatTimeDiff(differenceMillis) {
   minutes -= hours * 60; // Remove full hours from minutes
   hours -= days * 24; // Remove full days from hours
 
-  let formatted = "";
+  let formatted = '';
   // Show days if days > 0
-  days > 0 && (formatted = `${days} ${days === 1 ? "dzień" : "dni"} `);
+  days > 0 && (formatted = `${days} ${days === 1 ? 'dzień' : 'dni'} `);
   // Show hours if days are shown or hours > 0
   (formatted || hours > 0) && (formatted += `${hours} godz. `);
   // Show minutes if any of the previous are shown or if minutes > 0
-  (formatted !== "" || minutes > 0) && (formatted += `${minutes} min. `);
+  (formatted !== '' || minutes > 0) && (formatted += `${minutes} min. `);
   // Show seconds if any of the previous are shown or if seconds > 0
-  (formatted !== "" || seconds > 0) && (formatted += `${seconds} sek.`);
+  (formatted !== '' || seconds > 0) && (formatted += `${seconds} sek.`);
   return formatted;
 }
 

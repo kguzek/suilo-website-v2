@@ -40,7 +40,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
     setPage('home');
     fetchLuckyNumbers();
     fetchNews();
-  }, []);
+  }, [setPage]);
 
   useEffect(() => {
     if (!reload) {
@@ -50,7 +50,7 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
     setReload(false);
     fetchNews();
     fetchLuckyNumbers();
-  }, [reload]);
+  }, [reload, setReload]);
 
   const _scrollDown = () => {
     document.getElementById('home-2').scrollIntoView({ behavior: 'smooth', block: 'start' });

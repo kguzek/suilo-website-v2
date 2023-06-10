@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import InputDropdown from '../components/Editor/InputComponents/InputDropdown';
@@ -96,26 +96,29 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction, reloa
   }
 
   /** Fetch the calendar data from the cache or API. */
-  function fetchCalendar(forceUpdate = false) {
-    setLoadedCalendar(false);
-    if (forceUpdate) {
-      // Remove calendar caches for all months
-      for (const cacheName in localStorage) {
-        if (cacheName.startsWith('calendar')) {
-          localStorage.removeItem(cacheName);
+  const fetchCalendar = useCallback(
+    (forceUpdate = false) => {
+      setLoadedCalendar(false);
+      if (forceUpdate) {
+        // Remove calendar caches for all months
+        for (const cacheName in localStorage) {
+          if (cacheName.startsWith('calendar')) {
+            localStorage.removeItem(cacheName);
+          }
         }
       }
-    }
-    const fetchArgs = {
-      setData: setCalendarData,
-      setLoaded: setLoadedCalendar,
-      updateCache: forceUpdate,
-    };
-    const _month = parseInt(month) + 1;
-    const fetchURL = `/calendar/${year}/${_month}/`;
-    const cacheName = `calendar_${year}_${_month}`;
-    fetchCachedData(cacheName, fetchURL, fetchArgs);
-  }
+      const fetchArgs = {
+        setData: setCalendarData,
+        setLoaded: setLoadedCalendar,
+        updateCache: forceUpdate,
+      };
+      const _month = parseInt(month) + 1;
+      const fetchURL = `/calendar/${year}/${_month}/`;
+      const cacheName = `calendar_${year}_${_month}`;
+      fetchCachedData(cacheName, fetchURL, fetchArgs);
+    },
+    [month, year]
+  );
 
   /** Fetch the storage contents data from the cache or API. */
   function fetchStorageContents(forceUpdate = false) {
@@ -145,7 +148,7 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction, reloa
   }
 
   /** Populate the data from the cache or API. */
-  function fetchData() {
+  const fetchData = useCallback(() => {
     const updateCache = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
 
     for (const fetchFunc of [
@@ -158,10 +161,12 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction, reloa
     ]) {
       fetchFunc(updateCache);
     }
-  }
+  }, [searchParams, setSearchParams]);
 
   // Initial page load
-  useEffect(fetchData, []);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     if (!reload) {
@@ -170,13 +175,12 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction, reloa
     // The page content has updated on the server side; reload it
     setReload(false);
     fetchData();
-    fetchCalendar();
-  }, [reload]);
+  }, [reload, fetchData, setReload]);
 
   useEffect(() => {
     // Update calendar when month changed
     fetchCalendar();
-  }, [month, year]);
+  }, [fetchCalendar]);
 
   useEffect(() => {
     if (userPerms.isAdmin || userPerms.canEdit?.length > 0) {
@@ -191,7 +195,7 @@ export default function Edit({ setPage, user, userPerms = {}, loginAction, reloa
         loginAction();
       }
     }
-  }, [userPerms, user, navigate]);
+  }, [userPerms, user, navigate, loginAction, setPage]);
 
   // Display loading screen if the user hasn't been loaded yet
   if (user === undefined) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useParams, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { PostCardPreview, fetchNewsData } from '../components/News/PostCardPreview';
@@ -14,27 +14,27 @@ const News = ({ setPage, reload, setReload, collectionInfo }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   /** Fetches the data from the cache or API. */
-  function _populatePageContents(updateCache = false, pageNo) {
+  const _populatePageContents = useCallback((pageNumber, updateCache = false) => {
     fetchNewsData({
       setNewsData,
       setLoaded,
       updateCache,
-      pageNumber: pageNo ?? newsPage,
+      pageNumber: pageNumber,
     });
-  }
+  }, []);
 
   useEffect(() => {
     if (params.postID !== undefined) {
       // Specific post is being rendered
       return;
     }
-    const pageNo = searchParams.get('page') || 1;
-    setNewsPage(pageNo);
+    const pageNumber = searchParams.get('page') || 1;
+    setNewsPage(pageNumber);
     setPage('news');
     setLoaded(false);
     const updateCache = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
-    _populatePageContents(updateCache, pageNo);
-  }, [params.postID, searchParams]);
+    _populatePageContents(pageNumber, updateCache);
+  }, [params.postID, setPage, searchParams, setSearchParams, _populatePageContents]);
 
   useEffect(() => {
     if (!reload) {
@@ -43,8 +43,8 @@ const News = ({ setPage, reload, setReload, collectionInfo }) => {
     // The page content has updated on the server side; reload it
     setReload(false);
     setLoaded(false);
-    _populatePageContents();
-  }, [reload]);
+    _populatePageContents(newsPage);
+  }, [reload, setReload, newsPage, _populatePageContents]);
 
   if (params.postID !== undefined) {
     return <Outlet />;

@@ -1,66 +1,63 @@
-import React, { useState, useEffect } from "react";
-import { X } from "react-feather";
+import React, { useState, useEffect, useCallback } from 'react';
+import { X } from 'react-feather';
 
 const DialogBox = ({
   header,
   content,
   extra,
-  type = "NOTIFICATION",
+  type = 'NOTIFICATION',
   duration = 1000,
   buttonOneLabel,
   buttonTwoLabel,
-  buttonOneCallback = () => null,
-  buttonTwoCallback = () => null,
-  afterCallback = () => null,
+  buttonOneCallback,
+  buttonTwoCallback,
+  afterCallback,
   isVisible = false,
   setVisible,
 }) => {
-  const [display, setDisplay] = useState("none");
-  const [opacity, setOpacity] = useState(1);
-  const [yPos, setYPos] = useState("-10rem");
+  const [display, setDisplay] = useState('none');
+  const [yPos, setYPos] = useState('-10rem');
   const [fadeTimeout, setFadeTimeout] = useState(null);
-  const [closeBtnVisible, setCloseBtnVisible] = useState(false);
 
   // type === "DIALOG" | "NOTIFICATION"
   // duration only needed for NOTIFICATION type
   // buttonLabels needed for DIALOG type
 
-  useEffect(() => {
-    isVisible && fadeInDom();
-  }, [isVisible]);
-
-  const fadeInDom = () => {
-    setDisplay("flex");
+  const fadeOutDom = useCallback(() => {
+    setYPos('-10rem');
     setTimeout(() => {
-      setOpacity(1);
-      setYPos("0");
-      if (type === "NOTIFICATION") {
+      setDisplay('none');
+      setVisible(false);
+    }, 260);
+  }, [setVisible]);
+
+  const fadeInDom = useCallback(() => {
+    setDisplay('flex');
+    setTimeout(() => {
+      setYPos('0');
+      if (type === 'NOTIFICATION') {
         setFadeTimeout(
           setTimeout(() => {
             fadeOutDom();
-            afterCallback();
+            afterCallback?.();
           }, duration)
         );
       }
     }, 10);
-  };
+  }, [fadeOutDom, duration, type, afterCallback]);
 
-  const fadeOutDom = () => {
-    setOpacity(0);
-    setYPos("-10rem");
-    setTimeout(() => {
-      setDisplay("none");
-      setVisible(false);
-    }, 260);
-  };
+  useEffect(() => {
+    if (!isVisible) return;
+    fadeInDom();
+  }, [isVisible, fadeInDom]);
 
   const _onClickOne = () => {
-    buttonOneCallback();
+    buttonOneCallback?.();
     fadeOutDom();
   };
 
   const _onClickTwo = () => {
-    buttonTwoCallback();
+    buttonTwoCallback?.();
     fadeOutDom();
   };
 
@@ -72,23 +69,18 @@ const DialogBox = ({
 
   return (
     <div
-      style={{ display: display, transform: `translateY(${yPos})` }}
+      style={{ display, transform: `translateY(${yPos})` }}
       className="right-0 left-0 mx-auto transition-all duration-[250ms] fixed top-3 z-50"
     >
-      <div
-        className="mx-auto bg-white py-3 px-5 rounded-xl shadow-2xl group"
-        onMouseEnter={() => setCloseBtnVisible(true)}
-        onMouseLeave={() => setCloseBtnVisible(false)}
-      >
+      <div className="mx-auto bg-white py-3 px-5 rounded-xl shadow-2xl group">
         <div className="inline-flex justify-between w-full">
           <h1 className="font-semibold text-base text-text1">{header}</h1>
-          {
-            type === "NOTIFICATION" &&
+          {type === 'NOTIFICATION' && (
             <X
               onClick={_handleClose}
               className="ml-auto cursor-pointer transition-all duration-300 text-text6 hover:text-text1 group-hover:opacity-100 opacity-0"
             />
-          }
+          )}
         </div>
         {content && (
           <p className="font-normal text-sm text-text2 mt-1 max-w-[18rem] md:max-w-sm lg:max-w-md xl:max-w-lg whitespace-normal">
@@ -102,7 +94,7 @@ const DialogBox = ({
             <code>{extra}</code>
           </p>
         )}
-        {type === "DIALOG" && (
+        {type === 'DIALOG' && (
           <div className="inline-flex w-full flex-row-reverse">
             {buttonOneLabel && (
               <div

@@ -1,32 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Plus, Trash, Edit3 } from "react-feather";
-import InputBox from "./InputComponents/InputBox";
-import InputDropdown from "./InputComponents/InputDropdown";
-import TextEditor from "./InputComponents/TextEditor";
-import DialogBox from "../DialogBox";
-import { auth, DEBUG_MODE, fetchWithToken } from "../../firebase";
-import LoadingScreen from "../LoadingScreen";
-import { setErrorMessage } from "../../misc";
-import InputPhoto from "./InputComponents/InputPhoto";
+import React, { useEffect, useState } from 'react';
+import { Plus, Trash, Edit3 } from 'react-feather';
+import InputBox from './InputComponents/InputBox';
+import InputDropdown from './InputComponents/InputDropdown';
+import TextEditor from './InputComponents/TextEditor';
+import DialogBox from '../DialogBox';
+import { auth, DEBUG_MODE, fetchWithToken } from '../../firebase';
+import LoadingScreen from '../LoadingScreen';
+import { setErrorMessage } from '../../misc';
+import InputPhoto from './InputComponents/InputPhoto';
 
-export const PostEdit = ({
-  data,
-  loaded,
-  refetchData,
-  refetchStorage,
-  photos,
-}) => {
-  const [currentlyActive, setCurrentlyActive] = useState("_default");
+export const PostEdit = ({ data, loaded, refetchData, refetchStorage, photos }) => {
+  const [currentlyActive, setCurrentlyActive] = useState('_default');
   const [author, setAuthor] = useState(auth.currentUser?.displayName);
-  const [title, setTitle] = useState("");
-  const [formattedContent, setFormattedContent] = useState("");
-  const [rawContent, setRawContent] = useState("");
-  const [oldImageURL, setOldImageURL] = useState("");
-  const [newImageURL, setNewImageURL] = useState("");
-  const [imageAuthor, setImageAuthor] = useState("");
-  const [imageAltText, setImageAltText] = useState("");
-  const [ytID, setYtID] = useState("");
-  const [link, setLink] = useState("");
+  const [title, setTitle] = useState('');
+  const [formattedContent, setFormattedContent] = useState('');
+  const [rawContent, setRawContent] = useState('');
+  const [oldImageURL, setOldImageURL] = useState('');
+  const [newImageURL, setNewImageURL] = useState('');
+  const [imageAuthor, setImageAuthor] = useState('');
+  const [imageAltText, setImageAltText] = useState('');
+  const [ytID, setYtID] = useState('');
+  const [link, setLink] = useState('');
 
   const [addYtID, setAddYtID] = useState(false);
   const [addLink, setAddLink] = useState(false);
@@ -41,12 +35,12 @@ export const PostEdit = ({
 
   useEffect(() => {
     // Reset the YouTube video ID if the user unselects the "add YouTube ID" option
-    addYtID || setYtID("");
+    addYtID || setYtID('');
   }, [addYtID]);
 
   useEffect(() => {
     // Reset the external URL if the user unselects the "add external URL" option
-    addLink || setLink("");
+    addLink || setLink('');
   }, [addLink]);
 
   useEffect(() => {
@@ -54,9 +48,7 @@ export const PostEdit = ({
       return;
     }
     // Get the currently selected post
-    const post = (data?.contents ?? [])
-      .filter((post) => post.id === currentlyActive)
-      .shift();
+    const post = (data?.contents ?? []).filter((post) => post.id === currentlyActive).shift();
     if (!post) {
       // No currently selected post
       return void _resetAllInputs();
@@ -66,16 +58,16 @@ export const PostEdit = ({
     setRawContent(post.rawContent);
     setFormattedContent(post.formattedContent);
     // these properties are all nullable
-    setOldImageURL(post.photo ?? "");
-    setNewImageURL(post.photo ?? "");
-    setImageAuthor(post.photoAuthor ?? "");
-    setImageAltText(post.alt ?? "");
+    setOldImageURL(post.photo ?? '');
+    setNewImageURL(post.photo ?? '');
+    setImageAuthor(post.photoAuthor ?? '');
+    setImageAltText(post.alt ?? '');
 
-    setYtID(post.ytID ?? "");
-    setLink(post.link ?? "");
+    setYtID(post.ytID ?? '');
+    setLink(post.link ?? '');
     setAddYtID(!!post.ytID);
     setAddLink(!!post.link);
-  }, [currentlyActive]);
+  }, [currentlyActive, data?.contents, loaded]);
 
   // Display loading screen if news data hasn't been retrieved yet
   if (!loaded) {
@@ -99,9 +91,9 @@ export const PostEdit = ({
       setYtID,
       setLink,
     ]) {
-      setVar("");
+      setVar('');
     }
-    setCurrentlyActive("_default");
+    setCurrentlyActive('_default');
 
     setAuthor(auth.currentUser?.displayName);
   }
@@ -109,11 +101,11 @@ export const PostEdit = ({
   function _handleSubmit(e) {
     e.preventDefault();
     setClickedSubmit(true);
-    let url = "/news/";
-    let method = "POST";
+    let url = '/news/';
+    let method = 'POST';
     // Check if an existing post is selected
-    if (currentlyActive !== "_default") {
-      method = "PUT";
+    if (currentlyActive !== '_default') {
+      method = 'PUT';
       url += currentlyActive;
     }
     // ?date=null&author=autor&title=Tytuł Postu&text=Krótka treść postu...&content=Wydłużona treść postu.&photo=null&photoAuthor=null&alt=null&ytID=null
@@ -169,7 +161,7 @@ export const PostEdit = ({
 
   function _handleDelete() {
     setClickedDelete(true);
-    fetchWithToken(`/news/${currentlyActive}`, "DELETE").then((_res) => {
+    fetchWithToken(`/news/${currentlyActive}`, 'DELETE').then((_res) => {
       // Update the data once request is processed
       refetchData();
       _resetAllInputs();
@@ -220,16 +212,11 @@ export const PostEdit = ({
         onChange={setTitle}
       />
       <TextEditor
-        isNew={(currentlyActive === "_default")}
+        isNew={currentlyActive === '_default'}
         onChange={setPostContent}
         value={{ html: formattedContent, text: rawContent }}
       />
-      <InputBox
-        name="post-author"
-        placeholder="Autor"
-        value={author}
-        disabled
-      />
+      <InputBox name="post-author" placeholder="Autor" value={author} disabled />
       <InputPhoto
         oldImageURL={oldImageURL}
         newImageURL={newImageURL}
@@ -275,14 +262,14 @@ export const PostEdit = ({
         />
       )}
 
-      <div className="fr" style={{ width: "100%", justifyContent: "right" }}>
-        {currentlyActive !== "_default" &&
+      <div className="fr" style={{ width: '100%', justifyContent: 'right' }}>
+        {currentlyActive !== '_default' &&
           (clickedDelete ? (
             <button
               type="button"
               className="delete-btn select-none cursor-wait"
               disabled
-              style={{ pointerEvents: "none" }}
+              style={{ pointerEvents: 'none' }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -292,7 +279,7 @@ export const PostEdit = ({
             <button
               type="button"
               className="delete-btn select-none cursor-pointer"
-              style={{ pointerEvents: "all" }}
+              style={{ pointerEvents: 'all' }}
               onClick={() => setPopupDelete(true)}
             >
               <Trash color="rgb(252, 63, 30)" size={20} />
@@ -304,31 +291,27 @@ export const PostEdit = ({
             type="submit"
             className="add-btn select-none cursor-wait"
             disabled
-            style={{ pointerEvents: "none" }}
+            style={{ pointerEvents: 'none' }}
           >
-            {currentlyActive !== "_default" ? (
+            {currentlyActive !== '_default' ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
-            <p>
-              {currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}
-            </p>
+            <p>{currentlyActive !== '_default' ? 'edytuj post' : 'dodaj post'}</p>
           </button>
         ) : (
           <button
             type="submit  "
             className="add-btn select-none cursor-pointer"
-            style={{ pointerEvents: "all" }}
+            style={{ pointerEvents: 'all' }}
           >
-            {currentlyActive !== "_default" ? (
+            {currentlyActive !== '_default' ? (
               <Edit3 color="#FFFFFF" size={24} />
             ) : (
               <Plus color="#FFFFFF" size={24} />
             )}
-            <p>
-              {currentlyActive !== "_default" ? "edytuj post" : "dodaj post"}
-            </p>
+            <p>{currentlyActive !== '_default' ? 'edytuj post' : 'dodaj post'}</p>
           </button>
         )}
       </div>

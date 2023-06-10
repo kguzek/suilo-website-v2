@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight } from "react-feather";
-import { DEFAULT_IMAGE, formatDate, getDataFromFilename } from "../../misc";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'react-feather';
+import { DEFAULT_IMAGE, formatDate, getDataFromFilename } from '../../misc';
 
 const PostCardMain = ({ data }) => {
   const [photo, setPhoto] = useState(DEFAULT_IMAGE);
@@ -9,14 +9,12 @@ const PostCardMain = ({ data }) => {
   // const modified = formatDate(data.modified);
 
   useEffect(() => {
-    getDataFromFilename(data.photo, "400x300", setPhoto);
-  }, []);
+    getDataFromFilename(data.photo, '400x300', setPhoto);
+  }, [data.photo]);
 
   //group-hover:ring-[.2rem] ring-primaryDark/30 transition-all duration-300
   return (
-    <article
-      className="group w-full inline-flex flex-row align-top relative justify-start"
-    >
+    <article className="group w-full inline-flex flex-row align-top relative justify-start">
       {/* {data.modified && (
         <i className="main-post-date">Ostatnia edycja — {modified}</i>
       )} */}
@@ -25,6 +23,7 @@ const PostCardMain = ({ data }) => {
       </p>
       <img
         src={photo}
+        alt={data.alt}
         loading="lazy"
         className="bg-gray-200/75 w-1/5 object-cover aspect-square rounded-lg lg:rounded-xl"
       />
@@ -41,7 +40,7 @@ const PostCardMain = ({ data }) => {
           <div
             className="absolute -bottom-[.1rem] lg:bottom-[.025rem] right-0 py-[.1rem] px-1 pl-8"
             style={{
-              background: "linear-gradient(90deg, rgba(248,248,248,0) 0%, rgba(248,248,248,1) 15%)",
+              background: 'linear-gradient(90deg, rgba(248,248,248,0) 0%, rgba(248,248,248,1) 15%)',
               // backgroundColor: "#F8F8F8",
             }}
           >

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import LoadingScreen from '../components/LoadingScreen';
@@ -12,9 +12,9 @@ const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   /** Fetch the data from cache or the API. */
-  function fetchArchive(forceUpdate = false, pageNo) {
+  const fetchArchive = useCallback((pageNumber, forceUpdate = false) => {
     setLoadedArchive(false);
-    const page = pageNo ?? archivePage;
+    const page = pageNumber;
     const cacheName = `luckyNumbers_archive_page_${page}`;
     const fetchArgs = {
       setData: setArchive,
@@ -23,22 +23,22 @@ const NumbersArchive = ({ setPage, reload, setReload, collectionInfo }) => {
       params: { page, sort: 'descending' },
     };
     fetchCachedData(cacheName, '/luckyNumbers/archive', fetchArgs);
-  }
+  }, []);
 
   useEffect(() => {
-    const pageNo = searchParams.get('page') || 1;
-    setArchivePage(pageNo);
+    const pageNumber = searchParams.get('page') || 1;
+    setArchivePage(pageNumber);
     setPage('archive');
     setLoadedArchive(false);
     const updateCache = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
-    fetchArchive(updateCache, pageNo);
-  }, [searchParams]);
+    fetchArchive(pageNumber, updateCache);
+  }, [searchParams, setPage, setSearchParams, fetchArchive]);
 
   useEffect(() => {
     if (!reload) return;
     setReload(false);
-    fetchArchive();
-  }, [reload]);
+    fetchArchive(archivePage);
+  }, [reload, setReload, fetchArchive, archivePage]);
 
   function _generateArchiveRow() {
     return archive?.contents?.map((entry) => (

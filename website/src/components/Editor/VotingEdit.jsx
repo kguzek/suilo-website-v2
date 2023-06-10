@@ -38,10 +38,11 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
   const [popupConfirm, setPopupConfirm] = useState(false);
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isEditing, setIsEditing] = useState(data.errorDescription ? false : true);
+  // const [isEditing, setIsEditing] = useState(data.errorDescription ? false : true);
+  const isEditing = !data.errorDescription;
 
-  const [error, setError] = useState({ code: '', message: '' });
-  const [popupError, setPopupError] = useState(false);
+  // const [error, setError] = useState({ code: '', message: '' });
+  // const [popupError, setPopupError] = useState(false);
 
   const _handleSubmit = () => {
     const body = {
@@ -156,7 +157,7 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
         isVisible={popupSuccess}
         setVisible={setPopupSuccess}
       />
-      <DialogBox
+      {/* <DialogBox
         header={`Bład! (HTTP ${error.code})`}
         content={error.message}
         extra={popupError}
@@ -164,7 +165,7 @@ export const VotingEdit = ({ data, loaded, refetchData }) => {
         buttonOneLabel="Ok"
         isVisible={popupError}
         setVisible={setPopupError}
-      />
+      /> */}
       <div
         className="fr"
         style={{

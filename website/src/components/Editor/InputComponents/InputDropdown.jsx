@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 export default function InputDropdown({
   onChangeCallback,
@@ -15,7 +15,7 @@ export default function InputDropdown({
     const entries = Object.entries(data);
     if (defaultLabel) {
       // Add the default label to the beginning of the object entries
-      entries.splice(0, 0, ["_default", defaultLabel]);
+      entries.splice(0, 0, ['_default', defaultLabel]);
     }
     return entries.map(([key, display]) => (
       <option key={key} className="dropdown-option" value={key}>
@@ -25,13 +25,13 @@ export default function InputDropdown({
   }
 
   return (
-    <div style={isFirst ? { marginTop: "-.9em" } : {}}>
+    <div style={isFirst ? { marginTop: '-.9em' } : {}}>
       <p
         className="select-label"
         style={{
-          transform: "scale(.75)",
-          marginBottom: "-.35rem",
-          color: focused ? "#111111" : "rgb(100, 100, 100)",
+          transform: 'scale(.75)',
+          marginBottom: '-.35rem',
+          color: focused ? '#111111' : 'rgb(100, 100, 100)',
         }}
       >
         {label}

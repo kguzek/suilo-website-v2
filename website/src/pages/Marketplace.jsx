@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect, useReducer, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import Filter from '../components/Marketplace/Filter';
 import Form from '../components/Marketplace/Form';
@@ -117,7 +117,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   useEffect(() => {
     setPage('marketplace');
     fetchBooks();
-  }, []);
+  }, [setPage]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -171,19 +171,22 @@ const Marketplace = ({ setPage, email, userInfo }) => {
     });
   };
 
-  if (!loaded) {
-    return <LoadingScreen />;
-  }
-
   const numFiltersApplied = Object.values(query).reduce(
     (total, filter) => total + (filter.length > 0 ? 1 : 0),
     0
   );
 
+  const firstBookIdx = (currentPage - 1) * NUM_BOOKS_PER_PAGE;
+
   const filteredOffers = data.contents.filter((offer) => filterOffer(offer, query));
-  const lastBookIdx = currentPage * NUM_BOOKS_PER_PAGE;
-  const firstBookIdx = lastBookIdx - NUM_BOOKS_PER_PAGE;
-  const paginatedOffers = filteredOffers.slice(firstBookIdx, lastBookIdx);
+  const paginatedOffers = useMemo(
+    () => filteredOffers.slice(firstBookIdx, firstBookIdx + NUM_BOOKS_PER_PAGE),
+    [filteredOffers, firstBookIdx]
+  );
+
+  if (!loaded) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10">

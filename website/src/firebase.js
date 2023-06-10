@@ -131,7 +131,7 @@ export function AuthProvider({ children, setUserCallback }) {
         logOut();
       }
     });
-  }, []);
+  }, [setUserCallback]);
 
   return (
     <AuthContext.Provider value={{ currentUser: auth.currentUser }}>
