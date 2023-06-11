@@ -1,11 +1,12 @@
 const { FieldValue } = require("@google-cloud/firestore");
-const { db, fs } = require("./util");
+const { db, updateCollection } = require("./util");
 
-const REGEX_PATTERN = /([^\/]+?)((?<=_)\d{3,4}x\d{3,4})?(\.(?:[^\.\/]+))?$/;
+const REGEX_PATTERN = /([^/]+?)((?<=_)\d{3,4}x\d{3,4})?(\.(?:[^./]+))?$/;
 
 async function trackStorage(object) {
   const match = REGEX_PATTERN.exec(object.name);
-  const [fullPath, filename, _size, _extension] = match;
+  // const [fullPath, filename, size, extension] = match;
+  const [fullPath, filename] = match;
   if (!fullPath.startsWith("photos/")) {
     return;
   }

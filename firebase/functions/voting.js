@@ -1,5 +1,5 @@
 const { FieldValue, Timestamp } = require("firebase-admin/firestore");
-const { db, formatTimestamps, HTTP } = require("./util");
+const { db, formatTimestamps, HTTP, createSingleDocument } = require("./util");
 
 // Voting functions
 function createGeneralInfoPacket(req, res) {
@@ -185,7 +185,7 @@ function submitVoteForExistingCandidate(req, res, settings, voterInfo) {
           usedAccountsPromise,
           infoPromise,
         ])
-          .then(([voteRef, candidateRef, usedAccountsRef, infoRef]) => {
+          .then(([_voteRef, _candidateRef, _usedAccountsRef, _infoRef]) => {
             res.status(200).json({
               message: "Pomyślnie oddano głos",
             });

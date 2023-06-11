@@ -196,7 +196,7 @@ router
   })
 
   // READ single calendar event
-  .get(`/:id`, (req, res) => {
+  .get("/:id", (req, res) => {
     getDocRef(req, res, "calendar").then((docRef) =>
       sendSingleResponse(docRef, res, processEventData)
     );
