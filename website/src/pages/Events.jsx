@@ -104,7 +104,6 @@ function Events({ setPage, reload, setReload, loginAction }) {
     // determines if the cache should be updated by checking the 'refresh' URL query parameter
     const force = !!removeSearchParam(searchParams, setSearchParams, 'refresh');
     if (force || !loadedPrim) {
-      console.log('got thru');
       setPage('events');
       fetchPrimaryEvents(force);
     }

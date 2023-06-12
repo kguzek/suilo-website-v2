@@ -112,7 +112,8 @@ export function AuthProvider({ children, setUserCallback }) {
     onAuthStateChanged(auth, (user) => {
       userLoaded = true;
       // setUserCallback returns a boolean indicating if the user is from our school or not.
-      if (setUserCallback(user)) {
+      const userEmailValid = setUserCallback(user);
+      if (userEmailValid) {
         // execute any requests in the stack that were attempted before we got the user reference
         if (_fetchStack.length === 0) {
           // Skip if there are no pending fetches in the stack
@@ -131,7 +132,7 @@ export function AuthProvider({ children, setUserCallback }) {
         logOut();
       }
     });
-  }, [setUserCallback]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ currentUser: auth.currentUser }}>
@@ -156,27 +157,25 @@ export function getMobileSignInResult(callback) {
 /** Gets the most recent login redirect results and finally calls the callback function.
  * If the login was unsuccessful, calls the callback with an additional error message.
  */
-function getResults(getResult, processLoginCallback) {
-  getResult
-    .then((result) => {
-      if (!result) {
-        // no result from redirection -- user cancelled operation or other error
-        return processLoginCallback('Przerwano proces logowania');
-      }
-      const user = result.user;
-      if (!user.email.endsWith('lo1.gliwice.pl')) {
-        return processLoginCallback(
-          `Konto z adresem '${user.email}' nie należy do domeny @lo1.gliwice.pl`
-        );
-      }
-      // call the callback with no error message
-      processLoginCallback();
-    })
-    .catch((error) => {
-      // an error can be thrown when the login session has expired; user has to log in again.
-      console.error('An error occured while retrieving login results.', error);
-      return processLoginCallback('Nastąpił błąd przy logowaniu');
-    });
+async function getResults(resultPromise, callback) {
+  let result;
+  try {
+    result = await resultPromise;
+  } catch (error) {
+    // an error can be thrown when the login session has expired; user has to log in again.
+    console.error('An error occured while retrieving login results.', error);
+    return callback('Nastąpił błąd przy logowaniu');
+  }
+  if (!result) {
+    // no result from redirection -- user cancelled operation or other error
+    return callback('Przerwano proces logowania');
+  }
+  const email = result.user.email;
+  if (!email.endsWith('@lo1.gliwice.pl')) {
+    return callback(`Konto z adresem '${email}' nie należy do domeny @lo1.gliwice.pl`);
+  }
+  // call the callback with no error message
+  callback();
 }
 
 export function logOut() {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { getMobileSignInResult, signInWithGoogle } from '../../firebase';
 
@@ -11,17 +11,11 @@ function LoginScreen({ screenWidth }) {
   const [isSafeToChange, setSafety] = useState(true);
   const [cookies, setCookies, removeCookies] = useCookies(['loginStage']);
 
-  const signInCallback = useCallback(
-    (error) => {
-      if (error) {
-        setErrorMessage(error);
-        setCookies('loginStage', 'error', { sameSite: 'lax' });
-      } else {
-        removeCookies('loginStage');
-      }
-    },
-    [setCookies, removeCookies]
-  );
+  useEffect(() => {
+    if (cookies.loginStage === 'redirectGoogleMobile') {
+      getMobileSignInResult(signInCallback);
+    }
+  }, []);
 
   useEffect(() => {
     if (isSafeToChange) {
@@ -32,12 +26,16 @@ function LoginScreen({ screenWidth }) {
       }
     }
     setSafety(false);
-  }, [isSafeToChange, cookies.loginStage]);
+  }, [isSafeToChange]);
 
-  useEffect(() => {
-    if (cookies.loginStage !== 'redirectGoogleMobile') return;
-    getMobileSignInResult(signInCallback);
-  }, [cookies.loginStage, signInCallback]);
+  function signInCallback(error) {
+    if (error) {
+      setErrorMessage(error);
+      setCookies('loginStage', 'error', { sameSite: 'lax' });
+    } else {
+      removeCookies('loginStage');
+    }
+  }
 
   const fadeInDom = () => {
     setDisplay('flex');
@@ -66,7 +64,7 @@ function LoginScreen({ screenWidth }) {
   }
 
   function _handleRegister(e) {
-    e && e.preventDefault();
+    e?.preventDefault();
     // TODO: HANDLE NEW USER :INTEGRATE:
     setErrorMessage('Rejestracja nowych kont jest niedostępna');
   }
@@ -118,7 +116,7 @@ function LoginScreen({ screenWidth }) {
                 <p className="login-google-p">
                   {cookies.loginStage?.startsWith('redirectGoogle')
                     ? 'Logowanie...'
-                    : 'Zaloguj sie przez Google'}
+                    : 'Zaloguj się przez Google'}
                 </p>
               </div>
               {errorMessage && <p className="login-error">{errorMessage}</p>}
@@ -201,7 +199,7 @@ function LoginScreen({ screenWidth }) {
               <p className="login-google-p">
                 {cookies.loginStage?.startsWith('redirectGoogle')
                   ? 'Logowanie...'
-                  : 'Zaloguj sie przez Google'}
+                  : 'Zaloguj się przez Google'}
               </p>
             </div>
             {errorMessage && <p className="login-error">{errorMessage}</p>}
