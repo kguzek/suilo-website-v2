@@ -90,7 +90,7 @@ function filterOffer(offer, query) {
   return !Object.keys(query).some((filterGroup) => !filterMatches(filterGroup));
 }
 
-const Marketplace = ({ setPage, email, userInfo }) => {
+const Marketplace = ({ setPage, email, userInfo, screenWidth }) => {
   const [query, dispatch] = useReducer(reducer, QUERY_DEFAULT_VALUE);
   const [data, setData] = useState({ contents: [] });
   const [loaded, setLoaded] = useState(false);
@@ -145,24 +145,6 @@ const Marketplace = ({ setPage, email, userInfo }) => {
     />
   );
 
-  // generate filters based on avialable ones
-  const generateFilterButtons = (filterGroup) => (
-    <div
-      className="grid gap-1"
-      style={{ gridAutoFlow: 'column', gridTemplateRows: 'auto '.repeat(5) }}
-    >
-      {FILTERS[filterGroup].map((filter, idx) => (
-        <Filter
-          key={`${filter}-${idx}`}
-          name={filter}
-          filterGroup={filterGroup}
-          active={query[filterGroup].includes(filter)}
-          onChange={dispatch}
-        />
-      ))}
-    </div>
-  );
-
   const _handleDelete = () => {
     fetchWithToken('/books/' + deletedBookID, 'DELETE').then((res) => {
       console.debug(res);
@@ -187,6 +169,24 @@ const Marketplace = ({ setPage, email, userInfo }) => {
   if (!loaded) {
     return <LoadingScreen />;
   }
+
+  // generate filters based on avialable ones
+  const generateFilterButtons = (filterGroup) => (
+    <div
+      className={`gap-1 ${screenWidth > 1200 ? 'grid' : 'flex flex-wrap'}`}
+      style={{ gridAutoFlow: 'column', gridTemplateRows: 'auto '.repeat(5) }}
+    >
+      {FILTERS[filterGroup].map((filter, idx) => (
+        <Filter
+          key={`${filter}-${idx}`}
+          name={filter}
+          filterGroup={filterGroup}
+          active={query[filterGroup].includes(filter)}
+          onChange={dispatch}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <div className="w-11/12 xl:w-10/12 flex flex-col justify-center align-top min-h-screen pt-6 md:pt-10">
@@ -243,7 +243,7 @@ const Marketplace = ({ setPage, email, userInfo }) => {
             onClick={() => setShowFilters((oldVal) => !oldVal)}
           />
           {showFilters ? (
-            <div className="flex flex-row gap-3 mb-2">
+            <div className={`flex gap-3 mb-2 flex-${screenWidth > 800 ? 'row' : 'col'}`}>
               {Object.entries(FILTER_TRANSLATIONS).map(([filterGroup, filterTranslation], idx) => (
                 <fieldset key={`${filterGroup}-${idx}`}>
                   {filterTranslation.userFriendlyName}
