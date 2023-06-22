@@ -7,6 +7,30 @@ import PostCardPreview, { fetchNewsData } from '../components/News/PostCardPrevi
 import LoadingScreen from '../components/LoadingScreen';
 import { fetchCachedData, formatDate } from '../misc';
 
+const CouncilMemberCard = ({ name, role, img, description, studentClass }) => (
+  <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
+    <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">
+      {studentClass}
+    </p>
+    <img
+      src={require(`../media/${img}`)}
+      className="z-10 drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
+      alt={name}
+    />
+    <div
+      className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
+      title={description}
+    >
+      <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl select-all sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">
+        {name}
+      </p>
+      <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">
+        {role}
+      </p>
+    </div>
+  </div>
+);
+
 const Home = ({ setPage, reload, setReload, screenWidth }) => {
   const [newsData, setNewsData] = useState([]);
   const [numbersData, setNumbersData] = useState({});
@@ -153,87 +177,31 @@ const Home = ({ setPage, reload, setReload, screenWidth }) => {
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-2 sm:gap-4 mb-20 place-content-stretch place-items-center lg:gap-8 xl:gap-16 lg:w-11/12 m-auto">
-        <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
-          <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">
-            2C
-          </p>
-          <img
-            src={require('../media/wrobel.jpg')}
-            className="z-10  drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
-            alt="Szymon Wróbel"
-          />
-          <div
-            className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
-            title="Marszałek Samorządu Uczniowskiego I LO"
-          >
-            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base select-all lg:text-xl lg:mt-7">
-              Szymon Wróbel
-            </p>
-            <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">
-              Marszałek
-            </p>
-          </div>
-        </div>
-        <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
-          <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">
-            3Ap
-          </p>
-          <img
-            src={require('../media/kurzak.jpg')}
-            className="z-10  drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
-            alt="Adam Kurzak"
-          />
-          <div
-            className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
-            title="Sekretarz Samorządu Uczniowskiego I LO"
-          >
-            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base lg:text-xl select-all lg:mt-7">
-              Adam Kurzak
-            </p>
-            <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">
-              Sekretarz
-            </p>
-          </div>
-        </div>
-        <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
-          <p className="absolute text-[#f0f0f0] -z-10 xl:-bottom-[3.5rem] text-5xl -bottom-9 -right-3 xl:-right-8 font-extrabold xl:text-[4.4rem]">
-            3Bg
-          </p>
-          <img
-            src={require('../media/mruz.jpg')}
-            className="z-10 drop-shadow-3xl bg-red-500 aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
-            alt="Mikołaj Mrózek"
-          />
-          <div
-            className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
-            title="Skarbnik i Konsultant Samorządu Uczniowskiego I LO"
-          >
-            <p className="text-text1 font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl select-all sm:mt-12 md:mt-4 md:text-base lg:text-xl lg:mt-7">
-              Mikołaj Mrózek
-            </p>
-            <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">
-              Skarbnik
-            </p>
-          </div>
-        </div>
-        <div className="relative inline-flex flex-col justify-center w-11/12 sm:w-9/12 md:w-full 2xl:w-11/12">
-          <img
-            src={require('../media/bialowas.png')}
-            className="z-10  drop-shadow-3xl aspect-square w-2/5 m-auto rounded-full translate-y-2/5"
-            alt="Barbara Białowąs"
-          />
-          <div
-            className="bg-white w-full drop-shadow-3xl py-4 rounded-xl inline-flex align-middle flex-col"
-            title="Opiekun Samorządu Uczniowskiego I LO"
-          >
-            <p className="text-text1 -tracking-[0.015rem] font-semibold whitespace-nowrap m-auto mt-4 text-base sm:text-xl sm:mt-12 md:mt-4 md:text-base select-all lg:text-xl lg:mt-7">
-              Barbara Białowąs
-            </p>
-            <p className="text-text1 font-extralight whitespace-nowrap m-auto italic text-sm lg:mb-1">
-              Opiekun
-            </p>
-          </div>
-        </div>
+        <CouncilMemberCard
+          name="Szymon Wróbel"
+          role="Marszałek"
+          img="wrobel.jpg"
+          description="Marszałek Samorządu Uczniowskiego I LO"
+          studentClass="3C"
+        />
+        <CouncilMemberCard
+          name="Adam Kurzak"
+          role="Sekretarz"
+          img="kurzak.jpg"
+          description="Sekretarz Samorządu Uczniowskiego I LO"
+        />
+        <CouncilMemberCard
+          name="Mikołaj Mrózek"
+          role="Skarbnik"
+          img="mruz.jpg"
+          description="Skarbnik i Konsultant Samorządu Uczniowskiego I LO"
+        />
+        <CouncilMemberCard
+          name="Barbara Białowąs"
+          role="Opiekun"
+          img="bialowas.png"
+          description="Opiekun Samorządu Uczniowskiego I LO"
+        />
       </div>
       <div className="w-full justify-between inline-flex align-bottom flex-row mt-16">
         <h2 className="text-text1 font-semibold text-2xl lg:text-3xl text-left">Aktualności</h2>

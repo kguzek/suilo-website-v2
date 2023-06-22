@@ -19,7 +19,6 @@ const bookAttributeSanitisers = {
   publisher: (publisher) => publisher || null,
   subject: (subject) => subject || null,
   year: (year) => year || null,
-  photo: (photo) => photo || null,
   level: (level) => level || null,
   price: (price) => price || null,
 };
