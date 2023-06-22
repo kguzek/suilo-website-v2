@@ -1,0 +1,31 @@
+<svg id="Warstwa_1" data-name="Warstwa 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 410.06452 243.12903">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-3 {
+        fill: url(#Gradient_bez_nazwy);
+      }
+    </style>
+    <clipPath id="clip-path">
+      <rect class="cls-1" x="-919.86366" y="-836.85781" width="1225.61696" height="1426.48501" transform="translate(-178.09984 -428.46633) rotate(-89)"/>
+    </clipPath>
+    <linearGradient id="Gradient_bez_nazwy" data-name="Gradient bez nazwy" x1="0.36416" y1="-98.3289" x2="-0.12984" y2="-98.27274" gradientTransform="matrix(-21.38991, 1225.42712, -1426.26648, -24.89557, -140494.25305, -2416.55675)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffb300"/>
+      <stop offset="1" stop-color="#ff9609"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_8" data-name="Group 8">
+    <g class="cls-2">
+      <g id="Group_1" data-name="Group 1">
+        <path id="Path_32" data-name="Path 32" class="cls-3" d="M-254.73708-719.90154c101.2235-39.31238,245.38935,6.30359,353.14951,93.87061,108.439,88.27,181.105,217.8829,239.28706,362.83841,57.55027,145.56758,99.30695,306.38681,30.68232,379.45324C299.0773,188.62426,118.75881,173.843-27.84143,242.02288c-227.45885,105.78438-227.49889,198.49679-388.40643,233.736-207.39228,45.42249-521.8526-67.31778-592.75068-312.25552-57.279-197.88783,63.84638-414.93994,203.92341-509.51865,108.751-73.42822,164.462-29.50921,294.71133-120.23791,154.41672-107.5614,139.04581-208.376,255.62672-253.64832"/>
+      </g>
+    </g>
+  </g>
+</svg>
