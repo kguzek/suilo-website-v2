@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/static/css/main.cd8660c7.css",
-    "main.js": "/static/js/main.78d0a579.js",
-    "static/js/496.78e90e54.chunk.js": "/static/js/496.78e90e54.chunk.js",
-    "static/media/su-photo.jpg": "/static/media/su-photo.f0c1e53d6b81c82a04a7.jpg",
-    "static/media/mruz.jpg": "/static/media/mruz.2138236bff983236a1ed.jpg",
-    "static/media/wrobel.jpg": "/static/media/wrobel.21e5d064e2c13ba22f3e.jpg",
-    "static/media/kurzak.jpg": "/static/media/kurzak.febe599a8c4dccd072c2.jpg",
-    "static/media/homebg.svg": "/static/media/homebg.73691d8d524236b2bdc9.svg",
-    "static/media/discord.svg": "/static/media/discord.8be27c221173b20e6c6f53046481087b.svg",
-    "index.html": "/index.html",
-    "static/media/bloblogo.svg": "/static/media/bloblogo.d1c26b00f9300e38e0af.svg",
-    "static/media/facebook.svg": "/static/media/facebook.dd66b0cc48ff2ffe8a33aba38ab9fd56.svg",
-    "static/media/blob-clip.svg": "/static/media/blob-clip.d4f1c4243fcf48fe289c.svg",
-    "static/media/gmail.svg": "/static/media/gmail.de9b8f51aa32d3a02b27c0da08767e9e.svg",
-    "main.cd8660c7.css.map": "/static/css/main.cd8660c7.css.map",
-    "main.78d0a579.js.map": "/static/js/main.78d0a579.js.map",
-    "496.78e90e54.chunk.js.map": "/static/js/496.78e90e54.chunk.js.map"
+    "main.css": "/suilo-website-v2/static/css/main.cd8660c7.css",
+    "main.js": "/suilo-website-v2/static/js/main.2b3d3e2a.js",
+    "static/js/496.78e90e54.chunk.js": "/suilo-website-v2/static/js/496.78e90e54.chunk.js",
+    "static/media/su-photo.jpg": "/suilo-website-v2/static/media/su-photo.f0c1e53d6b81c82a04a7.jpg",
+    "static/media/mruz.jpg": "/suilo-website-v2/static/media/mruz.2138236bff983236a1ed.jpg",
+    "static/media/wrobel.jpg": "/suilo-website-v2/static/media/wrobel.21e5d064e2c13ba22f3e.jpg",
+    "static/media/kurzak.jpg": "/suilo-website-v2/static/media/kurzak.febe599a8c4dccd072c2.jpg",
+    "static/media/homebg.svg": "/suilo-website-v2/static/media/homebg.b43008751c452eaaa1cf.svg",
+    "static/media/discord.svg": "/suilo-website-v2/static/media/discord.d125d03ad66c5d5b6f61a96bd7eb8a38.svg",
+    "index.html": "/suilo-website-v2/index.html",
+    "static/media/bloblogo.svg": "/suilo-website-v2/static/media/bloblogo.11766f7a7fd1bddf523a.svg",
+    "static/media/facebook.svg": "/suilo-website-v2/static/media/facebook.dd66b0cc48ff2ffe8a33aba38ab9fd56.svg",
+    "static/media/blob-clip.svg": "/suilo-website-v2/static/media/blob-clip.4a27eb90d270cb6624be.svg",
+    "static/media/gmail.svg": "/suilo-website-v2/static/media/gmail.9b46762263d04f57dc9e0905e4de2499.svg",
+    "main.cd8660c7.css.map": "/suilo-website-v2/static/css/main.cd8660c7.css.map",
+    "main.2b3d3e2a.js.map": "/suilo-website-v2/static/js/main.2b3d3e2a.js.map",
+    "496.78e90e54.chunk.js.map": "/suilo-website-v2/static/js/496.78e90e54.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.cd8660c7.css",
-    "static/js/main.78d0a579.js"
+    "static/js/main.2b3d3e2a.js"
   ]
 }
