@@ -2,7 +2,8 @@
   "name": "website",
   "version": "1.0.1",
   "private": true,
-  "homepage": "https://suilo.pl",
+  "homepage": "https://kguzek.github.io/suilo-website-v2",
+  "base": "/suilo-website-v2",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

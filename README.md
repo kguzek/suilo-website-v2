@@ -1,16 +1,21 @@
 # SUILO Webiste v2
 
-SUILO Website v2 is a responsive single-page-app website created for the School Council of Bilingual High School no. 1, patroned by Edward Dembowski, in Gliwice, Poland (*[I Liceum Ogólnokształcące Dwujęzyczne im. Edwarda Dembowskiego w Gliwicach](http://www.lo1.gliwice.pl/)*).
+## PL
 
-### Website Link
+Strona Samorządu Uczniowskiego I Liceum Ogólnokształcącego im. E. Dembowskiego w Gliwicach (SU I LO).
 
-The website is fully hosted on an independent service and can be accessed at https://suilo.pl/.
+Wykonana dla kadencji 2020-2023. Obecnie nie jest w użytku, ale jest w pełni sprawna.
+
+## EN
+
+SUILO Website v2 is a responsive single-page-app website created for the School Council of Bilingual High School no. 1, patroned by Edward Dembowski, in Gliwice, Poland. It is currently unused, but fully functional.
 
 ![Website preview](https://i.imgur.com/PZUNADw.jpg)
 
 ## Features
 
-This application is very feature-rich, hosting its database on Firebase Firestore. The website features the following:
+This application is very feature-rich, hosting its database on Firebase Firestore. The website contains the following:
+
 - news feed
 - event calendar
 - custom events
